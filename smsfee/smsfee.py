@@ -772,9 +772,10 @@ class smsfee_receiptbook(osv.osv):
     """ A fee receopt book, stores fee payments history of students """
     
     def create(self, cr, uid, vals, context=None, check=True):
-        
+        print "vals in create",vals
         rec =  self.pool.get('sms.student').browse(cr,uid,vals['student_id'])
         vals['student_class_id'] = rec.current_class.id,
+        print "student class id",rec.current_class.id
         vals['fee_structure_id'] = rec.fee_type.id
         vals['session_id'] =  rec.current_class.acad_session_id.id,
         
@@ -810,6 +811,7 @@ class smsfee_receiptbook(osv.osv):
         fee_ids = self.pool.get('smsfee.studentfee').search(cr, uid, [('student_id','=',student),('reconcile','=',0)])
             
         if fee_ids:
+            total_recvble = 0
             for fees in fee_ids:
                 late_fee = 0
                 reconcile = False
@@ -818,6 +820,7 @@ class smsfee_receiptbook(osv.osv):
                 obj = self.pool.get('smsfee.studentfee').browse(cr, uid, fees)
                 if  obj.fee_amount == 0 or obj.fee_amount+late_fee ==0:
                     reconcile = True
+                total_recvble = total_recvble + obj.fee_amount 
                 create = self.pool.get('smsfee.receiptbook.lines').create(cr, uid, {
                        'acad_cal_id': obj.acad_cal_id.id,
                        'fee_type':obj.fee_type.id,
@@ -828,7 +831,7 @@ class smsfee_receiptbook(osv.osv):
                        'total': obj.fee_amount+late_fee,
                        'reconcile':reconcile
                        }) 
-            self.write(cr, uid, ids[0], {'state':'fee_calculated'})
+            self.write(cr, uid, ids[0], {'state':'fee_calculated','total_paybles':total_recvble})
         return
     
     def confirm_fee_received(self, cr, uid, ids, context=None):
@@ -1020,7 +1023,7 @@ class smsfee_receiptbook(osv.osv):
         'student_id': fields.many2one('sms.student','Student',required = True),
         'father_name': fields.char(string = 'Father',size = 100),
         'payment_method':fields.selection([('Cash','Cash'),('Bank','Bank')],'Payment Method'),
-        'total_paybles':fields.float('Paybles',readonly = True),
+        'total_paybles':fields.float('Receivables',readonly = True),
         'total_paid_amount':fields.float('Paid Amount',required = True),
         'note_at_receive': fields.text('Note'),
         'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Calculated'),('Paid', 'Paid')], 'State', readonly = True, help='State'),
