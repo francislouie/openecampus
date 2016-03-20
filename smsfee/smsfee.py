@@ -955,6 +955,15 @@ class smsfee_receiptbook(osv.osv):
 #                 cr.commit()  
         return 
             
+    def request_for_adjustment(self, cr, uid, ids, context=None):
+        
+        user = self.pool.get('res.users').browse(cr,uid,uid)
+        note_str = "*** Paid Fee Adjustment Details ***"
+        note_str += "\n\nFee Adjustment request Entered by "+str(user.name)+ "ON"+str(datetime.datetime.now()) +" \n"
+        self.write(cr, uid, ids[0], {'state':'Request_Adjustment','note_at_receive':note_str})
+        return
+
+    
     def onchange_student(self, cr, uid,ids,std):
         result = {}
         print "std##########:",std
@@ -1026,8 +1035,10 @@ class smsfee_receiptbook(osv.osv):
         'total_paybles':fields.float('Receivables',readonly = True),
         'total_paid_amount':fields.float('Paid Amount',required = True),
         'note_at_receive': fields.text('Note'),
-        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Calculated'),('Paid', 'Paid')], 'State', readonly = True, help='State'),
+        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Calculated'),('Paid', 'Paid'),('Request_Adjustment', 'Request Adjustment'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
+        #fields related to adjustment
+        'receipt_book_idd': fields.one2many('smsfee.receiptbook.lines.fee.adjustment', 'receipt_book_idd', 'Fees'),
         'receiptbook_lines_ids': fields.one2many('smsfee.receiptbook.lines', 'receipt_book_id', 'Fees'),
         'voucher_date': fields.date('Voucher Date',readonly=True),
         'vouchered_by': fields.many2one('res.users', 'Voucher By',readonly=True),
@@ -1115,10 +1126,18 @@ class smsfee_receiptbook_lines(osv.osv):
                        })   
         return {'value':vals}
     
+    def _set_feename(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            result[f.id] = f.fee_type.name
+        return result
+    
     _name = 'smsfee.receiptbook.lines'
+    _rec_name = 'fee_name'
     _description = "This object store fee types"
     _columns = {
-        'name': fields.many2one('sms.academiccalendar','Academic Calendar'),      
+        'name': fields.many2one('sms.academiccalendar','Academic Calendar'),
+        'fee_name': fields.function(_set_feename,string = 'Fee.',type = 'char',method = True),      
         'fee_type': fields.many2one('smsfee.classes.fees','Fee Type'),
         'student_fee_id': fields.many2one('smsfee.studentfee','Student Fee Id'),
         'fee_month': fields.many2one('sms.session.months','Fee Month'),
@@ -1141,6 +1160,101 @@ class smsfee_receiptbook_lines(osv.osv):
                  
     }
 smsfee_receiptbook_lines()
+
+#-------------------------pbject for paid fee adjustment--------------------------------------
+class smsfee_receiptbook_lines_fee_adjustment(osv.osv):
+    """ This object is created to make adjustment in paid fees.
+        it appears as on2many on receiptbook.
+        it also acts as child of receopbooklines """
+    
+    def create(self, cr, uid, vals, context=None, check=True):
+        result = super(osv.osv, self).create(cr, uid, vals, context)
+        return result
+  
+     
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        result = super(osv.osv, self).write(cr, uid, ids, vals, context)
+        return result
+     
+    def unlink(self, cr, uid, ids, context=None):
+        result = super(osv.osv, self).unlink(cr, uid, ids, context)
+        return result 
+    
+    def onchange_amount(self, cr, uid, ids,total,paid_amount):
+        vals = {}
+        
+        print "ids::",ids
+        if paid_amount > total:
+            vals['paid_amount'] = 0
+            vals['discount'] = 0
+            vals['net_total'] = total
+            vals['reconcile'] = False
+        elif paid_amount == total: 
+            vals['paid_amount'] = paid_amount
+            vals['discount'] = 0
+            vals['net_total'] = total-paid_amount
+            vals['reconcile'] = True
+        elif  paid_amount < total:
+            vals['paid_amount'] = paid_amount
+            vals['discount'] = total - paid_amount
+            vals['net_total'] = total- (paid_amount+vals['discount'])
+            vals['reconcile'] = True         
+        update_lines = self.pool.get('smsfee.receiptbook.lines').write(cr, uid, ids, {
+                       'paid_amount':vals['paid_amount'],
+                       'discount':vals['discount'],
+                       'net_total':vals['net_total'],
+                       'reconcile':vals['reconcile']
+                       })   
+        return {'value':vals}
+    
+    def onchange_discount(self, cr, uid, ids,total,discount):
+        vals = {}
+        
+        print "ids disc::",ids
+        if discount > total:
+            vals['paid_amount'] = 0
+            vals['discount'] = 0
+            vals['net_total'] = total
+            vals['reconcile'] = False
+        elif discount == total: 
+            vals['paid_amount'] = 0
+            vals['net_total'] = total- discount
+            vals['reconcile'] = True
+            vals['discount'] = discount
+        elif  discount < total:
+            vals['paid_amount'] = total - discount
+            vals['net_total'] = total- (discount+vals['paid_amount'])
+            vals['discount'] = discount
+            vals['reconcile'] = True         
+        update_lines = self.pool.get('smsfee.receiptbook.lines').write(cr, uid, ids, {
+                       'paid_amount':vals['paid_amount'],
+                       'discount':vals['discount'],
+                       'net_total':vals['net_total'],
+                       'reconcile':vals['reconcile']
+                       })   
+        return {'value':vals}
+    
+    _name = 'smsfee.receiptbook.lines.fee.adjustment'
+    _description = "This object store fee types"
+    _columns = {
+        'name': fields.many2one('smsfee.receiptbook.lines','Fee' ),      
+        'fee_type': fields.many2one('smsfee.classes.fees','Fee Type'),
+        'fee_month': fields.many2one('sms.session.months','Fee Month'),
+        'receipt_book_idd': fields.many2one('smsfee.receiptbook','Receipt book',required = True),
+        'paid_amount':fields.integer('Paid'),
+        'discount': fields.integer('Discount'),
+        'net_total': fields.integer('Balance'),  
+        'adjustment_decision':fields.selection([('Unchanged','No Adjustment'),('set_as_unpaid','Set as Fee Unpaid'),('change_amount','Change Amount')],'Adjustment',required = True), 
+    }
+    _sql_constraints = [  
+        ('Fee Exisits', 'unique (name)', 'This fee is already added for adjustment')
+    ] 
+     _defaults = {
+         'state':'Unchanged',
+    }
+smsfee_receiptbook_lines_fee_adjustment()
+ 
+
 
 #-------------------------- Unpaid Fee Adjustment ---------------------------------------------------------------
 # 

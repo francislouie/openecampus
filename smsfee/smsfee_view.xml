@@ -492,10 +492,10 @@
          <field name="arch" type="xml">
             <form string="Fee Receipt Book" version="7.0">
 			<header>
-			<button name="load_std_fee" string="Show Fees" states="Draft" type="object"  class="oe_highlight" />
-			<button name="confirm_fee_received" string="Receive Fee" confirm = "Receive Fee with given amount?" states="fee_calculated" type="object"  class="oe_highlight" />
+			<button name="load_std_fee" string="1. Show Student Fees" states="Draft" type="object"  class="oe_highlight" />
+			<button name="confirm_fee_received" string="2. Receive Fee" confirm = "Receive Fee with given amount?" states="fee_calculated" type="object"  class="oe_highlight" />
 			<button name="%(print_paid_fee_receipt_id)d" string="Print Receipt" states="Paid" type="action" class="oe_highlight" groups=""/>
-			<field name="state" widget="statusbar" statusbar_visible="Draft,fee_calculated,Paid"/>
+			<field name="state" widget="statusbar" statusbar_visible="Draft,fee_calculated,Paid,Request_Adjustment,Adjusted"/>
 			</header>
 			<sheet>
 			<group attrs="{'readonly':[('student_id','=',False)]}">
@@ -526,13 +526,15 @@
 					</group>
 					</group>
 					<notebook>
-        				    <page string="Fee" >
+        				    <page string="Fee Received" >
 							<field name="receiptbook_lines_ids" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 							</page>
 							<page string="Note" >
+							<p><h2>Need correction?</h2> <button name="request_for_adjustment" string="Ask For Fee Adjustment"  states="Paid" type="object"  class="oe_highlight" /></p>
 							<field name="note_at_receive" nolabel ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 							</page>
 							<page string="Accounting Enteries" >
+								<group>
 								<group>
 								<field name="vouchered"/>
 								<field name="vouchered_by"/>
@@ -541,6 +543,12 @@
 								<field name="voucher_date"/>
 								<field name="voucher_no"/>
 								</group>
+								</group>
+							</page>
+							<page string="Fee Adjustment" attrs="{'invisible':[('state','NOT IN',['Request_Adjustment','Adjusted'])]}" >
+							<field name="receipt_book_idd" nolabel ="1" attrs="{'readonly':[('state','NOT IN',['Request_Adjustment'])]}"  />
+							<newline/>
+							<p>Select the fee you want to make adjustment by click <font color ="blue">add an item above</font></p>
 							</page>
 					</notebook>
 					<group string ="">
@@ -573,7 +581,7 @@
                 <search string="Search">
                     <field name="student_id" string="name"/>
 					<field name="student_class_id" string="name"/>
-					<field name="name" string= "Receopt No" />
+					<field name="name" string= "Receipt No" />
 					<field name="manual_recpt_no" string= "Manual Receipt No" />
                 </search>
             </field>
@@ -619,6 +627,31 @@
             <field name="context">{'search_default_draft': 1}</field>
         </record>
     <!-- fee.receiptbook.lines END --> 
+
+<!-- sms.fee receipt book.lines.adjustment -->
+    
+    <record model="ir.ui.view" id="sms_receiptbook_linesadjustment_tree">
+      <field name="name">smsfee.receiptbook.lines.fee.adjustment</field>
+      <field name="model">smsfee.receiptbook.lines.fee.adjustment</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+        <tree string=" Paid Fee Adjustment"  editable="bottom">
+          <field name="name"  required ="1" />
+	      <field name="fee_type"  readonly ="1"  />
+          <field name="fee_month"  readonly ="1" />
+          <field name="paid_amount" colspan="4" on_change="onchange_amount(total,paid_amount)"  />
+		  <field name="discount" on_change="onchange_discount(total,discount)"  />
+		  <field name="net_total" invisible ="1"/>
+          <field name="adjustment_decision" />	
+          
+        </tree>
+      </field>
+    </record>
+
+
+
+
+
 
 <!-- smsfee.student.return.fee -->
     <record model="ir.ui.view" id="smsfee_student_return_fee_form">
