@@ -1310,41 +1310,51 @@
          <field name="model">sms.academiccalendar.subjects</field>
          <field name="arch" type="xml">
             <form string="Class Subjects" version="7.0">
-			<sheet>
 			<notebook>
-            <page string="">
-			<group readonly ="1">
-			<field name="name"/>
-			<field name="subject_id" readonly = "1"/>
-			<field name="academic_calendar" readonly = "1"/>
-			<field name="state" readonly = "1"/>
+            <page string="Configuration">
+			<group>
+			<group>
+				<field name="name" nolabel = "1"/>
 			</group>
-              <group readonly ="1" >
+			<group>
+				<field name="subject_id" required = "1"/>
+				<field name="offered_as"/>
+				<field name="reference_practical_of" required = "1"/>
+
+			</group>
+			<group>
+				<field name="teacher_id"/>
+				<field name="academic_calendar" readonly = "1"/>
+				<field name="state" readonly = "1"/>
+			</group>
+			</group>
+			</page>
+			 <page string = "Subject Requirements">
+            <group>  
+			<group>
 			  <field name="total_marks"/>
 			  <field name="passing_marks"/>
 			  <field name="min_require_att"/>
-  			  <field name="teacher_id"/>
-<field name="allow_delete"/>
               </group>	
+			<group>
+			  <field name="allow_delete"/>
+			  <field name="id" readonly = "1"/>
+              </group>	
+			</group>
 		   </page>
 		   </notebook>
-		</sheet>	 	
-          </form>
+          </form>	
         </field>
         </record>
         <record model="ir.ui.view" id="view_class_subjects_tree">
             <field name="name">class.subjects</field>
             <field name="model">sms.academiccalendar.subjects</field>
             <field name="arch" type="xml">
-            <tree string="Class Subjects" editable="top">
-                <field name="name" invisible = "True"/>
+            <tree string="Class Subjects">
+                <field name="name"/>
 				<field name="subject_id" attrs="{'required':[('state','=','Draft')], 'readonly':[('state','IN',['Closed'])]}"/>
 				<field name="teacher_id"/>
-				<field name="offered_as"/>
 				<field name="state" />
-				<field name="id" readonly = "1"/>
-				<field name="academic_calendar" readonly = "1"/>
-<field name="allow_delete"/>
                 </tree>
             </field>
         </record>
@@ -1358,7 +1368,7 @@
         </record>
 <!--sms.student.subject-->
 <!--this view is set for classes with no specific subject attendance, for subject wise attendance create another view of the same object-->
-        <record model="ir.ui.view" id="view_clss_subjects_form">
+        <record model="ir.ui.view" id="students_subjects_form">
          <field name="name">sms.student.subject</field>
          <field name="model">sms.student.subject</field>
          <field name="arch" type="xml">

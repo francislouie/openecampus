@@ -2091,7 +2091,7 @@ class sms_academiccalendar_subjects(osv.osv):
             
             if f.offered_as == 'practical':
                 #r_sub =  str(subject_name) + " ( " + str(f.reference_practical_of.subject_id.name).replace(" ","") + ")" 
-                r_sub =  str(subject_name) + " ("+str(f.reference_practical_of.subject_id)+")"
+                r_sub =  str(subject_name) + " ("+str(f.reference_practical_of.subject_id.name)+")"
                 result[f.id] = r_sub 
             else:    
                 result[f.id] = str(f.subject_id.name) 
@@ -2215,7 +2215,7 @@ class sms_academiccalendar_subjects(osv.osv):
     _columns = {
         'name':fields.function(_set_name, method=True,  string='Subject',type='char'),
         'subject_id': fields.many2one('sms.subject', 'Subject',required=True),  
-        'academic_calendar': fields.many2one('sms.academiccalendar'),
+        'academic_calendar': fields.many2one('sms.academiccalendar','Class'),
         'total_marks': fields.float('Total Marks(%)'),
         'passing_marks': fields.float('Passing marks(%)'),
         'min_require_att': fields.float('Attendance Per'),
@@ -2223,7 +2223,6 @@ class sms_academiccalendar_subjects(osv.osv):
         'teacher_id': fields.many2one('hr.employee','Teacher'),
         'offered_as': fields.selection([('theory','Theory Only'),('theory_practical','Theory + Practical'),('practical','Practical Only')], 'Offered As'),
         'reference_practical_of': fields.many2one('sms.academiccalendar.subjects', 'Main Subject',),
-        'admission_register' : fields.many2one('admission.register.subjects','admission_register') ,
         'allow_delete' : fields.boolean('Allow Deletion')
     }
      
