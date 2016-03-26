@@ -203,7 +203,7 @@ class sms_session(osv.osv):
             acad_cals = self.pool.get('sms.academiccalendar').search(cr, uid, [('state','=','Active'),('session_id','=',ids)])
             if acad_cals:
                 for idss in acad_cals:
-                    close_class = self.pool.get('sms.academiccalendar').write(cr, uid, idss, {'state': 'Complete','date_closed': datetime.date.today(),'closed_by':uid})
+                    close_class = self.pool.get('sms.academiccalendar').write(cr, uid, [idss], {'state': 'Complete','date_closed': datetime.date.today(),'closed_by':uid})
                     subjects = self.pool.get('sms.academiccalendar.subjects').search(cr, uid, [('academic_calendar','=',idss),('state','=','Current')])
                     if subjects:
                         for sub in subjects:
@@ -1041,7 +1041,7 @@ class sms_academiccalendar(osv.osv):
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         super(osv.osv, self).write(cr, uid, ids, vals, context)
         
-        for f in self.browse(cr, uid, ids, context=context):
+        for f in self.browse(cr, uid, ids):
             acad_cal_state = f.state
             if f.state == 'Active':
                 #Step1: make all draft subject to current in this acad cal,
@@ -2090,8 +2090,11 @@ class sms_academiccalendar_subjects(osv.osv):
             subject_name = str(f.subject_id.name).replace(" ","")
             
             if f.offered_as == 'practical':
-                #r_sub =  str(subject_name) + " ( " + str(f.reference_practical_of.subject_id.name).replace(" ","") + ")" 
-                r_sub =  str(subject_name) + " ("+str(f.reference_practical_of.subject_id.name)+")"
+                #r_sub =  str(subject_name) + " ( " + str(f.reference_practical_of.subject_id.name).replace(" ","") + ")"
+                if f.reference_practical_of.subject_id:
+                    r_sub =  str(subject_name) + " ("+str(f.reference_practical_of.subject_id.name)+")"
+                else:
+                    r_sub =  str(subject_name) + " (???)"
                 result[f.id] = r_sub 
             else:    
                 result[f.id] = str(f.subject_id.name) 

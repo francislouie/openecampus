@@ -665,6 +665,8 @@ class crossovered_analytic(report_sxw.rml_parse):
                 else:
                     my_dict["practical"] = practical_marks
                 
+                
+                print "got practicle marks ",practical_marks
                 my_dict["obtained_marks"] = str(round(std_subs_row[1] + practical_marks, 2))
                 my_dict["total_marks"] = round(std_subs_row[2] + practical_total, 2)
                 
