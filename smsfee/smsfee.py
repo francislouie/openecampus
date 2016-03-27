@@ -28,7 +28,7 @@ class sms_academiccalendar(osv.osv):
     """This object is used to add fields in sms.student"""
    
     def manage_class_fee(self, cr, uid, ids, context=None):
-        
+        print "in mangage class fee"
         fee_obj = self.pool.get('smsfee.classes.fees')
         fee_line_obj = self.pool.get('smsfee.classes.fees.lines')
         #get all fee structures to add with class
