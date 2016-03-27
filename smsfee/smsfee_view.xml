@@ -66,16 +66,53 @@
 		    </record>
 		<!-- sms.Classes Fee-->
 
+<!--New Fee object for class-->
+
+<record model="ir.ui.view" id="view_sms_class_feeobject_form">
+		      <field name="name">class.fee.structure</field>
+		      <field name="model">smsfee.classes.fees.structure</field>
+		      <field name="type">form</field>
+		      <field name="arch" type="xml">
+			    <form string="Classes Fee" version="7.0">
+ 			 <sheet>
+					<group>
+						<group>
+						<field name="fee_structure_id"/>
+						<field name="active"/>
+						</group>
+						<group>
+						<p><strong>Fee Structure for Student Admission</strong></p>
+						</group>
+					</group>
+						<field name="fee_type_ids"  nolabel="1"  />
+			   		 </sheet>
+			   </form>
+		      </field>
+		    </record>
+
+ <!-- Tree class fee structure (new design) -->
+    <record model="ir.ui.view" id="view_class_fee_structure_tree1">
+            <field name="name">smsfee.classes.fees.structure.tree</field>
+            <field name="model">smsfee.classes.fees.structure</field>
+            <field name="arch" type="xml">
+                <tree string="Fee Structure" >
+							<field name="fee_structure_id"  />
+							<field name="active" />
+				 </tree>
+            </field>
+        </record> 
         
-    <!-- Tree class fee types (new design) apread as one2many to smsfee.classes.fee-->
+    <!-- Tree class fee types (new design) -->
     <record model="ir.ui.view" id="view_class_types_tree">
-            <field name="name">smsfee.classes.fees.lines.tree</field>
-            <field name="model">smsfee.classes.fees.lines</field>
+            <field name="name">smsfee.classes.fees.types.tree</field>
+            <field name="model">smsfee.classes.fees.types</field>
             <field name="arch" type="xml">
                 <tree string="Fees" editable = "bottom" >
-					<field name="parent_fee_structure_id" invisible = "1" />
-					<field name="fee_type"  />
-					<field name="amount" />
+							
+							<field name="academic_cal_id" invisible = "1" />
+							<field name="fee_structure_id" invisible = "1" />
+							<field name="fee_type"  />
+							<field name="amount" />
 				 </tree>
             </field>
         </record> 
@@ -104,7 +141,10 @@
 						<page readonly = "1" string = "Fee Register"><field name="fee_register" readonly ="1"/></page>
 						</notebook>
 			    </page>
-			    
+			    <page string = " New Fee Management">
+		    	 
+						<field name="class_fee_structures"/>
+			    </page>
 			   </notebook>
 		      </field>
 		    </record>
@@ -152,20 +192,15 @@
          <field name="name">smsfee.classes.fees.form</field>
          <field name="model">smsfee.classes.fees</field>
          <field name="arch" type="xml">
-           <form string="Classes Fee" version="7.0">
+            <form string="Classes Fee" version="7.0">
  			 <sheet>
-					<group>
-						<group>
-						<field name="fee_structure_id"/>
-						<field name="active"/>
-						</group>
-						<group>
-						<p><strong>Fee Structure for Student Admission</strong></p>
-						</group>
+					<group string ="Classes Fees Details ">
+							<field name="fee_structure_id" />
+							<field name="fee_type_id" />
+							<field name="amount" />
 					</group>
-						<field name="fee_type_ids"  nolabel="1"  />
-			   		 </sheet>
-			   </form>
+				</sheet>	 	
+              </form>
             </field>
         </record>
 
@@ -174,9 +209,10 @@
             <field name="model">smsfee.classes.fees</field>
             <field name="arch" type="xml">
                 <tree string="Classes Fees" colors="blue:fee_structure_id=='1';grey:fee_structure_id =='2';green:fee_structure_id=='3'" editable="top">
-							<field name="name" readonly ="1" />
 							<field name="academic_cal_id" readonly ="1" />
 							<field name="fee_structure_id" readonly ="1" />
+							<field name="fee_type_id" readonly ="1" />
+							<field name="amount"/>
 				 </tree>
             </field>
         </record>
@@ -456,10 +492,10 @@
          <field name="arch" type="xml">
             <form string="Fee Receipt Book" version="7.0">
 			<header>
-			<button name="load_std_fee" string="1. Show Student Fees" states="Draft" type="object"  class="oe_highlight" />
-			<button name="confirm_fee_received" string="2. Receive Fee" confirm = "Receive Fee with given amount?" states="fee_calculated" type="object"  class="oe_highlight" />
+			<button name="load_std_fee" string="Show Fees" states="Draft" type="object"  class="oe_highlight" />
+			<button name="confirm_fee_received" string="Receive Fee" confirm = "Receive Fee with given amount?" states="fee_calculated" type="object"  class="oe_highlight" />
 			<button name="%(print_paid_fee_receipt_id)d" string="Print Receipt" states="Paid" type="action" class="oe_highlight" groups=""/>
-			<field name="state" widget="statusbar" statusbar_visible="Draft,fee_calculated,Paid,Request_Adjustment,Adjusted"/>
+			<field name="state" widget="statusbar" statusbar_visible="Draft,fee_calculated,Paid"/>
 			</header>
 			<sheet>
 			<group attrs="{'readonly':[('student_id','=',False)]}">
@@ -490,15 +526,13 @@
 					</group>
 					</group>
 					<notebook>
-        				    <page string="Fee Received" >
+        				    <page string="Fee" >
 							<field name="receiptbook_lines_ids" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 							</page>
 							<page string="Note" >
-							<p><h2>Need correction?</h2> <button name="request_for_adjustment" string="Ask For Fee Adjustment"  states="Paid" type="object"  class="oe_highlight" /></p>
 							<field name="note_at_receive" nolabel ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 							</page>
 							<page string="Accounting Enteries" >
-								<group>
 								<group>
 								<field name="vouchered"/>
 								<field name="vouchered_by"/>
@@ -507,13 +541,7 @@
 								<field name="voucher_date"/>
 								<field name="voucher_no"/>
 								</group>
-								</group>
 							</page>
-							<!--<page string="Fee Adjustment" attrs="{'invisible':[('state','NOT IN',['Request_Adjustment','Adjusted'])]}" >
-							<field name="receipt_book_idd" nolabel ="1" attrs="{'readonly':[('state','NOT IN',['Request_Adjustment'])]}"  />
-							<newline/>
-							<p>Select the fee you want to make adjustment by click <font color ="blue">add an item above</font></p>
-							</page> -->
 					</notebook>
 					<group string ="">
 							<field name="state"  readonly ="1" />
@@ -545,7 +573,7 @@
                 <search string="Search">
                     <field name="student_id" string="name"/>
 					<field name="student_class_id" string="name"/>
-					<field name="name" string= "Receipt No" />
+					<field name="name" string= "Receopt No" />
 					<field name="manual_recpt_no" string= "Manual Receipt No" />
                 </search>
             </field>
@@ -591,29 +619,6 @@
             <field name="context">{'search_default_draft': 1}</field>
         </record>
     <!-- fee.receiptbook.lines END --> 
-
-<!-- sms.fee receipt book.lines.adjustment 
-    
-    <record model="ir.ui.view" id="sms_receiptbook_linesadjustment_tree">
-      <field name="name">smsfee.receiptbook.lines.fee.adjustment</field>
-      <field name="model">smsfee.receiptbook.lines.fee.adjustment</field>
-      <field name="type">tree</field>
-      <field name="arch" type="xml">
-        <tree string=" Paid Fee Adjustment"  editable="bottom">
-          <field name="name"  required ="1" />
-	      <field name="fee_type"  readonly ="1"  />
-          <field name="fee_month"  readonly ="1" />
-          <field name="paid_amount" colspan="4" on_change="onchange_amount(total,paid_amount)"  />
-		  <field name="discount" on_change="onchange_discount(total,discount)"  />
-		  <field name="net_total" invisible ="1"/>
-          <field name="adjustment_decision" />	
-          
-        </tree>
-      </field>
-    </record>
-    -->
-
-
 
 <!-- smsfee.student.return.fee -->
     <record model="ir.ui.view" id="smsfee_student_return_fee_form">
@@ -670,36 +675,6 @@
       <field name="view_mode">tree,form</field>
     </record>
     
-    <!-- smsfee.student.return.fee END-->
-<!-- --> 
-	<record model="ir.ui.view" id="sms_student_admission_register_form2">
-		<field name="name">student.admission.register.form.inherit</field>
-		<field name="model">student.admission.register</field>
-		<field name="inherit_id" ref="sms.sms_student_admission_register_form"/>
-		<field name="type">form</field>
-		<field name="arch" type="xml">
-			<field name="subject_ids" position="after">
-			<field name="fee_id" />
-			</field>
-		</field>
-	</record>
-
-
-<!--		 sms.student.admission.register  -->  
-
-    <record model="ir.ui.view" id="sms_student_admission_register_lines_tree">
-      <field name="name">sms.student.admission.register.lines.tree</field>
-      <field name="model">admission.register.fees</field>
-      <field name="type">tree</field>
-      <field name="arch" type="xml">
-        <tree string=" Admission Fee">
-          <field name="name"/>
-          <field name="stu_fee_id"/>
-		  <field name="fee_amount"/>	
-        </tree>
-      </field>
-    </record>
-
-
+    <!-- smsfee.student.return.fee END-->         
 	</data>
 </openerp>
