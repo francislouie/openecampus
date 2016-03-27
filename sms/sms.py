@@ -40,7 +40,7 @@ class sms_academics_session(osv.osv):
     
     def start_new_academic_session(self, cr, uid, ids, *args):
    
-        result = {} 
+        result = {}
         for f in self.browse(cr, uid, ids):
             state = ''
             start_date = f.start_date
@@ -621,40 +621,6 @@ sms_student_certificate()
 class sms_student(osv.osv):
     
     """ This object defines students of an institute """
-    
-    def admisssion_registration(self, cr, uid, ids, context=None):
-        ctx = {}
-        for f in self.browse(cr,uid,ids):
-            if not context:
-                ctx = {
-                'name':f.name,
-                'father_name':f.father_name,
-                }
-            else:
-                ctx = context
-                ctx['name'] = f.id
-                ctx['father_name'] = f.father_name,
-        
-        result = {
-        'type': 'ir.actions.act_window',
-        'name': 'Student Admission',
-        'res_model': 'student.admission.register',
-        'view_type': 'form',
-        'view_mode': 'form',
-        'view_id': False,
-        'nodestroy': True,
-        'target': 'current',
-        'context': ctx,
-        }
-        return result 
-    
-    def action_admit_student(self, cr, uid, ids, context=None):
-        print "action_admit_student"
-        return None 
-    
-
-    
-    
     def unlink(self, cr, uid, ids, context={}, check=True):
         for rec in self.browse(cr, uid, ids, context):
             if rec.state == 'Draft':
@@ -1041,7 +1007,7 @@ class sms_academiccalendar(osv.osv):
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         super(osv.osv, self).write(cr, uid, ids, vals, context)
         
-        for f in self.browse(cr, uid, ids):
+        for f in self.browse(cr, uid, ids, context=context):
             acad_cal_state = f.state
             if f.state == 'Active':
                 #Step1: make all draft subject to current in this acad cal,
@@ -1254,13 +1220,7 @@ class sms_academiccalendar(osv.osv):
        
         
         return
-
-    def unlink(self, cr, uid, ids, context={}, check=True):
-        print "@@@@acd_cal@@@@@",ids,context
-        for rec in self.browse(cr, uid, ids, context):
-            print "inside for"
-            result = super(osv.osv, self).unlink(cr, uid, ids, context=context)
-        return result     
+     
 
     _name = 'sms.academiccalendar'
     _description = "Crates new class in a new session."
@@ -2235,6 +2195,7 @@ class sms_academiccalendar_subjects(osv.osv):
     }
     _sql_constraints = [('name_unique', 'unique (subject_id,academic_calendar)', """Subject Already Added to Class. """)]     
     
+    
 
 class sms_student_subject(osv.osv):
     """Stores students subjects in new class"""
@@ -2855,7 +2816,7 @@ class sms_attendancelines(osv.osv):
 sms_attendancelines()
 
 class sms_exam_type(osv.osv):
-    """This object is used to store generic exam types"""
+    """This object is used to store exam types"""
     
     _name = 'sms.exam.type'
     _columns = {
@@ -2865,7 +2826,7 @@ class sms_exam_type(osv.osv):
 sms_exam_type()
 
 class sms_exam(osv.osv):
-    """This ."""
+    """This object is used to store student Exam Marks."""
         
     _name = 'sms.exam'
     _columns = {
@@ -3034,31 +2995,11 @@ class sms_exam_offered(osv.osv):
                                                             'status':'Active'})
         else:
             raise osv.except_osv(('Cannot Start Exam'),('No Active class found for this exam, You have either all clesses in Draft State,OR you didnot create classes for this session'))
+        
+        
         return True
     
     def close_exam(self, cr, uid, ids, *args):
-        
-        rec = self.browse(cr,uid,ids)
-        #1.find all classes in this exam to close
-        
-        datesheet_ids = self.pool.get('sms.exam.datesheet').search(cr,uid,[('status','=','Active'),('exam_offered','=',rec[0].id)])
-        
-        if datesheet_ids:
-            rec_datesheet = self.pool.get('sms.exam.datesheet').browse(cr,uid,datesheet_ids)
-            
-            #2. Search all subjects in these classes
-            for ds in rec_datesheet:
-                #3. Search subjects in date sheet and close it
-                datesheetlines_ids = self.pool.get('sms.exam.datesheet.lines').search(cr,uid,[('open_for_edit','=',True),('name','=',ds.id)])
-                
-                if datesheetlines_ids:
-                    #close all subjects
-                    for subject in datesheetlines_ids:
-                        close_subject = self.pool.get('sms.exam.datesheet.lines').close_exam_subject(cr,uid,subject)
-                        
-                #4 close all classes in tis exam
-                close_classes_exam = self.pool.get('sms.exam.datesheet').close_exam_class(cr,uid,ds.id)
-        #5 close offered exam
         self.write(cr, uid, ids, {'state':'Closed','start_date':datetime.date.today()})
         return True
     
@@ -3082,9 +3023,6 @@ class sms_exam_offered(osv.osv):
         }
     
 class sms_exam_datesheet(osv.osv):
-    
-    """This object register academic calender in to active exams, when click on start exams all acitve
-       academic calenders are registered in this object.appeared as one2many to sms.exam.offered """
     _name= "sms.exam.datesheet"
     _descpription = "Stores exam date sheets"
     
@@ -3101,6 +3039,10 @@ class sms_exam_datesheet(osv.osv):
                         'paper_date':datetime.date.today(), 
                         'invigilator':uid, 
                         'total_marks':0 })
+                
+                
+             
+             
                                  
         return
     
@@ -3130,14 +3072,6 @@ class sms_exam_datesheet(osv.osv):
         for obj in self.browse(cr, uid, ids, context=context):
             result[obj.id] =  obj.exam_offered.start_date
         return result
-    
-    def close_exam_class(self, cr, uid, ds_id):
-        """This method will do three things 
-           it will cancel exams when called with cancel exam button
-           it will close exam when called with close exam button on this object
-           it will close and cancel exams on parent exams called when they are closed or canceled"""
-        self.write(cr,uid,ds_id,{'status':'Closed'})
-        return 
     
     _columns = { 
         'name':fields.function(set_datesheet, method=True,  string='Exam',type='char', store=True),
@@ -3182,55 +3116,6 @@ class sms_exam_datesheet(osv.osv):
             month_name = 'December'
             
         return month_name
-
-class sms_exam_datesheet_lines(osv.osv):
-    """This objects stores papers and their dates, it is appeared as on2many to sms_exam_datesheet """
-    
-    def create(self, cr, uid, vals, context=None, check=True):
-        super(osv.osv, self).create(cr, uid, vals, context)
-        return None
-    def unlink(self, cr, uid, ids, context={}, check=True):
-        print "@@@@@exam datesheet lines@@@@",ids,context
-        result = super(osv.osv, self).unlink(cr, uid, ids, context=context)
-        return result
-    
-    def close_exam_subject(self, cr, uid, ds_id):
-        """This method will do three things 
-           it will de-activate entry when clicked the option on each subject in datesheet lines
-           it will de-activate entry  on parent exams called when they are closed or canceled"""
-        self.write(cr,uid,ds_id,{'open_for_edit':False})
-        return result
-    
-    _name= "sms.exam.datesheet.lines"
-    _descpription = "Stores exam date sheets paper and date"
-    _columns = { 
-        'name': fields.many2one('sms.exam.datesheet', 'Date Sheet',required=True),
-        'subject': fields.many2one('sms.academiccalendar.subjects', 'Subject',required=True),
-        'total_marks': fields.integer('Total Marks'),
-        'paper_date': fields.date('Date'),
-        'invigilator':fields.many2one('hr.employee', 'Invigilator'),
-        'open_for_edit':fields.boolean('Open to Edit',readonly = 1)
-    }
-    
-    _defaults = {
-        'total_marks': lambda *a: 100
-    }
-    
-    def write(self, cr, uid, ids, vals, context=None):
-        super(osv.osv, self).write(cr, uid, ids, vals, context)
-        objs = self.browse(cr, uid, ids, context=context)
-        for f in objs:
-            std_sub_ids = self.pool.get('sms.student.subject').search(cr,uid,[('subject','=',f.subject.id)])
-            exam_ids = self.pool.get('sms.exam.lines').search(cr,uid,[('name','=',f.name.id),('student_subject','in',std_sub_ids)])
-            for exam in exam_ids:
-                exam_obj = self.pool.get('sms.exam.lines').browse(cr, uid, exam, context=context)
-                if exam_obj.obtained_marks > f.total_marks:
-                    raise osv.except_osv(('Invalid Total Marks'),('Total marks should be greater than obtained marks. To change total marks, first change student obtained marks'))
-            self.pool.get('sms.exam.lines').write(cr, uid, exam_ids, {'total_marks':f.total_marks})
-        return {} 
-       
-sms_exam_datesheet_lines()    
-
 
 #New Promotion
 
@@ -3326,6 +3211,35 @@ sms_student_class_promotion_lines()
 
 
 
+class sms_exam_datesheet_lines(osv.osv):
+    _name= "sms.exam.datesheet.lines"
+    _descpription = "Stores exam date sheets"
+    _columns = { 
+        'name': fields.many2one('sms.exam.datesheet', 'Date Sheet',required=True),
+        'subject': fields.many2one('sms.academiccalendar.subjects', 'Subject',required=True),
+        'total_marks': fields.integer('Total Marks'),
+        'paper_date': fields.date('Date'),
+        'invigilator':fields.many2one('hr.employee', 'Invigilator'),
+    }
+    
+    _defaults = {
+        'total_marks': lambda *a: 100
+    }
+    
+    def write(self, cr, uid, ids, vals, context=None):
+        super(osv.osv, self).write(cr, uid, ids, vals, context)
+        objs = self.browse(cr, uid, ids, context=context)
+        for f in objs:
+            std_sub_ids = self.pool.get('sms.student.subject').search(cr,uid,[('subject','=',f.subject.id)])
+            exam_ids = self.pool.get('sms.exam.lines').search(cr,uid,[('name','=',f.name.id),('student_subject','in',std_sub_ids)])
+            for exam in exam_ids:
+                exam_obj = self.pool.get('sms.exam.lines').browse(cr, uid, exam, context=context)
+                if exam_obj.obtained_marks > f.total_marks:
+                    raise osv.except_osv(('Invalid Total Marks'),('Total marks should be greater than obtained marks. To change total marks, first change student obtained marks'))
+            self.pool.get('sms.exam.lines').write(cr, uid, exam_ids, {'total_marks':f.total_marks})
+        return {} 
+       
+sms_exam_datesheet_lines()    
 
 class sms_student_promotion(osv.osv):
     _name= "sms.student.promotion"
@@ -4044,104 +3958,4 @@ class sms_student_clearance(osv.osv):
 
 sms_student_clearance()    
     
-class student_admission_register(osv.osv):
-
-    def _get_student(self, cr, uid, context={}):
-        if context:
-            return context['name']
-        return None
-    
-    def unlink(self, cr, uid, ids, context={}, check=True):
-        result = super(osv.osv, self).unlink(cr, uid, ids, context=context)
-        return None    
-    
-    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-        result = super(osv.osv, self).write(cr, uid, ids, vals, context)
-        return True
-    
-    def student_father(self, cr, uid, context={}):
-        if context:
-            return context['father_name']
-        return None
-    
-    def load_subjects(self, cr, uid, ids, context):
-        student_class = ""
-        for stu_ids in self.browse( cr,uid,ids ):
-            student_class = stu_ids.student_class.id
-            
-            class_id = self.pool.get('sms.academiccalendar').search(cr ,uid ,[('id','=',student_class),('group_id','=',stu_ids.group.id)])
-            if stu_ids.group.name == 'No group':
-                class_id = self.pool.get('sms.academiccalendar').search(cr ,uid ,[('id','=',student_class)])
-                
-        ac_sub_obj_ids =  self.pool.get('sms.academiccalendar.subjects').search(cr ,uid ,[('academic_calendar','=',class_id),('state','!=','Complete')])
-        for acd_subj_id in self.pool.get('sms.academiccalendar.subjects').browse(cr ,uid ,ac_sub_obj_ids):
-            self.pool.get('admission.register.subjects').create(cr ,uid ,{'name': acd_subj_id.id ,
-                                                                                                 'parent_id': ids[0],
-                                                                                                  } )
-        return True
-    
-    def cancel_admisssion_registration(self, cr, uid, ids, context):
-        subj_ids = self.pool.get('admission.register.subjects').search(cr ,uid ,[('parent_id','=',ids[0])])
-        self.pool.get('admission.register.subjects').unlink(cr ,uid ,subj_ids)
-        fee_ids = self.pool.get('admission.register.fees').search(cr ,uid ,[('name','=',ids[0])])
-        self.pool.get('admission.register.fees').unlink(cr ,uid ,fee_ids)
-        self.write(cr, uid, ids, {'state': 'Draft'})
-        return True
-    
-    def confirm_student_subjects(self, cr, uid, ids, context):
-        for info in self.browse(cr ,uid ,ids):
-            ac_stu_id= self.pool.get('sms.academiccalendar.student').create(cr ,uid ,{
-                                                                'name': info.student_class.id ,
-                                                                'std_id':info.name.id ,             
-                                                                'state':'Current' ,             
-                                                                'date_registered':datetime.date.today() ,             
-                                                                 })
-            for subs in info.subject_ids:
-                stu_sub_obj_id = self.pool.get('sms.student.subject').create(cr ,uid ,{
-                                                                'student' : ac_stu_id,
-                                                                'student_id' : info.name.id,
-                                                                'subject' : subs.name.id,
-                                                                'subject_status' : 'Current' ,
-                                                                })
-            admission_no = self.pool.get('sms.academiccalendar.student')._set_admission_no(cr ,uid ,ac_stu_id ,info.student_class.id)
-            self.pool.get('sms.student').write(cr, uid, info.name.id , {'registration_no':admission_no,'fee_starting_month':info.fee_starting_month.id,'fee_type':info.fee_structure.id, 'state': 'Admitted', 'current_state': 'Current','admitted_to_class':info.student_class.id,'admitted_on':datetime.date.today(),'current_class':info.student_class.id})
-        return None
-    
-    def onchange_session_month(self,cr ,uid ,ids ,student_class ,context=None):
-        acad_cal_id_group = []
-        for adcal_id in self.pool.get('sms.academiccalendar').browse(cr ,uid ,[student_class]):
-            acad_cal_id_group.append(adcal_id.group_id.id)
-        return {'domain': {'fee_starting_month': [('session_id','=',adcal_id.session_id.id)] ,
-                            'group':[('id','in',acad_cal_id_group ) ]},
-                    'value':{}}
-    
-    """This object is store admission details regarding to student register """
-    _name="student.admission.register"
-    _columns = {
-        'name' : fields.many2one('sms.student' , 'Student Name'),
-        'father_name' : fields.char('Father Name', readonly=True ,size=256),
-        'fee_structure' : fields.many2one('sms.feestructure' , 'Fee structure'),
-        'fee_start_from' : fields.date('Fee Start From'),
-        'fee_starting_month': fields.many2one('sms.session.months', 'Starting Fee Month'),
-        'student_class' : fields.many2one('sms.academiccalendar' ,'Student Class'),
-        'group' : fields.many2one('sms.group' ,'Group'),
-        'subject_ids' : fields.one2many('admission.register.subjects','parent_id','Student Subjects'),
-        'form_no' : fields.integer('Form No'),
-        'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Confirm', 'Confirm')], 'State', readonly = True),
-    } 
-    _defaults = {  'state': lambda*a :'Draft' ,
-                 'name':_get_student,
-                 'father_name':student_father}
-        
-student_admission_register()
-
-class admission_register_subjects(osv.osv):
-    """This object serves as a tree view for sms_student_admission_register for fee purpose """
-    _name = 'admission.register.subjects'
-    _columns = {
-        'name' : fields.many2one('sms.academiccalendar.subjects','Subjects'),
-        'parent_id' : fields.many2one('student.admission.register','Student SUbject'),
-    }
-    _defaults = {    }    
-admission_register_subjects()
 

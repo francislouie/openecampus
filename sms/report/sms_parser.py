@@ -545,7 +545,7 @@ class crossovered_analytic(report_sxw.rml_parse):
         
         final_result = []
         subjects = []
-
+        print "funtion called function name =get_students_dmc >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
         dmc_type = str(form['dmc_type'])
         academiccalendar_id = str(form['academiccalendar_id'][0])
         exam_type = str(form['exam_type'][0])
@@ -605,7 +605,7 @@ class crossovered_analytic(report_sxw.rml_parse):
             
             self.cr.execute(std_subs_sql)
             std_subs_rows = self.cr.fetchall()
-            
+            print "sql1",std_subs_sql
             s_no = 1
             total_obatined_marks = 0.0;
             class_total_marks = 0.0
@@ -643,6 +643,7 @@ class crossovered_analytic(report_sxw.rml_parse):
                         and sms_student_subject.reference_practical_of = """ + str(std_subs_row[4])
             
                     self.cr.execute(practical_sql)
+                    print practical_sql
                     practical_rows = self.cr.fetchone()
                     if practical_rows:
                         practical_marks = practical_rows[1]
@@ -665,8 +666,6 @@ class crossovered_analytic(report_sxw.rml_parse):
                 else:
                     my_dict["practical"] = practical_marks
                 
-                
-                print "got practicle marks ",practical_marks
                 my_dict["obtained_marks"] = str(round(std_subs_row[1] + practical_marks, 2))
                 my_dict["total_marks"] = round(std_subs_row[2] + practical_total, 2)
                 
@@ -775,7 +774,7 @@ class crossovered_analytic(report_sxw.rml_parse):
         return final_result
 
     def get_students_dmc_multiple(self,form):
-        
+        print "fucntion called , function name get_students_dmc_multiple"
         final_result = []
         report_type = str(form['report_type'])
         academiccalendar_id = form['academiccalendar_id'][0]

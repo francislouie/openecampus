@@ -116,8 +116,13 @@ class sms_dmc_format2_parser(report_sxw.rml_parse):
             self.cr.execute(sql)
             lower_grade = self.cr.fetchone()[0]
             
-            std_subs_sql = """SELECT sms_subject.name, sms_exam_lines.obtained_marks, sms_exam_lines.total_marks, 
-                sms_academiccalendar_subjects.offered_as, sms_student_subject.id, sms_exam_lines.exam_status 
+            std_subs_sql = """SELECT sms_subject.name, 
+                sms_exam_lines.obtained_marks, 
+                sms_exam_lines.total_marks, 
+                sms_academiccalendar_subjects.offered_as, 
+                sms_student_subject.id, 
+                sms_exam_lines.exam_status,
+                sms_academiccalendar_subjects.id 
                 from sms_exam_lines 
                 inner join sms_student_subject 
                 on 
@@ -150,10 +155,19 @@ class sms_dmc_format2_parser(report_sxw.rml_parse):
                 practical_marks = 0.0
                 practical_total = 0.0
                 practical_rows = None
-                
+                print "parent theory id",std_subs_row[6]
                 if std_subs_row[3] == 'theory_practical':
-                    practical_sql = """SELECT sms_subject.name, sms_exam_lines.obtained_marks, sms_exam_lines.total_marks, 
-                        sms_academiccalendar_subjects.offered_as, sms_student_subject.id,sms_exam_lines.exam_status 
+                    practicle_subjs_ids = self.pool.get('sms.academiccalendar.subjects').search(self.cr, self.uid,[
+                                    ('reference_practical_of','=',std_subs_row[6]),
+                                    ('offered_as','=','practical')])
+                    print "practicle subject_ids",practicle_subjs_ids
+                    
+                    
+                    practical_sql = """SELECT sms_subject.name, 
+                                    sms_exam_lines.obtained_marks, 
+                                    sms_exam_lines.total_marks, 
+                                    sms_academiccalendar_subjects.offered_as, 
+                                    sms_student_subject.id,sms_exam_lines.exam_status 
                         from sms_exam_lines 
                         inner join sms_student_subject 
                         on 
@@ -171,9 +185,10 @@ class sms_dmc_format2_parser(report_sxw.rml_parse):
                         and sms_exam_lines.name =  """ + str(exam_type) + """
                         and sms_academiccalendar_student.name = """ + str(academiccalendar_id) + """
                         and sms_academiccalendar_subjects.reference_practical_of is not null
-                        and sms_student_subject.reference_practical_of = """ + str(std_subs_row[4])
+                        and sms_academiccalendar_subjects.reference_practical_of = """ + str(std_subs_row[6])
             
                     self.cr.execute(practical_sql)
+                    print "sql in formate 2",practical_sql
                     practical_rows = self.cr.fetchone()
                     if practical_rows:
                         practical_marks = practical_rows[1]

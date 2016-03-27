@@ -563,7 +563,7 @@
                             <div class="oe_product_vignette">
                                 <a type="open">
                                     <img class="oe_kanban_image"
-                                        t-att-src="kanban_image('sms.student', 'image', record.id.value)" />
+                                        t-att-src="kanban_image('your_model', 'image', record.id.value)" />
                                 </a>
                                 <div class="oe_product_desc">
                                     <h4>
@@ -589,17 +589,13 @@
             <form string="Student" version="7.0">
 			<header>
 			<button name="%(action_admit_student)d" string="Admit" states="Draft" type="action" class="oe_highlight" groups=""/>
-<!--			<button name="action_admit_student" string="Admit(Beta)" states="Draft" type="action" class="oe_highlight" groups=""/>
--->
 			<button name="%(action_readmit_student)d" string="Re-admit" states="admission_cancel,drop_out,slc" type="action" class="oe_highlight" groups=""/>
 			<button name="%(action_assign_class_to_student)d" string="Assign Class" type="action" class="oe_highlight" groups="" attrs="{'invisible':[('current_state','!=','Failed')]}"/>
-<!--
 			<button name="%(report_admission_form_filled_id)d" string="Admission Form" states="Draft,Admitted" type="action" class="oe_highlight" groups=""/>
--->
 			<button name="promote_std" string="Promote" states="admitted" type="object" class="oe_highlight" groups=""/>
 			<button name="%(action_withdraw_student)d" string="Withdraw" states="Admitted" type="action" class="oe_highlight" groups=""/>
 			<button name="%(action_demote_student)d" string="Demote" states="Admitted" type="action" confirm = "Use this wizard Carefully, thiw wizard enables you to bring a student back to his previous class." class="oe_highlight" groups=""/>
-    		<button name="admisssion_registration" string="Admit(Beta)" states="Draft" type="object" class="oe_highlight" groups=""/>
+    		
 				
 			<field name="state" widget="statusbar" statusbar_visible="Draft,Admitted,Pass Out"/>
              </header> 			 
@@ -1304,46 +1300,47 @@
             <field name="search_view_id" ref="view_std_cls_reg_search"/>
         </record>
 
+
 <!-- sms.academiccalendar.subjects -->
-        <record model="ir.ui.view" id="view_clss_subjects_form">
+        <record model="ir.ui.view" id="view_clss_subjects_form11">
          <field name="name">class.sub.form</field>
          <field name="model">sms.academiccalendar.subjects</field>
          <field name="arch" type="xml">
             <form string="Class Subjects" version="7.0">
-			<notebook>
+            <notebook>
             <page string="Configuration">
-			<group>
-			<group>
-				<field name="name" nolabel = "1"/>
-			</group>
-			<group>
-				<field name="subject_id" required = "1"/>
-				<field name="offered_as"/>
-				<field name="reference_practical_of" required = "1"/>
+            <group>
+            <group>
+                <field name="name" nolabel = "1"/>
+            </group>
+            <group>
+                <field name="subject_id" required = "1"/>
+                <field name="offered_as"/>
+                <field name="reference_practical_of" domain="[('academic_calendar','=',academic_calendar),('offered_as','=','theory_practical')]"/>
 
-			</group>
-			<group>
-				<field name="teacher_id"/>
-				<field name="academic_calendar" readonly = "1"/>
-				<field name="state" readonly = "1"/>
-			</group>
-			</group>
-			</page>
-			 <page string = "Subject Requirements">
-            <group>  
-			<group>
-			  <field name="total_marks"/>
-			  <field name="passing_marks"/>
-			  <field name="min_require_att"/>
-              </group>	
-			<group>
-			  <field name="allow_delete"/>
-			  <field name="id" readonly = "1"/>
-              </group>	
-			</group>
-		   </page>
-		   </notebook>
-          </form>	
+            </group>
+            <group>
+                <field name="teacher_id"/>
+                <field name="academic_calendar" readonly = "1"/>
+                <field name="state" readonly = "1"/>
+            </group>
+            </group>
+            </page>
+             <page string = "Subject Requirements">
+            <group> 
+            <group>
+              <field name="total_marks"/>
+              <field name="passing_marks"/>
+              <field name="min_require_att"/>
+              </group>   
+            <group>
+              <field name="allow_delete"/>
+              <field name="id" readonly = "1"/>
+              </group>   
+            </group>
+           </page>
+           </notebook>
+          </form>   
         </field>
         </record>
         <record model="ir.ui.view" id="view_class_subjects_tree">
@@ -1351,13 +1348,26 @@
             <field name="model">sms.academiccalendar.subjects</field>
             <field name="arch" type="xml">
             <tree string="Class Subjects">
-                <field name="name"/>
-				<field name="subject_id" attrs="{'required':[('state','=','Draft')], 'readonly':[('state','IN',['Closed'])]}"/>
-				<field name="teacher_id"/>
-				<field name="state" />
+                <field name="name"/> 
+                <field name="subject_id" attrs="{'required':[('state','=','Draft')], 'readonly':[('state','IN',['Closed'])]}"/>
+                <field name="teacher_id"/>
+                 <field name="academic_calendar"/>
+                <field name="state" />
+                <field name="id"/>
                 </tree>
             </field>
         </record>
+        
+         <record id="view_default_acad_cal_subjects_search" model="ir.ui.view">
+            <field name="name">sms.academiccalendar.subjects.search</field>
+            <field name="model">sms.academiccalendar.subjects</field>
+            <field name="arch" type="xml">
+                <search string="Search Classe Subjects">
+                    <field name="id" string="ID"/>
+                </search>
+            </field>
+        </record>
+
 
 	<record model="ir.actions.act_window" id="action_acad_cal_subjects">
             <field name="name">Class Subjects</field>
@@ -1368,7 +1378,7 @@
         </record>
 <!--sms.student.subject-->
 <!--this view is set for classes with no specific subject attendance, for subject wise attendance create another view of the same object-->
-        <record model="ir.ui.view" id="students_subjects_form">
+        <record model="ir.ui.view" id="view_clss_subjects_form">
          <field name="name">sms.student.subject</field>
          <field name="model">sms.student.subject</field>
          <field name="arch" type="xml">
@@ -1395,9 +1405,10 @@
             <field name="name">sms.student.subject</field>
             <field name="model">sms.student.subject</field>
             <field name="arch" type="xml">
-            <tree string="Student Subjectss">
+            <tree string="Student Subjectss" editable = "top">
 				<field name="subject" />
-     		   <field name="subject_status" />	
+     		   <field name="subject_status" />
+     		   <field name="reference_practical_of" />	
 				<field name="id" readonly = "1" />	
                 </tree>
             </field>
@@ -2253,7 +2264,7 @@
             <form string="Datesheet" version="7.0">
  			<header>
             <button name="start_new_session" string="Print ClassDatesheet" status="Active,Closed,Cancelled" type="object" class="oe_highlight" groups=""/>
-			<button name="close_exam_class" string="Close Class Exam" status="Active,Closed,Cancelled" type="object" class="oe_highlight" groups=""/>
+			<button name="load_session_months" string="Close Class Exam" status="Active,Closed,Cancelled" type="object" class="oe_highlight" groups=""/>
              </header>
 				<sheet>
 				 <group >
@@ -2836,86 +2847,6 @@
             <field name="context">{'search_default_draft': 1}</field>
             <field name="search_view_id" ref="view_grading_scheme_line_search"/>
         </record>
-
-<!-- Student Admission Register-->
-		<record model="ir.ui.view" id="sms_student_admission_register_form">
-         <field name="name">sms.student.admission.register.form</field>
-         <field name="model">student.admission.register</field>
-         <field name="arch" type="xml">
-            <form string="" version="7.0">
-				<header>
-					<button name="%(report_admission_form_filled_id)d" string="Admission Form" states="Draft,waiting_approval,Confirm" type="action" class="oe_highlight" groups=""/>
-					<button name="load_fee_subjects" string="Proceed" states="Draft" type="object" class="oe_highlight" groups=""/>
-					<button name="cancel_admisssion_registration" string="Cancel" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-					<button name="admit_student" string="Confirm" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Confirm" readonly="1"  />
-				</header>
-				<group>
-                   <group string="Admission Register" col="4" colspan="4">
-                    	  <field name="name" required="1"   attrs="{'readonly':[('state','=','Confirm')]}" />
-				          <field name="father_name" attrs="{'readonly':[('state','=','Confirm')]}" />
- 				          <field name="student_class" required="1" attrs="{'readonly':[('state','=','Confirm')]}" on_change="onchange_session_month(student_class)"  />
-						  <field name="group" required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
-						  <field name="fee_structure" required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
-						  <field name="fee_starting_month" required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
-						  <field name="form_no" readonly="1"/>
-                   </group>
-				   <newline/>
-					<notebook>
-						<page string="subjects">
-					  		<field name="subject_ids" colspan="6"  />
-						</page>
-					</notebook>
-			    </group>  
-			  </form>
-            </field>
-        </record>
-        <record model="ir.ui.view" id="sms_student_admission_register_tree">
-            <field name="name">sms.student.admission.register.tree</field>
-            <field name="model">student.admission.register</field>
-            <field name="arch" type="xml">
-                <tree string="Student Admission Register">
-                		  <field name="name"/>
-				          <field name="father_name"/>
-						  <field name="fee_structure"/>
-				          <field name="fee_start_from"/>
-				          <field name="student_class"/>
-						  <field name="group"/>
-                </tree>
-            </field>
-        </record>
-
-
-        <record id="view_student_admission_register_search" model="ir.ui.view">
-            <field name="name">sms.student.admission.register.search</field>
-            <field name="model">student.admission.register</field>
-            <field name="arch" type="xml">
-                <search string="Search Grading Scheme Lines">
-                    <field name="name" string="Student"/>
-                </search>
-            </field>
-        </record>
-        <record model="ir.actions.act_window" id="action_admission_register">
-            <field name="name">sms.student.admission.register</field>
-            <field name="res_model">student.admission.register</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="context">{'search_default_draft': 1}</field>
-            <field name="search_view_id" ref="view_student_admission_register_search"/>
-        </record>
-
-
-	  <record model="ir.ui.view" id="sms_student_admission_subjects_tree">
-	      <field name="name">admission.register.subjects</field>
-	      <field name="model">admission.register.subjects</field>
-	      <field name="type">tree</field>
-	      <field name="arch" type="xml">
-	        <tree string=" Subjects">
-	          <field name="name"/>
-		    </tree>
-	      </field>
-     </record>
-
+    
 	</data>
 </openerp>
