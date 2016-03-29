@@ -76,6 +76,20 @@ class sms_dmc_format2_parser(report_sxw.rml_parse):
     
     def get_students_dmc(self,form):
         
+#         students_ids = self.pool.get('sms.academiccalendar.student').search(self.cr,self.uid,[('name','=',38),('state','=',"Current")])
+#         if students_ids:
+#              rec = self.pool.get('sms.academiccalendar.student').browse(self.cr,self.uid,students_ids)
+#              for f in rec:
+#            
+#                 
+#                 create = self.pool.get('sms.student.subject').create(self.cr,self.uid,{
+#                                                                               
+#                                                             'student':f.id,
+#                                                             'student_id': f.std_id.id,
+#                                                             'subject': 478,
+#                                                             'subject_status':'Current'
+#                                                                               })
+        
         final_result = []
         subjects = []
 

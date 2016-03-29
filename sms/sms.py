@@ -121,16 +121,16 @@ class sms_session(osv.osv):
         return
 
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        if 'session_admissions_closed' in vals:
+            acad_cal_ids = self.pool.get('sms.academiccalendar').search(cr, uid, [('session_id','=', ids)])
+            if  acad_cal_ids:
+                for acad_cal in acad_cal_ids:
+                    if vals['session_admissions_closed']:
+                        close_admission = True
+                    else:
+                        close_admission = False
+                    close_admission = self.pool.get('sms.academiccalendar').write(cr,uid,[acad_cal],{'admission_closed':close_admission})
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
-#         rec_session = self.browse(cr, uid, ids, context=context)
-#         for record in rec_session:
-#             calendar_ids = self.pool.get('sms.academiccalendar').search(cr, uid, [('session_id','=',record.id),('state','=','Complete')])
-#             for cal_id in  calendar_ids:
-#                 cal_std_ids = self.pool.get('sms.academiccalendar.student').search(cr, uid, [('name','=',cal_id),('state','=','Promoted')])
-#                 for std_class in cal_std_ids:
-#                     sub_std = self.pool.get('sms.student.subject').search(cr, uid, [('name','=',std_class),('subject_status','=','Current')])
-#                     for std_sub in sub_std:
-#                         self.pool.get('sms.student.subject').write(cr,uid,std_sub,{'subject_status': 'Pass'}) 
         return True
     
     def unlink(self, cr, uid, ids, context={}, check=True):
@@ -203,13 +203,13 @@ class sms_session(osv.osv):
             acad_cals = self.pool.get('sms.academiccalendar').search(cr, uid, [('state','=','Active'),('session_id','=',ids)])
             if acad_cals:
                 for idss in acad_cals:
-                    close_class = self.pool.get('sms.academiccalendar').write(cr, uid, [idss], {'state': 'Complete','date_closed': datetime.date.today(),'closed_by':uid})
+                    close_class = self.pool.get('sms.academiccalendar').write(cr, uid, [idss], {'admission_closed':True,'state': 'Complete','date_closed': datetime.date.today(),'closed_by':uid})
                     subjects = self.pool.get('sms.academiccalendar.subjects').search(cr, uid, [('academic_calendar','=',idss),('state','=','Current')])
                     if subjects:
                         for sub in subjects:
                             close_subjects = self.pool.get('sms.academiccalendar.subjects').write(cr, uid, sub, {'state': 'Closed'})
         
-        self.write(cr, uid, ids, {'state': 'Previous','date_session_closed':datetime.date.today(),'session_closed_by':uid})
+        self.write(cr, uid, ids, {'session_admissions_closed':True,'state': 'Previous','date_session_closed':datetime.date.today(),'session_closed_by':uid})
         return True
     
     def set_code(self, cr, uid, ids, name, args, context=None):
@@ -329,6 +329,7 @@ class sms_session(osv.osv):
         'acad_cals':fields.one2many('sms.academiccalendar','session_id','Academic Calendars'),
         'date_session_stared':fields.date("started on"),
         'date_session_closed':fields.date("Closed on"),
+        'session_admissions_closed':fields.boolean("Admission Closed In This Session"),
         'session_started_by':fields.many2one('res.users','Started By:'),
         'session_closed_by':fields.many2one('res.users','Closed By'),
         'state': fields.selection([('Draft', 'Draft'),('Active', 'Active'),('Previous', 'Previous')], 'State', readonly = True, help='Session State'),
@@ -1298,10 +1299,8 @@ class sms_academiccalendar(osv.osv):
                             self.pool.get('sms.academiccalendar.subjects').create(cr, uid, {
                             'subject_id': record.name.id,
                             'academic_calendar': f.id,
-                            'total_marks': 100,
-                            'passing_marks': 40,
-                            'min_require_att': 70,
-                            'state': 'Draft',}, context=context)
+                            'offered_as':record.offered_as,
+                            'state': 'Current',}, context=context)
                          
                         self.write(cr, uid, ids, {'subjects_loaded':True})
                 else:
@@ -2057,7 +2056,7 @@ class sms_academiccalendar_subjects(osv.osv):
                     r_sub =  str(subject_name) + " (???)"
                 result[f.id] = r_sub 
             else:    
-                result[f.id] = str(f.subject_id.name) 
+                result[f.id] = str(f.subject_id.name)
         return result
 
     def unlink(self, cr, uid, ids, context={}, check=True):
@@ -2161,13 +2160,13 @@ class sms_academiccalendar_subjects(osv.osv):
         if acd_cal_stu_ids :
             rec_cal_std = self.pool.get('sms.academiccalendar.student').browse(cr ,uid ,acd_cal_stu_ids) 
         
-        for acd_stu in rec_cal_std:
-            stu_sub_id = self.pool.get('sms.student.subject').create(cr ,uid ,{
-                      'student': acd_stu.id ,
-                      'student_id':acd_stu.std_id.id ,
-                      'subject': new_subject ,
-                      'subject_status': 'Current'
-                      })
+            for acd_stu in rec_cal_std:
+                stu_sub_id = self.pool.get('sms.student.subject').create(cr ,uid ,{
+                          'student': acd_stu.id ,
+                          'student_id':acd_stu.std_id.id ,
+                          'subject': new_subject ,
+                          'subject_status': 'Current'
+                          })
     
             # use this portio onward if student fee is to be added on subject registration, call a method that adds fee to student
         return new_subject
@@ -2271,7 +2270,7 @@ class sms_academiccalendar_subjects_default(osv.osv):
     _columns = {
         'name': fields.many2one('sms.subject', 'Subject', required=True),
         'academic_calendar': fields.many2one('sms.academiccalendar.default', 'Class', ondelete='cascade'),
-        'no_of_classes': fields.integer('No Of Classes', required=True),
+        'offered_as': fields.selection([('theory','Theory Only'),('theory_practical','Theory + Practical'),('practical','Practical Only')], 'Offered As'),
         'lab_required': fields.boolean('Lab Required '),
     }
     _defaults = {
@@ -3216,7 +3215,7 @@ class sms_exam_datesheet_lines(osv.osv):
     _descpription = "Stores exam date sheets"
     _columns = { 
         'name': fields.many2one('sms.exam.datesheet', 'Date Sheet',required=True),
-        'subject': fields.many2one('sms.academiccalendar.subjects', 'Subject',required=True),
+        'subject': fields.many2one('sms.academiccalendar.subjects',  'Subject',required=True),
         'total_marks': fields.integer('Total Marks'),
         'paper_date': fields.date('Date'),
         'invigilator':fields.many2one('hr.employee', 'Invigilator'),

@@ -88,19 +88,23 @@
 			<field name="state" widget="statusbar" statusbar_visible="Draft,active,previous"/>
              </header>
 				<sheet>
-				 <group >
-                  <group string="Session">
+				 <group string="Session" >
+                  <group >
                     <field name="name"/>
-                    <field name="academic_session_id" readonly ="1" />
                     <field name="start_date" />
-					<field name="end_date" readonly ="1"/>
 					<field name="date_session_stared" readonly ="1"/>
+					<field name="session_started_by" readonly ="1"/>
+                  </group>
+                  <group >
+                    <field name="academic_session_id" readonly ="1" />
+					<field name="end_date" readonly ="1"/>
 					<field name="session_started_by" readonly ="1"/>
 					<field name="date_session_closed" readonly ="1"/>
 					<field name="session_closed_by" readonly ="1"/>
                 	
-                	<field name="state"/>
                   </group>
+                  <field name="session_admissions_closed"/>
+                	<field name="state"/>
 				</group>  
 				<group></group>
 			<notebook>
@@ -1100,7 +1104,7 @@
             <form string="" version="7.0">
  			 <header>
              <button name="start_class" string="Start Class" states="Draft" type="object" class="oe_highlight" groups="" confirm="Are you sure to start this class?"/>
-			 <button name="load_subjects" string="Load Subjects" states="Draft"   type="object" class="oe_highlight" groups=""/>
+			 <button name="load_subjects" string="Load Class  Subjects" attrs="{'invisible':[('subjects_loaded','=',True)]}" states="Draft"   type="object" class="oe_highlight" groups=""/>
 			 <button name="%(report_studentsclass_list_id)d" string="Print Class List"  states="Draft,Active,Complete" type="action" icon="gtk-print"/>
 			 <!--
 			 <button name="load_timetable" string="Load Timetable" states="subjects_loaded" type="object" class="oe_highlight" groups=""/>
@@ -1132,7 +1136,7 @@
 			 <group>
 				<group>
 				  	<field name="cur_strength"/>
-					<field name="max_stds" on_change="onchange_type(type)"/>
+					<field name="max_stds"/>
 					<field name="admission_closed"/>
 				</group>
 				<group>
@@ -1300,9 +1304,7 @@
             <field name="search_view_id" ref="view_std_cls_reg_search"/>
         </record>
 
-
-<!-- sms.academiccalendar.subjects -->
-        <record model="ir.ui.view" id="view_clss_subjects_form11">
+ <record model="ir.ui.view" id="view_clss_subjects_form11">
          <field name="name">class.sub.form</field>
          <field name="model">sms.academiccalendar.subjects</field>
          <field name="arch" type="xml">
@@ -1334,7 +1336,6 @@
               <field name="min_require_att"/>
               </group>   
             <group>
-              <field name="allow_delete"/>
               <field name="id" readonly = "1"/>
               </group>   
             </group>
@@ -1357,17 +1358,6 @@
                 </tree>
             </field>
         </record>
-        
-         <record id="view_default_acad_cal_subjects_search" model="ir.ui.view">
-            <field name="name">sms.academiccalendar.subjects.search</field>
-            <field name="model">sms.academiccalendar.subjects</field>
-            <field name="arch" type="xml">
-                <search string="Search Classe Subjects">
-                    <field name="id" string="ID"/>
-                </search>
-            </field>
-        </record>
-
 
 	<record model="ir.actions.act_window" id="action_acad_cal_subjects">
             <field name="name">Class Subjects</field>
@@ -1405,10 +1395,9 @@
             <field name="name">sms.student.subject</field>
             <field name="model">sms.student.subject</field>
             <field name="arch" type="xml">
-            <tree string="Student Subjectss" editable = "top">
+            <tree editable = "top" string="Student Subjectss">
 				<field name="subject" />
-     		   <field name="subject_status" />
-     		   <field name="reference_practical_of" />	
+     		   <field name="subject_status" />	
 				<field name="id" readonly = "1" />	
                 </tree>
             </field>
@@ -1496,7 +1485,7 @@
 				 <group string="">
                     <field name="academic_calendar"  invisible="1" />
 					<field name="name"/>
-					<field name="no_of_classes"/>
+					<field name="offered_as"/>
 					<field name="lab_required" />
 				</group>
 			</sheet>	 	
@@ -1511,7 +1500,7 @@
                 <tree string="default acad subjects">
                     <field name="academic_calendar" invisible ="1"/>
 					<field name="name"/>
-					<field name="no_of_classes"/>
+					<field name="offered_as"/>
 					<field name="lab_required" />
                 </tree>
             </field>
@@ -2051,7 +2040,8 @@
         <tree string="Parent Exam">
           <field name="exam_lines"/>
 		  <field name="entry_date"/>
-		  <field name="subject_id"/>		
+		  <field name="subject_id"/>
+		  		
         </tree>
       </field>
     </record>
@@ -2304,6 +2294,7 @@
 		  <field name="start_date"/>
 		  <field name="result" readonly = "1"/>		  
 		  <field name="status" readonly = "1"/>
+		   <field name="id" readonly = "1"/>
 	    </tree>
       </field>
     </record>
@@ -2349,7 +2340,7 @@
       <field name="arch" type="xml">
         <tree editable="top" string="Papers Dates" >
           <field name="name" />
-		  <field name="subject" />
+		  <field name="subject" domain="[('state','!=','Closed')]" />
  		  <field name="paper_date"/>
 		  <field name="invigilator"/>	
 		  <field name="total_marks"/>	

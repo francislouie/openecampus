@@ -30,26 +30,27 @@ class sms_academiccalendar(osv.osv):
     """This object is used to add fields in sms.student"""
     def manage_class_fee(self, cr, uid, ids, context=None):
         academic_object = self.browse(cr, uid, ids, context=context)
+        print "ob",academic_object
         for f in academic_object:
             class_id = f.class_id.id
+            #load same class fee of previous session
+            session_id = f.session_id.name
+            print "class_id id",class_id
+            previous_acad_cal = self.search(cr, uid, [('class_id','=',class_id),('session_id','!=',session_id),('state','!=','Draft')])
+            print "previous cal",previous_acad_cal
             acad_cal_id = f.id
+            already_exist = f.fee_defined
+            if not already_exist:     
+                class_fee_obj = self.pool.get('smsfee.classes.fees')
                  
-            sql_fs = """SELECT id,name from sms_feestructure  ORDER BY name"""
-            cr.execute(sql_fs)
-            fs_rows =  view_res = cr.fetchall()
-             
-            for fee_str in fs_rows:
-                fees_str_id =fee_str[0]
-                
-                # 1s create an entry in class fee strure object
-                class_fee_str_id = self.pool.get('smsfee.classes.fees.structure').create(cr, uid, {
-                                 'academic_cal_id': acad_cal_id,
-                                 'fee_structure_id':fees_str_id})
-                  
-                print "fs id",class_fee_str_id
-                if class_fee_str_id:
-                    # creae all entries of fee types as one2many to fs
-                
+                sql_fs = """SELECT id,name from sms_feestructure  ORDER BY name"""
+                cr.execute(sql_fs)
+                fs_rows =  view_res = cr.fetchall()
+                 
+                success_create = True
+                for fee_str in fs_rows:
+                    fees_str_id =fee_str[0]
+                      
                     sql_ft = """SELECT id,name,subtype from smsfee_feetypes ORDER BY name"""
                     cr.execute(sql_ft)
                     ft_rows = cr.fetchall()
@@ -58,26 +59,30 @@ class sms_academiccalendar(osv.osv):
                         for fee_type in ft_rows:
                              amount = 0
                              #sarch previous class fee
-                             
-                             fee_id = self.pool.get('smsfee.classes.fees.types').search(cr, uid, [
-                                    ('academic_cal_id','=',acad_cal_id),
-                                    ('fee_structure_id','=',class_fee_str_id),
-                                    ('fee_type','=',fee_type[0])])
-                             print "fee already",fee_id
-                             if len(fee_id) == 0:
-                        
-                                 created = self.pool.get('smsfee.classes.fees.types').create(cr, uid, {
-                                         'academic_cal_id':acad_cal_id,
-                                         'fee_structure_id':class_fee_str_id,
-                                         'fee_type': fee_type[0],
-                                         'amount': 0}) 
-                                 print "created",created 
-                               
+                             if previous_acad_cal:
+                                 fee_id = class_fee_obj.search(cr, uid, [('academic_cal_id','=',previous_acad_cal[0]),('fee_structure_id','=',fees_str_id),('fee_type_id','=',fee_type[0])])
+                                 if fee_id:
+                                     amount = class_fee_obj.browse(cr,uid,fee_id[0]).amount
+                                     print "amount found",amount
+                            
+                             print "amount found",amount    
+                             created = class_fee_obj.create(cr, uid, {
+                                     'academic_cal_id': acad_cal_id,
+                                     'fee_structure_id':fees_str_id,
+                                     'fee_type_id': fee_type[0],
+                                     'fee_type_subtype': fee_type[2],
+                                     'amount': amount})  
+                             if not created:
+                                success_create = False
                     else:
                         raise osv.except_osv(('Please Define fee Types'),('Fee Types & Fee Structure both are needed for lass Fee Management'))
                                      
-                   
+                if success_create == True:
+                   update = self.write(cr, uid, [acad_cal_id], {'fee_defined':True})
+                else:
+                    raise osv.except_osv(('Error'), ('Some Fee Structures Or Fee Types could not be defined. Contact System Administrator.'))    
         return                
+                   
          
 #============== View of tree ===========================================================================================================         
 #         cr.execute("""select id,name from ir_ui_view 

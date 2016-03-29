@@ -545,7 +545,7 @@ class crossovered_analytic(report_sxw.rml_parse):
         
         final_result = []
         subjects = []
-        print "funtion called function name =get_students_dmc >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+
         dmc_type = str(form['dmc_type'])
         academiccalendar_id = str(form['academiccalendar_id'][0])
         exam_type = str(form['exam_type'][0])
@@ -605,7 +605,7 @@ class crossovered_analytic(report_sxw.rml_parse):
             
             self.cr.execute(std_subs_sql)
             std_subs_rows = self.cr.fetchall()
-            print "sql1",std_subs_sql
+            
             s_no = 1
             total_obatined_marks = 0.0;
             class_total_marks = 0.0
@@ -643,7 +643,6 @@ class crossovered_analytic(report_sxw.rml_parse):
                         and sms_student_subject.reference_practical_of = """ + str(std_subs_row[4])
             
                     self.cr.execute(practical_sql)
-                    print practical_sql
                     practical_rows = self.cr.fetchone()
                     if practical_rows:
                         practical_marks = practical_rows[1]
@@ -774,7 +773,7 @@ class crossovered_analytic(report_sxw.rml_parse):
         return final_result
 
     def get_students_dmc_multiple(self,form):
-        print "fucntion called , function name get_students_dmc_multiple"
+        
         final_result = []
         report_type = str(form['report_type'])
         academiccalendar_id = form['academiccalendar_id'][0]
@@ -873,7 +872,7 @@ class crossovered_analytic(report_sxw.rml_parse):
                             and sms_exam_lines.name =  """ + str(exam_obj.id) + """
                             and sms_academiccalendar_student.name = """ + str(academiccalendar_id) + """
                             and sms_academiccalendar_subjects.reference_practical_of is not null
-                            and sms_student_subject.reference_practical_of = """ + str(std_subs_row[4])
+                            and sms_academiccalendar_subjects.reference_practical_of = """ + str(std_subs_row[6])
                 
                         self.cr.execute(practical_sql)
                         practical_rows = self.cr.fetchone()

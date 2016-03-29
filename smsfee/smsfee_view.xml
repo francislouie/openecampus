@@ -141,10 +141,7 @@
 						<page readonly = "1" string = "Fee Register"><field name="fee_register" readonly ="1"/></page>
 						</notebook>
 			    </page>
-			    <page string = " New Fee Management">
-		    	 
-						<field name="class_fee_structures"/>
-			    </page>
+			    
 			   </notebook>
 		      </field>
 		    </record>
