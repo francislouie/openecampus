@@ -729,7 +729,7 @@
 						<field name="current_class"/>
 						 <field name="fee_type"/>
 						<field name="state"/>
-						<field name="id" />
+						<field name="id" invisible = "1" />
                 </tree>
             </field>
         </record>
@@ -1143,9 +1143,11 @@
 					<field name="date_started"  readonly = "1"/>
 					<field name="started_by"  readonly = "1"/>
 				 </group>
-				 <group>
+				 <group string ="Closing and Promotion">
+					<p> Normally Classes are closed at the end of the session, students are promoted to next class</p>
 					<field name="date_closed"  readonly = "1"/>
 					<field name="closed_by"   readonly = "1"/>
+					<field name="all_student_promoted"   readonly = "1"/>
                 </group>	
 				<group string="">
 					<field name="subjects_loaded" readonly = "1"/>
@@ -1163,10 +1165,6 @@
           <page string = "Examination">
 			<field name="exam_ids" nolabel="1"/>
 		</page>
-				
-		<page string="Help">
-		 		<field name="helptxt"/>
-          </page>
 
 		   </notebook>
 		</sheet>	 	
@@ -1183,7 +1181,7 @@
 						<field name="class_id"/>
 						<field name="section_id"/>
 						<field name="cur_strength"/>
-						<field name="id" />	
+						<field name="id" invisible = "1" />	
                 </tree>
             </field>
         </record>
@@ -1278,7 +1276,7 @@
 						<field name="marks_per"/>
 						<field name="latest_fee_month"/>
 						<field name="state"/>
-						<field name="id"/>
+						<field name="id" invisible = "1"/>
                 </tree>
             </field>
         </record>
@@ -1318,7 +1316,7 @@
             <group>
                 <field name="subject_id" required = "1"/>
                 <field name="offered_as"/>
-                <field name="reference_practical_of" domain="[('academic_calendar','=',academic_calendar),('offered_as','=','theory_practical')]"/>
+                <field name="reference_practical_of" domain="[('offered_as','=','theory_practical')]"/>
 
             </group>
             <group>
@@ -1336,7 +1334,7 @@
               <field name="min_require_att"/>
               </group>   
             <group>
-              <field name="id" readonly = "1"/>
+              <field name="id" invisible = "1"/>
               </group>   
             </group>
            </page>
@@ -1352,9 +1350,9 @@
                 <field name="name"/> 
                 <field name="subject_id" attrs="{'required':[('state','=','Draft')], 'readonly':[('state','IN',['Closed'])]}"/>
                 <field name="teacher_id"/>
-                 <field name="academic_calendar"/>
+                 <field name="academic_calendar" invisible = "1"/>
                 <field name="state" />
-                <field name="id"/>
+                <field name="id" invisible = "1"/>
                 </tree>
             </field>
         </record>
@@ -1398,7 +1396,7 @@
             <tree editable = "top" string="Student Subjectss">
 				<field name="subject" />
      		   <field name="subject_status" />	
-				<field name="id" readonly = "1" />	
+				<field name="id" invisible = "1" />	
                 </tree>
             </field>
         </record>
@@ -2294,7 +2292,7 @@
 		  <field name="start_date"/>
 		  <field name="result" readonly = "1"/>		  
 		  <field name="status" readonly = "1"/>
-		   <field name="id" readonly = "1"/>
+		   <field name="id" invisible = "1"/>
 	    </tree>
       </field>
     </record>
@@ -2376,7 +2374,45 @@
  
  
  <!-- SMS NEW Student promotion -->
-   
+    <record id="view_sms_student_promote_form" model="ir.ui.view">
+            <field name="name">Student Promotion</field>
+            <field name="model">sms.student.class.promotion</field>
+            <field name="arch" type="xml">
+                <form string="Class Annual Promotion" version="7.0">
+				
+					<header>
+					<button string="1.Show Students" states = "Draft" name="show_students" type="object" class="oe_highlight"/>
+					<button string="Go Back" icon="terp-dialog-close" states = "Student_Loaded" name="set_to_draft" type="object" class="oe_highlight"/>
+					</header><sheet>
+                    
+					<group col="4" string = "Class Annual Promorion">
+						<h3><field nolabel = "1" readonly = "1" attrs="{'invisible':[('state','=','Draft')]}" name="name"/></h3>
+					</group>
+					<group col="4">
+						<field name="existing_class" on_change="onchange_cunrrent_class(existing_class)"/>
+						<field name="promot_to_class"/>
+						<field name="state" invisible = "1"/>
+					</group>
+					
+                   <notebook><page string = "Instructions" attrs="{'invisible':[('state','!=','Draft')]}" >
+							<p class="oe_grey oe_edit_only" colspan="2">
+							<h2>Insructions For Students Promotion</h2>
+								<ol>
+									<li>Make sure fee structure for new class is defined before promotion</li>
+									<li>You can change student Fee Structure during promotion</li>
+									<li>If some students are not decided now, you may leave them pending, and may promote them later on</li>
+								</ol>
+							</p>
+							</page>
+							<page string = "Students" attrs="{'invisible':[('state','=','Draft')]}">
+							<field name="promotion_line_ids"/>
+							</page>
+					</notebook>
+				</sheet>
+               </form>
+            </field>
+          </record>
+
 
     <record model="ir.ui.view" id="sms_annual_class_promotion_tree">
       <field name="name">Class Promotion</field>
@@ -2385,7 +2421,7 @@
       <field name="arch" type="xml">
         <tree string="Student Promotion">
           <field name="name"/>
-          <field name="cunrrent_class"/>
+          <field name="existing_class"/>
 		  <field name="promot_to_class"/>
 		  <field name="state"/>
         </tree>
@@ -2404,12 +2440,12 @@
       <field name="model">sms.student.class.promotion.lines</field>
       <field name="type">tree</field>
       <field name="arch" type="xml">
-        <tree string="Student Promotion">
-		  <field name="registration_no"/>
+        <tree editable = "top" colors="blue:decision == 'Failed'" string="Student Annual Promotion">
+		  <field name="sno"/>
           <field name="name"/>
-          <field name="father_name"/>
-		  <field name="exam_to_show"/>
-		  <field name="obtained_marks"/>
+		 <field name="father_name"/>
+          <field name="fee_structure"/>
+		  <field name="fee_charged"/>
 		  <field name="decision"/>
         </tree>
       </field>

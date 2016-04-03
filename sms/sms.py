@@ -1070,6 +1070,16 @@ class sms_academiccalendar(osv.osv):
                 string = str(cls)+' - '+str(section)+' ('+str(session)+')'
                 result[obj.id] = string
             return result
+        
+    def check_all_students_promoted(self, cr, uid, ids, name, args, context=None):
+            result = {}
+            for obj in self.browse(cr, uid, ids, context=context):
+                student_class_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',ids),('state','=',"Current")])
+                if student_class_id:
+                    result[obj.id] = 0
+                else:
+                    result[obj.id] = 1
+            return result
     
     def onchange_max_student_to_set_class_name(self, cr, uid, ids):
             result = {}
@@ -1246,7 +1256,7 @@ class sms_academiccalendar(osv.osv):
         'started_by':fields.many2one('res.users', 'Started By'),
         'date_closed':fields.date('Closed On'),
         'closed_by':fields.many2one('res.users', 'Closed By'),
-        'helptxt':fields.text('Help', readonly = True),
+        'all_student_promoted':fields.function(check_all_students_promoted, method=True, string='All Students Promoted',type='boolean'),
         'exam_ids' :fields.one2many('sms.exam.datesheet', 'academiccalendar', 'Exam', readonly=True),
     } 
     
@@ -1256,7 +1266,7 @@ class sms_academiccalendar(osv.osv):
         'fee_defined':False,
         'section_id':_get_default_section,
         'group_id':_get_default_group,
-        'helptxt':'Academic Calender: A Class in current session. \n 1: Create A new Academic Calendar. \n 2: Load subjects to it.\n 3: Start Academic Calendar.\n 4: Admit Student in this Academic Calendar.',
+        
     }
     _sql_constraints = [('name_unique', 'unique (session_id,class_id,section_id)', """Session, Class and Section must be unique. """)]   
     
@@ -1844,11 +1854,6 @@ class sms_academiccalendar_student(osv.osv):
     
     def enroll_student_in_class(self, cr, uid, ids,fs, fee_start_month,class_of_admin,enrolment_type):
             
-        print "student",ids
-        print "fs",fs
-        print "start m",fee_start_month
-        print "class of admission",class_of_admin
-
         #step1: Register student to class
         acad_cal_obj = self.pool.get('sms.academiccalendar').browse(cr,uid,class_of_admin)
         std_cal_id = self.pool.get('sms.academiccalendar.student').create(cr,uid,{
@@ -2056,79 +2061,12 @@ class sms_academiccalendar_subjects(osv.osv):
                     r_sub =  str(subject_name) + " (???)"
                 result[f.id] = r_sub 
             else:    
-                result[f.id] = str(f.subject_id.name)
+                result[f.id] = str(f.subject_id.name)+"-"+str(f.id)
         return result
 
     def unlink(self, cr, uid, ids, context={}, check=True):
-        print "@@@@acd_cal_sub@@@@@",ids,context
-        allow_deletion = False
-        stu_ids = exm_lines_ids = []
-        allow_deletion = False
-        student_subj = exam_entry = ""
-        
-        #-------------------------------------------------
-        for acd_sub in self.browse(cr ,uid ,ids):
-            print "******allow_deletion",acd_sub.allow_delete
-            if acd_sub.allow_delete == True:
-                allow_deletion = True
-        
-        acd_cal_ids = self.pool.get('sms.academiccalendar').search(cr ,uid ,[('assigned_subjects','=',ids)])
-        print "acd_cal_ids",acd_cal_ids
-        #---------count exam entries----------------------------
-        sql = """select * from sms_academiccalendar where id =  """+str(acd_cal_ids[0])
-        cr.execute(sql)
-        exam_entry = cr.fetchone()[0]
-        print "exam_entry=",exam_entry 
-        #-------count no of students to whome subject is assigned that one wants to delete-------
-        sql = """select count(*) from sms_academiccalendar_student where name =  """+str(acd_cal_ids[0])
-        cr.execute(sql)
-        student_subj = cr.fetchone()[0]
-        print "student_subj=",student_subj 
-        
-        acd_cal_stu_ids = self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('name','in',acd_cal_ids)])
-        print "acd_cal_stu_ids==",acd_cal_stu_ids
-        #---------------------------------------------
-        
-        if allow_deletion == True:
-        
-            stu_subj_id = self.pool.get('sms.student.subject').search(cr ,uid ,[('subject','=',ids),('student','in',acd_cal_stu_ids)])
-            print "stu_subj_id",stu_subj_id
-            for i in self.pool.get('sms.student.subject').browse(cr ,uid ,stu_subj_id):
-                print "student=====",i.student_id.name,i.student_id.id,"****",i.name,"*******",i.subject_exams_result
                 
-                stu_ids.append(i.id)
-                for p in i.subject_exams_result:
-                    exm_lines_ids.append(p.id)
-            
-            print "stu_ids===",len(stu_ids)
-                    #unlink ex lines
-            ex_line = self.pool.get('sms.exam').search(cr,uid,[('exam_lines','in',exm_lines_ids)])
-            print "ex_------->>>",ex_line  
-            
-            if ex_line:
-                print "exm unlink===",self.pool.get('sms.exam').unlink(cr ,uid ,ex_line,context)
-                #unlink em def
-            def_exam_lines_ids = self.pool.get('sms.exam.default.lines').search(cr,uid,[('exam_id','in',exm_lines_ids)])
-            print "def_exam_lines_ids==",def_exam_lines_ids
-            def_exam_lines = self.pool.get('sms.exam.default').search(cr,uid,[('exam_lines','in',def_exam_lines_ids)])
-            if def_exam_lines_ids:
-                print "def unlink===",self.pool.get('sms.exam.default').unlink(cr ,uid ,def_exam_lines,context)
-                print "def unlink===",self.pool.get('sms.exam.default.lines').unlink(cr ,uid ,def_exam_lines_ids,context)
-                print "exm_lines unlink===",self.pool.get('sms.exam.lines').unlink(cr ,uid ,exm_lines_ids,context)
-                
-            dsheet_id = self.pool.get('sms.exam.datesheet.lines').search(cr,uid,[('subject','in',ids)])
-            print "delete dsheet===",dsheet_id
-            #------------unlink datesheet lines--------------------------------
-            if dsheet_id:
-                print "unlink===",self.pool.get('sms.exam.datesheet.lines').unlink(cr ,uid ,dsheet_id,context)
-            s = self.pool.get('sms.student.subject').search(cr,uid,[('subject','in',ids)])
-            print "unlink===",self.pool.get('sms.student.subject').unlink(cr ,uid ,s,context)
-    #-----------remove from student.subject as well--------------------------------            
-            for rec in self.browse(cr, uid, ids, context):
-                super(osv.osv, self).unlink(cr, uid, [rec.id], context)            
-           # raise osv.except_osv(('SSSTTTOOOPPP'),('........'))
-        else:
-            raise osv.except_osv(('Subject Deletion Denied'),('This subject is assigned to '+str(student_subj)+' students and  have '+ str(exam_entry)+' exam entries.'))
+        super(osv.osv, self).unlink(cr, uid, ids, context=context)
         return None
             
     def create(self, cr, uid, vals, context=None, check=True):
@@ -3120,35 +3058,52 @@ class sms_exam_datesheet(osv.osv):
 
 class sms_student_class_promotion(osv.osv):
     
-    def set_promotion(self, cr, uid, ids, name, args, context=None):
-       result = {}
-       for obj in self.browse(cr, uid, ids, context=context):
-           print "hello"
-       return
+    def set_promotion_no(self, cr, uid, ids):
+       _sql = """SELECT  COALESCE(count(*),'0') from sms_student_class_promotion
+                 """
+       cr.execute(_sql)
+       rows = cr.fetchone()
+       if rows:
+           rows = "PR-"+str(rows[0] + 1)
+       return rows
     
-    def show_students(self, cr, uid, ids, name, args, context=None):
+    def show_students(self, cr, uid, ids, name):
        result = {}
-       for obj in self.browse(cr, uid, ids, context=context):
-           current_class = object.current_class.id
-#            students = self.pool.get('sms.student').search(cr,uid,[('current_class',=obj.current_class.id))])
+       for obj in self.browse(cr, uid, ids):
+           students = self.pool.get('sms.student').search(cr,uid,[('current_class','=',obj.existing_class.id)])
+           print "...................",datetime.datetime.now()
            if students:
                rec_students = self.pool.get('sms.student').browse(cr,uid,students)
-               dict = {'name' :rec_students.id,
-                       'std_existing_class_id':rec_students.current_class.id,
-                       'father_name':rec_students.father_name,
-                       'exam_to_show':datimetime.date.today(),
-                       'obtained_marks':obj.id,
-                       'total_marks':obj.id,
-                       'parent_promotion_id':obj.id,
-                       'decision':'',
-                       }
-        
+               i = 1
+               for student in rec_students:
+                 
+                   dict = {'name' :student.id,
+                           'registration_no':student.registration_no,
+                           'std_existing_class_id':student.current_class.id,
+                           'father_name':student.father_name,
+                           'fee_structure':student.fee_type.id,
+                           'parent_promotion_id':obj.id,
+                           'decision':'Pending',
+                           'sno':i
+                           } 
+                   
+                   move_id=self.pool.get('sms.student.class.promotion.lines').create(cr, uid, dict)
+                   i = i + 1
+               self.write(cr,uid,obj.id,{'state':'Student_Loaded','dated':datetime.datetime.now(),'promotion_by':uid,'name':self.set_promotion_no(cr,uid,obj.id)})
        return
    
     def confirm_promotion(self, cr, uid, ids, name, args, context=None):
        result = {}
        for obj in self.browse(cr, uid, ids, context=context):
            print "hello"
+       return
+    def set_to_draft(self, cr, uid, ids, name):
+       for obj in self.browse(cr, uid, ids):
+           child_ids=self.pool.get('sms.student.class.promotion.lines').search(cr, uid, [('parent_promotion_id','=',ids)])
+           if child_ids:
+               for student in child_ids:
+                   del_student = self.pool.get('sms.student.class.promotion.lines').unlink(cr,uid,student)
+               self.write(cr,uid,obj.id,{'state':'Draft','dated':datetime.datetime.now(),'promotion_by':uid})
        return
    
     def cancel_promotion(self, cr, uid, ids, name, args, context=None):
@@ -3167,12 +3122,12 @@ class sms_student_class_promotion(osv.osv):
         return res
     
     _name= "sms.student.class.promotion"
-    _descpription = "Stores exam date sheets"
+    _descpription = "Student protiomotion object"
     _columns = { 
-        'name':fields.function(set_promotion, method=True,  size=256, string='Name',type='char'),
-        'cunrrent_class': fields.many2one('sms.academiccalendar', 'Promote From',required=True),
+        'name':fields.char('No',size = 100),
+        'existing_class': fields.many2one('sms.academiccalendar', 'Promote From', domain="[('all_student_promoted','=',True)]",required=True),
         'promot_to_class': fields.many2one('sms.academiccalendar', 'Promote To',required=True),
-        'dated': fields.date('Date',required=True),
+        'dated': fields.datetime('Date',readonly=True),
         'promotion_by':fields.many2one('res.users', 'Promotion By',readonly=True),
         'promotion_line_ids':fields.one2many('sms.student.class.promotion.lines','parent_promotion_id','Parent ID'),
         'state': fields.selection([('Draft', 'Draft'),('Student_Loaded', 'Student Loaded'),('Promoted', 'Promoted'),('Cancelled', 'Cancelled')], 'State', readonly = True),
@@ -3182,20 +3137,31 @@ class sms_student_class_promotion(osv.osv):
                  'state':'Draft'
     }
     
+    
 sms_student_class_promotion()
 
 class sms_student_class_promotion_lines(osv.osv):
     
+    def create(self, cr, uid, vals, context=None, check=True):
+        super(osv.osv, self).create(cr, uid, vals, context)
+        return
+    
+    def unlink(self, cr, uid, ids, context={}, check=True):
+        result = super(osv.osv, self).unlink(cr, uid, [ids], context=context)
+        return True
     
     
     _name= "sms.student.class.promotion.lines"
     _descpription = "Stores exam date sheets"
     _columns = { 
+        'sno':fields.integer('S.No'),
         'name':fields.many2one('sms.student','Studet', readonly=True),
         'std_existing_class_id':fields.many2one('sms.academiccalendar','Academiccalendar From', readonly=True),
         'registration_no': fields.char('Registration No',size=256, readonly=True),
+        'fee_structure':  fields.many2one('sms.feestructure', 'Fee Structure'),
         'father_name': fields.char('Father Name',size=25, readonly=True),
-        'exam_to_show': fields.many2one('sms.exam.datesheet','Exam', required=True, domain="[('academiccalendar','=',academiccalendar_id)]"),
+        'fee_charged':fields.float('Fee Receivable',readonly=True),
+        'exam_to_show': fields.many2one('sms.exam.datesheet','Exam', readonly=True, domain="[('academiccalendar','=',academiccalendar_id)]"),
         'obtained_marks': fields.integer('Obtained Marks', readonly=True),
         'parent_promotion_id':fields.many2one('sms.student.class.promotion','Parent ID', required=True, domain="[('academiccalendar','=',academiccalendar_id)]"),
         'decision': fields.selection([('Promote', 'Promote'),('Promote_Conditionally', 'Promote Conditionally'),('Suspended', 'Suspended'),('Failed', 'Failed'),('Pending', 'Pending')], 'Decision', required=True),

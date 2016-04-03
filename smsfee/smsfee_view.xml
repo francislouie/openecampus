@@ -44,7 +44,7 @@
 				
 					<page string = "Fee Details">
 					<button name="%(report_class_unpaidfee_receipts_id)d" string="Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-					<button name="action_pay_student_fee" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="object" class="oe_highlight" groups=""/>
+					<button name="action_pay_student_fee" icon="terp-dolar_ok!" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="object" class="oe_highlight" groups=""/>
 					<group>
 						<group>					
 						
@@ -125,13 +125,13 @@
 		      <field name="inherit_id" ref="sms.view_session_classes_form"/>
 		      <field name="type">form</field>
 		      <field name="arch" type="xml">
-		      <field name="helptxt" position="before">
+		      <field name="assigned_subjects" position="after">
 			  </field>
-			  <header>
+				<header>
 			  <button name="manage_class_fee" string="Fee Structure" icon="gtk-execute" states="Draft,Active" type="object" class="oe_highlight" groups=""/>
 				<button name= "%(action_update_fee_register)d" string="Update Fee Register" states="Draft,Active"  icon="gtk-execute" type="action"/>
 				<button name="%(action_fee_receipts)d" string="Fee Receipts"  states="Draft,Active" type="action" icon="gtk-print"/>
-			  </header>
+				</header>
 				<notebook>
 				<page string = "Fee Management">
 		    	 

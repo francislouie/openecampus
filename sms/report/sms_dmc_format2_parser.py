@@ -76,20 +76,37 @@ class sms_dmc_format2_parser(report_sxw.rml_parse):
     
     def get_students_dmc(self,form):
         
-#         students_ids = self.pool.get('sms.academiccalendar.student').search(self.cr,self.uid,[('name','=',38),('state','=',"Current")])
+#         students_ids = self.pool.get('sms.academiccalendar.student').search(self.cr,self.uid,[('name','=',29),('state','=',"Current")])
+#         print "students list",students_ids
 #         if students_ids:
-#              rec = self.pool.get('sms.academiccalendar.student').browse(self.cr,self.uid,students_ids)
-#              for f in rec:
-#            
+#              recc = self.pool.get('sms.academiccalendar.student').browse(self.cr,self.uid,students_ids)
+#              register = 0
+#              nregister = 0 
+#              mathe = 0
+#              for ff in recc:
+#                 print "student cal ",ff.id
+#                 print "student_id ",ff.std_id.id
 #                 
-#                 create = self.pool.get('sms.student.subject').create(self.cr,self.uid,{
-#                                                                               
-#                                                             'student':f.id,
-#                                                             'student_id': f.std_id.id,
-#                                                             'subject': 478,
-#                                                             'subject_status':'Current'
-#                                                                               })
-        
+#                 
+#                 already_exists =  self.pool.get('sms.student.subject').search(self.cr, self.uid,[('subject','=',472),('student','=',ff.id)])
+#                 if already_exists: 
+#                     register = register + 1
+#                 else:
+#                     nregister = nregister + 1
+#                     mathematics =  self.pool.get('sms.student.subject').search(self.cr, self.uid,[('subject','=',250),('student','=',ff.id)])
+#                     if mathematics:
+#                         mathe = mathe + 1
+#                     else:
+#                         create = self.pool.get('sms.student.subject').create(self.cr,self.uid,{
+#                                                                                      
+#                                                               'student':ff.id,
+#                                                               'student_id': ff.std_id.id,
+#                                                               'subject': 472,
+#                                                               'subject_status':'Current'
+#                                                                                 })
+#              print "registered >>>>>>>>>>>>>>>>>>>>> ",register
+#              print "not registered>>>>>>>>>>>>>>>>>>>>>> ",nregister
+#              print "mathematics>>>>>>>>>>>>>>",mathe
         final_result = []
         subjects = []
 
@@ -169,12 +186,10 @@ class sms_dmc_format2_parser(report_sxw.rml_parse):
                 practical_marks = 0.0
                 practical_total = 0.0
                 practical_rows = None
-                print "parent theory id",std_subs_row[6]
                 if std_subs_row[3] == 'theory_practical':
                     practicle_subjs_ids = self.pool.get('sms.academiccalendar.subjects').search(self.cr, self.uid,[
                                     ('reference_practical_of','=',std_subs_row[6]),
                                     ('offered_as','=','practical')])
-                    print "practicle subject_ids",practicle_subjs_ids
                     
                     
                     practical_sql = """SELECT sms_subject.name, 
@@ -202,7 +217,6 @@ class sms_dmc_format2_parser(report_sxw.rml_parse):
                         and sms_academiccalendar_subjects.reference_practical_of = """ + str(std_subs_row[6])
             
                     self.cr.execute(practical_sql)
-                    print "sql in formate 2",practical_sql
                     practical_rows = self.cr.fetchone()
                     if practical_rows:
                         practical_marks = practical_rows[1]
