@@ -679,7 +679,7 @@
 		<field name="type">form</field>
 		<field name="arch" type="xml">
 			<field name="subject_ids" position="after">
-			<field name="fee_id" />
+			<field name="fee_id" attrs="{'invisible':[('state','not in',['waiting_approval','Confirm'] )]}" />
 			</field>
 		</field>
 	</record>
