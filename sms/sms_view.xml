@@ -1396,7 +1396,7 @@
             <tree editable = "top" string="Student Subjectss">
 				<field name="subject" />
      		   <field name="subject_status" />	
-				<field name="id" invisible = "1" />	
+				<field name="id" readonly = "1" />	
                 </tree>
             </field>
         </record>
@@ -2292,7 +2292,7 @@
 		  <field name="start_date"/>
 		  <field name="result" readonly = "1"/>		  
 		  <field name="status" readonly = "1"/>
-		   <field name="id" invisible = "1"/>
+		   <field name="id" readonly = "1"/>
 	    </tree>
       </field>
     </record>

@@ -2138,6 +2138,14 @@ class sms_student_subject(osv.osv):
     """Stores students subjects in new class"""
     
     
+    def unlink(self, cr, uid, ids, context=None):
+        for f in  self.browse(cr, uid, ids):
+            exam_ids = self.pool.get('sms.exam.lines').search(cr,uid,[('student_subject','=',f.id)])
+            if exam_ids:
+                for exam in exam_ids:        
+                    self.pool.get('sms.exam.lines').unlink(cr, uid, exam,context)
+        super(osv.osv, self).unlink(cr, uid, ids, context)
+        return
     
     def _set_subj_name(self, cr, uid, ids, name, args, context=None):
         result = {}
