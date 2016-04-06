@@ -68,6 +68,7 @@
 	<menuitem id="menu_action_student_withdraw_register" parent="menu_admission_withdraw_id" sequence="2" groups="group_sms_principal,group_sms_admin,group_sms_admission_manager,group_sms_principal" action="action_withdraw_reg"/>
 	<menuitem id="menu_sms_student_clearance_id" name="Student Certificate" parent="menu_certificates_parent_id" sequence="5" groups="" action="action_sms_student_clearance"/>
 	<menuitem id="menu_certificate_form_id" parent="menu_certificates_parent_id" sequence="6" groups="" action="action_certificate_form"/>
+	<menuitem id="menu_student_admission_register" parent="menu_admission_students_and_admissions_id" sequence="3" groups="group_sms_principal,group_sms_admin,group_sms_admission_manager" action="action_admission_register" />
 	
 	<!--Examination-->
 	<menuitem id="menu_examination_head_top_id" name="Examinations" parent="" sequence="2" groups="group_sms_admin,group_sms_manager_exams,group_sms_officers_exams"/>	

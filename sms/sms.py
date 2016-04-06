@@ -2102,74 +2102,40 @@ class sms_academiccalendar_subjects(osv.osv):
 
     def unlink(self, cr, uid, ids, context={}, check=True):
         print "@@@@acd_cal_sub@@@@@",ids,context
-        allow_deletion = False
-        stu_ids = exm_lines_ids = []
-        allow_deletion = False
-        student_subj = exam_entry = ""
         
         #-------------------------------------------------
-        for acd_sub in self.browse(cr ,uid ,ids):
-            print "******allow_deletion",acd_sub.allow_delete
-            if acd_sub.allow_delete == True:
-                allow_deletion = True
-        
-        acd_cal_ids = self.pool.get('sms.academiccalendar').search(cr ,uid ,[('assigned_subjects','=',ids)])
-        print "acd_cal_ids",acd_cal_ids
-        #---------count exam entries----------------------------
-        sql = """select * from sms_academiccalendar where id =  """+str(acd_cal_ids[0])
-        cr.execute(sql)
-        exam_entry = cr.fetchone()[0]
-        print "exam_entry=",exam_entry 
-        #-------count no of students to whome subject is assigned that one wants to delete-------
-        sql = """select count(*) from sms_academiccalendar_student where name =  """+str(acd_cal_ids[0])
-        cr.execute(sql)
-        student_subj = cr.fetchone()[0]
-        print "student_subj=",student_subj 
-        
-        acd_cal_stu_ids = self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('name','in',acd_cal_ids)])
-        print "acd_cal_stu_ids==",acd_cal_stu_ids
-        #---------------------------------------------
-        
-        if allow_deletion == True:
-        
-            stu_subj_id = self.pool.get('sms.student.subject').search(cr ,uid ,[('subject','=',ids),('student','in',acd_cal_stu_ids)])
-            print "stu_subj_id",stu_subj_id
-            for i in self.pool.get('sms.student.subject').browse(cr ,uid ,stu_subj_id):
-                print "student=====",i.student_id.name,i.student_id.id,"****",i.name,"*******",i.subject_exams_result
-                
-                stu_ids.append(i.id)
-                for p in i.subject_exams_result:
-                    exm_lines_ids.append(p.id)
+        rec = self.browse(cr ,uid ,ids)[0]
+        check_delete = rec.allow_delete
+        if check_delete == True :
+            acad_cal_id = rec.academic_calendar.id
             
-            print "stu_ids===",len(stu_ids)
-                    #unlink ex lines
-            ex_line = self.pool.get('sms.exam').search(cr,uid,[('exam_lines','in',exm_lines_ids)])
-            print "ex_------->>>",ex_line  
-            
-            if ex_line:
-                print "exm unlink===",self.pool.get('sms.exam').unlink(cr ,uid ,ex_line,context)
-                #unlink em def
-            def_exam_lines_ids = self.pool.get('sms.exam.default.lines').search(cr,uid,[('exam_id','in',exm_lines_ids)])
-            print "def_exam_lines_ids==",def_exam_lines_ids
-            def_exam_lines = self.pool.get('sms.exam.default').search(cr,uid,[('exam_lines','in',def_exam_lines_ids)])
-            if def_exam_lines_ids:
-                print "def unlink===",self.pool.get('sms.exam.default').unlink(cr ,uid ,def_exam_lines,context)
-                print "def unlink===",self.pool.get('sms.exam.default.lines').unlink(cr ,uid ,def_exam_lines_ids,context)
-                print "exm_lines unlink===",self.pool.get('sms.exam.lines').unlink(cr ,uid ,exm_lines_ids,context)
+            dsheet_id = self.pool.get('sms.exam.datesheet').search(cr,uid,[('academiccalendar','=',acad_cal_id),('status','=','Active')])
+            acd_cal_stu_ids =  self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('name','=',acad_cal_id),('state','=','Current')])
+            tota_stu = len(acd_cal_stu_ids)
+    
+            if  dsheet_id:
+    
+                subj_datesheet =  self.pool.get('sms.exam.datesheet.lines').search(cr,uid,[('name','in',dsheet_id),('subject','=',ids)])
+                self.pool.get('sms.exam.datesheet.lines').unlink(cr ,uid ,subj_datesheet)
                 
-            dsheet_id = self.pool.get('sms.exam.datesheet.lines').search(cr,uid,[('subject','in',ids)])
-            print "delete dsheet===",dsheet_id
-            #------------unlink datesheet lines--------------------------------
-            if dsheet_id:
-                print "unlink===",self.pool.get('sms.exam.datesheet.lines').unlink(cr ,uid ,dsheet_id,context)
-            s = self.pool.get('sms.student.subject').search(cr,uid,[('subject','in',ids)])
-            print "unlink===",self.pool.get('sms.student.subject').unlink(cr ,uid ,s,context)
-    #-----------remove from student.subject as well--------------------------------            
-            for rec in self.browse(cr, uid, ids, context):
-                super(osv.osv, self).unlink(cr, uid, [rec.id], context)            
+    
+                if acd_cal_stu_ids :
+                    stud_subj_id = self.pool.get('sms.student.subject').search(cr ,uid ,[('student','=',acd_cal_stu_ids),('subject','=',ids)])
+                if stud_subj_id:
+                    rec_stud_subj = self.pool.get('sms.student.subject').browse(cr ,uid ,stud_subj_id)
+                     
+                    
+                    
+                    for acd_stu in rec_stud_subj:
+                        self.pool.get('sms.student.subject').unlink(cr ,uid ,acd_stu.id)
+                    
+                for rec in self.browse(cr, uid, ids, context):
+                    super(osv.osv, self).unlink(cr, uid, ids, context)            
+                        
+                    
            # raise osv.except_osv(('SSSTTTOOOPPP'),('........'))
         else:
-            raise osv.except_osv(('Subject Deletion Denied'),('This subject is assigned to '+str(student_subj)+' students and  have '+ str(exam_entry)+' exam entries.'))
+             raise osv.except_osv(('Subject Remission Denied'),('This subject that you are trying to remove is assigned to students first check the allow delete checkbox of subject '))
         return None
             
     def create(self, cr, uid, vals, context=None, check=True):
@@ -4107,13 +4073,24 @@ class student_admission_register(osv.osv):
             self.pool.get('sms.student').write(cr, uid, info.name.id , {'registration_no':admission_no,'fee_starting_month':info.fee_starting_month.id,'fee_type':info.fee_structure.id, 'state': 'Admitted', 'current_state': 'Current','admitted_to_class':info.student_class.id,'admitted_on':datetime.date.today(),'current_class':info.student_class.id})
         return None
     
-    def onchange_session_month(self,cr ,uid ,ids ,student_class ,context=None):
+    def onchange_set_domain(self,cr ,uid ,ids ,student_class ,context=None):
         acad_cal_id_group = []
+        group = ''
         for adcal_id in self.pool.get('sms.academiccalendar').browse(cr ,uid ,[student_class]):
             acad_cal_id_group.append(adcal_id.group_id.id)
+        group = adcal_id.group_id.id
+        print "group ===",group      
         return {'domain': {'fee_starting_month': [('session_id','=',adcal_id.session_id.id)] ,
                             'group':[('id','in',acad_cal_id_group ) ]},
-                    'value':{}}
+                    'value':{'group':group}}
+
+    def onchange_form_no(self,cr ,uid ,ids ,name ,context=None):
+            
+        sql = """ select count (*) from student_admission_register"""
+        cr.execute(sql)
+        form_no = cr.fetchone()[0]
+        return {'value':{'form_no':form_no}}
+
     
     """This object is store admission details regarding to student register """
     _name="student.admission.register"
@@ -4127,6 +4104,7 @@ class student_admission_register(osv.osv):
         'group' : fields.many2one('sms.group' ,'Group'),
         'subject_ids' : fields.one2many('admission.register.subjects','parent_id','Student Subjects'),
         'form_no' : fields.integer('Form No'),
+        'total_fee' : fields.integer('Total Fee'), 
         'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Confirm', 'Confirm')], 'State', readonly = True),
     } 
     _defaults = {  'state': lambda*a :'Draft' ,
