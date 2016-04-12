@@ -186,10 +186,18 @@ class sms_dmc_format2_parser(report_sxw.rml_parse):
                 practical_marks = 0.0
                 practical_total = 0.0
                 practical_rows = None
+<<<<<<< HEAD
+=======
+                print "parent theory id",std_subs_row[6]
+>>>>>>> ed0cbb0bd551c10571a43558245edff99cebcccc
                 if std_subs_row[3] == 'theory_practical':
                     practicle_subjs_ids = self.pool.get('sms.academiccalendar.subjects').search(self.cr, self.uid,[
                                     ('reference_practical_of','=',std_subs_row[6]),
                                     ('offered_as','=','practical')])
+<<<<<<< HEAD
+=======
+                    print "practicle subject_ids",practicle_subjs_ids
+>>>>>>> ed0cbb0bd551c10571a43558245edff99cebcccc
                     
                     
                     practical_sql = """SELECT sms_subject.name, 
@@ -217,6 +225,7 @@ class sms_dmc_format2_parser(report_sxw.rml_parse):
                         and sms_academiccalendar_subjects.reference_practical_of = """ + str(std_subs_row[6])
             
                     self.cr.execute(practical_sql)
+                    print "sql in formate 2",practical_sql
                     practical_rows = self.cr.fetchone()
                     if practical_rows:
                         practical_marks = practical_rows[1]

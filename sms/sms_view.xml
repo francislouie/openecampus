@@ -1302,7 +1302,12 @@
             <field name="search_view_id" ref="view_std_cls_reg_search"/>
         </record>
 
+<<<<<<< HEAD
  <record model="ir.ui.view" id="view_clss_subjects_form11">
+=======
+<!-- sms.academiccalendar.subjects -->
+        <record model="ir.ui.view" id="view_clss_subjects_form11">
+>>>>>>> ed0cbb0bd551c10571a43558245edff99cebcccc
          <field name="name">class.sub.form</field>
          <field name="model">sms.academiccalendar.subjects</field>
          <field name="arch" type="xml">
@@ -1316,7 +1321,11 @@
             <group>
                 <field name="subject_id" required = "1"/>
                 <field name="offered_as"/>
+<<<<<<< HEAD
                 <field name="reference_practical_of" domain="[('offered_as','=','theory_practical')]"/>
+=======
+                <field name="reference_practical_of" domain="[('academic_calendar','=',academic_calendar),('offered_as','=','theory_practical')]"/>
+>>>>>>> ed0cbb0bd551c10571a43558245edff99cebcccc
 
             </group>
             <group>
@@ -1334,7 +1343,12 @@
               <field name="min_require_att"/>
               </group>   
             <group>
+<<<<<<< HEAD
               <field name="id" invisible = "1"/>
+=======
+              <field name="allow_delete"/>
+              <field name="id" readonly = "1"/>
+>>>>>>> ed0cbb0bd551c10571a43558245edff99cebcccc
               </group>   
             </group>
            </page>
@@ -1350,12 +1364,29 @@
                 <field name="name"/> 
                 <field name="subject_id" attrs="{'required':[('state','=','Draft')], 'readonly':[('state','IN',['Closed'])]}"/>
                 <field name="teacher_id"/>
+<<<<<<< HEAD
                  <field name="academic_calendar" invisible = "1"/>
                 <field name="state" />
                 <field name="id" invisible = "1"/>
+=======
+                 <field name="academic_calendar"/>
+                <field name="state" />
+                <field name="id"/>
+>>>>>>> ed0cbb0bd551c10571a43558245edff99cebcccc
                 </tree>
             </field>
         </record>
+        
+         <record id="view_default_acad_cal_subjects_search" model="ir.ui.view">
+            <field name="name">sms.academiccalendar.subjects.search</field>
+            <field name="model">sms.academiccalendar.subjects</field>
+            <field name="arch" type="xml">
+                <search string="Search Classe Subjects">
+                    <field name="id" string="ID"/>
+                </search>
+            </field>
+        </record>
+
 
 	<record model="ir.actions.act_window" id="action_acad_cal_subjects">
             <field name="name">Class Subjects</field>
