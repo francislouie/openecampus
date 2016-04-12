@@ -2846,9 +2846,9 @@
             <form string="" version="7.0">
 				<header>
 					<button name="%(report_admission_form_filled_id)d" string="Admission Form" states="Draft,waiting_approval,Confirm" type="action" class="oe_highlight" groups=""/>
-					<button name="load_fee_subjects" string="Proceed" states="Draft" type="object" class="oe_highlight" groups=""/>
+					<button name="load_fee_subjects" string="1.Proceed With Admission" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="cancel_admisssion_registration" string="Cancel" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-					<button name="admit_student" string="Confirm" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
+					<button name="admit_student" string="2. Confirm This Admission" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Confirm" readonly="1"  />
 				</header>
 				<group>
@@ -2866,6 +2866,16 @@
 					<notebook>
 						<page string="subjects"  attrs="{'invisible':[('state','not in',['waiting_approval','Confirm'] )]}" >
 					  		<field name="subject_ids" colspan="6"  />
+						</page>
+						<page string="Instructions"  attrs="{'invisible':[('state','not in',['waiting_approval','Draft'] )]}" >
+						<p>
+						<h2>New Admission</h2>
+						<ol>
+						<li>Select Student class of admission</li>
+						<li>Studenet monthly and other fee are charged according to Fee Structure selected for student</li>
+						<li>Fee Starting month means fee of month student fee is sarted</li>
+						</ol>
+						</p>
 						</page>
 					</notebook>
 			    </group>  
