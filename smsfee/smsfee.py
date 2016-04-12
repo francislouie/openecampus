@@ -195,7 +195,6 @@ class smsfee_classes_fees(osv.osv):
         for f in self.browse(cr, uid, ids, context=context):
              for fee_type_lines in f.fee_type_ids:
                  ftyps = fee_type_lines.fee_type.name
-                 print "ftyps---",ftyps 
                  result[f.id] = str(ftyps)
         return result
     

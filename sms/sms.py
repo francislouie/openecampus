@@ -4123,3 +4123,106 @@ class admission_register_subjects(osv.osv):
     _defaults = {    }    
 admission_register_subjects()
 
+class sms_class_attendance(osv.osv):
+
+    def mark_attendance(self, cr, uid, ids, context):
+        
+        rec = self.browse(cr ,uid ,ids)[0]
+        for acd_cal in rec.class_id.acad_cal_students:
+            create_line = self.pool.get('sms.class.attendance.lines').create(cr ,uid ,{
+                                                                    'parent_id': rec.id ,
+                                                                    'student_name':acd_cal.std_id.id  ,
+                                                                    'student_class_id':acd_cal.id  ,
+                                                                    })
+        self.write(cr ,uid ,ids ,{'state':'waiting_approval' ,'class_teacher':rec.class_id.class_teacher.id })
+        return None
+        
+    def submit_attendance(self ,cr ,uid ,ids ,context):
+        print "submit_attendance"
+        attendance_state = ""
+        rec = self.browse(cr ,uid ,ids)[0]
+         
+        for a_lines in rec.child_id:
+            print a_lines.present,a_lines.absent,a_lines.leave
+            if a_lines.present == False and a_lines.absent == False and a_lines.leave == False:
+                print "and"
+                self.pool.get('sms.class.attendance.lines').write(cr ,uid ,a_lines.id ,{'state':'present' ,'present':True })
+            elif a_lines.present == True and a_lines.absent == False and a_lines.leave == False:
+                self.pool.get('sms.class.attendance.lines').write(cr ,uid ,a_lines.id ,{'state':'present'})
+                
+        #raise osv.except_osv(('Not Allowed'), ('S..................s.'))
+        self.write(cr ,uid ,ids ,{'state':'submit' , 'punched_by':uid})
+        return None
+    
+    def onchange_set_domain(self,cr ,uid ,ids ,class_id ,context=None):
+        result = {}
+        rec = self.pool.get('sms.academiccalendar').browse(cr ,uid ,[class_id])[0]
+        result['class_teacher'] = rec.class_teacher.id
+        
+        return {'value': result}
+    
+    """This object serves as a tree view for sms_student_admission_register for fee purpose """
+    _name = 'sms.class.attendance'
+    _columns = {
+        'name' : fields.char('Name',size=256),
+        'class_id' : fields.many2one('sms.academiccalendar',' Class' ,required=True),
+        'class_teacher' : fields.many2one('res.users',' Teacher Name' ,required=True),
+        'attendance_date' :fields.date('Date' ,required=True),
+        'punched_by' : fields.many2one('res.users','  Punched By'),
+        'child_id' : fields.one2many('sms.class.attendance.lines','parent_id','Student Attendance'),
+        'state' : fields.selection([('Draft','Draft'),('waiting_approval','waiting_approval'),('submit','submit')],'Status'),
+    }
+    _defaults = {'state': 'Draft'}    
+sms_class_attendance()
+
+class sms_class_attendance_lines(osv.osv):
+
+    def onchange_set_absent(self,cr ,uid ,ids ,absent ,context=None):
+        result = {}
+        print "absen----",absent
+        if absent == True :
+            result['present'] = False 
+            result['leave'] = False
+            self.write(cr ,uid ,ids ,{'state':'absent' ,'absent':False ,'leave':False })
+        
+        return {'value': result}
+    
+    def onchange_set_leave(self,cr ,uid ,ids ,leave ,context=None):
+        result = {}
+        print "leave----",leave
+        if leave == True :
+            result['absent'] = False 
+            result['present'] = False
+            self.write(cr ,uid ,ids ,{'state':'leave' ,'absent':False ,'leave':False })
+        
+        return {'value': result}
+    
+    def onchange_set_present(self,cr ,uid ,ids ,present ,context=None):
+        result = {}
+        print "present----",present
+        if present == True :
+            result['absent'] = False 
+            result['leave'] = False
+            self.write(cr ,uid ,ids ,{'state':'present' ,'absent':False ,'leave':False })
+        
+        return {'value': result}
+        
+#     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):                
+#         raise osv.except_osv(('Not Allowed'), ('S..................s.'))
+#         return
+    
+    """This object serves as a tree view for sms_student_admission_register for fee purpose """
+    _name = 'sms.class.attendance.lines'
+    _columns = {
+        'parent_id' : fields.many2one('sms.class.attendance','Class Attendance'),
+     #   'student_name' : fields.char('Student',size=256),
+        'student_name' : fields.many2one('sms.student','Student'),
+        'student_class_id' : fields.many2one('sms.academiccalendar.student','Student Class'),
+        'present' :fields.boolean('present'),
+        'absent' :fields.boolean('absent'),
+        'leave' :fields.boolean('leave'),
+        'state' : fields.selection([('Draft','Draft'),('present','Present'),('absent','Absent'),('leave','Leave')],'Status'),
+    }
+    _defaults = {'state': 'Draft' , 'present': True }    
+sms_class_attendance_lines()
+
