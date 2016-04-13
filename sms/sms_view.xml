@@ -2846,9 +2846,9 @@
             <form string="" version="7.0">
 				<header>
 					<button name="%(report_admission_form_filled_id)d" string="Admission Form" states="Draft,waiting_approval,Confirm" type="action" class="oe_highlight" groups=""/>
-					<button name="load_fee_subjects" string="Proceed" states="Draft" type="object" class="oe_highlight" groups=""/>
+					<button name="load_fee_subjects" string="1.Proceed With Admission" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="cancel_admisssion_registration" string="Cancel" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-					<button name="admit_student" string="Confirm" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
+					<button name="admit_student" string="2. Confirm This Admission" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Confirm" readonly="1"  />
 				</header>
 				<group>
@@ -2867,6 +2867,45 @@
 						<page string="subjects"  attrs="{'invisible':[('state','not in',['waiting_approval','Confirm'] )]}" >
 					  		<field name="subject_ids" colspan="6"  />
 						</page>
+						<page string="Instructions"  attrs="{'invisible':[('state','not in',['waiting_approval','Draft'] )]}" >
+						<p>
+						<h2>New Admission</h2>
+						<ol>
+						<li>Select Student class of admission</li>
+						<li>Studenet monthly and other fee are charged according to Fee Structure selected for student</li>
+						<li>Fee Starting month means fee of month student fee is sarted</li>
+						</ol>
+						</p>
+						</page>
+		                <page string="Contact Information">
+						 <group>
+		                 	<group string="Personal">
+			                   	<field name="gender"  required="1"/>
+								<field name="father_nic" required="1"/>
+								<field name="blood_grp"/>
+								<field name="father_occupation"/>
+								 <field name="religion" />
+								<field name="birthday" />
+		                  	</group>
+							<group string="Contact">
+								<field name="phone"  />
+								<field name="cell_no" required ="1"/>
+								<field name="fax_no"/>
+								<field name="email" />
+		                  	</group>
+						   <group string="Permanent Address">
+								<field name="permanent_address" />
+								<field name="permanent_city"/>
+								<field name="permanent_country"/>
+								<field name="domocile"/>
+		                  	</group>
+							<group string="Present Address">
+								<field name="cur_address"   />
+								<field name="cur_city"/>
+								<field name="cur_country" required ="1" />
+		                  	</group>
+						</group>  
+					   </page>
 					</notebook>
 			    </group>  
 			  </form>

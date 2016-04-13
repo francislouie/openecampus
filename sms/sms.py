@@ -4016,6 +4016,11 @@ class student_admission_register(osv.osv):
         if context:
             return context['name']
         return None
+
+    def student_father(self, cr, uid, context={}):
+        if context:
+            return context['father_name']
+        return None
     
     def unlink(self, cr, uid, ids, context={}, check=True):
         result = super(osv.osv, self).unlink(cr, uid, ids, context=context)
@@ -4024,11 +4029,6 @@ class student_admission_register(osv.osv):
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
         return True
-    
-    def student_father(self, cr, uid, context={}):
-        if context:
-            return context['father_name']
-        return None
     
     def load_subjects(self, cr, uid, ids, context):
         student_class = ""
@@ -4079,17 +4079,39 @@ class student_admission_register(osv.osv):
         for adcal_id in self.pool.get('sms.academiccalendar').browse(cr ,uid ,[student_class]):
             acad_cal_id_group.append(adcal_id.group_id.id)
         group = adcal_id.group_id.id
-        print "group ===",group      
+        
         return {'domain': {'fee_starting_month': [('session_id','=',adcal_id.session_id.id)] ,
                             'group':[('id','in',acad_cal_id_group ) ]},
                     'value':{'group':group}}
 
     def onchange_form_no(self,cr ,uid ,ids ,name ,context=None):
+        val = {}
+        rec = self.pool.get('sms.student').browse(cr ,uid ,name)
             
+        val['gender'] = rec.gender
+        val['birthday'] = rec.birthday
+        val['blood_grp'] = rec.blood_grp
+        val['father_occupation'] = rec.father_occupation
+        val['father_nic'] = rec.father_nic
+        val['religion'] = rec.religion
+        val['phone'] = rec.phone
+        val['cell_no'] = rec.cell_no
+        val['fax_no'] = rec.fax_no
+        val['email'] = rec.email
+        val['cur_address'] = rec.cur_address
+        val['cur_city'] = rec.cur_city
+        val['cur_country'] = rec.cur_country.id
+        val['permanent_address'] = rec.permanent_address
+        val['permanent_country'] = rec.permanent_country
+        val['permanent_country'] = rec.permanent_country.id
+        val['domocile'] = rec.domocile
+        
+        #-----------------calculate form value----------------------------
         sql = """ select count (*) from student_admission_register"""
         cr.execute(sql)
         form_no = cr.fetchone()[0]
-        return {'value':{'form_no':form_no}}
+        val['form_no'] = form_no
+        return {'value': val}
 
     
     """This object is store admission details regarding to student register """
@@ -4100,12 +4122,32 @@ class student_admission_register(osv.osv):
         'fee_structure' : fields.many2one('sms.feestructure' , 'Fee structure'),
         'fee_start_from' : fields.date('Fee Start From'),
         'fee_starting_month': fields.many2one('sms.session.months', 'Starting Fee Month'),
-        'student_class' : fields.many2one('sms.academiccalendar' ,'Student Class'),
+        'student_class' : fields.many2one('sms.academiccalendar' , 'Student Class',domain="[('admission_closed','=',False),('state','=','Close')]"),
         'group' : fields.many2one('sms.group' ,'Group'),
         'subject_ids' : fields.one2many('admission.register.subjects','parent_id','Student Subjects'),
         'form_no' : fields.integer('Form No'),
         'total_fee' : fields.integer('Total Fee'), 
         'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Confirm', 'Confirm')], 'State', readonly = True),
+        #*********************personal info************************************88
+        'gender': fields.selection([('Male', 'Male'),('Female', 'Female')], 'Gender'),
+        'birthday': fields.date("Date of Birth"),
+        'blood_grp': fields.selection([('A+', 'A+'),('A-', 'A-'),('B+', 'B+'),('B-', 'B-'),('AB+', 'AB+'),('AB-', 'AB-'),('O+', 'O+'),('O-', 'O-')], 'Blood Group'),
+        'father_occupation': fields.char(string = "Father Occupation", size=32),
+        'father_nic': fields.char(string = "Father NIC", size=32),
+        'religion': fields.char(string = "Religion", size=32),
+        'phone': fields.char(string = "Phone No", size=32),
+        'cell_no': fields.char(string = "Cell No", size=32),
+        'fax_no': fields.char(string = "Fax No", size=32),
+        'email': fields.char(string = "Email", size=32),
+        'cur_address': fields.char(string = "Street", size=32),
+        'cur_city': fields.char(string = "City", size=32), 
+        'cur_country': fields.many2one('res.country', 'Country'),
+        'permanent_address': fields.char(string = "Street", size=32),
+        'permanent_city': fields.char(string = "City", size=32), 
+        'permanent_country': fields.many2one('res.country', 'Country'), 
+        'domocile': fields.char(string = "Domicile", size=32),
+        
+        
     } 
     _defaults = {  'state': lambda*a :'Draft' ,
                  'name':_get_student,
