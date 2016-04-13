@@ -4100,7 +4100,7 @@ class student_admission_register(osv.osv):
         'fee_structure' : fields.many2one('sms.feestructure' , 'Fee structure'),
         'fee_start_from' : fields.date('Fee Start From'),
         'fee_starting_month': fields.many2one('sms.session.months', 'Starting Fee Month'),
-        'student_class' : fields.many2one('sms.academiccalendar' ,'Student Class'),
+        'student_class' : fields.many2one('sms.academiccalendar' , 'Student Class',domain="[('admission_closed','=',False),('state','=','Close')]"),
         'group' : fields.many2one('sms.group' ,'Group'),
         'subject_ids' : fields.one2many('admission.register.subjects','parent_id','Student Subjects'),
         'form_no' : fields.integer('Form No'),
