@@ -10,10 +10,11 @@
     <menuitem id="academic_session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_academic_session"/>
 	<menuitem id="menu_structure_id" parent="menu_quick_setting_id" sequence="2" groups="group_sms_admin,group_sms_admission_manager" action="action_feestructure"/>
 	
-	<!-- Attendance-->
+	<!-- Attendance 
 	<menuitem id="menu_sms_attendance" name="Attendance"  groups="group_sms_admin,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officer" sequence="1"/>
 	<menuitem id="menu_attendance" name="Class Attendance" parent="sms.menu_sms_attendance" sequence="1" groups="group_sms_principal,group_sms_admin,group_sms_officer,group_sms_admission_manager"/>
 	<menuitem id="menu_sms_class_attendance" parent="menu_attendance" sequence="1" groups="group_sms_principal,group_sms_officer,group_sms_admin,group_sms_admission_manager" action="action_sms_class_attendance"/>
+-->
 	
 	<!--Academic calendar-->
 	<menuitem id="menu_sms_id" name="Academic Calendars" parent="sms.menu_sms_root" sequence="1" groups="group_sms_principal,group_sms_admin,group_sms_officer,group_sms_admission_manager"/>
