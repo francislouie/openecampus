@@ -217,20 +217,13 @@ class sms_student(osv.osv):
     
     def set_paybles(self, cr, uid, ids, context={}, arg=None, obj=None):
         result = {}
-        amount = '0'
         records =  self.browse(cr, uid, ids, context)
-        print "ids:,",ids
-
         for f in records:
-            sql =   """SELECT sum(fee_amount) FROM smsfee_studentfee
+            sql =   """SELECT  COALESCE(sum(fee_amount),'0')  FROM smsfee_studentfee
                      WHERE student_id ="""+str(ids[0])+"""  AND state='fee_unpaid'"""
             cr.execute(sql)
             amount = cr.fetchone()[0]
-            if amount is None:
-                amount = '0'   
-                print "amount:m,",amount  
         result[f.id] = amount
-        print "result",result
         return result
     
     def set_paid_amount(self, cr, uid, ids, context={}, arg=None, obj=None):
@@ -240,15 +233,11 @@ class sms_student(osv.osv):
         print "ids:,",ids
 
         for f in records:
-            sql =   """SELECT sum(fee_amount) FROM smsfee_studentfee
+            sql =   """SELECT COALESCE(sum(fee_amount),'0')  FROM smsfee_studentfee
                      WHERE student_id ="""+str(ids[0])+"""  AND state='fee_paid'"""
             cr.execute(sql)
             amount = cr.fetchone()[0]
-            if amount is None:
-                amount = '0'   
-                print "amount:m,",amount  
         result[f.id] = amount
-        print "result",result
         return result
     
     _name = 'sms.student'
@@ -520,6 +509,27 @@ class smsfee_studentfee(osv.osv):
                                 'reconcile':False,
                                  'state':'fee_unpaid'
                                 })
+        return  
+
+    def insert_student_non_monthly_fee(self, cr, uid, ids, acad_std_id,acad_cal_id,acad_cal_fee_id):
+        """This method will insert student non_monthly(admit student,re-admit student and other wizards wlil call it)"""
+       
+               
+       
+        crate_fee = self.pool.get('smsfee.studentfee').create(cr,uid,{
+                    'student_id': ids,
+                    'acad_cal_id': acad_cal_id,
+                    'acad_cal_std_id': acad_std_id,
+                    'fee_type': acad_cal_fee_id,
+                    'date_fee_charged':datetime.date.today(),
+                    'due_month': fee_starting_month,
+                    'fee_amount': acad_cal_fee.amount,
+                    'paid_amount':0,
+                    'late_fee':0,
+                    'total_amount':acad_cal_fee.amount + late_fee,
+                    'reconcile':False,
+                    'state':'fee_unpaid'
+                    })
         return  
     
     _name = 'smsfee.studentfee'

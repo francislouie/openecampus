@@ -2383,20 +2383,31 @@
 					<header>
 					<button string="1.Show Students" states = "Draft" name="show_students" type="object" class="oe_highlight"/>
 					<button string="Go Back" icon="terp-dialog-close" states = "Student_Loaded" name="set_to_draft" type="object" class="oe_highlight"/>
+					<button string="2. Promote Students" icon="terp-go-today" states = "Student_Loaded" name="confirm_promotion" type="object" class="oe_highlight"/>
 					</header><sheet>
                     
-					<group col="4" string = "Class Annual Promorion">
+					<group col="4" string = "Class Annual Promotion">
 						<h3><field nolabel = "1" readonly = "1" attrs="{'invisible':[('state','=','Draft')]}" name="name"/></h3>
 					</group>
-					<group col="4">
+					<group attrs="{'readonly':[('state','=','Promoted')]}" col="4">
 						<field name="existing_class" on_change="onchange_cunrrent_class(existing_class)"/>
 						<field name="promot_to_class"/>
 						<field name="state" invisible = "1"/>
+						
 					</group>
-					
+					<group attrs="{'invisible':[('state','!=','Student_Loaded')]}">
+						<p class=""  colspan="2">
+							<h2>Tips</h2>
+								<ol>
+									<li>Leave Student pending if his/her result is not decided by now</li>
+									<li>You can change student Fee Structure for new session before promotion</li>
+									<li>If student is declared failed,Assign him/her the same class in new session after this promotion </li>
+								</ol>
+							</p>
+					</group>
                    <notebook><page string = "Instructions" attrs="{'invisible':[('state','!=','Draft')]}" >
 							<p class="oe_grey oe_edit_only" colspan="2">
-							<h2>Insructions For Students Promotion</h2>
+							<h2>Instructions For Students Promotion</h2>
 								<ol>
 									<li>Make sure fee structure for new class is defined before promotion</li>
 									<li>You can change student Fee Structure during promotion</li>
@@ -2445,7 +2456,7 @@
           <field name="name"/>
 		 <field name="father_name"/>
           <field name="fee_structure"/>
-		  <field name="fee_charged"/>
+		  <field name="fee_balance"/>
 		  <field name="decision"/>
         </tree>
       </field>
