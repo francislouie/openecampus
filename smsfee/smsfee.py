@@ -272,6 +272,12 @@ class smsfee_classes_fees(osv.osv):
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
+        for f in self.browse(cr,uid,ids):
+            if 'amount' in vals:
+                std_fee_ids = self.pool.get('smsfee.studentfee').search(cr,uid,[('fee_type','=',f.id),('state','=','fee_unpaid')])
+                if std_fee_ids:
+                    for std_fee in std_fee_ids:
+                        self.pool.get('smsfee.studentfee').write(cr,uid,std_fee,{'fee_amount':f.amount})
         return result
     
     def _set_name(self, cr, uid, ids, name, args, context=None):
