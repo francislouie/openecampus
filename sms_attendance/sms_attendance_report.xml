@@ -5,7 +5,8 @@
         <!--Puched Attendance Reports-->
 		<report
             id="report_punched_attendance_id"
-            name="class.punched.attendance"
+            model="sms.class.attendance"
+            name="report.disply.attendance"
             multi="True"
             rml="addons/sms_attendance/report/report_disply_attendance_view.rml"
             string="Puched Attendance Detail"

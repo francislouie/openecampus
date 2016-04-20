@@ -24,7 +24,7 @@ class class_punched_attendance(osv.osv_memory):
     def print_view_attendance_report(self, cr, uid, ids, data):
         result = []
         thisform = self.read(cr, uid, ids)[0]
-        report = 'report_disply_attendance'        
+        report = 'report.disply.attendance'        
  
         datas = {
              'ids': [],

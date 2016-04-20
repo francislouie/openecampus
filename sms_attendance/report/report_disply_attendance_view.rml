@@ -69,11 +69,7 @@
   
   </stylesheet>
   <story>
-  <pto>
-  <section>
-	<para style="Caption">Date:  [[ get_month(data['form'])]]</para>
-      
-    </section>
-    </pto>
+	<para style="">Date: [[print_form()]] </para>
+
   </story>
 </document>
