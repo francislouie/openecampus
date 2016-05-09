@@ -700,6 +700,100 @@
       </field>
     </record>
 
+<!-- smsfee.paid.unpaid.adjustments-->
+    <record model="ir.ui.view" id="smsfee_paid_unpaid_adjustments_form">
+      <field name="name">smsfee.paid.unpaid.adjustments.form</field>
+      <field name="model">smsfee.paid.unpaid.adjustments</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+        <form string="Paid-Unpaid Fee Adjustments" version="7.0">
+
+        <header>
+			    <button name="submit_request" string="Approve" icon="gtk-execute" states="Draft" type="object" class="oe_highlight" groups=""/>
+			    <button name="cancel_fee_change" string="Cancel" icon="gtk-ok" states="Apply" type="object" class="oe_highlight" groups=""/>
+			    <button name="apply_fee_change" string="Apply" icon="terp-continue" states="Apply" type="object" class="oe_highlight" groups=""/>
+			    <field name="state" widget="statusbar" statusbar_visible="Draft,Apply,Approve,Cancel"/>
+		</header>
+
+		<group>
+			<group string= "Paid-Unpaid Fee Adjustments" col="4" colspan="4">>
+	          	<field name="name"/>
+	          	<field name="student"/>
+	          	<field name="date"/>
+	          	<field name="receipt_no"/>
+	          	<field name="action"/>
+	          	<field name="state"/>
+			</group>
+				<notebook >
+					<page string="Unpaid Fee Adjustment" attrs="{'invisible':[('action','!=','unpaid_fee_adjustment')]}" > 
+						<field name="unpaid_fee" on_change="onchange_decision_on_amount(unpaid_fee)"  />
+					</page>
+					<page string="Paid Fee Adjustment" attrs="{'invisible':[('action','!=','paid_fee_adjustment')]}" >
+						<field name="paid_fee"/>
+					</page>
+				</notebook >
+		</group>
+        </form>
+      </field>
+    </record>
+    
+    <record model="ir.ui.view" id="smsfee_paid_unpaid_adjustments_tree">
+      <field name="name">smsfee.paid.unpaid.adjustments.tree</field>
+      <field name="model">smsfee.paid.unpaid.adjustments</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+        <tree string="Paid-Unpaid Fee Adjustments">
+          <field name="name"/>
+          	<field name="student"/>
+          	<field name="date"/>
+          	<field name="receipt_no"/>
+          	<field name="action"/>
+          	<field name="state"/>
+        </tree>
+      </field>
+    </record>
+    
+    <record model="ir.actions.act_window" id="action_smsfee_paid_unpaid_adjustments">
+      <field name="name">Student Fee Adjustments</field>
+      <field name="res_model">smsfee.paid.unpaid.adjustments</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+		<!-- child tree view smsfee_unpaid_fee_adjustment --> 
+
+	  <record model="ir.ui.view" id="smsfee_unpaid_fee_adjustment_tree">
+	      <field name="name">smsfee.unpaid.fee.adjustment</field>
+	      <field name="model">smsfee.unpaid.fee.adjustment</field>
+	      <field name="type">tree</field>
+	      <field name="arch" type="xml">
+	        <tree string="Unpaid Fee Adjustments" >
+	          	<field name="name"/>
+	          	<field name="fee_id"/>
+	          	<field name="current_amount"/>
+	          	<field name="new_amount"  />
+	          	<field name="decision"/>
+		    </tree>
+	      </field>
+     </record>
+
+		<!-- child tree view smsfee_paid_fee_adjustment --> 
+
+	  <record model="ir.ui.view" id="smsfee_paid_fee_adjustment_tree">
+	      <field name="name">smsfee.paid.fee.adjustment</field>
+	      <field name="model">smsfee.paid.fee.adjustment</field>
+	      <field name="type">tree</field>
+	      <field name="arch" type="xml">
+	        <tree string="Paid Fee Adjustments">
+	          	<field name="name"/>
+	          	<field name="fee_id"/>
+	          	<field name="fee_received"/>
+	          	<field name="actual_amount"/>
+	          	<field name="decision"/>
+		    </tree>
+	      </field>
+     </record>
+<!--################################################################################ -->
 
 	</data>
 </openerp>

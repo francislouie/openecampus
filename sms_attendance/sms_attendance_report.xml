@@ -8,7 +8,7 @@
             model="sms.class.attendance"
             name="report.disply.attendance"
             multi="True"
-            rml="addons/sms_attendance/report/report_disply_attendance_view.rml"
+            rml="sms_attendance/report/report_disply_attendance_view.rml"
             string="Puched Attendance Detail"
             />
             	

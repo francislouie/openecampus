@@ -16,7 +16,7 @@
 				</header>
 				<group>
                    <group string="Class Attendance" col="4" colspan="4">
-						<field name="class_id" on_change="onchange_set_domain(class_id,attendance_date)" attrs="{'readonly':[('state','!=','Draft')] }"  domain="[('state','=','active')]" />
+						<field name="class_id" on_change="onchange_set_domain(class_id,attendance_date)" attrs="{'readonly':[('state','!=','Draft')] }" /> <!-- domain="[('state','=','active')]" />   -->
 						<field name="class_teacher" readonly="1" />
 						<field name="attendance_date" on_change="onchange_set_domain(class_id,attendance_date)" attrs="{'readonly':[('state','!=','Draft')] }"/>
 						<field name="punched_by" readonly="1" /> 

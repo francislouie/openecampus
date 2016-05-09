@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <document filename="test.pdf">
-   <template pageSize="(750.0,950.0)" title="Crossovered Analytic" author="Izbaila" allowSplitting="20">
+  <template pageSize="(632.0,920.0)" title="Crossovered Analytic" author="Inovtec" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="28.0" y1="28.0" width="570" height="786"/>
+      <frame id="first" x1="28.0" y1="5.0" width="570" height="786"/>
     </pageTemplate>
   </template>
   <stylesheet>
@@ -15,34 +15,35 @@
     <blockAlignment value="LEFT"/>
     <blockValign value="TOP"/>
 	<blockTopPadding length="0.0" start="0,0" stop="-1,-1"/>
-    <blockBottomPadding length="0.0" start="0,0" stop="-1,-1"/>   
+    <blockBottomPadding length="0.0" start="0,0" stop="-1,-1"/>
+   
 	</blockTableStyle>
-
-    <blockTableStyle id="Table11">
-    <blockAlignment value="LEFT"/>
-    <blockValign value="TOP"/>
-	<blockTopPadding length="0.0" start="0,0" stop="-1,-1"/>
-    <blockBottomPadding length="0.0" start="0,0" stop="-1,-1"/>   
-	<lineStyle kind="GRID" colorName="#FFFFFF" start="0,0" stop="-1,-1"/>
-	</blockTableStyle>
-
     
-    <blockTableStyle id="Table2">
+    <blockTableStyle id="Table3">
     <blockAlignment value="LEFT"/>
     <blockValign value="TOP"/>
 	<blockTopPadding length="3.0" start="0,0" stop="-1,-1"/>
     <blockBottomPadding length="2.0" start="0,0" stop="-1,-1"/>
     <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
+    <blockBackground colorName="#e9e9e9" start="0,0" stop="4,-0"/>
 	</blockTableStyle>
-    
-    <blockTableStyle id="Tablemini">
+	
+	 <blockTableStyle id="Table31">
     <blockAlignment value="LEFT"/>
     <blockValign value="TOP"/>
 	<blockTopPadding length="3.0" start="0,0" stop="-1,-1"/>
     <blockBottomPadding length="2.0" start="0,0" stop="-1,-1"/>
-    <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
+    <lineStyle kind="GRID" colorName="#FFFFFF" start="0,0" stop="-1,-1"/>
 	</blockTableStyle>
 
+	<blockTableStyle id="Table2">
+    <blockAlignment value="LEFT"/>
+    <blockValign value="TOP"/>
+	<blockTopPadding length="3.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="2.0" start="0,0" stop="-1,-1"/>
+    <lineStyle kind="GRID" colorName="#FFFFFF" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+    
     <initialize>
       <paraStyle name="all" alignment="justify"/>
     </initialize>
@@ -52,24 +53,67 @@
     <paraStyle name="Table Contents" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
     <paraStyle name="Table Heading" fontName="Helvetica" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0"/>
     <paraStyle name="Caption" fontName="Helvetica" fontSize="7.0" leading="13" spaceBefore="6.0" spaceAfter="6.0"/>
-	<paraStyle name="white" fontName="Helvetica" fontColor = "#111111" fontSize="7.0" leading="13" spaceBefore="6.0" spaceAfter="6.0"/>
     <paraStyle name="Index" fontName="Helvetica"/>
-    <paraStyle name="Heading" fontName="Helvetica" fontSize="12.0" alignment="CENTER"  leading="25" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="pageheading1" fontName="Arial" fontSize="13.0" alignment="CENTER" leading="15" spaceBefore="12.0" spaceAfter="6.0"/>
+	<paraStyle name="pageheading2" fontName="Arial" fontSize="12.0" alignment="CENTER" leading="20" spaceBefore="12.0" spaceAfter="6.0"/>
+	<paraStyle name="pageheading21" fontName="Arial" fontSize="12.0" alignment="CENTER" leading="20" spaceBefore="12.0" spaceAfter="6.0"/>
+	<paraStyle name="pageheading3" fontName="Helvetica" fontSize="9.0" alignment="RIGHT" leading="8" spaceBefore="12.0" spaceAfter="6.0"/>
+	<paraStyle name="pageheading5" fontName="Verdena" fontSize="10.0" alignment="LEFT" leading="9" spaceBefore="12.0" spaceAfter="6.0"/>
+	<paraStyle name="pageheading6" fontName="Verdena" fontSize="14.0" alignment="LEFT" leading="20" spaceBefore="12.0" spaceAfter="6.0"/>
+	<paraStyle name="pageheading15" fontName="Verdena" fontSize="10.0" alignment="Right" leading="9" spaceBefore="12.0" spaceAfter="6.0"/>
+	<paraStyle name="pageheading4" fontName="Verdena" fontSize="11.0" alignment="LEFT" leading="5" spaceBefore="12.0" spaceAfter="6.0"/>
+	<paraStyle name="ParaWhite" fontName="Helvetica" fontSize="9.0" leading="18" alignment="CENTER"  spaceBefore="0.0" spaceAfter="0.0" textColor="#FFFFFF"/>
     <paraStyle name="Footer" fontName="Helvetica"/>
-    <paraStyle name="para_heading" fontName="Helvetica" fontSize="8.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="para_heading1" fontName="Helvetica" fontSize="8.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="para_heading" fontName="Helvetica" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+	<paraStyle name="headingright" fontName="Helvetica" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>	
+	<paraStyle name="para_title" fontName="Helvetica" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="para_heading2" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-	<paraStyle name="para_heading3" fontName="Helvetica" fontSize="11.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="para_1" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-
-    <paraStyle name="para_2" fontName="Helvetica" fontSize="6.0" leading="7" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="para_3" fontName="Helvetica" fontSize="11.0" leading="13" alignment="CENTER" spaceBefore="5.0" spaceAfter="5.0"/>
+	<paraStyle name="para_amount" fontName="Helvetica" fontSize="9.0" leading="11" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="bold_column" fontName="Helvetica" fontSize="11.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="parasmall" fontName="Helvetica" fontSize="6.0" leading="7" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="para_3" fontName="Helvetica" fontSize="11.0" leading="9" alignment="CENTER" spaceBefore="5.0" spaceAfter="5.0"/>
     <paraStyle name="para_4" fontName="Helvetica" fontSize="11.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+	 <paraStyle name="ParaWhite" fontName="Helvetica" fontSize="9.0" leading="18" alignment="CENTER"  spaceBefore="0.0" spaceAfter="0.0" textColor="#FFFFFF"/>
     <images/>
   
   </stylesheet>
   <story>
-	<para style="">Date: [[print_form()]] </para>
-
+  	<pto>
+	  <section>
+	 		<blockTable  rowHeights="20.0" colWidths="170.0,170.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,15.0,35.0,35.0" repeatRows="1" style="Table1">
+<!--					 <tr>
+						<td><para style="para_3">NAme</para></td>
+						<td><para style="para_3">Father Name</para></td>
+						<td><para style="para_3">    </para></td>
+						<td><para style="para_3">    </para></td>
+						<td><para style="para_3">    </para></td>
+						<td><para style="para_3">    </para></td>
+						<td><para style="para_3">    </para></td>
+						<td><para style="para_3">    </para></td>
+						<td><para style="para_3">    </para></td>
+						<td><para style="para_3">    </para></td>
+						<td><para style="para_3">Presnet</para></td>
+						<td><para style="para_3">Total Classes</para></td>
+					</tr>
+-->
+					<para>[[ repeatIn(report_title(data['form']),'s') ]]</para>
+					 <tr>
+						<td><para style="">[[ s['student'] ]]</para></td>
+						<td><para style="">[[ s['father_name'] ]]</para></td>
+						<td><para style=""> [[(s[1])]]   </para></td>
+						<td><para style=""> [[(s[2])]]  </para></td>
+						<td><para style="">    [[(s[3])]] </para></td>
+						<td><para style="">   [[(s[4])]]   </para></td>
+						<td><para style="">   [[(s[5])]]   </para></td>
+						<td><para style="">   [[(s[6])]]   </para></td>
+						<td><para style="">   [[(s[7])]]   </para></td>
+						<td><para style="">   [[(s[8])]]  </para></td>
+						<td><para style="para_3"> [[ s['total_class'] ]]   </para></td>
+						<td><para style="para_3">  [[ s['present'] ]]  </para></td>
+					</tr>
+					
+				</blockTable>	
+	  </section>
+    </pto>
   </story>
 </document>

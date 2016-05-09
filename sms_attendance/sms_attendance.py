@@ -5,6 +5,9 @@ import datetime
 import xlwt
 import xlrd
 from dateutil import parser
+import time
+import mx.DateTime
+from datetime import date
 
 
 class sms_class_attendance(osv.osv):
@@ -48,7 +51,7 @@ class sms_class_attendance(osv.osv):
     def onchange_set_domain(self,cr ,uid ,ids ,class_id ,attendance_date ,context=None):
         result = {}
         rec = self.pool.get('sms.academiccalendar').browse(cr ,uid ,[class_id])[0]
-        current_day = datetime.datetime.now().strftime("%A")
+        current_day = mx.DateTime.strptime(attendance_date, '%Y-%m-%d').strftime("%A")  
         if current_day != 'Sunday': 
             if attendance_date:
                 if attendance_date < rec.session_id.start_date or attendance_date > rec.session_id.end_date:
