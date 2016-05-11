@@ -709,27 +709,58 @@
         <form string="Paid-Unpaid Fee Adjustments" version="7.0">
 
         <header>
-			    <button name="submit_request" string="Approve" icon="gtk-execute" states="Draft" type="object" class="oe_highlight" groups=""/>
-			    <button name="cancel_fee_change" string="Cancel" icon="gtk-ok" states="Apply" type="object" class="oe_highlight" groups=""/>
-			    <button name="apply_fee_change" string="Apply" icon="terp-continue" states="Apply" type="object" class="oe_highlight" groups=""/>
-			    <field name="state" widget="statusbar" statusbar_visible="Draft,Apply,Approve,Cancel"/>
+			    <button name="load_fee" string="Approve" icon="gtk-go-forward" states="Draft" type="object" class="oe_highlight" groups=""/>
+			    <button name="cancel_fee_change" string="Back" icon="gtk-ok" states="waiting_approve" type="object" class="oe_highlight" groups=""/>
+			    <button name="apply_fee_change" string="Apply" icon="gtk-apply" states="waiting_approve" type="object" class="oe_highlight" groups=""/>
+				<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approve,fee_adjusted" readonly="1"  />
 		</header>
 
 		<group>
 			<group string= "Paid-Unpaid Fee Adjustments" col="4" colspan="4">>
 	          	<field name="name"/>
-	          	<field name="student"/>
-	          	<field name="date"/>
-	          	<field name="receipt_no"/>
-	          	<field name="action"/>
-	          	<field name="state"/>
+	          	<field name="student" attrs="{'readonly':[('state','!=','Draft' )]}" />
+	          	<field name="date" attrs="{'readonly':[('state','!=','Draft' )]}" />
+	          	<field name="receipt_no" attrs="{'readonly':[('state','!=','Draft' )]}" />
+	          	<field name="action" attrs="{'readonly':[('state','!=','Draft' )]}" />
+	          	<field name="state" reaonly="1"/>
 			</group>
 				<notebook >
 					<page string="Unpaid Fee Adjustment" attrs="{'invisible':[('action','!=','unpaid_fee_adjustment')]}" > 
-						<field name="unpaid_fee" on_change="onchange_decision_on_amount(unpaid_fee)"  />
+						<field name="unpaid_fee" attrs="{'readonly':[('state','=','fee_adjusted' )]}" >
+
+							<form string="smsfee.unpaid.fee.adjustment">
+					          	<field name="name"/>
+					          	<field name="fee_id"/>
+					          	<field name="current_amount"/>
+					          	<field name="new_amount"  on_change="onchange_decision_on_amount(new_amount,decision)"  />
+					          	<field name="decision" on_change="onchange_decision_on_amount(new_amount,decision)"  />
+	       					</form>
+							<tree string="smsfee.unpaid.fee.adjustment"  editable="true" >
+					          	<field name="fee_id"/>
+					          	<field name="current_amount"/>
+								<field name="new_amount" on_change="onchange_decision_on_amount(new_amount,decision)"  />
+					          	<field name="decision" on_change="onchange_decision_on_amount(new_amount,decision)"  />
+							</tree>
+						</field>
+
 					</page>
 					<page string="Paid Fee Adjustment" attrs="{'invisible':[('action','!=','paid_fee_adjustment')]}" >
-						<field name="paid_fee"/>
+						<field name="paid_fee" attrs="{'readonly':[('state','=','fee_adjusted' )]}" >
+							<form string="smsfee.paid.fee.adjustment">
+								<field name="name"/>
+					          	<field name="fee_id"/>
+					          	<field name="fee_received"/>
+					          	<field name="actual_amount" on_change="onchange_decision(actual_amount,decision)"  />
+					          	<field name="decision" on_change="onchange_decision(actual_amount,decision)" />
+	       					</form>
+							<tree string="smsfee.paid.fee.adjustment"  editable="true" >
+					          	<field name="fee_id"/>
+					          	<field name="fee_received"/>
+					          	<field name="actual_amount" on_change="onchange_decision(actual_amount,decision)" />
+					          	<field name="decision" on_change="onchange_decision(actual_amount,decision)" />
+							</tree>
+						</field>						
+
 					</page>
 				</notebook >
 		</group>
@@ -760,39 +791,27 @@
       <field name="view_mode">tree,form</field>
     </record>
 
-		<!-- child tree view smsfee_unpaid_fee_adjustment --> 
 
-	  <record model="ir.ui.view" id="smsfee_unpaid_fee_adjustment_tree">
-	      <field name="name">smsfee.unpaid.fee.adjustment</field>
-	      <field name="model">smsfee.unpaid.fee.adjustment</field>
-	      <field name="type">tree</field>
-	      <field name="arch" type="xml">
-	        <tree string="Unpaid Fee Adjustments" >
-	          	<field name="name"/>
-	          	<field name="fee_id"/>
-	          	<field name="current_amount"/>
-	          	<field name="new_amount"  />
-	          	<field name="decision"/>
-		    </tree>
-	      </field>
-     </record>
-
-		<!-- child tree view smsfee_paid_fee_adjustment --> 
-
-	  <record model="ir.ui.view" id="smsfee_paid_fee_adjustment_tree">
-	      <field name="name">smsfee.paid.fee.adjustment</field>
-	      <field name="model">smsfee.paid.fee.adjustment</field>
-	      <field name="type">tree</field>
-	      <field name="arch" type="xml">
-	        <tree string="Paid Fee Adjustments">
-	          	<field name="name"/>
-	          	<field name="fee_id"/>
-	          	<field name="fee_received"/>
-	          	<field name="actual_amount"/>
-	          	<field name="decision"/>
-		    </tree>
-	      </field>
-     </record>
+<!--
+        <record id="view_smsfee_paid_unpaid_adjustments_search" model="ir.ui.view">
+            <field name="name">smsfee.paid.unpaid.adjustments.search</field>
+            <field name="model">smsfee.paid.unpaid.adjustments</field>
+            <field name="arch" type="xml">
+                <search string="Search ">
+                    <field name="name" string="Fee"/>
+                </search>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_smsfee_paid_unpaid_adjustments">
+            <field name="name">Student Fee Adjustments</field>
+            <field name="res_model">smsfee.paid.unpaid.adjustments</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_draft': 1}</field>
+            <field name="search_view_id" ref="view_smsfee_paid_unpaid_adjustments_search"/>
+        </record>
+-->
 <!--################################################################################ -->
 
 	</data>

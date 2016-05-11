@@ -559,7 +559,7 @@ class smsfee_studentfee(osv.osv):
         'discount': fields.integer('Discount'),
         'net_total': fields.integer('Balance'),  
         'reconcile':fields.boolean('Reconcile'), 
-        'state':fields.selection([('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
+        'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
     } 
     
     _defaults = {
@@ -2113,68 +2113,90 @@ admission_register_fees()
 class smsfee_paid_unpaid_adjustments(osv.osv):
 
     def cancel_fee_change(self, cr, uid, ids, context=None):
-        print "cancel_fee_change"
-        self.write(cr ,uid ,ids ,{'state' : 'Cancel'})
+        rec = self.browse(cr ,uid ,ids)[0]
+        _pool = self.pool.get('smsfee.paid.fee.adjustment')
+        if rec.unpaid_fee != []:
+            _pool = self.pool.get('smsfee.unpaid.fee.adjustment')
+            
+        _ids = _pool.search(cr ,uid , [('name','=',ids[0])]) 
+        if _ids :
+            unlink = _pool.unlink(cr ,uid ,_ids )
+            
+        self.write(cr ,uid ,ids ,{'state' : 'Draft'})
         return True
     
-    def apply_fee_change(self, cr, uid, ids, context=None):
-        print "apply_fee_change"
-        self.write(cr ,uid ,ids ,{'state' : 'Approve'})
-        return True
-    
-    def set_name(self, cr, uid, ids, context={}, arg=None, obj=None):
+    def set_name(self, cr, uid, ids, fields,context={}, arg=None, obj=None):
         res = {}
         records =  self.browse(cr, uid, ids, context)
         for f in records:
-            print 
             res[f.id] = 'name'
-        return res
-        
-    def onchange_decision_on_amount(self, cr, uid, ids, unpaid_fee):
-        val ={}
-        print "\n\n\n\n\n*****\n\n\n\n",unpaid_fee
-        _pooler = self.pool.get('smsfee.unpaid.fee.adjustment')
-        
-        for list in unpaid_fee:
-                print " list= ",list[0],list[1],list[2]
-                if  list[2] == False:
-                    print "print000ooo ",list[2] 
-                    print _pooler.write(cr ,uid ,list[1] ,{'decision':'charge_amount'})
-        print "*****\n\n\n\n"
-        return {'value':val}        
-        
-    def submit_request(self, cr, uid, ids, context=None):
-        print "\n\n\n\nsubmit_request"
+        return res      
+
+    def apply_fee_change(self, cr, uid, ids, context=None):
         rec = self.browse(cr ,uid ,ids)[0]
         _pooler_stu_fee = self.pool.get('smsfee.studentfee')
         
-        stu_fee_id = _pooler_stu_fee.search(cr ,uid , [('student_id','=',rec.student.id),('state','=','fee_unpaid')])
-        print "stu_fee_id= ",stu_fee_id
-        fee_rec = _pooler_stu_fee.browse(cr ,uid ,stu_fee_id)
-        for i in fee_rec:
-            unpaid_id = self.pool.get('smsfee.unpaid.fee.adjustment').create(cr ,uid ,{'name': ids[0],
-                                                                                       'fee_id': i.id,
-                                                                                        'current_amount': i.total_amount ,
-#                                                                                         'new_amount': ,
-#                                                                                         'decision': ,
-                                                                                        })
-            print "unpaid_id=",unpaid_id
-#             print "name= ",i.name,"receipt_no= ",i.receipt_no.name,"student_id= ",i.student_id.name,"acad_cal_id= ",i.acad_cal_id.name,"paid_amount= ",i.paid_amount,"i.fee_type= ",i.fee_type.name
-#             print "fee_amount= ",i.fee_amount,"late_fee= ",i.late_fee,"total_amount= ",i.total_amount,"paid_amount= ",i.paid_amount,"returned_amount=",i.returned_amount,"discount= ",i.discount
-
-        print "\n\n\n\n"
-       # self.write(cr ,uid ,ids ,{'state' : 'Apply'})
+        if rec.unpaid_fee != []:
+            #------if user wants to adjust unpaid_fee-----------------
+            for change_amount in rec.unpaid_fee:
+                if change_amount.decision == "charge_amount" :
+                    change_fee = _pooler_stu_fee.write(cr ,uid ,change_amount.fee_id.id ,{'fee_amount': change_amount.new_amount 
+                                                                             })
+                elif change_amount.decision == "fee_exemption" :
+                    fee_exempted = _pooler_stu_fee.write(cr ,uid ,change_amount.fee_id.id ,{'fee_amount': change_amount.new_amount ,
+                                                                             'state':'fee_exemption' ,
+                                                                             'reconcile': True,
+                                                                             })
+                
+        else :
+            #------if user wants to adjust paid_fee-----------------
+            for check in rec.paid_fee:
+                if check.decision == "set_as_unpaid" :
+                    set_unpaid_fee = _pooler_stu_fee.write(cr ,uid ,check.fee_id.id ,{'paid_amount': check.actual_amount , 
+                                                                                      'reconcile': False,
+                                                                                      'state' : 'fee_unpaid'
+                                                                                      })
+                elif check.decision == "change_amount" :
+                    set_unpaid_fee = _pooler_stu_fee.write(cr ,uid ,check.fee_id.id ,{'paid_amount': check.actual_amount  
+                                                                                      }) 
+            
+        self.write(cr ,uid ,ids ,{'state' : 'fee_adjusted'})
+        return True
+            
+    def load_fee(self, cr, uid, ids, context=None):
+        rec = self.browse(cr ,uid ,ids)[0]
+        _pooler_stu_fee = self.pool.get('smsfee.studentfee')
+        
+        if rec.action == 'unpaid_fee_adjustment':
+            unpaid_fee_id = _pooler_stu_fee.search(cr ,uid , [('student_id','=',rec.student.id),('state','=','fee_unpaid')])
+            fee_rec = _pooler_stu_fee.browse(cr ,uid ,unpaid_fee_id)
+            for i in fee_rec:
+                print "fee= ",i.fee_amount
+                unpaid_id = self.pool.get('smsfee.unpaid.fee.adjustment').create(cr ,uid ,{'name': ids[0],
+                                                                                           'fee_id': i.id,
+                                                                                            'current_amount': i.fee_amount ,
+                                                                                            })
+                
+        else:
+            paid_fee_id = _pooler_stu_fee.search(cr ,uid , [('student_id','=',rec.student.id),('state','=','fee_paid')])
+            fee_rec = _pooler_stu_fee.browse(cr ,uid ,paid_fee_id)
+            for i in fee_rec:
+                paid_id = self.pool.get('smsfee.paid.fee.adjustment').create(cr ,uid ,{'name': ids[0],
+                                                                                        'fee_id': i.id,
+                                                                                            })
+            
+        self.write(cr ,uid ,ids ,{'state' : 'waiting_approve'})
         return True
         
     """This object performs fee adjustment of student's paid and unpaid fee """
     _name = 'smsfee.paid.unpaid.adjustments'
     _columns = {
         'name' : fields.function(set_name, method=True, string='NAme', type='char', size=150),
-        'student' : fields.many2one('sms.student' , 'Student Name'),
-        'date': fields.date("Date"),
-        'receipt_no' : fields.integer('receipt No'),
-        'action':fields.selection([('paid_fee_adjustment','Paid Fee Adjustment'),('unpaid_fee_adjustment','Unpaid Fee Adjustment')],'Action'),
-        'state': fields.selection([('Draft', 'Draft'),('Apply', 'Apply'),('Cancel', 'Cancel'),('Approve', 'Approve')], 'State', readonly = True),
+        'student' : fields.many2one('sms.student' , 'Student Name' ,required=True ),
+        'date': fields.date("Date" ,required=True),
+        'receipt_no':fields.many2one('smsfee.receiptbook','Receipt No'),
+        'action':fields.selection([('paid_fee_adjustment','Paid Fee Adjustment'),('unpaid_fee_adjustment','Unpaid Fee Adjustment')],'Action' ,required=True ),
+        'state': fields.selection([('Draft', 'Draft'),('waiting_approve', 'Waiting Approve'),('fee_adjusted', 'Fee Adjusted')], 'State', readonly = True ,required=True),
         'unpaid_fee' : fields.one2many('smsfee.unpaid.fee.adjustment','name','Unpaid Fee Adjustment'),
         'paid_fee' : fields.one2many('smsfee.paid.fee.adjustment','name','Paid Fee Adjustment'),
     }
@@ -2184,32 +2206,63 @@ smsfee_paid_unpaid_adjustments()
 
 class smsfee_unpaid_fee_adjustment(osv.osv):
     
-#     def create(self, cr, uid, vals, context=None, check=True):
-#         result = super(osv.osv, self).create(cr, uid, vals, context)
-#         return result
+    def onchange_decision_on_amount(self, cr, uid, ids, new_amount ,decision):
+        val ={}
+#         if new_amount == 0 and decision == False:
+#             val['decision'] = 'no_adjustment'
+            
+        if  decision == 'no_adjustment' :
+            val['new_amount'] = 0.00
+        
+        if  decision == 'charge_amount':
+            if  new_amount == 0:
+                raise osv.except_osv(('Enter new amount'),('Inorder to charge fee  enter New Amount'))
+            
+        elif  decision == 'fee_exemption':
+            if  new_amount != 0:
+                raise osv.except_osv(('Fee Exemption Denied'),('For fee exemption new amount should be zero'))
+        
+        return {'value':val}     
     
     """This is child object of smsfee.paid.unpaid.adjustments resolving unpaid fee"""
     _name = 'smsfee.unpaid.fee.adjustment'
     _columns = {
-        'name' : fields.many2one('smsfee.paid.unpaid.adjustments','parent_id'),
-        'fee_id' : fields.many2one('smsfee.studentfee' , 'Fee'),
- #       'current_amount':fields.related('fee_id','fee_amount',type='many2one',relation='smsfee.studentfee', string='Current Amount'),
-        'current_amount' : fields.char('Current Amount'),
-        'new_amount' : fields.float('New Amount'),
-        'decision': fields.selection([('no_adjustment', 'No Adjustment'),('charge_amount', 'Charge Amount'),('fee_exemption', 'Fee Exemption')], 'decision'),
+        'name' : fields.many2one('smsfee.paid.unpaid.adjustments','parent_id' ),
+        'fee_id' : fields.many2one('smsfee.studentfee' , 'Fee Type'),
+        'current_amount' : fields.integer('Current Amount'),
+        'new_amount' : fields.integer('New Amount'),
+        'decision': fields.selection([('no_adjustment', 'No Adjustment'),('charge_amount', 'Charge Amount'),('fee_exemption', 'Fee Exemption')], 'decision' ),
     }
-    _defaults = { 'decision':'no_adjustment' ,}  
+    _defaults = { }  
     _sql_constraints = [('parent_fee_id', 'unique (name,fee_id)', """ Parent and fee id should be unique..""")]     
 smsfee_unpaid_fee_adjustment()
 
 class smsfee_paid_fee_adjustment(osv.osv):
+    
+    def set_fee(self, cr, uid, ids, fields, arg, context):
+        res = {}
+        records =  self.browse(cr, uid, ids, context)
+        
+        for f in records:
+            res[f.id] = str(f.fee_id.paid_amount) +'/'+ str(f.fee_id.fee_amount)
+        return res
+    
+    def onchange_decision(self, cr, uid, ids, actual_amount ,decision):
+        val ={}
+        
+        if  decision == 'set_as_unpaid':
+            if  actual_amount != 0:
+                raise osv.except_osv(('Request Denied'),('Inorder to set fee as unpaid Actual Amount should be zero.'))
+        
+        return {'value':val}     
+    
     """This is child object of smsfee.paid.unpaid.adjustments resolving unpaid fee"""
     _name = 'smsfee.paid.fee.adjustment'
     _columns = {
         'name' : fields.many2one('smsfee.paid.unpaid.adjustments','parent_id'),
-        'fee_id' : fields.many2one('smsfee.studentfee' , 'Fee'),
-        'fee_received' : fields.char('Fee Received'),
-        'actual_amount' : fields.float('Actual Amount'),
+        'fee_id' : fields.many2one('smsfee.studentfee' , 'Fee Type'),
+        'fee_received' : fields.function(set_fee, method=True, string='Paid Fee/Actual Fee', type='char', size=150),
+        'actual_amount' : fields.integer('Actual Amount'),
         'decision': fields.selection([('change_amount', 'Change Amount'),('set_as_unpaid', 'Set As Unpaid'),('return_fee', 'Return Fee')], 'decision'),
     }
     _defaults = {   }  
