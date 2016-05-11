@@ -2501,26 +2501,44 @@
       <field name="model">sms.change.student.class</field>
       <field name="type">form</field>
       <field name="arch" type="xml">
-        <form string="Student Change Class">
-          
-          
-          <group>
-          <field name="name" on_change="onchange_student(name)" />
-           <field name="father_name"/>
-           <field name="current_class" on_change="onchange_acad_cal(current_class)"/>
-          <field name="new_class"/>
-		  <field name="fee_str" />	
-		  <field name="fee_starting_month" />	
-         </group>
+        <form string="Student Change Class" version="7.0">
+          <header>
+			<button name="on_change" string="Change Class" states="Draft" type="object"  class="oe_highlight" />
+         	<button name="on_confirm"  string="Confirm" states="Confirm" type="object"  class="oe_highlight" />
+			<button name="on_cancel"  string="Cancel" states="Confirm,Draft" type="object"  class="oe_highlight" />
+          <field name="state" widget="statusbar" />
+		  </header>
+
+<sheet>
+<div><h1><label for="title" string="Change Student Class"/></h1></div>
+    <group>
          <group>
-		  <field name="academic_session"/>
-		  <field name="session"/> 
-		  <field name="changed_by"/>
-		  <field name="date_changed"/>
-         
-         
-		  </group>
-		  
+	         <field name="name" on_change="onchange_student(name)" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
+	         <field name="father_name" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
+			 <field name="current_class" on_change="onchange_acad_cal(current_class)" attrs="{'readonly':[('state','IN',['Draft','Class_changed'])]}"/>
+		</group>  
+ 		 <group>
+	 		   <field name="new_class" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}"/>
+	           <!--<field name="session"  attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}"/> -->
+			   <field name="session"  readonly="1"/>
+         </group>
+ 	</group>
+         <notebook>
+         	<page string="Note">
+				<group>
+	 			   <field name="reason"  placeholder = "Reason Class Is Changed..." attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
+                    </group>
+					<group>
+					<group>
+				   <field name="changed_by" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}"/>
+					</group>
+					<group>
+				   <field name="date_changed" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}"/>
+					</group>
+				</group>
+			</page>
+        </notebook>		 	
+</sheet>
         </form>
       </field>
     </record>
@@ -2534,7 +2552,7 @@
         <tree string="Change Student Class">
 		  <field name="name"/>
           <field name="father_name"/>
-		  <field name="fee_str" readonly = "1"/>	
+		  <!--<field name="fee_str" readonly = "1"/> -->	
         </tree>
       </field>
     </record>
