@@ -441,11 +441,14 @@ class smsfee_studentfee(osv.osv):
             
          return result
     
-    def _set_std_fee(self, cr, uid, ids, name, args, context=None):
+    def _set_std_fee(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
              if f.state == 'fee_returned':
-                 string  = 'Fee Returned'
+                if f.fee_month:
+                     string =  str(f.generic_fee_type.name)+ "- "+f.fee_month.name
+                else:
+                     string = str(f.generic_fee_type.name)
              else:
                  if f.fee_month:
                      string =  str(f.generic_fee_type.name)+ "- "+f.fee_month.name
@@ -2158,6 +2161,13 @@ class smsfee_paid_unpaid_adjustments(osv.osv):
                                                                                       })
                 elif check.decision == "change_amount" :
                     set_unpaid_fee = _pooler_stu_fee.write(cr ,uid ,check.fee_id.id ,{'paid_amount': check.actual_amount  
+                                                                                      })
+                elif check.decision == "return_fee" :
+                    print "return amount",check.actual_amount
+                    return_fee = _pooler_stu_fee.write(cr ,uid ,check.fee_id.id ,{#'paid_amount': check.actual_amount,
+                                                                                      'state' : 'fee_returned',
+                                                                                      'reconcile': False,
+                                                                                      'returned_amount' : check.actual_amount
                                                                                       }) 
             
         self.write(cr ,uid ,ids ,{'state' : 'fee_adjusted'})
@@ -2253,6 +2263,14 @@ class smsfee_paid_fee_adjustment(osv.osv):
         if  decision == 'set_as_unpaid':
             if  actual_amount != 0:
                 raise osv.except_osv(('Request Denied'),('Inorder to set fee as unpaid Actual Amount should be zero.'))
+
+        if  decision == 'return_fee':
+            val['actual_amount'] = 0
+
+        if  decision == 'change_amount':
+            if  actual_amount == 0:
+                raise osv.except_osv(('Request Denied'),('Enter value in Actual amount'))
+
         
         return {'value':val}     
     
