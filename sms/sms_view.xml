@@ -2515,10 +2515,12 @@
          <group>
 	         <field name="name" on_change="onchange_student(name)" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
 	         <field name="father_name" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
-			 <field name="current_class" on_change="onchange_acad_cal(current_class)" attrs="{'readonly':[('state','IN',['Draft','Class_changed'])]}"/>
-		</group>  
+			 <field name="fee_starting_month" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
+			 <field name="fee_structure" on_change="onchange_fee_staring_month(fee_starting_month,fee_structure,new_class,session)" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
+		 </group>  
  		 <group>
 	 		   <field name="new_class" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}"/>
+			   <field name="current_class" on_change="onchange_acad_cal(current_class)" attrs="{'readonly':[('state','IN',['Draft','Class_changed'])]}"/>
 	           <!--<field name="session"  attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}"/> -->
 			   <field name="session"  readonly="1"/>
          </group>

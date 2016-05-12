@@ -3770,6 +3770,8 @@ class sms_change_student_class(osv.osv):
         'changed_by':fields.many2one('res.users','Changed By'),
         'date_changed':fields.date('Date'),
         'reason':fields.text('Reason'),
+        'fee_structure' : fields.many2one('sms.feestructure' , 'Fee structure'),
+        'fee_starting_month' : fields.date('Fee Start From'),
         'state': fields.selection([('Draft', 'Draft'),('Confirm','Confirm'),('Class_changed', 'Class Changed')], 'State', readonly=True),
     }
     _defaults = {
@@ -3823,6 +3825,44 @@ class sms_change_student_class(osv.osv):
 
         self.write(cr, uid, ids, {'state': 'Class_changed'})
         return True
+    def onchange_fee_staring_month(self, cr, uid, ids, fee_starting_month,fee_str,acad_cal, session_id,context=None):
+        result = {}
+        string = ''
+        if not acad_cal:
+            result['helptext'] = 'Select A class First' 
+            result['fee_structure'] = None
+            return {'value': result}
+        else:
+            current_month = int(datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%m'))
+#             session_id = self.pool.get('sms.academiccalendar').browse(cr,uid,acad_cal).session_id.id
+            current_month_in_session = self.pool.get('sms.session.months').search(cr,uid,[('session_id','=',session_id),('session_month_id','=',current_month)])[0]
+            counted_month =  int(current_month_in_session) - int(fee_starting_month)
+#             this_class_fees = self.pool.get('smsfee.classes.fees').search(cr, uid, [('academic_cal_id','=', acad_cal),('fee_structure_id','=', fee_str)])
+            # Get this class admission fee
+            
+            sqlfee1 =  """SELECT smsfee_classes_fees.id
+                            FROM smsfee_classes_fees
+                            INNER JOIN smsfee_feetypes
+                            ON smsfee_feetypes.id = smsfee_classes_fees.fee_type_id
+                            WHERE smsfee_classes_fees.academic_cal_id ="""+str(acad_cal)+"""
+                            AND smsfee_classes_fees.fee_structure_id="""+str(fee_str)+"""
+                            AND smsfee_feetypes.subtype IN('at_admission','Monthly_Fee','Annual_fee')
+                            """
+            cr.execute(sqlfee1)
+            this_class_fees = cr.fetchall() 
+            if this_class_fees:
+                total = 0
+                for class_fee in this_class_fees:
+                    obj = self.pool.get('smsfee.classes.fees').browse(cr,uid,class_fee[0])
+                    fs = obj.fee_structure_id.name
+                    ft = obj.fee_type_id.name
+                   
+                    total = total + int(obj.amount)
+                    string += str(ft)+"="+str(obj.amount)+",\n "
+                result['helptext'] = string
+                return {'value': result}
+            else:
+                return {}
         
 sms_change_student_class()
        
