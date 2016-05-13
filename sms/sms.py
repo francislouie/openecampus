@@ -3727,6 +3727,7 @@ class sms_change_student_class(osv.osv):
 #              result['fee_str'] = std_rec.fee_type.id
              result['father_name'] = std_rec.father_name
              result['current_class'] = std_rec.current_class.id
+             #result['fee_structure'] = std_rec.fee_type.id
 # #              update_lines = self.pool.get('smsfee.receiptbook').write(cr, uid, ids, {'father_name':father_name})
              print "result:::",result
         return {'value':result}
@@ -3765,14 +3766,15 @@ class sms_change_student_class(osv.osv):
         'name':fields.many2one('sms.student','Student',domain="[('state','=','Admitted')]", required=True),
         'father_name': fields.char('Father Name',size=25,),
         'current_class':fields.many2one('sms.academiccalendar','Current Class', readonly=True),
-        'session': fields.many2one('sms.session', 'Session', domain="[('state','!=','Previous'),('academic_session_id','=',academic_session)]", help="Student will be admitted belongs to selected session",readonly = True),
+#         'session': fields.many2one('sms.session', 'Session', domain="[('state','!=','Previous'),('academic_session_id','=',academic_session)]", help="Student will be admitted belongs to selected session",readonly = True),
         'new_class':fields.many2one('sms.academiccalendar','New Class', domain="[('state','!=','Complete'),('id','!=',current_class)]", required=True),
         'changed_by':fields.many2one('res.users','Changed By'),
         'date_changed':fields.date('Date'),
         'reason':fields.text('Reason'),
-        'fee_structure' : fields.many2one('sms.feestructure' , 'Fee structure'),
-        'fee_starting_month' : fields.date('Fee Start From'),
-        'state': fields.selection([('Draft', 'Draft'),('Confirm','Confirm'),('Class_changed', 'Class Changed')], 'State', readonly=True),
+       # 'fee_structure' : fields.many2one('sms.feestructure' , 'Fee structure'),
+        #'fee_structure' : fields.char( 'Fee structure'),
+        #'fee_starting_month' : fields.many2one('sms.session.months', 'Fee Starting Month'),
+        'state': fields.selection([('Draft', 'Draft'),('Confirm','Confirmation'),('Class_changed', 'Class Changed'),('Cancel', 'Cancel')], 'State', readonly=True),
     }
     _defaults = {
                  'state':'Draft',
@@ -3784,8 +3786,8 @@ class sms_change_student_class(osv.osv):
         return True
     
     def on_cancel(self, cr, uid, ids, context=None):
-        self.write(cr, uid, ids, {'state': 'Draft'})
-        return {'type': 'ir.actions.act_window_close'}
+        self.write(cr, uid, ids, {'state': 'Cancel'})
+        return True
 
         
     def on_confirm(self, cr, uid, ids,context):
@@ -3821,11 +3823,12 @@ class sms_change_student_class(osv.osv):
                                                                     'subject' : subject,
                                                                     'subject_status' : 'Current' ,
                                                                     })
-        
+    #change student current class
+        self.pool.get('sms.student').write(cr, uid, current_std_id, {'current_class': new_cls_id})
 
         self.write(cr, uid, ids, {'state': 'Class_changed'})
         return True
-    def onchange_fee_staring_month(self, cr, uid, ids, fee_starting_month,fee_str,acad_cal, session_id,context=None):
+    def onchange_fee_staring_month(self, cr, uid, ids, fee_starting_month,fee_str,acad_cal,context=None):
         result = {}
         string = ''
         if not acad_cal:
@@ -3834,7 +3837,7 @@ class sms_change_student_class(osv.osv):
             return {'value': result}
         else:
             current_month = int(datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%m'))
-#             session_id = self.pool.get('sms.academiccalendar').browse(cr,uid,acad_cal).session_id.id
+            session_id = self.pool.get('sms.academiccalendar').browse(cr,uid,acad_cal).session_id.id
             current_month_in_session = self.pool.get('sms.session.months').search(cr,uid,[('session_id','=',session_id),('session_month_id','=',current_month)])[0]
             counted_month =  int(current_month_in_session) - int(fee_starting_month)
 #             this_class_fees = self.pool.get('smsfee.classes.fees').search(cr, uid, [('academic_cal_id','=', acad_cal),('fee_structure_id','=', fee_str)])
@@ -3855,7 +3858,7 @@ class sms_change_student_class(osv.osv):
                 for class_fee in this_class_fees:
                     obj = self.pool.get('smsfee.classes.fees').browse(cr,uid,class_fee[0])
                     fs = obj.fee_structure_id.name
-                    ft = obj.fee_type_id.name
+                    ft = obj.fee_type_ids.name
                    
                     total = total + int(obj.amount)
                     string += str(ft)+"="+str(obj.amount)+",\n "

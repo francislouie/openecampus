@@ -2504,7 +2504,7 @@
         <form string="Student Change Class" version="7.0">
           <header>
 			<button name="on_change" string="Change Class" states="Draft" type="object"  class="oe_highlight" />
-         	<button name="on_confirm"  string="Confirm" states="Confirm" type="object"  class="oe_highlight" />
+         	<button name="on_confirm"  string="Confirm" states="Confirm" type="object"  class="oe_highlight" confirm = "Adjust student fees in student fees adjusment, old class fee is still charged against student"  />
 			<button name="on_cancel"  string="Cancel" states="Confirm,Draft" type="object"  class="oe_highlight" />
           <field name="state" widget="statusbar" />
 		  </header>
@@ -2515,20 +2515,20 @@
          <group>
 	         <field name="name" on_change="onchange_student(name)" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
 	         <field name="father_name" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
-			 <field name="fee_starting_month" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
-			 <field name="fee_structure" on_change="onchange_fee_staring_month(fee_starting_month,fee_structure,new_class,session)" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
+			<!-- <field name="fee_structure" on_change="onchange_fee_staring_month(fee_starting_month,fee_structure,new_class)" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" /> -->
 		 </group>  
  		 <group>
 	 		   <field name="new_class" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}"/>
 			   <field name="current_class" on_change="onchange_acad_cal(current_class)" attrs="{'readonly':[('state','IN',['Draft','Class_changed'])]}"/>
-	           <!--<field name="session"  attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}"/> -->
-			   <field name="session"  readonly="1"/>
+			   <!--<field name="fee_starting_month" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />-->
+	        <!--   <field name="session"  attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}"/> -->
+			  <!-- <field name="session"  readonly="1"/> -->
          </group>
  	</group>
          <notebook>
          	<page string="Note">
 				<group>
-	 			   <field name="reason"  placeholder = "Reason Class Is Changed..." attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
+	 			   <field name="reason"  placeholder = "Reason Class Is Changed..." nolabel = "1" attrs="{'readonly':[('state','IN',['Confirm','Class_changed'])]}" />
                     </group>
 					<group>
 					<group>
