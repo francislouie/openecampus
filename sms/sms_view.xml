@@ -2558,12 +2558,23 @@
         </tree>
       </field>
     </record>
+ <record id="view_Student_search" model="ir.ui.view">
+            <field name="name">student.search</field>
+            <field name="model">sms.change.student.class</field>
+            <field name="arch" type="xml">
+                <search string="Search students">
+                    <field name="name"  icon="terp-dialog-close" string="Name"/>
+					<field name="current_class" domain="[('state','=','Active')]" icon="terp-camera_test" string="Class"/>
+                </search>
+            </field>
+        </record>
   
-  <record model="ir.actions.act_window" id="action_sms_student_change_class">
+ <record model="ir.actions.act_window" id="action_sms_student_change_class">
       <field name="name">Change Student Class</field>
       <field name="res_model">sms.change.student.class</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
+	  <field name="search_view_id" ref="view_Student_search"/>
     </record>
   
     <!-- E --> 
