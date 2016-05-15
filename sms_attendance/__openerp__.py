@@ -9,6 +9,8 @@
     'depends' : ['base','account','account_accountant','sms'],
     'data': [
              'sms_attendance_view.xml',
+             'wizard/sms_wizard_punched_attendance_report_view.xml',
+             'sms_attendance_report.xml',
              'sms_attendance_menu.xml',
             ],
     'demo': [],

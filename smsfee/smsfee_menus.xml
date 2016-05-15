@@ -11,6 +11,11 @@
 	<menuitem id="menu_withdraw_process_id" icon ="terp-graph" parent="sms.menu_admission_withdraw_id" sequence="6" groups="sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager" action="action_withdrawprocess_id"/>
 <!--	<menuitem id="menu_withdraw_process_id" icon ="terp-graph" parent="menu_fee_head_id" sequence="6" groups="sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager" action="action_withdrawprocess_id"/>   -->	
     <menuitem id="menu_return_fee" parent="menu_fee_head_id" sequence="7" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="action_smsfee_return_fee"/>
+	
+
+	<menuitem id="menu_paid_unpaid_adjustments"  parent="menu_fee_head_id" sequence="6" groups="sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager" action="action_smsfee_paid_unpaid_adjustments"/>
+
+
 </data>
 </openerp>
 

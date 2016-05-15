@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Attendance Reports -->
+
+        <record id="view_attendance" model="ir.ui.view">
+            <field name="name">class.punched.attendance.form</field>
+            <field name="model">class.punched.attendance</field>
+            <field name="arch" type="xml">
+                <form string="Print Attendance" version="7.0">
+                    <group>
+					<group>
+                        <field name="class_id" required = "1" /> 
+						<newline/><field name="today"/>
+                    </group>
+					<group><field  name="helptext" nolabel = "1" />
+					</group>
+					</group>
+                    <footer>
+                        <button string="Print" name="print_view_attendance_report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+          </record>
+
+  <!-- action Fee Reports-->
+
+        <record id="action_attendance" model="ir.actions.act_window">
+            <field name="name">Print Attendance Report</field>
+            <field name="res_model">class.punched.attendance</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_attendance"/>
+           <field name="target">new</field>
+        </record>
+
+
+</data>
+</openerp>
