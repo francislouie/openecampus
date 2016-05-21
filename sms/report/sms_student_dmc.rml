@@ -59,32 +59,48 @@
     <initialize>
     <paraStyle name="all" alignment="justify"/>
     </initialize>
-    <paraStyle name="P1" fontName="Helvetica" fontSize="11.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+   <!-- <paraStyle name="P1" fontName="Helvetica" fontSize="11.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>  -->
+	<paraStyle name="P1" fontName="Helvetica" fontSize="11.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="18" alignment="CENTER"  spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P3" fontName="Helvetica" fontSize="11.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
     <paraStyle name="P4" fontName="Helvetica" fontSize="11.0" leading="13" alignment="LEFT"  spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P5" fontName="Helvetica-Bold" fontSize="11.0" leading="18" alignment="CENTER" spaceBefore="200.0" spaceAfter="0.0" textColor="#000000"/>
+    <!--<paraStyle name="P5" fontName="Helvetica-Bold" fontSize="11.0" leading="18" alignment="CENTER" spaceBefore="200.0" spaceAfter="0.0" textColor="#000000"/> -->
+    <paraStyle name="P5" fontName="Helvetica-Bold" fontSize="11.0" leading="18" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+
     <paraStyle name="P6" fontName="Helvetica-Bold" fontSize="9.0" leading="14" alignment="LEFT"  spaceBefore="5.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P7" fontName="Helvetica-Bold" fontSize="9.0" leading="14" alignment="CENTER"  spaceBefore="5.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P8" fontName="Helvetica" fontSize="9.0" leading="18" alignment="LEFT"  spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <!--<paraStyle name="P8" fontName="Helvetica" fontSize="9.0" leading="18" alignment="LEFT"  spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>  -->
+    <paraStyle name="P8" fontName="Times-Roman" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" 
+spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P9" fontName="Helvetica-Bold" fontSize="10.0" leading="11" alignment="LEFT"  spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P10" fontName="Helvetica" fontSize="9.0" leading="18" alignment="LEFT"  spaceBefore="5.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P11" fontName="Helvetica-Bold" fontSize="9.0" leading="10" alignment="LEFT"  spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="ParaBlack" fontName="Helvetica-Bold" fontSize="13.0" leading="18" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
 	<paraStyle name="ParaWhite" fontName="Helvetica" fontSize="9.0" leading="18" alignment="CENTER"  spaceBefore="0.0" spaceAfter="0.0" textColor="#FFFFFF"/>	
-    <images/>
+    <paraStyle name="P55" fontName="Helvetica-Bold" fontSize="12.0" leading="18" alignment="CENTER" spaceBefore="200.0" spaceAfter="0.0" textColor="#000000"/>
+	<images/>
   </stylesheet>
   <story>
 	<para style="P1">[[repeatIn(get_students_dmc(data['form']),'r')]]</para> 
-		<blockTable colWidths="510" style="Table1">
-			 <tr><td><para style="P5"><u>DETAILED MARKS CERTIFICATE</u></para></td></tr> 
-			 <tr><td><para style="P5">[[get_exam_type(data['form'])]]</para></td></tr>
-             <tr><td> <para style="P5"><u>[[get_class(data['form'])]]</u></para></td></tr>
-			 <tr><td><para style="ParaBlack"><u>[[(r['student_class_status'])]]</u></para></td></tr>
+			<blockTable colWidths="410,100" style="Table1">
+						 <tr>
+							<td>
+								<para style="P5"><u>DETAILED MARKS CERTIFICATE</u></para> 
+								<para style="ParaWhite">.</para> 
+								<para style="P5"><u>[[get_exam_type(data['form'])]]</u></para>
+								<para style="P5"><u>[[get_class(data['form'])]]</u></para>
+								<para style="ParaBlack"><u>[[(r['student_class_status'])]]</u></para>
+						 	</td>
+							<td>
+					<para style="P8">[[ r['image'] and setTag('para','image',{'width':'65.0','height':'75.0'}) or removeParentNode('para') ]][[(r['image']) ]]</para>
+				</td>
+			 </tr>
 		</blockTable>
+		<spacer length="20"/>
+					
+
 		
 		<blockTable colWidths="115.0,140.0,115.0,140.0" style="Table1">
-		   	<!-- <tr><td><para style="P9"><u>ADMISSION NO:</u></para></td><td><para style="P4">[[(r['cadidate_no'])]]</para></td><td><para style="P4"></para></td><td><para style="P4"></para></td></tr> -->
              <tr><td><para style="P9"><u>ADMISSION NO:</u></para></td><td><para style="P4">[[(r['cadidate_no'])]]</para></td><td><para style="P9"><u>SECTION:</u></para></td><td><para style="P4">[[(r['section'])]]</para></td></tr>  
 		   	 <tr><td><para style="P9"><u>STUDENT:</u></para></td><td><para style="P4">[[(r['student_name'])]]</para></td><td><para style="P9"><u>FATHER'S NAME:</u></para></td><td><para style="P4">[[(r['father_name'])]]</para></td></tr>
 		</blockTable>
@@ -182,30 +198,13 @@
 		      </tr>
 		    </blockTable>
 		</section>  
-			
-	<blockTable colWidths="550" style="Table1">
+        <blockTable colWidths="300.0,210.0" style="Table1">
+            <tr><td><para style="ParaWhite">.</para></td></tr>
+            <tr><td><para style="P33"> Grade:______________<u>[[(r['grade'])]]</u></para></td><td><para style="P33">Position:  <u>[[(r['position'])]]</u> Out of <u>[[(r['total_students'])]]</u></para></td></tr>  
+		    <tr><td><para style="P33">Attendance: ______________</para></td><td><para style="P33">Date Issued: [[get_today_formatted(data['form'])]]</para></td></tr>
+			<tr><td><para style="P33">Remarks:</para></td></tr>
 			<tr><td><para style="ParaWhite">.</para></td></tr>
-			<tr><td><para style="P33"> Grade: <u>[[(r['grade'])]]</u></para></td></tr>
-		  	<tr><td><para style="P33">Position:  <u>[[(r['position'])]]</u> Out of <u>[[(r['total_students'])]]</u></para></td></tr>
-		  	<tr><td><para style="P33">Remarks: <u>[[(r['remarks'])]]</u></para></td></tr>
-			<tr><td><para style="P33">Attendance: ______________</para></td></tr>
-		 </blockTable>
-
-		  <blockTable colWidths="380.0,170.0" style="Table1">
-			<tr><td><para style="ParaWhite">.</para></td><td></td></tr>
-			<tr><td><para style="ParaWhite">.</para></td><td></td></tr>
-			<tr>
-				<td><para style="P3"><u>Principal</u></para></td>
-				<td><para style="P3"><u></u></para></td>
-		    </tr>
-			<tr><td><para style="ParaWhite">.</para></td><td></td></tr>
-			<tr><td><para style="ParaWhite">.</para></td><td></td></tr>
-			<tr><td><para style="ParaWhite">.</para></td><td></td></tr>
-			<tr><td><para style="ParaWhite">.</para></td><td></td></tr>
-			<tr><td><para style="P3">Parent Sign_____________</para></td><td></td></tr>
-			<tr><td><para style="ParaWhite"></para></td><td></td></tr>
-			<tr><td><para style="ParaWhite"></para></td><td></td></tr>
-			<tr><td><para style="P22">Date Issued: [[get_today_formatted(data['form'])]]</para></td><td></td></tr>
-		   </blockTable>			
+            <tr><td><para style="P33">Principal_____________</para></td><td><para style="P33">Parent Sign_____________</para></td></tr>
+		</blockTable>
      </story>
 </document>
