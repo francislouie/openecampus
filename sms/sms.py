@@ -2139,7 +2139,7 @@ class sms_academiccalendar_subjects(osv.osv):
         return None
             
     def create(self, cr, uid, vals, context=None, check=True):
-        
+        rec_cal_std = ''
         exm_id = ""
         #create this new subject
         new_subject = super(osv.osv, self).create(cr, uid, vals, context)

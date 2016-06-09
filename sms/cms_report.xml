@@ -71,6 +71,15 @@
             rml="sms/report/rml_std_admission_statistics.rml"
             string="Admission details"/>
 
+ 		<!--print students biodata-->
+		<report
+            id="report_student_biodata_id"
+            model="sms.student"
+            name="sms.students.biodata"
+            multi="True"
+            rml="sms/report/rml_studentsbiodata.rml"
+            string="Student Biodata"/>
+
 		<!--Print Students Signature List-->
 		<report
             id="report_student_signature_list"

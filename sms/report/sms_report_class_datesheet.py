@@ -36,7 +36,7 @@ class sms_report_class_datesheet(report_sxw.rml_parse):
     
     def print_form(self):
         result = []
-        print "hi*********************"
+        print "*********************"
         return result 
     
     
