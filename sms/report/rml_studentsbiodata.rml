@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <document filename="test.pdf">
-  <template pageSize="(632.0,920.0)" title="Crossovered Analytic" author="Inovtec" allowSplitting="20">
+  <template pageSize="(732.0,920.0)" title="Crossovered Analytic" author="Inovtec" allowSplitting="20">
     <pageTemplate id="first">
       <frame id="first" x1="28.0" y1="5.0" width="570" height="786"/>
     </pageTemplate>
@@ -62,7 +62,6 @@
   <pto>
 	<section>
    		 <blockTable colWidths="250.0,250.0,250.0" repeatRows="1" style="Table2">
-		    
 			<tr>
 			<td><para style="Heading2"></para></td>
 			<td><para style="form_heading">[[ class_name(data['form'])]]</para></td>
@@ -75,20 +74,31 @@
 			</tr>
 		</blockTable>
 
-	<blockTable  rowHeights="20.0" colWidths="60.0,100.0,150.0,150.0" repeatRows="1" style="innermost_tables">
-					 <tr>
-					<td><para style="para_2">S.No</para></td>
-					<td><para style="para_2">Admission No</para></td>
-					<td><para style="para_2">Student</para></td>
-					<td><para style="para_2">Father</para></td>
+	<blockTable   colWidths="30.0,80.0,100.0,100.0,60.0,50.0,55.0,50.0,70.0" repeatRows="1" style="innermost_tables">
+					<tr>
+						<td><para style="para_2">S.No</para></td>
+						<td><para style="para_2">Image</para></td>
+						<td><para style="para_2">Name</para></td>
+						<td><para style="para_2">Father</para></td>
+						<td><para style="para_2">Registration No</para></td>
+						<td><para style="para_2">Gender</para></td>
+						<td><para style="para_2">Date Of Birth</para></td>
+						<td><para style="para_2">Currrent Address</para></td>
+						<td><para style="para_2">Phone No</para></td>
 					</tr>
-					<tr>[[ repeatIn(print_students_class_list(data['form']),'s') ]]
-					<td><para style="para_1">[[ s['sno'] ]]</para></td>
-					<td><para style="para_1">[[ s['admsn_no'] ]]</para></td>
-					<td><para style="para_1">[[ s['student'] ]]</para></td>
-					<td><para style="para_1">[[ s['father'] ]]</para></td>
+
+					<tr>[[ repeatIn(get_student_biodata(data['form']),'r') ]]
+						<td><para style="para_1">[[ r['s_no'] ]]</para></td>
+						<td><para style="para_1">[[ r['image'] and setTag('para','image',{'width':'65.0','height':'75.0'}) or removeParentNode('para') ]][[(r['image']) ]]</para></td>
+						<td><para style="para_1">[[ r['name'] ]]</para></td>
+						<td><para style="para_1">[[ r['father_name'] ]]</para></td>
+						<td><para style="para_1">[[ r['registration_no'] ]]</para></td>
+						<td><para style="para_1">[[ r['gender'] ]]</para></td>
+						<td><para style="para_1">[[ r['birthday'] ]]</para></td>
+						<td><para style="para_1">[[ r['cur_address'] ]]</para></td>
+						<td><para style="para_1">[[ r['phone'] ]]</para></td>
 					</tr>
-					</blockTable>
+	</blockTable>
 	</section>
 </pto>
   </story>

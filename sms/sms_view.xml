@@ -2179,7 +2179,7 @@
       <field name="arch" type="xml">
         <form string="Exam Offered" version="7.0">
           <header>
-			<button name="%(report_admission_form_filled_id)d" string="Print Date Sheet" type="action" class="oe_highlight"/>
+			<button name="%(report_datesheet_id)d" string="Print Date Sheet" type="action" class="oe_highlight"/>
 			<button name="%(action_exam_datesheet_wizard)d" string="Add New Class" states="Active" type="action" class="oe_highlight" groups=""/>
 			<button name="start_exam" string="Start Exams" type="object" states="Draft" confirm = "Starting exam will provide access to intended users for data entry and editing, Start exams?" class="oe_highlight"/>
 			<button name="close_exam" string="Close Exams" type="object" states="Active" confirm = "Closing exams will close access to marks enry and editing,howerver exams reports can be accessed." class="oe_highlight"/>
@@ -2258,7 +2258,7 @@
          <field name="arch" type="xml">
             <form string="Datesheet" version="7.0">
  			<header>
-            <button name="start_new_session" string="Print ClassDatesheet" status="Active,Closed,Cancelled" type="object" class="oe_highlight" groups=""/>
+            <button name="%(report_datesheet_id)d" string="Print ClassDatesheet" status="Active,Closed,Cancelled" type="object" class="oe_highlight" groups=""/>
 			<button name="close_exam_class" string="Close Class Exam" status="Active,Closed,Cancelled" type="object" class="oe_highlight" groups=""/>
              </header>
 				<sheet>

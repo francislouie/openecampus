@@ -27,6 +27,7 @@ import sms_report_withdraw_register
 import sms_report_expense_report
 import sms_report_requested_certificate_form
 import sms_dmc_format2_parser
-
+import sms_report_datesheet
+import sms_report_class_datesheet
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 
