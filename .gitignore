@@ -211,3 +211,9 @@ project_long_term/
 project_mrp/
 project_timesheet/
 web_shortcuts/
+
+*.pyc
+*.*~
+.bzrignore
+
+
