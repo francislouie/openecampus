@@ -80,35 +80,33 @@ class sms_report_studentslist(report_sxw.rml_parse):
     
     def get_admission_statistics(self, data):                                                         
         result = []
+        s_no = 0
         this_form = self.datas['form']
-        
         fee_st =tuple(self.pool.get('sms.feestructure').search(self.cr, self.uid,[]))
-        acad_cal =tuple(self.pool.get('sms.academiccalendar').search(self.cr, self.uid,[('state', '!=','Closed')]))
+#        acad_cal =tuple(self.pool.get('sms.academiccalendar').search(self.cr, self.uid,[('state', '!=','Draft' )]))
         
         sql = """SELECT id FROM sms_academiccalendar
-            WHERE ('""" + str(this_form['start_date']) + "' <=  date_started and '""" + this_form['end_date'] + """' >= date_started ) 
+            WHERE (
+            ('""" + str(this_form['start_date']) + "' <=  date_started and '""" + this_form['end_date'] + """' >= date_started ) 
             OR ('""" + str(this_form['start_date']) + "' >=  date_started and '""" + this_form['end_date'] + """' <= date_closed ) 
-            OR ('""" + str(this_form['start_date']) + "' <=  date_closed and '""" + this_form['end_date'] + """' >= date_closed ) 
-            OR state = 'Draft'
-            OR date_closed is null""" 
-        
+            OR ('""" + str(this_form['start_date']) + "' <=  date_closed and '""" + this_form['end_date'] + """' >= date_closed )
+            ) 
+            AND sms_academiccalendar.state !=  'Draft'
+            """ 
         self.cr.execute(sql)
         acad_cal = self.cr.fetchall()
        
         for cls in acad_cal:
-            sub_list = []
+            s_no +=1
             obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,cls[0])
-            mydict = {'acad_cal':'','state':'','list':''}
-            mydict['acad_cal'] = obj.name
-            mydict['state'] = obj.state
-            j = 1
-            print "mydict['acad_cal']=",mydict['acad_cal']
+            my_dict = {'s_no':'','acad_cal':'','state':'','full_fee':'','merit_100':'','merit_50':'','fps_adm':'','fps_50':''}            
+            my_dict['s_no'] = s_no
+            my_dict['acad_cal'] = obj.name
+            my_dict['state'] = obj.state
             
             for fs in fee_st:
-                inner_dict = {'SNO':'','fee_structure':'','no_admission':''}
-                inner_dict['fee_structure'] = self.pool.get('sms.feestructure').browse(self.cr, self.uid,fs).name
-                inner_dict['SNO'] = j
                 
+                fee_structure = self.pool.get('sms.feestructure').browse(self.cr, self.uid,fs).name
                 
                 sql = """SELECT count(sms_academiccalendar_student.id) FROM sms_student
                     inner join sms_academiccalendar_student on 
@@ -118,18 +116,25 @@ class sms_report_studentslist(report_sxw.rml_parse):
                     AND sms_student.state in ('Admitted','admission_cancel','drop_out','slc') 
                     AND sms_student.admitted_on >= '""" + this_form['start_date'] + """'
                     AND sms_student.admitted_on <='""" + this_form['end_date'] + """'"""
-                    
-                
                 self.cr.execute(sql)
                 row = self.cr.fetchone()
-                inner_dict['no_admission'] = row[0]
-                if row[0] > 0:
-                    sub_list.append(inner_dict)
-                    j = j + 1
-
-            mydict['list'] = sub_list
-            if sub_list:
-                result.append(mydict)
+                
+                if fee_structure == 'Full Fee':
+                    my_dict['full_fee'] =  row[0]
+                        
+                elif fee_structure == 'Merit Schorlarship(100%)':
+                    my_dict['merit_100'] = row[0]
+                        
+                elif fee_structure == 'Merit Scholarship(50%)' :
+                    my_dict['merit_50'] =  row[0]
+                    
+                elif fee_structure == 'FPS ADMISSION FREE ' :
+                    my_dict['fps_adm'] =  row[0]
+                    
+                elif fee_structure == 'FPS 50%' :
+                    my_dict['fps_50'] = row[0]
+                    
+            result.append(my_dict)
         return result
     
     def get_student_biodata(self,form):
