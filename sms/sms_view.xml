@@ -74,7 +74,7 @@
         </record>
 
 		
-        <!-- sms.session-->
+         <!-- sms.session-->
         <record model="ir.ui.view" id="view_session_form">
          <field name="name">session.form</field>
          <field name="model">sms.session</field>
@@ -88,19 +88,23 @@
 			<field name="state" widget="statusbar" statusbar_visible="Draft,active,previous"/>
              </header>
 				<sheet>
-				 <group >
-                  <group string="Session">
+				 <group string="Session" >
+                  <group >
                     <field name="name"/>
-                    <field name="academic_session_id" readonly ="1" />
                     <field name="start_date" />
-					<field name="end_date" readonly ="1"/>
 					<field name="date_session_stared" readonly ="1"/>
+					<field name="session_started_by" readonly ="1"/>
+                  </group>
+                  <group >
+                    <field name="academic_session_id" readonly ="1" />
+					<field name="end_date" readonly ="1"/>
 					<field name="session_started_by" readonly ="1"/>
 					<field name="date_session_closed" readonly ="1"/>
 					<field name="session_closed_by" readonly ="1"/>
                 	
-                	<field name="state"/>
                   </group>
+                  <field name="session_admissions_closed"/>
+                	<field name="state"/>
 				</group>  
 				<group></group>
 			<notebook>
@@ -111,7 +115,7 @@
 			   </page>
 			  <page string= "Academic Calendars">
 				 <group string="">
-					<field name="acad_cals" domain="[('state','=','Complete')]" nolabel = "1"/>
+					<field name="acad_cals" domain="[('state','=','Complete']" nolabel = "1"/>
 				</group>  
 			   </page>
 			  
@@ -1104,7 +1108,7 @@
             <form string="" version="7.0">
  			 <header>
              <button name="start_class" string="Start Class" states="Draft" type="object" class="oe_highlight" groups="" confirm="Are you sure to start this class?"/>
-			 <button name="load_subjects" string="Load Subjects" states="Draft"   type="object" class="oe_highlight" groups=""/>
+			 <button name="load_subjects" string="Load Class  Subjects" attrs="{'invisible':[('subjects_loaded','=',True)]}" states="Draft"   type="object" class="oe_highlight" groups=""/>
 			 <button name="%(report_studentsclass_list_id)d" string="Print Class List"  states="Draft,Active,Complete" type="action" icon="gtk-print"/>
 			 <!--
 			 <button name="load_timetable" string="Load Timetable" states="subjects_loaded" type="object" class="oe_highlight" groups=""/>
@@ -1127,7 +1131,7 @@
 					<field name="class_teacher" attrs="{'readonly':[('state','IN',['Complete'])]}"/>
 				</group>
 				<group>
-					<field name="section_id" widget="selection" attrs="{'readonly':[('state','IN',['Active','Complete'])]}" />
+					<field name="section_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}" domain="[('active','=',1)]" />
 					<field name="group_id"   widget="selection"   attrs="{'readonly':[('state','IN',['Active','Complete'])]}" />
 				</group>
 			</group>
@@ -1136,7 +1140,7 @@
 			 <group>
 				<group>
 				  	<field name="cur_strength"/>
-					<field name="max_stds" on_change="onchange_type(type)"/>
+					<field name="max_stds" />
 					<field name="admission_closed"/>
 				</group>
 				<group>
@@ -1305,61 +1309,64 @@
         </record>
 
 <!-- sms.academiccalendar.subjects -->
-        <record model="ir.ui.view" id="view_clss_subjects_form">
+
+	<record model="ir.ui.view" id="view_clss_subjects_form11">
          <field name="name">class.sub.form</field>
          <field name="model">sms.academiccalendar.subjects</field>
          <field name="arch" type="xml">
             <form string="Class Subjects" version="7.0">
-			<notebook>
-            <page string="Configuration">
+            <group>
+			 <group>
+					<h2><field name="name" nolabel = "1"/></h2> 
+			 </group>
+            <newline/>
 			<group>
-			<group>
-				<field name="name" nolabel = "1"/>
-			</group>
-			<group>
-				<field name="subject_id" required = "1"/>
-				<field name="offered_as"/>
-				<field name="reference_practical_of" required = "1"/>
-
-			</group>
-			<group>
-				<field name="teacher_id"/>
-				<field name="academic_calendar" readonly = "1"/>
-				<field name="state" readonly = "1"/>
-			</group>
-			</group>
-			</page>
-			 <page string = "Subject Requirements">
-            <group>  
-			<group>
-			  <field name="total_marks"/>
-			  <field name="passing_marks"/>
-			  <field name="min_require_att"/>
-              </group>	
-			<group>
-			  <field name="allow_delete"/>
-			  <field name="id" readonly = "1"/>
-              </group>	
-			</group>
-		   </page>
-		   </notebook>
-          </form>	
+				 <field name="subject_id" required = "1"/>
+				<field name="offered_as" required = "1"/>
+                <field name="reference_practical_of" attrs="{'required':[('offered_as','=','practical')], 'readonly':[('offered_as','!=','practical')]}" domain="[('offered_as','=','theory_practical'),('state','!=','Closed')]"/>
+                <field name="teacher_id"/>
+                <field name="state" readonly = "1"/>
+            </group>
+            <group>
+              <field name="total_marks"/>
+              <field name="passing_marks"/>
+              <field name="min_require_att"/>
+              </group>   
+            <group>
+              <field name="allow_delete"/>
+              <field name="id" readonly = "1"/>
+              </group>   
+            </group>
+          </form>   
         </field>
         </record>
-        <record model="ir.ui.view" id="view_class_subjects_tree">
+
+               <record model="ir.ui.view" id="view_class_subjects_tree">
             <field name="name">class.subjects</field>
             <field name="model">sms.academiccalendar.subjects</field>
             <field name="arch" type="xml">
-            <tree string="Class Subjects" >
+            <tree colors="blue:state == 'Draft'" string="Class Subjects" >
                 <field name="name"/>
-				<field name="subject_id" attrs="{'required':[('state','=','Draft')], 'readonly':[('state','IN',['Closed'])]}"/>
+				<field name="subject_id" invisible = "1" attrs="{'required':[('state','=','Draft')], 'readonly':[('state','IN',['Closed'])]}"/>
+				<field name="academic_calendar" />				
 				<field name="teacher_id"/>
-				<field name="allow_delete" />
-				<field name="state" />
+				<field name="state"  invisible = "1" />
+				<field name="id" string = "Code" />
                 </tree>
             </field>
         </record>
 
+	<record id="view_acad_cal_subject_search" model="ir.ui.view">
+            <field name="name">Search Subject</field>
+            <field name="model">sms.academiccalendar.subjects</field>
+            <field name="arch" type="xml">
+                <search string="Search">
+                    <field name="academic_calendar" string="Class"/>
+					<field name="id" string="Code"/>
+                </search>
+            </field>
+        </record>
+	
 	<record model="ir.actions.act_window" id="action_acad_cal_subjects">
             <field name="name">Class Subjects</field>
             <field name="res_model">sms.academiccalendar.subjects</field>
@@ -1481,13 +1488,12 @@
          <field name="name">default.academiccalendar.subjects.form</field>
          <field name="model">sms.academiccalendar.subjects.default</field>
          <field name="arch" type="xml">
-            <form string="Default Classes" version="7.0">
+            <form string="Default Subjects" version="7.0">
  			 <sheet>
 				 <group string="">
                     <field name="academic_calendar"  invisible="1" />
 					<field name="name"/>
-					<field name="no_of_classes"/>
-					<field name="lab_required" />
+					<field name="offered_as"/>
 				</group>
 			</sheet>	 	
               </form>
@@ -1501,8 +1507,7 @@
                 <tree string="default acad subjects">
                     <field name="academic_calendar" invisible ="1"/>
 					<field name="name"/>
-					<field name="no_of_classes"/>
-					<field name="lab_required" />
+					<field name="offered_as"/>
                 </tree>
             </field>
         </record>
@@ -2339,7 +2344,7 @@
       <field name="arch" type="xml">
         <tree editable="top" string="Papers Dates" >
           <field name="name" />
-		  <field name="subject" />
+		  <field name="subject" domain="[('state','!=','Closed')]"  />
  		  <field name="paper_date"/>
 		  <field name="invigilator"/>	
 		  <field name="total_marks"/>	
@@ -2375,7 +2380,57 @@
  
  
  <!-- SMS NEW Student promotion -->
-   
+   <!-- SMS NEW Student promotion -->
+    <record id="view_sms_student_promote_form" model="ir.ui.view">
+            <field name="name">Student Promotion</field>
+            <field name="model">sms.student.class.promotion</field>
+            <field name="arch" type="xml">
+                <form string="Class Annual Promotion" version="7.0">
+				
+					<header>
+					<button string="1.Show Students" states = "Draft" name="show_students" type="object" class="oe_highlight"/>
+					<button string="Go Back" icon="terp-dialog-close" states = "Student_Loaded" name="set_to_draft" type="object" class="oe_highlight"/>
+					<button string="2. Promote Students" icon="terp-go-today" states = "Student_Loaded" name="confirm_promotion" type="object" class="oe_highlight"/>
+					</header><sheet>
+                    
+					<group col="4" string = "Class Annual Promotion">
+						<h3><field nolabel = "1" readonly = "1" attrs="{'invisible':[('state','=','Draft')]}" name="name"/></h3>
+					</group>
+					<group attrs="{'readonly':[('state','=','Promoted')]}" col="4">
+						<field name="existing_class" on_change="onchange_cunrrent_class(existing_class)"/>
+						<field name="promot_to_class"/>
+						<field name="state" invisible = "1"/>
+						
+					</group>
+					<group attrs="{'invisible':[('state','!=','Student_Loaded')]}">
+						<p class=""  colspan="2">
+							<h2>Tips</h2>
+								<ol>
+									<li>Leave Student pending if his/her result is not decided by now</li>
+									<li>You can change student Fee Structure for new session before promotion</li>
+									<li>If student is declared failed,Assign him/her the same class in new session after this promotion </li>
+								</ol>
+							</p>
+					</group>
+                   <notebook><page string = "Instructions" attrs="{'invisible':[('state','!=','Draft')]}" >
+							<p class="oe_grey oe_edit_only" colspan="2">
+							<h2>Instructions For Students Promotion</h2>
+								<ol>
+									<li>Make sure fee structure for new class is defined before promotion</li>
+									<li>You can change student Fee Structure during promotion</li>
+									<li>If some students are not decided now, you may leave them pending, and may promote them later on</li>
+								</ol>
+							</p>
+							</page>
+							<page string = "Students" attrs="{'invisible':[('state','=','Draft')]}">
+							<field name="promotion_line_ids"/>
+							</page>
+					</notebook>
+				</sheet>
+               </form>
+            </field>
+          </record>
+
 
     <record model="ir.ui.view" id="sms_annual_class_promotion_tree">
       <field name="name">Class Promotion</field>
@@ -2384,7 +2439,7 @@
       <field name="arch" type="xml">
         <tree string="Student Promotion">
           <field name="name"/>
-          <field name="cunrrent_class"/>
+          <field name="existing_class"/>
 		  <field name="promot_to_class"/>
 		  <field name="state"/>
         </tree>
@@ -2403,12 +2458,12 @@
       <field name="model">sms.student.class.promotion.lines</field>
       <field name="type">tree</field>
       <field name="arch" type="xml">
-        <tree string="Student Promotion">
-		  <field name="registration_no"/>
+        <tree editable = "top" colors="blue:decision == 'Failed'" string="Student Annual Promotion">
+		  <field name="sno"/>
           <field name="name"/>
-          <field name="father_name"/>
-		  <field name="exam_to_show"/>
-		  <field name="obtained_marks"/>
+		 <field name="father_name"/>
+          <field name="fee_structure"/>
+		  <field name="fee_balance"/>
 		  <field name="decision"/>
         </tree>
       </field>
@@ -2417,6 +2472,8 @@
     
     
     <!-- END NEWsms.Class.promotion --> 
+ 
+ 
  
  
  

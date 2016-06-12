@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
-<data noupdate="1">
+<data noupdate="0">
 
 	<!-- Play Group Class Default Academic Calendar -->
 	<record id="sms_academiccalendar_playgroup" model="sms.academiccalendar.default">
@@ -19,49 +19,49 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_playgroup"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_playgroup_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_playgroup"/>
       <field name="name" ref="sms.sms_subjects_art"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_playgroup_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_playgroup"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_playgroup_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_playgroup"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_playgroup_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_playgroup"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
    <record id="sms_class_playgroup_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_playgroup"/>
       <field name="name" ref="sms.sms_subjects_gscience"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_playgroup_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_playgroup"/>
       <field name="name" ref="sms.sms_subjects_social_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<!-- Nursery Class Default Academic Calendar -->
@@ -81,49 +81,49 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_nursery"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_nursery_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_nursery"/>
       <field name="name" ref="sms.sms_subjects_art"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_nursery_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_nursery"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_nursery_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_nursery"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_nursery_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_nursery"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
    <record id="sms_class_nursery_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_nursery"/>
       <field name="name" ref="sms.sms_subjects_gscience"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_nursery_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_nursery"/>
       <field name="name" ref="sms.sms_subjects_social_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 
@@ -145,28 +145,28 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_kg"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_kg_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_kg"/>
       <field name="name" ref="sms.sms_subjects_pak_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_kg_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_kg"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_kg_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_kg"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<!--CLASS Prep-->
@@ -187,49 +187,49 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_prep"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_prep_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_prep"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_prep_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_prep"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_prep_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_prep"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_prep_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_prep"/>
       <field name="name" ref="sms.sms_subjects_gscience"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_prep_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_prep"/>
       <field name="name" ref="sms.sms_subjects_social_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_prep_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_prep"/>
       <field name="name" ref="sms.sms_subjects_art"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>                                                              
 
 
@@ -251,35 +251,35 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_1"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+      <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_1_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_1"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_1_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_1"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_1_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_1"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_1_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_1"/>
       <field name="name" ref="sms.sms_subjects_gscience"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 
@@ -301,49 +301,49 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_2"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_2_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_2"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_2_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_2"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_2_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_2"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_2_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_2"/>
       <field name="name" ref="sms.sms_subjects_gscience"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_2_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_2"/>
       <field name="name" ref="sms.sms_subjects_social_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_2_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_2"/>
       <field name="name" ref="sms.sms_subjects_art"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>                       
 
 <!-- Class 3 Default Academic Calendar -->
@@ -364,49 +364,49 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_3"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_3_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_3"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_3_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_3"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_3_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_3"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_3_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_3"/>
       <field name="name" ref="sms.sms_subjects_gscience"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_3_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_3"/>
       <field name="name" ref="sms.sms_subjects_social_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_3_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_3"/>
       <field name="name" ref="sms.sms_subjects_art"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>                                  
 
 
@@ -428,49 +428,49 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_4"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_4_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_4"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_4_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_4"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_4_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_4"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_4_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_4"/>
       <field name="name" ref="sms.sms_subjects_gscience"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_4_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_4"/>
       <field name="name" ref="sms.sms_subjects_social_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_4_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_4"/>
       <field name="name" ref="sms.sms_subjects_art"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>                                  
 
 <!-- Class 5 Default Academic Calendar -->
@@ -491,49 +491,49 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_5"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_5_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_5"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_5_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_5"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_5_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_5"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_5_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_5"/>
       <field name="name" ref="sms.sms_subjects_gscience"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_5_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_5"/>
       <field name="name" ref="sms.sms_subjects_social_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_5_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_5"/>
       <field name="name" ref="sms.sms_subjects_art"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>                                  
 
 <!-- Class 6 Default Academic Calendar -->
@@ -554,49 +554,49 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_6"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_6_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_6"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_6_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_6"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_6_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_6"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_6_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_6"/>
       <field name="name" ref="sms.sms_subjects_gscience"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_6_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_6"/>
       <field name="name" ref="sms.sms_subjects_social_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_6_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_6"/>
       <field name="name" ref="sms.sms_subjects_art"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>                                  
 
 <!-- Class 7 Default Academic Calendar -->
@@ -617,49 +617,49 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_7"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_7_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_7"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_7_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_7"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_7_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_7"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_7_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_7"/>
       <field name="name" ref="sms.sms_subjects_gscience"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_7_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_7"/>
       <field name="name" ref="sms.sms_subjects_social_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 <record id="sms_class_7_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_7"/>
       <field name="name" ref="sms.sms_subjects_art"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>                                  
 
 <!-- Class 8 (Science) Default Academic Calendar -->
@@ -680,56 +680,56 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_8"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_8_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_8"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_8_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_8"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_8_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_8"/>
       <field name="name" ref="sms.sms_subjects_pak_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_8_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_8"/>
       <field name="name" ref="sms.sms_subjects_physics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory_practical</field>
     </record>
 
 <record id="sms_class_8_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_8"/>
       <field name="name" ref="sms.sms_subjects_chemistory"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory_practical</field>
     </record>
 
 <record id="sms_class_8_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_8"/>
       <field name="name" ref="sms.sms_subjects_biology"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory_practical</field>
     </record> 
 
 <record id="sms_class_8_sub8" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_8"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>      
 
 <!-- Class 9 (Science) Default Academic Calendar -->
@@ -750,56 +750,56 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_9"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_9_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_9"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_9_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_9"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_9_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_9"/>
       <field name="name" ref="sms.sms_subjects_pak_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_9_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_9"/>
       <field name="name" ref="sms.sms_subjects_physics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory_practical</field>
     </record>
 
 <record id="sms_class_9_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_9"/>
       <field name="name" ref="sms.sms_subjects_chemistory"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory_practical</field>
     </record>
 
 <record id="sms_class_9_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_9"/>
       <field name="name" ref="sms.sms_subjects_biology"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory_practical</field>
     </record> 
 
 <record id="sms_class_9_sub8" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_9"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>                             
 
 <!-- Class 10 (Science) Default Academic Calendar -->
@@ -820,56 +820,56 @@
       <field name="academic_calendar" ref="sms.sms_academiccalendar_10"/>
       <field name="name" ref="sms.sms_subjects_english"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 	
 	<record id="sms_class_10_sub2" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_10"/>
       <field name="name" ref="sms.sms_subjects_urdu"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_10_sub3" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_10"/>
       <field name="name" ref="sms.sms_subjects_mathematics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_10_sub4" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_10"/>
       <field name="name" ref="sms.sms_subjects_pak_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record>
 
 	<record id="sms_class_10_sub5" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_10"/>
       <field name="name" ref="sms.sms_subjects_physics"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory_practical</field>
     </record>
 
 <record id="sms_class_10_sub6" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_10"/>
       <field name="name" ref="sms.sms_subjects_chemistory"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory_practical</field>
     </record>
 
 <record id="sms_class_10_sub7" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_10"/>
       <field name="name" ref="sms.sms_subjects_biology"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory_practical</field>
     </record> 
 
 <record id="sms_class_10_sub8" model="sms.academiccalendar.subjects.default">
       <field name="academic_calendar" ref="sms.sms_academiccalendar_10"/>
       <field name="name" ref="sms.sms_subjects_islamic_study"/>
       <field eval="False" name="lab_required"/>
-      <field name="no_of_classes">90</field>
+     <field name="offered_as">theory</field>
     </record> 
 
 

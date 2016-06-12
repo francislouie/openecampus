@@ -156,7 +156,7 @@
  			 <sheet>
 					<group>
 						<group>
-						<field name="fee_structure_id"/>
+						<field name="fee_structure_id" required = "1"/>
 						<field name="active"/>
 						</group>
 						<group>
@@ -173,7 +173,7 @@
             <field name="name">smsfee.classes.fees.tree</field>
             <field name="model">smsfee.classes.fees</field>
             <field name="arch" type="xml">
-                <tree string="Classes Fees" colors="blue:fee_structure_id=='1';grey:fee_structure_id =='2';green:fee_structure_id=='3'" editable="top">
+                <tree string="Classes Fees" colors="blue:fee_structure_id=='1';grey:fee_structure_id =='2';green:fee_structure_id=='3'">
 							<field name="name" readonly ="1" />
 							<field name="academic_cal_id" readonly ="1" />
 							<field name="fee_structure_id" readonly ="1" />

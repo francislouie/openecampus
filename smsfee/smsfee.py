@@ -119,43 +119,31 @@ class sms_student(osv.osv):
         'context': ctx,
         }
         return result 
-    
     def set_paybles(self, cr, uid, ids, context={}, arg=None, obj=None):
         result = {}
-        amount = '0'
         records =  self.browse(cr, uid, ids, context)
-        print "ids:,",ids
-
         for f in records:
-            sql =   """SELECT sum(fee_amount) FROM smsfee_studentfee
+            sql =   """SELECT  COALESCE(sum(fee_amount),'0')  FROM smsfee_studentfee
                      WHERE student_id ="""+str(ids[0])+"""  AND state='fee_unpaid'"""
             cr.execute(sql)
             amount = cr.fetchone()[0]
-            if amount is None:
-                amount = '0'   
-                print "amount:m,",amount  
         result[f.id] = amount
-        print "result",result
         return result
     
     def set_paid_amount(self, cr, uid, ids, context={}, arg=None, obj=None):
         result = {}
         amount = '0'
         records =  self.browse(cr, uid, ids, context)
-        print "ids:,",ids
 
         for f in records:
-            sql =   """SELECT sum(fee_amount) FROM smsfee_studentfee
+            sql =   """SELECT COALESCE(sum(fee_amount),'0')  FROM smsfee_studentfee
                      WHERE student_id ="""+str(ids[0])+"""  AND state='fee_paid'"""
             cr.execute(sql)
             amount = cr.fetchone()[0]
-            if amount is None:
-                amount = '0'   
-                print "amount:m,",amount  
         result[f.id] = amount
-        print "result",result
         return result
-    
+
+        
     _name = 'sms.student'
     _inherit ='sms.student'
         
@@ -279,7 +267,7 @@ class smsfee_classes_fees_lines(osv.osv):
     _order = "fee_type"
     _columns = {
         'name':fields.function(_set_name, method=True,  string='Class Fee',type='char'),
-        'parent_fee_structure_id': fields.many2one('smsfee.classes.fees','Fee Structure',required = True),
+        'parent_fee_structure_id': fields.many2one('smsfee.classes.fees','Fee Structure'),
         'fee_type': fields.many2one('smsfee.feetypes','Fee Type',required = True),
         'amount':fields.float('Amount'),
     }

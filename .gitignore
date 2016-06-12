@@ -36,6 +36,8 @@ eb_shortcuts/
 web_tests/
 web_tests_demo/
 web_view_editor/
-sms/*.pyc
-smsfee/smsfee.pyc
-sms_attendance/sms_attendance.pyc
+sms/**/*.pyc
+sms/wizard/*.pyc
+sms/report/*.pyc
+smsfee/**/*.pyc
+sms_attendance/**/*.pyc
