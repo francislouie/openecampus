@@ -1017,7 +1017,7 @@ class smsfee_receiptbook(osv.osv):
         'total_paybles':fields.float('Receivables',readonly = True),
         'total_paid_amount':fields.float('Paid Amount',required = True),
         'note_at_receive': fields.text('Note'),
-        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Calculated'),('Paid', 'Paid'),('Request_Adjustment', 'Request Adjustment'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
+        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Calculated'),('Paid', 'Paid'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
         #fields related to adjustment
         'receipt_book_idd': fields.one2many('smsfee.receiptbook.lines.fee.adjustment', 'receipt_book_idd', 'Fees'),
@@ -2114,7 +2114,7 @@ class admission_register_fees(osv.osv):
 admission_register_fees()
 
 class smsfee_paid_unpaid_adjustments(osv.osv):
-
+        
     def cancel_fee_change(self, cr, uid, ids, context=None):
         rec = self.browse(cr ,uid ,ids)[0]
         _pool = self.pool.get('smsfee.paid.fee.adjustment')
@@ -2127,13 +2127,6 @@ class smsfee_paid_unpaid_adjustments(osv.osv):
             
         self.write(cr ,uid ,ids ,{'state' : 'Draft'})
         return True
-    
-    def set_name(self, cr, uid, ids, fields,context={}, arg=None, obj=None):
-        res = {}
-        records =  self.browse(cr, uid, ids, context)
-        for f in records:
-            res[f.id] = 'name'
-        return res      
 
     def apply_fee_change(self, cr, uid, ids, context=None):
         rec = self.browse(cr ,uid ,ids)[0]
@@ -2169,6 +2162,9 @@ class smsfee_paid_unpaid_adjustments(osv.osv):
                                                                                       'reconcile': False,
                                                                                       'returned_amount' : check.actual_amount
                                                                                       }) 
+            print "id of reciptbook=",rec.receipt_no.id,rec.receipt_no.name,rec.receipt_no.state
+            self.pool.get('smsfee.receiptbook').write(cr ,uid ,rec.receipt_no.id ,{'state' : 'Adjusted'})
+            print "state of reciptbook=",rec.receipt_no.state
             
         self.write(cr ,uid ,ids ,{'state' : 'fee_adjusted'})
         return True
@@ -2181,27 +2177,40 @@ class smsfee_paid_unpaid_adjustments(osv.osv):
             unpaid_fee_id = _pooler_stu_fee.search(cr ,uid , [('student_id','=',rec.student.id),('state','=','fee_unpaid')])
             fee_rec = _pooler_stu_fee.browse(cr ,uid ,unpaid_fee_id)
             for i in fee_rec:
-                print "fee= ",i.fee_amount
                 unpaid_id = self.pool.get('smsfee.unpaid.fee.adjustment').create(cr ,uid ,{'name': ids[0],
                                                                                            'fee_id': i.id,
                                                                                             'current_amount': i.fee_amount ,
                                                                                             })
                 
         else:
-            paid_fee_id = _pooler_stu_fee.search(cr ,uid , [('student_id','=',rec.student.id),('state','=','fee_paid')])
-            fee_rec = _pooler_stu_fee.browse(cr ,uid ,paid_fee_id)
-            for i in fee_rec:
-                paid_id = self.pool.get('smsfee.paid.fee.adjustment').create(cr ,uid ,{'name': ids[0],
-                                                                                        'fee_id': i.id,
-                                                                                            })
-            
-        self.write(cr ,uid ,ids ,{'state' : 'waiting_approve'})
-        return True
+            paid_fee_id = _pooler_stu_fee.search(cr ,uid , [('student_id','=',rec.student.id),('state','=','fee_paid'),('receipt_no','=',rec.receipt_no.id)])
+            if paid_fee_id:
+                fee_rec = _pooler_stu_fee.browse(cr ,uid ,paid_fee_id)
+                for i in fee_rec:
+                    paid_id = self.pool.get('smsfee.paid.fee.adjustment').create(cr ,uid ,{'name': ids[0],
+                                                                                            'fee_id': i.id,
+                                                                                                })
+            else:
+                raise osv.except_osv(('Enter valid receipt no '),('The receipt number that you have entered is invalid'))
         
+        #--------------calculate fee adjustment number-------------------------------------
+        sql = """SELECT count(*) from  smsfee_paid_unpaid_adjustments"""
+        cr.execute(sql)
+        adjust_no = cr.fetchone()
+            
+        self.write(cr ,uid ,ids ,{'state' : 'waiting_approve','name':adjust_no[0]})
+        return True
+ 
+    def onchange_set_domain(self, cr, uid, ids, student):
+        receipt_id = self.pool.get('smsfee.receiptbook').search(cr ,uid , [('student_id','=',student)])
+        return {'domain': {'receipt_no': [('id', 'in', receipt_id)]} ,
+                'value':{}}
+
+       
     """This object performs fee adjustment of student's paid and unpaid fee """
     _name = 'smsfee.paid.unpaid.adjustments'
     _columns = {
-        'name' : fields.function(set_name, method=True, string='NAme', type='char', size=150),
+        'name' : fields.char('Fee Adjustment No' ,size=256),
         'student' : fields.many2one('sms.student' , 'Student Name' ,required=True ),
         'date': fields.date("Date" ,required=True),
         'receipt_no':fields.many2one('smsfee.receiptbook','Receipt No'),

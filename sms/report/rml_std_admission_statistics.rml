@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <document filename="test.pdf">
-  <template title="Crossovered Analytic" author="Bahar Ali" allowSplitting="20">
+  <template pageSize="(632.0,920.0)" title="Crossovered Analytic" author="Izbaila Imtiaz" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="28.0" y1="28.0" width="600" height="786"/>
+      <frame id="first" x1="28.0" y1="5.0" width="570" height="786"/>
     </pageTemplate>
-  </template>
+  </template>>
   <stylesheet>
     <blockTableStyle id="Standard_Outline">
       <blockAlignment value="LEFT"/>
@@ -37,7 +37,7 @@
 
 	<blockTableStyle id="innermost_tables">
     <blockAlignment value="CENTER"/>
-    <blockBackground colorName="#e6e6e6" start="0,0" stop="4,0"/>
+    <blockBackground colorName="#e6e6e6" start="0,0" stop="7,0"/>
     <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
 	<blockTopPadding length="1.0" start="0,0" stop="-1,-1"/>
     <blockBottomPadding length="1.0" start="0,0" stop="-1,-1"/>
@@ -69,36 +69,34 @@
   </stylesheet>
   <story>
   <pto>
-	<section>
-   		<para style="P1">[[repeatIn(get_admission_statistics(data['form']),'r')]]</para> 
-   		 <blockTable colWidths="535.0" style="Table1">
-		 <tr><td>
-		 <blockTable  rowHeights="20.0" colWidths="200.0,530" style="Table2">
-			<tr><td><para style="para_1"></para></td>
-			<td><para style="para_1">[[(r['acad_cal'])]]  ( [[(r['state'])]] )</para></td></tr>
-		 </blockTable>
+
+    <blockTable rowHeights="33.0"  colWidths="50.0,100.0,70.0,50.0,90.0,90.0,70.0,40.0" style="innermost_tables">
+       <tr>
+       <td><para style="para_1">S.No</para></td>
+       <td><para style="para_1">Class</para></td>
+       <td><para style="para_1">State</para></td>
+       <td><para style="para_1">Full Fee</para></td>
+       <td><para style="para_1">Merit Schorlarship(100%)</para></td>
+       <td><para style="para_1">Merit Schorlarship(50%)</para></td>
+       <td><para style="para_1">FPS ADMISSION FREE</para></td>
+       <td><para style="para_1">FPS 50%</para></td>
+       </tr>
+       </blockTable>                
 		
-		 <blockTable  rowHeights="20.0" colWidths="50.0,170.0,100.0" style="innermost_tables">
-			<tr>
-			<td><para style="para_1">S.No</para></td>
-			<td><para style="para_1">Fee Structure</para></td>
-			<td><para style="para_1">No of Admission</para></td>
-			</tr>
-			</blockTable>
-			
-		 <section>
-			<blockTable  rowHeights="20.0" colWidths="50.0,170.0,100.0" style="Table21">
-			<para>[[repeatIn((r['list']),'s')]]</para>
-			<tr>
-			<td><para style="para_1">[[(s['SNO'])]]</para></td>
-			<td><para style="para_1">[[(s['fee_structure'])]]</para></td>
-			<td><para style="para_1">[[(s['no_admission'])]]</para></td>
-			</tr>
-			</blockTable>
-		</section>
-   		</td></tr>
+	 <section>
+		<blockTable  rowHeights="33.0" colWidths="50.0,100.0,70.0,50.0,90.0,90.0,70.0,40.0" style="Table21">
+		<tr>
+		<para style="P1">[[repeatIn(get_admission_statistics(data['form']),'s')]]</para> 
+		<td><para style="para_1">[[(s['s_no'])]]</para></td>
+   	   	<td><para style="para_1">[[(s['acad_cal'])]]</para></td>
+       	<td><para style="para_1">[[(s['state'])]]</para></td>
+       	<td><para style="para_1">[[(s['full_fee'])]]</para></td>
+       	<td><para style="para_1">[[(s['merit_100'])]]</para></td>
+       	<td><para style="para_1">[[(s['merit_50'])]]</para></td>
+       	<td><para style="para_1">[[(s['fps_adm'])]]</para></td>
+       	<td><para style="para_1">[[(s['fps_50'])]]</para></td>
+		</tr>
 		</blockTable>
-		
 	</section>
 </pto>
   </story>

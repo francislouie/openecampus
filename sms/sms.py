@@ -1256,9 +1256,7 @@ class sms_academiccalendar(osv.osv):
         return
 
     def unlink(self, cr, uid, ids, context={}, check=True):
-        print "@@@@acd_cal@@@@@",ids,context
         for rec in self.browse(cr, uid, ids, context):
-            print "inside for"
             result = super(osv.osv, self).unlink(cr, uid, ids, context=context)
         return result     
 

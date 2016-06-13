@@ -17,7 +17,9 @@ class sms_student_list(osv.osv_memory):
               'end_date':fields.date('End Ddate'),
               'export_to_excel':fields.boolean('Save As MS Excel File')
              }
-    _defaults = { 
+    _defaults = { 'list_type': 'check_admissions',
+                 'start_date': '2007-06-07',
+                 'end_date': '2016-06-09'
            }
 
     def print_list(self, cr, uid, ids, data):
