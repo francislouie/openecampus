@@ -31,8 +31,22 @@
 	
 
 	<!-- sms.student..inherited-->
-		<record model="ir.ui.view" id="inherit_view_sms_student_form">
-		      <field name="name">sms.student.inherit</field>
+			<record model = "ir.ui.view" id = "sms_student_ih_ihrt">
+			<field name = "name">sms.student.inherit1</field>	
+			<field name = "model">sms.student</field>
+			<field name = "inherit_id" ref = "sms.view_student_form"/>
+			<field name = "arch" type = "xml">
+				<xpath expr = "//field[@name ='current_class']" position = "after">
+				<h3><field name="fee_type"/></h3>
+				</xpath>
+			</field>
+
+
+		</record>
+
+
+			<record model="ir.ui.view" id="inherit_view_sms_student_form">
+		      <field name="name">sms.student.inherit2</field>
 		      <field name="model">sms.student</field>
 		      <field name="inherit_id" ref="sms.view_student_form"/>
 		      <field name="type">form</field>
@@ -47,14 +61,12 @@
 					<button name="action_pay_student_fee" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="object" class="oe_highlight" groups=""/>
 					<group>
 						<group>					
-						
-						<label for="total_paybles" groups=""/>
-						<h2 ><field name="total_paybles" readonly="1"/></h2>
-						</group>
-						<group>
-						<label for="total_paid_amount" groups=""/>
-						<h2><field name="total_paid_amount" readonly="1"/></h2>
-						<field name="fee_type"/>
+						<div class="oe_title"><label for="total_paybles"/>
+							<h2><field name="total_paybles"/></h2>
+						</div>
+						<div class="oe_title"><label for="total_paid_amount"/>
+							<h2><field name="total_paid_amount"/></h2>
+						</div>
 						</group>
 					</group>
 					<group readonly ="1">		    	 		
@@ -173,32 +185,12 @@
             <field name="name">smsfee.classes.fees.tree</field>
             <field name="model">smsfee.classes.fees</field>
             <field name="arch" type="xml">
-                <tree string="Classes Fees" colors="blue:fee_structure_id=='1';grey:fee_structure_id =='2';green:fee_structure_id=='3'">
-							<field name="name" readonly ="1" />
-							<field name="academic_cal_id" readonly ="1" />
+                <tree string="Classes Fees" colors="red:active==0">
 							<field name="fee_structure_id" readonly ="1" />
+							<field name="academic_cal_id" readonly ="1" />
+							<field name="active" readonly ="1" />
 				 </tree>
             </field>
-        </record>
-
- <record id="view_sms_classesfees_search" model="ir.ui.view">
-            <field name="name">smsfee.classes.fees.search</field>
-            <field name="model">smsfee.classes.fees</field>
-            <field name="arch" type="xml">
-                <search string="Timetable Search">
-                    <field name="name" string="name"/>
-                </search>
-            </field>
-        </record>
-
-        <record model="ir.actions.act_window" id="action_classesfee_id">
-            <field name="name">Classes Fees</field>
-            <field name="res_model">smsfee.classes.fees</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="context">{'search_default_draft': 1}</field>
-	        <field name="search_view_id" ref="view_sms_classesfees_search"/>
         </record>
 
 <!--Classes Fee Register-->
@@ -671,7 +663,7 @@
     </record>
     
     <!-- smsfee.student.return.fee END-->
-<!-- --> 
+<!-- 
 	<record model="ir.ui.view" id="sms_student_admission_register_form2">
 		<field name="name">student.admission.register.form.inherit</field>
 		<field name="model">student.admission.register</field>
@@ -679,13 +671,13 @@
 		<field name="type">form</field>
 		<field name="arch" type="xml">
 			<field name="subject_ids" position="after">
-			<field name="fee_id" attrs="{'invisible':[('state','not in',['waiting_approval','Confirm'] )]}" />
+			<page string ="Fee" attrs="{'invisible':[('state','not in',['waiting_approval','Confirm'] )]}"><field name="fee_ids"  /></page>
 			</field>
 		</field>
-	</record>
+	</record>--> 
 
 
-<!--		 sms.student.admission.register  -->  
+<!--		 sms.student.admission.register 
 
     <record model="ir.ui.view" id="sms_student_admission_register_lines_tree">
       <field name="name">sms.student.admission.register.lines.tree</field>
@@ -698,7 +690,7 @@
 		  <field name="fee_amount"/>	
         </tree>
       </field>
-    </record>
+    </record> -->  
 
 <!-- smsfee.paid.unpaid.adjustments-->
     <record model="ir.ui.view" id="smsfee_paid_unpaid_adjustments_form">
@@ -813,6 +805,44 @@
         </record>
 -->
 <!--################################################################################ -->
+
+<record model="ir.ui.view" id="sms_admission_register_fees_tree">
+            <field name="name">admission.register.student.fees.tree</field>
+            <field name="model">admission.register.student.fees</field>
+            <field name="arch" type="xml">
+                <tree colors="red:amount==0;" editable = "bottom" string="Fee Applied">
+                		  <field name="name" domain="[('parent_fee_structure_id','=',hidden_parent_feestr)]"/>
+						 <field name="fee_month"/>
+				          <field name="amount"/>
+						<field name="hidden_parent_feestr"/>
+                </tree>
+            </field>
+        </record>
+
+
+<!-- sms.admission register .inherited-->
+		<record model="ir.ui.view" id="inherit_view_admisttion_register_form">
+		      <field name="name">student.admission.register.inherit</field>
+		      <field name="model">student.admission.register</field>
+		      <field name="inherit_id" ref="sms.sms_student_admission_register_form"/>
+		      <field name="type">form</field>
+		      <field name="arch" type="xml">
+		      <field name="subject_ids" position="after">
+			  	</field>
+				
+				<notebook>
+					
+					<field name="fee_ids" nolabel="1"/>
+					<page string = "Fee Details">
+					<div class="oe_title"><label for="total_fee_applicable"/>
+						<h2><field name="total_fee_applicable"/></h2>
+					</div>
+					<field name="fee_ids" context = " {'parent_id':active_id}" nolabel="1"/>
+			    	</page>
+			   </notebook>
+		      </field>
+		    </record>
+		
 
 	</data>
 </openerp>

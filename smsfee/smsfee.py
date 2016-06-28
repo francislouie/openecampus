@@ -538,7 +538,7 @@ class smsfee_studentfee(osv.osv):
         'acad_cal_std_id': fields.many2one('sms.academiccalendar.student','Academic Calendar Student'),  
         'date_fee_charged':fields.date('Date Fee Charged'),
         'date_fee_paid':fields.date('Date Fee Paid'),
-        'fee_type':fields.many2one('smsfee.classes.fees','Fee Type'),
+        'fee_type':fields.many2one('smsfee.classes.fees.lines','Fee Type'),
         'generic_fee_type':fields.many2one('smsfee.feetypes','G.Feetype'),
         'fee_month':fields.many2one('sms.session.months','Fee Month'),
         'due_month':fields.many2one('sms.session.months','Payment Month'),
@@ -742,7 +742,6 @@ class smsfee_receiptbook(osv.osv):
     """ A fee receopt book, stores fee payments history of students """
     
     def create(self, cr, uid, vals, context=None, check=True):
-        print "vals in create",vals
         rec =  self.pool.get('sms.student').browse(cr,uid,vals['student_id'])
         vals['student_class_id'] = rec.current_class.id,
         print "student class id",rec.current_class.id
@@ -754,7 +753,6 @@ class smsfee_receiptbook(osv.osv):
   
      
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-        print "vals parent:",vals
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
         return result
      
@@ -764,11 +762,9 @@ class smsfee_receiptbook(osv.osv):
     
     def unlink_lines(self, cr, uid, ids, *args):
         line_pool = self.pool.get('smsfee.receiptbook.lines')
-        print "idssssssss:",ids
         idss = line_pool.search(cr,uid, [('receipt_book_id','=',ids)])
         for id in idss:
             line_pool.unlink(cr,uid,id)
-        print "idssssssss:",ids   
         return True
     
     def load_std_fee(self, cr, uid, ids, context=None):
@@ -997,7 +993,7 @@ class smsfee_receiptbook(osv.osv):
         'receipt_date': fields.date('Date'),
         'session_id':fields.many2one('sms.academics.session', 'Session'),
         'fee_structure': fields.char(string = 'Fee Structure',size = 100),
-        'manual_recpt_no': fields.char(string = 'Manual Receipt No',required = True,size = 100),
+        'manual_recpt_no': fields.char(string = 'Manual Receipt No',size = 100),
         'student_class_id': fields.many2one('sms.academiccalendar','Class'),
         'student_id': fields.many2one('sms.student','Student',required = True),
         'father_name': fields.char(string = 'Father',size = 100),
@@ -1108,7 +1104,7 @@ class smsfee_receiptbook_lines(osv.osv):
     _columns = {
         'name': fields.many2one('sms.academiccalendar','Academic Calendar'),
         'fee_name': fields.function(_set_feename,string = 'Fee.',type = 'char',method = True),      
-        'fee_type': fields.many2one('smsfee.classes.fees','Fee Type'),
+        'fee_type': fields.many2one('smsfee.classes.fees.lines','Fee Type'),
         'student_fee_id': fields.many2one('smsfee.studentfee','Student Fee Id'),
         'fee_month': fields.many2one('sms.session.months','Fee Month'),
         'receipt_book_id': fields.many2one('smsfee.receiptbook','Receipt book',required = True),
@@ -2036,70 +2032,58 @@ class smsfee_student_return_fee(osv.osv):
 smsfee_student_return_fee()
 
 
-class student_admission_register(osv.osv):
-    
-    def admit_student(self ,cr ,uid ,ids ,context):
-        fee_amount = 0
-        #----confirm subjects---------
-        self.confirm_student_subjects(cr ,uid ,ids,context=None)
-        #----confirm fee---------
-        for i in self.browse(cr ,uid ,ids):
-            create_stu_fee = self.pool.get('smsfee.studentfee').add_fee_student(cr ,uid ,ids,{'acd_cal_id':i.student_class.id ,
-                                                                             'student_id':i.name.id ,
-                                                                             'month':i.fee_starting_month.id, 
-                                                                             'fee_structure':i.fee_structure.id
-                                                                             })
-            for fee_sum in i.fee_id :
-                fee_amount +=fee_sum.fee_amount
-                
-        self.write(cr, uid, ids, {'state': 'Confirm' ,'total_fee': fee_amount })
-        return None  
-    def load_fee_subjects(self ,cr ,uid ,ids ,context):
-        #-----------write form no-------------------------------
-        #------load fee----------
-        self.load_student_fee(cr ,uid ,ids,context=None)
-        #-------load student---------
-        self.load_subjects(cr ,uid ,ids,context=None)
-        self.write(cr, uid, ids, {'state': 'waiting_approval','form_no':ids[0]})
-        return True
-    
-    def load_student_fee(self ,cr ,uid ,ids ,context):
-        for parent_id in self.browse(cr ,uid ,ids):
-            class_fee_id = self.pool.get('smsfee.classes.fees').search(cr,uid,[('academic_cal_id','=',parent_id.student_class.id),
-                                                                      ('fee_structure_id','=',parent_id.fee_structure.id)])
-            
-        if class_fee_id:
-            for class_fee in class_fee_id:
-                obj = self.pool.get('smsfee.classes.fees').browse(cr,uid,class_fee_id[0])
-                for fee_line in obj.fee_type_ids:
-                    adm_regis_fee = self.pool.get('admission.register.fees').create(cr ,uid ,{'name': ids[0] ,
-                                                         'stu_fee_id' : fee_line.id ,
-                                                         'fee_amount' : fee_line.amount  })
-        else:
-            print "No setting found for this feestructure"
-            raise osv.except_osv(('No Fee Structure'),('No setting found for this feestructure'))
-        return None
-    
-    """This object inherits sms_student_admission_register and adds fields related to fee."""
-    _name = 'student.admission.register'
-    _inherit ='student.admission.register'
-    _columns = {
-        'fee_id' : fields.one2many('admission.register.fees','name','Student Fee'),
-    }
-    _defaults = {  }
-student_admission_register()
-
-class admission_register_fees(osv.osv):
-    
-    """This object serves as a tree view for sms_student_admission_register for fee purpose """
-    _name = 'admission.register.fees'
-    _columns = {
-        'name' : fields.many2one('student.admission.register','Fee Id'),
-        'stu_fee_id' : fields.many2one('smsfee.classes.fees.lines','Student Fee'),
-        'fee_amount':fields.float('Amount',required = True),
-    }
-    _defaults = {    }    
-admission_register_fees()
+# class student_admission_register(osv.osv):
+#     
+#     def admit_student(self ,cr ,uid ,ids ,context):
+#         fee_amount = 0
+#         #----confirm subjects---------
+#         self.confirm_student_subjects(cr ,uid ,ids,context=None)
+#         #----confirm fee---------
+#         for i in self.browse(cr ,uid ,ids):
+#             create_stu_fee = self.pool.get('smsfee.studentfee').add_fee_student(cr ,uid ,ids,{'acd_cal_id':i.student_class.id ,
+#                                                                              'student_id':i.name.id ,
+#                                                                              'month':i.fee_starting_month.id, 
+#                                                                              'fee_structure':i.fee_structure.id
+#                                                                              })
+#             for fee_sum in i.fee_id :
+#                 fee_amount +=fee_sum.fee_amount
+#                 
+#         self.write(cr, uid, ids, {'state': 'Confirm' ,'total_fee': fee_amount })
+#         return None  
+#     def load_fee_subjects(self ,cr ,uid ,ids ,context):
+#         #-----------write form no-------------------------------
+#         #------load fee----------
+#         self.load_student_fee(cr ,uid ,ids,context=None)
+#         #-------load student---------
+#         self.load_subjects(cr ,uid ,ids,context=None)
+#         self.write(cr, uid, ids, {'state': 'waiting_approval','form_no':ids[0]})
+#         return True
+#     
+#     def load_student_fee(self ,cr ,uid ,ids ,context):
+#         for parent_id in self.browse(cr ,uid ,ids):
+#             class_fee_id = self.pool.get('smsfee.classes.fees').search(cr,uid,[('academic_cal_id','=',parent_id.student_class.id),
+#                                                                       ('fee_structure_id','=',parent_id.fee_structure.id)])
+#             
+#         if class_fee_id:
+#             for class_fee in class_fee_id:
+#                 obj = self.pool.get('smsfee.classes.fees').browse(cr,uid,class_fee_id[0])
+#                 for fee_line in obj.fee_type_ids:
+#                     adm_regis_fee = self.pool.get('admission.register.fees').create(cr ,uid ,{'name': ids[0] ,
+#                                                          'stu_fee_id' : fee_line.id ,
+#                                                          'fee_amount' : fee_line.amount  })
+#         else:
+#             print "No setting found for this feestructure"
+#             raise osv.except_osv(('No Fee Structure'),('No setting found for this feestructure'))
+#         return None
+#     
+#     """This object inherits sms_student_admission_register and adds fields related to fee."""
+#     _name = 'student.admission.register'
+#     _inherit ='student.admission.register'
+#     _columns = {
+#         'fee_id' : fields.one2many('admission.register.fees','name','Student Fee'),
+#     }
+#     _defaults = {  }
+# student_admission_register()
 
 class smsfee_paid_unpaid_adjustments(osv.osv):
         
@@ -2283,3 +2267,58 @@ class smsfee_paid_fee_adjustment(osv.osv):
     _defaults = {   }  
        
 smsfee_paid_fee_adjustment()
+
+class student_admission_register(osv.osv):
+    """This object serves as a tree view for sms_student_admission_register for fee purpose """
+    def set_fee_amount(self, cr, uid, ids, context={}, arg=None, obj=None):
+        result = {}
+        amount = '0'
+        records =  self.browse(cr, uid, ids, context)
+
+        for f in records:
+            sql =   """SELECT COALESCE(sum(amount),'0')  FROM admission_register_student_fees
+                     WHERE parent_id ="""+str(f.id)
+            cr.execute(sql)
+            amount = cr.fetchone()[0]
+        result[f.id] = amount
+        return result
+    
+    _name = 'student.admission.register'
+    _inherit = 'student.admission.register'
+    _columns = {
+        'fee_ids':fields.one2many('admission.register.student.fees','parent_id','Fee'),
+        'total_fee_applicable':fields.function(set_fee_amount, method=True, string='Total Fee',type='float'),
+    }
+    _defaults = {    }    
+student_admission_register()
+
+class admission_register_student_fees(osv.osv):
+    """This object serves as a tree view for sms_student_admission_register for fee purpose """
+    def default_get(self, cr, uid, fields, context=None):
+        if context is None:
+            context = {}
+        res = super(admission_register_student_fees, self).default_get(cr, uid, fields, context)
+        if context.get('parent_id'):
+            rec_admin_reg = self.pool.get('student.admission.register').browse(cr ,uid ,context['parent_id'])
+            #get class id and fs id to search via this in class fess lines to get lin id
+            class_id = rec_admin_reg.student_class.id
+            fs_id = rec_admin_reg.fee_structure.id
+            fee_line_id = self.pool.get('smsfee.classes.fees').search(cr ,uid ,[('academic_cal_id','=',class_id),('fee_structure_id','=',fs_id)])
+            if fee_line_id:
+                 print "found parent fs id ",fee_line_id[0]
+                 res['hidden_parent_feestr'] = fee_line_id[0]
+        print "res ",res
+        return res
+    
+    _name = 'admission.register.student.fees'
+    _columns = {
+        'name':fields.many2one('smsfee.classes.fees.lines','Fee'),
+        'parent_id':fields.many2one('student.admission.register','Admission Register'),
+        'fee_month':fields.many2one('sms.session.months','Fee Month'),
+        'amount':fields.float('Amount'),
+        'hidden_parent_feestr':fields.integer('Hidden classes Fees id'),
+    }
+    _sql_constraints = [('Fee_ex-tinsts', 'unique (name,parent_id,fee_month)', """ Fee is already inculded""")]
+
+    _defaults = {    }    
+admission_register_student_fees()

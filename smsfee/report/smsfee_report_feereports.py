@@ -755,7 +755,7 @@ report_sxw.report_sxw('report.smsfee.monthlyfeecollection.allclasses.name', 'sms
 report_sxw.report_sxw('report.smsfee.monthly.feestructure.collections.allclasses.name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_monthly_feestructure_collections_allclasses.rml',parser = smsfee_report_feereports, header='external')
 report_sxw.report_sxw('report.smsfee_students_paidfee_report_name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_students_paid_fee_report.rml',parser = smsfee_report_feereports, header='external')
 report_sxw.report_sxw('report.smsfee_defaulter_studnent_list_name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_defaulter_student_list_report.rml',parser = smsfee_report_feereports, header='external')
-report_sxw.report_sxw('report.smsfee_unpaidfee_receipt_name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_unpaid_receipts_report.rml',parser = smsfee_report_feereports, header=None)
+
 report_sxw.report_sxw('report.smsfee.dailyfee.report.name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_dailyfee_report.rml',parser = smsfee_report_feereports, header='external')
 report_sxw.report_sxw('report.smsfee.paidfee.receipt.name', 'smsfee.receiptbook', 'addons/smsfee/print_paid_receipt_individual.rml',parser = smsfee_report_feereports, header='external')
 

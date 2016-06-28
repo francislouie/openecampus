@@ -1270,7 +1270,7 @@ class sms_academiccalendar(osv.osv):
         'session_id': fields.many2one('sms.session', 'Session Year',domain="[('state','!=','Previous'),('academic_session_id','=',acad_session_id)]",required=True),
         'class_id': fields.many2one('sms.classes', 'Class',required=True), 
         'section_id': fields.many2one('sms.class.section', 'Section',required=True),
-        'group_id': fields.many2one('sms.group', 'Group',required=True),
+        'group_id': fields.many2many('sms.group', 'sms_acad_cal_group_rel', 'acad_cal_id', 'group_id', 'Groups', required=True),
         'class_teacher': fields.many2one('hr.employee', 'Class Teacher',required=True),
         'max_stds': fields.integer('Max Students'),
         'cur_strength':fields.function(update_class_strength, method=True, string='Current Strength',type='char'),
@@ -4076,6 +4076,35 @@ sms_student_clearance()
     
 class student_admission_register(osv.osv):
 
+    def admit_student(self ,cr ,uid ,ids ,context):
+        for f in self.browse(cr,uid,ids):
+            #step1: Register student in class
+            std_cal_id = self.pool.get('sms.academiccalendar.student').create(cr,uid,{
+                'name':f.student_class.id,
+                'date_enrolled':datetime.date.today(),
+                'enrolled_by':uid,                                              
+                'std_id':f.name.id,
+                'date_registered':datetime.date.today(),
+                'state':'Current' })
+            #step2:updat sms.student
+            admission_no = self.pool.get('sms.academiccalendar.student')._set_admission_no(cr ,uid ,f.name.id ,f.student_class.id)
+            self.pool.get('sms.student').write(cr, uid, f.name.id , {
+                                            'registration_no':admission_no,
+                                            'fee_starting_month':None,
+                                            'fee_type':f.fee_structure.id, 
+                                            'state': 'Admitted', 
+                                            'current_state': 'Current',
+                                            'admitted_to_class':f.student_class.id,
+                                            'admitted_on':datetime.date.today(),
+                                            'current_class':f.student_class.id})
+       
+        #Step 3----confirm student registraion with classsubjects---------
+        self.confirm_student_subjects(cr ,uid ,std_cal_id,f.name.id,f.id)
+        #Step 4----confirm student fee registration---------
+        self.confirm_student_fee_registration(cr ,uid ,std_cal_id,f.name.id,f.id)
+        self.write(cr, uid, ids, {'state': 'Confirm'})
+        return None  
+        
     def _get_student(self, cr, uid, context={}):
         if context:
             return context['name']
@@ -4094,20 +4123,52 @@ class student_admission_register(osv.osv):
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
         return True
     
-    def load_subjects(self, cr, uid, ids, context):
+    def load_fee_subjects(self, cr, uid, ids, context):
         student_class = ""
+        
         for stu_ids in self.browse( cr,uid,ids ):
             student_class = stu_ids.student_class.id
-            
-            class_id = self.pool.get('sms.academiccalendar').search(cr ,uid ,[('id','=',student_class),('group_id','=',stu_ids.group.id)])
-            if stu_ids.group.name == 'No group':
-                class_id = self.pool.get('sms.academiccalendar').search(cr ,uid ,[('id','=',student_class)])
-                
-        ac_sub_obj_ids =  self.pool.get('sms.academiccalendar.subjects').search(cr ,uid ,[('academic_calendar','=',class_id),('state','!=','Complete')])
-        for acd_subj_id in self.pool.get('sms.academiccalendar.subjects').browse(cr ,uid ,ac_sub_obj_ids):
-            self.pool.get('admission.register.subjects').create(cr ,uid ,{'name': acd_subj_id.id ,
-                                                                                                 'parent_id': ids[0],
-                                                                                                  } )
+              
+        #load subjects of selected class
+        ac_sub_obj_ids =  self.pool.get('sms.academiccalendar.subjects').search(cr ,uid ,[('academic_calendar','=',student_class),('state','!=','Complete')])
+        if ac_sub_obj_ids:
+                for subject in ac_sub_obj_ids:
+                    self.pool.get('admission.register.subjects').create(cr ,uid ,{
+                                                          'name': subject,
+                                                          'parent_id': stu_ids.id,
+                                                          })
+        # Load fees for selected class and fees structure   
+        ac_calfee_ids =  self.pool.get('smsfee.classes.fees').search(cr ,uid ,[('academic_cal_id','=',student_class),('fee_structure_id','=',stu_ids.fee_structure.id)])
+        if ac_calfee_ids:
+            fee_lines = self.pool.get('smsfee.classes.fees.lines').search(cr ,uid ,[('parent_fee_structure_id','=',ac_calfee_ids[0])])
+            if fee_lines:
+                rec_feelins = self.pool.get('smsfee.classes.fees.lines').browse(cr,uid,fee_lines)
+                for line in rec_feelins:
+                    if line.fee_type.subtype == 'Monthly_Fee':
+                        #1st get session id for student class, then get all months of that session
+                        class_session_id = stu_ids.student_class.session_id.id
+                        months = self.pool.get('sms.session.months').search(cr,uid,[('session_id','=',class_session_id)])
+                        #get month of class updated till
+                        fee_update_till = stu_ids.student_class.fee_update_till.id
+                        if months:
+                            for this_month in months:
+                                if this_month <= fee_update_till:
+                                    self.pool.get('admission.register.student.fees').create(cr ,uid ,{
+                                                                              'name': line.id,
+                                                                              'parent_id': stu_ids.id,
+                                                                              'fee_month': this_month,
+                                                                              'amount': line.amount
+                                                                              })
+                    else:
+                        #so this is not monthly fee, proceed with inserting single rocrd in fee
+                        self.pool.get('admission.register.student.fees').create(cr ,uid ,{
+                                                                          'name': line.id,
+                                                                          'parent_id': stu_ids.id,
+                                                                          'amount': line.amount
+                                                                          }) 
+        else:
+            raise osv.except_osv(('Fee Structure Not Found'), ('Fee Structure '+str(stu_ids.fee_structure.name)+' is not defined for '+str(stu_ids.student_class.id)+'.\n First define a fee structure for this class'))
+        self.write(cr, uid, ids, {'state': 'waiting_approval'})
         return True
     
     def cancel_admisssion_registration(self, cr, uid, ids, context):
@@ -4118,35 +4179,64 @@ class student_admission_register(osv.osv):
         self.write(cr, uid, ids, {'state': 'Draft'})
         return True
     
-    def confirm_student_subjects(self, cr, uid, ids, context):
-        for info in self.browse(cr ,uid ,ids):
-            ac_stu_id= self.pool.get('sms.academiccalendar.student').create(cr ,uid ,{
-                                                                'name': info.student_class.id ,
-                                                                'std_id':info.name.id ,             
-                                                                'state':'Current' ,             
-                                                                'date_registered':datetime.date.today() ,             
-                                                                 })
-            for subs in info.subject_ids:
-                stu_sub_obj_id = self.pool.get('sms.student.subject').create(cr ,uid ,{
-                                                                'student' : ac_stu_id,
-                                                                'student_id' : info.name.id,
-                                                                'subject' : subs.name.id,
-                                                                'subject_status' : 'Current' ,
-                                                                })
-            admission_no = self.pool.get('sms.academiccalendar.student')._set_admission_no(cr ,uid ,ac_stu_id ,info.student_class.id)
-            self.pool.get('sms.student').write(cr, uid, info.name.id , {'registration_no':admission_no,'fee_starting_month':info.fee_starting_month.id,'fee_type':info.fee_structure.id, 'state': 'Admitted', 'current_state': 'Current','admitted_to_class':info.student_class.id,'admitted_on':datetime.date.today(),'current_class':info.student_class.id})
+    def confirm_student_subjects(self, cr, uid, acad_cal_std_id, student_id,parent_id):
+        # this method is called by a mthoed when student is to be registered in selected subects
+        selected_subject_id= self.pool.get('admission.register.subjects').search(cr,uid,[('parent_id','=',parent_id)])
+        if selected_subject_id:
+            rec_sel_subj = self.pool.get('admission.register.subjects').browse(cr,uid,selected_subject_id)
+        for subs in rec_sel_subj:
+            stu_sub_obj_id = self.pool.get('sms.student.subject').create(cr ,uid ,{
+                                                            'student' : acad_cal_std_id,
+                                                            'student_id' : student_id,
+                                                            'subject' : subs.name.id,
+                                                            'subject_status' : 'Current' ,
+                                                            })
+        
+        return None
+    
+    def confirm_student_fee_registration(self, cr, uid, acad_cal_std_id, student_id,parent_id):
+        # this method is called by a mthoed when student fee is to be registered 
+        # this method can be made as generic method for adding fee to students, called from every every in loop
+        selected_fee_id= self.pool.get('admission.register.student.fees').search(cr,uid,[('parent_id','=',parent_id)])
+        if selected_fee_id:
+            rec_sel_fee = self.pool.get('admission.register.student.fees').browse(cr,uid,selected_fee_id)
+        for fee in rec_sel_fee:
+            stu_fee_obj_id = self.pool.get('smsfee.studentfee').create(cr ,uid ,{
+                                                            'acad_cal_std_id' : acad_cal_std_id,
+                                                            'student_id' : student_id,
+                                                            'acad_cal_id' : fee.name.id,
+                                                            'date_fee_charged':datetime.date.today(),
+                                                            'fee_type':fee.name.id,
+                                                            'fee_month':fee.fee_month.id,
+                                                            'fee_amount':fee.amount,
+                                                            'late_fee':0,
+                                                            'total_amount':fee.amount,
+                                                            'reconcile':False,
+                                                            'state':'fee_unpaid'
+                                                            })
+        
         return None
     
     def onchange_set_domain(self,cr ,uid ,ids ,student_class ,context=None):
         acad_cal_id_group = []
         group = ''
-        for adcal_id in self.pool.get('sms.academiccalendar').browse(cr ,uid ,[student_class]):
-            acad_cal_id_group.append(adcal_id.group_id.id)
-        group = adcal_id.group_id.id
         
-        return {'domain': {'fee_starting_month': [('session_id','=',adcal_id.session_id.id)] ,
-                            'group':[('id','in',acad_cal_id_group ) ]},
-                    'value':{'group':group}}
+        sql = """SELECT sms_acad_cal_group_rel.group_id from sms_acad_cal_group_rel
+                  INNER JOIN sms_academiccalendar ON sms_academiccalendar.id = sms_acad_cal_group_rel.acad_cal_id
+                  WHERE sms_acad_cal_group_rel.acad_cal_id="""+str(student_class)
+                  
+        cr.execute(sql)
+        grops = cr.fetchall()
+        if grops:
+        
+            for grp in grops:
+                acad_cal_id_group.append(grp)
+        
+        rec_acad_cal = self.pool.get('sms.academiccalendar').browse(cr,uid,student_class)
+
+        return {'domain': {'fee_starting_month': [('session_id','=',rec_acad_cal.session_id.id)] ,
+                            'group':[('id','in',acad_cal_id_group ) ]}}
+                    
 
     def onchange_form_no(self,cr ,uid ,ids ,name ,context=None):
         val = {}
@@ -4176,21 +4266,18 @@ class student_admission_register(osv.osv):
         form_no = cr.fetchone()[0]
         val['form_no'] = form_no
         return {'value': val}
-
+    
     
     """This object is store admission details regarding to student register """
     _name="student.admission.register"
     _columns = {
         'name' : fields.many2one('sms.student' , 'Student Name'),
-        'father_name' : fields.char('Father Name', readonly=True ,size=256),
+        'father_name' : fields.char('Father Name', size=256),
         'fee_structure' : fields.many2one('sms.feestructure' , 'Fee structure'),
-        'fee_start_from' : fields.date('Fee Start From'),
-        'fee_starting_month': fields.many2one('sms.session.months', 'Starting Fee Month'),
-        'student_class' : fields.many2one('sms.academiccalendar' , 'Student Class',domain="[('admission_closed','=',False),('state','=','Active')]"),
+        'student_class' : fields.many2one('sms.academiccalendar' , 'Student Class',domain="[('admission_closed','=',False),('state','in',['Active','Draft'])]"),
         'group' : fields.many2one('sms.group' ,'Group'),
         'subject_ids' : fields.one2many('admission.register.subjects','parent_id','Student Subjects'),
         'form_no' : fields.integer('Form No'),
-        'total_fee' : fields.integer('Total Fee'), 
         'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Confirm', 'Confirm')], 'State', readonly = True),
         #*********************personal info************************************88
         'gender': fields.selection([('Male', 'Male'),('Female', 'Female')], 'Gender'),
@@ -4213,6 +4300,7 @@ class student_admission_register(osv.osv):
         
         
     } 
+    _sql_constraints = [('Student_Admission', 'unique (name,student_class,state)', """ Student Admission for this class already exists.""")]
     _defaults = {  'state': lambda*a :'Draft' ,
                  'name':_get_student,
                  'father_name':student_father}
@@ -4220,12 +4308,15 @@ class student_admission_register(osv.osv):
 student_admission_register()
   
 class admission_register_subjects(osv.osv):
-    """This object serves as a tree view for sms_student_admission_register for fee purpose """
+    """This object serves as a tree view for sms_student_admission_register for fee subject """
     _name = 'admission.register.subjects'
     _columns = {
         'name' : fields.many2one('sms.academiccalendar.subjects','Subjects'),
-        'parent_id' : fields.many2one('student.admission.register','Student SUbject'),
+        'parent_id' : fields.many2one('student.admission.register','Admission Register'),
     }
     _defaults = {    }    
+    _sql_constraints = [('subject_ex-tinsts', 'unique (name,parent_id)', """ Subject is already inculded,renove duplicated subject and then continue""")]
 admission_register_subjects()
+
+
 

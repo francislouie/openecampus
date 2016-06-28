@@ -30,7 +30,7 @@
 						   </group>
 				<notebook>
                 <page string="Sessions Years">
-                    <field name="session_ids" readonly = "1" nolabel = "1" />
+                    <field name="session_ids" readonly = "1" nolabel = "1"/>
 			   </page>
 			   </notebook>
 			</sheet>	 	
@@ -717,7 +717,6 @@
                         </page>
 					
 				</notebook>
-			  <field name="state" readonly ="1"/>
 			</sheet>	 	
               </form>
             </field>
@@ -1132,7 +1131,7 @@
 				</group>
 				<group>
 					<field name="section_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}" domain="[('active','=',1)]" />
-					<field name="group_id"   widget="selection"   attrs="{'readonly':[('state','IN',['Active','Complete'])]}" />
+					<field name="group_id"   widget="many2many_tags" attrs="{'readonly':[('state','IN',['Active','Complete'])]}" />
 				</group>
 			</group>
 			<notebook>
@@ -2902,39 +2901,25 @@
          <field name="arch" type="xml">
             <form string="" version="7.0">
 				<header>
-					<button name="%(report_admission_form_filled_id)d" string="Admission Form" states="Draft,waiting_approval,Confirm" type="action" class="oe_highlight" groups=""/>
+					
 					<button name="load_fee_subjects" string="1.Proceed With Admission" states="Draft" type="object" class="oe_highlight" groups=""/>
-					<button name="cancel_admisssion_registration" string="Cancel" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
+					<button name="cancel_admisssion_registration" string="Go Back" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<button name="admit_student" string="2. Confirm This Admission" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Confirm" readonly="1"  />
 				</header>
 				<group>
                    <group string="Admission Register" col="4" colspan="4">
                     	  <field name="name" required="1"   attrs="{'readonly':[('state','=','Confirm')]}" on_change="onchange_form_no(name)"  />
-				          <field name="father_name" attrs="{'readonly':[('state','=','Confirm')]}" />
- 				          <field name="student_class" required="1" attrs="{'readonly':[('state','=','Confirm')]}" on_change="onchange_set_domain(student_class)"  />
+				          <field name="father_name"  required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
+ 				          <field name="student_class" context = "{'class_id':student_class}" required="1" attrs="{'readonly':[('state','=','Confirm')]}" on_change="onchange_set_domain(student_class)"  />
 						  <field name="group" required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
-						  <field name="fee_structure" required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
-						  <field name="fee_starting_month" required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
-						  <field name="form_no" readonly="1" />
-						  <field name="total_fee" readonly="1"/>
+						  <field name="fee_structure"  required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
+						  <field name="form_no" readonly="1" attrs="{'invisible':[('state','not in',['waiting_approval','Confirm'] )]}" />
                    </group>
 				   <newline/>
+					
 					<notebook>
-						<page string="subjects"  attrs="{'invisible':[('state','not in',['waiting_approval','Confirm'] )]}" >
-					  		<field name="subject_ids" colspan="6"  />
-						</page>
-						<page string="Instructions"  attrs="{'invisible':[('state','not in',['waiting_approval','Draft'] )]}" >
-						<p>
-						<h2>New Admission</h2>
-						<ol>
-						<li>Select Student class of admission</li>
-						<li>Studenet monthly and other fee are charged according to Fee Structure selected for student</li>
-						<li>Fee Starting month means fee of month student fee is sarted</li>
-						</ol>
-						</p>
-						</page>
-		                <page string="Contact Information">
+						<page string="Contact Information">
 						 <group>
 		                 	<group string="Personal">
 			                   	<field name="gender"  required="1"/>
@@ -2963,6 +2948,22 @@
 		                  	</group>
 						</group>  
 					   </page>
+						<page string="Subjects"  attrs="{'invisible':[('state','not in',['waiting_approval','Confirm'] )]}" >
+					  		<field name="subject_ids" colspan="6"  />
+						</page>
+						
+						<page string="Instructions"  attrs="{'invisible':[('state','not in',['waiting_approval','Draft'] )]}" >
+						<p>
+						<h2>New Admission</h2>
+						<ol>
+						<button name="%(report_admission_form_filled_id)d" string="Admission Form" states="Draft,waiting_approval,Confirm" type="action" class="oe_highlight" groups=""/>
+						<li>Select Student class of admission</li>
+						<li>Studenet monthly and other fee are charged according to Fee Structure selected for student</li>
+						<li>Check applicable fees</li>
+						<li>Verify subjects in which students will be registered</li>
+						</ol>
+						</p>
+						</page>
 					</notebook>
 			    </group>  
 			  </form>
@@ -2975,9 +2976,8 @@
                 <tree string="Student Admission Register"  >
                 		  <field name="name"  />
 				          <field name="father_name"  />
+						  <field name="student_class"  />
 						  <field name="fee_structure"  />
-				          <field name="fee_start_from"  />
-				          <field name="student_class"  />
 						  <field name="group"  />
 						  <field name="state" />
                 </tree>
@@ -2994,14 +2994,34 @@
                 </search>
             </field>
         </record>
-        <record model="ir.actions.act_window" id="action_admission_register">
-            <field name="name">Admission Register</field>
+        <record model="ir.actions.act_window" id="action_admission_register_draft">
+            <field name="name">1. Draft Admissions</field>
             <field name="res_model">student.admission.register</field>
             <field name="type">ir.actions.act_window</field>
+			<field name="domain">[('state','=','Draft')]</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="context">{'search_default_draft': 1}</field>
-            <field name="search_view_id" ref="view_student_admission_register_search"/>
+            <field name="search_admission_id" ref="view_student_admission_register_search"/>
+        </record>
+
+		<record model="ir.actions.act_window" id="action_admission_register_waiting_approval">
+            <field name="name">2. To be Approved</field>
+            <field name="res_model">student.admission.register</field>
+            <field name="type">ir.actions.act_window</field>
+			<field name="domain">[('state','=','waiting_approval')]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_admission_id" ref="view_student_admission_register_search"/>
+        </record>
+
+		<record model="ir.actions.act_window" id="action_admission_register_approved">
+            <field name="name">3. Approved(Confirmed)</field>
+            <field name="res_model">student.admission.register</field>
+            <field name="type">ir.actions.act_window</field>
+			<field name="domain">[('state','=','Confirm')]</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_admission_id" ref="view_student_admission_register_search"/>
         </record>
 
 
