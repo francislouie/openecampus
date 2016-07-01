@@ -2,7 +2,7 @@
 <document filename="test.pdf">
   <template pageSize="(732.0,920.0)" title="Crossovered Analytic" author="Inovtec" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="28.0" y1="5.0" width="570" height="786"/>
+      <frame id="first" x1="28.0" y1="5.0" width="400" height="786"/>
     </pageTemplate>
   </template>
   <stylesheet>
@@ -21,7 +21,7 @@
 
 	<blockTableStyle id="innermost_tables">
     <blockAlignment value="CENTER"/>
-    <blockBackground colorName="#e6e6e6" start="0,0" stop="4,0"/>
+    <blockBackground colorName="#e6e6e6" start="0,0" stop="8,0"/>
     <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
 	<blockTopPadding length="1.0" start="0,0" stop="-1,-1"/>
     <blockBottomPadding length="1.0" start="0,0" stop="-1,-1"/>
@@ -74,7 +74,7 @@
 			</tr>
 		</blockTable>
 
-	<blockTable   colWidths="30.0,80.0,100.0,100.0,60.0,50.0,55.0,50.0,70.0" repeatRows="1" style="innermost_tables">
+		<blockTable   colWidths="27.0,70.0,90.0,90.0,60.0,45.0,55.0,90.0,70.0" repeatRows="1" style="innermost_tables">
 					<tr>
 						<td><para style="para_2">S.No</para></td>
 						<td><para style="para_2">Image</para></td>
