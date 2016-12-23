@@ -24,7 +24,7 @@ sms_transport_location()
 
 class sms_transport_route(osv.osv):
     
-    """This object maintains transport routes """
+    """This object maintains transport routes Data"""
     
     _name="sms.transport.route"
     _columns = {
