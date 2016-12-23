@@ -8,6 +8,8 @@ class sms_student_subject_removal(osv.osv_memory):
                 'academiccalendar_id': fields.many2one('sms.academiccalendar','Select Class', domain="[('state','=','Active')]", required=True,),
                 'academiccalendar_subject_id': fields.many2one('sms.academiccalendar.subjects','Subject', domain="[('academic_calendar','=',academiccalendar_id)]"),
                 'delete_exams': fields.boolean('Delete Exams'),
+                'delete_from_class':fields.boolean('Also Remove subject from class'),
+                'selected_students':fields.many2many('sms.student','sms_student_wizard_rel','wizard_id','sms_std_id','Students', domain="[('current_class','=',academiccalendar_id)]", required=True)
             }
     _defaults = {
             'delete_exams': False,
@@ -22,7 +24,11 @@ class sms_student_subject_removal(osv.osv_memory):
         current_obj = self.browse(cr, uid, ids, context=context)       
         
         for obj in current_obj:
-            student_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',obj.academiccalendar_id.id)])
+            student_list =[]
+            #student_list = obj.selected_students
+            student_list += [x.id for x in obj.selected_students]
+            #raise osv.except_osv(('This Class Belongs to Session'),(student_list))
+            student_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','in',student_list)])
             student_objs = self.pool.get('sms.academiccalendar.student').browse(cr, uid, student_ids, context=context)
             
             exam_datesheet_lines_ids = self.pool.get('sms.exam.datesheet.lines').search(cr,uid,[('subject','=',obj.academiccalendar_subject_id.id)])
@@ -41,13 +47,15 @@ class sms_student_subject_removal(osv.osv_memory):
                     self.pool.get('sms.student.subject').unlink(cr, uid, student_subject_ids, context=context)
             
             if obj.delete_exams:
-                self.pool.get('sms.exam.datesheet.lines').unlink(cr, uid, exam_datesheet_lines_ids, context=context)
-                self.pool.get('sms.exam.default.lines').unlink(cr, uid, exam_default_lines_ids, context=context)
-                self.pool.get('sms.exam.default').unlink(cr, uid, exam_default_ids, context=context)
-                self.pool.get('sms.exam').unlink(cr, uid, exam_ids, context=context)
+                if obj.delete_from_class:
+                    self.pool.get('sms.exam.datesheet.lines').unlink(cr, uid, exam_datesheet_lines_ids, context=context)
+                    self.pool.get('sms.exam.default.lines').unlink(cr, uid, exam_default_lines_ids, context=context)
+                    self.pool.get('sms.exam.default').unlink(cr, uid, exam_default_ids, context=context)
+                    self.pool.get('sms.exam').unlink(cr, uid, exam_ids, context=context)
                  
-            self.pool.get('sms.academiccalendar.subjects').write(cr, uid, obj.academiccalendar_subject_id.id, {'state':'Draft'})
-            self.pool.get('sms.academiccalendar.subjects').unlink(cr, uid, [obj.academiccalendar_subject_id.id], context=context)
+            if obj.delete_from_class:
+                self.pool.get('sms.academiccalendar.subjects').write(cr, uid, obj.academiccalendar_subject_id.id, {'state':'Draft'})
+                self.pool.get('sms.academiccalendar.subjects').unlink(cr, uid, [obj.academiccalendar_subject_id.id], context=context)
                                 
         return {}
         

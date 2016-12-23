@@ -1,0 +1,503 @@
+<document filename="test.pdf">
+  	<template pageSize="(878.0,600.0)" title="Test" author="BaharAli" allowSplitting="20">
+	<pageTemplate id="first">
+    <frame id="first" x1="7.0" y1="0.0" width="870.0" height="590.0"/>
+
+     <header>
+        <pageGraphics>
+
+           	<!-- Header -->			
+			<image x="002" y="560" height="33.0" >[[company.logo]]</image>
+			<image x="300" y="560" height="33.0" >[[company.logo]]</image>
+			<image x="590" y="560" height="33.0" >[[company.logo]]</image>
+			
+			<setFont name="Helvetica-Bold" size="9" />
+			<setFont name="Helvetica" size="9" />
+
+			<drawString x="200" y="580">Date : [[ get_today() ]]</drawString>
+			<drawString x="495" y="580">Date : [[ get_today() ]]</drawString>
+			<drawString x="770" y="580">Date : [[ get_today() ]]</drawString>
+
+			<setFont name="Helvetica" size="7"/>
+
+           	<drawString x="115" y="15">Depositor's Signature: _____________________</drawString>
+			<drawString x="410" y="15">Depositor's Signature: _____________________</drawString>
+			<drawString x="700" y="15">Depositor's Signature: _____________________</drawString>
+
+           	<drawString x="002" y="15">Printed by: [[ get_user_name() ]]</drawString>
+			<drawString x="300" y="15">Printed by: [[ get_user_name() ]]</drawString>
+			<drawString x="600" y="15">Printed by: [[ get_user_name() ]]</drawString>
+
+           	<lineMode width="0.7" />
+           	<lines>1cm 27.7cm 20cm 27.7cm</lines>
+           	<setFont name="Helvetica" size="8" />
+
+        </pageGraphics>
+     </header>
+
+    </pageTemplate>
+  	</template>
+  	<stylesheet>
+
+	<blockTableStyle id="Standard_Outline">
+    <blockAlignment value="LEFT"/>
+    <blockValign value="TOP"/>
+    </blockTableStyle>
+    
+    <blockTableStyle id="Table_1">
+    <blockAlignment value="LEFT"/>
+    <blockValign value="TOP"/>
+    <blockLeftPadding length="0.0" start="0,0" stop="-1,-1"/>
+	<blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="2.0" start="0,0" stop="-1,-1"/>
+    <lineStyle kind="LINEBELOW" colorName="#000000" start="0,-1" stop="0,-1"/>
+    <lineStyle kind="LINEBELOW" colorName="#000000" start="1,-1" stop="1,-1"/>
+    </blockTableStyle>
+    
+    <blockTableStyle id="Table_2">
+    <blockAlignment value="LEFT"/>
+    <blockValign value="TOP"/>
+    <blockLeftPadding length="0.0" start="0,0" stop="-1,-1"/>
+	<blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="2.0" start="0,0" stop="-1,-1"/>
+    <lineStyle kind="LINEBELOW" colorName="#C0C0C0" start="0,-1" stop="0,-1"/>
+    <lineStyle kind="LINEBELOW" colorName="#C0C0C0" start="1,-1" stop="1,-1"/>
+    </blockTableStyle>
+	
+    <blockTableStyle id="Table_maintable">
+    <blockAlignment value="CENTER"/>
+    <blockValign value="TOP"/>
+	<blockTopPadding length="5.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+    </blockTableStyle>
+	
+	<initialize>
+    <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="P1" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="10" alignment="CENTER" textColor="#000000"/>
+	<paraStyle name="P2-Bold" fontName="Helvetica-Bold" fontSize="9.0" leading="10" alignment="CENTER" textColor="#000000"/>
+	<paraStyle name="P2-Bold-Left" fontName="Helvetica-Bold" fontSize="9.0" leading="10" alignment="LEFT" textColor="#000000"/>
+	<paraStyle name="P2-White" fontName="Helvetica" fontSize="9.0" leading="10" alignment="CENTER" textColor="#FFFFFF"/>
+    <paraStyle name="P3" fontName="Helvetica" fontSize="8.0" leading="9" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
+    <paraStyle name="P4" fontName="Helvetica" fontSize="9.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P4-Bold" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P4-Bold-Right" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P5" fontName="Helvetica" fontSize="8.0" leading="9" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P6" fontName="Helvetica" fontSize="8.0" leading="9" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P7" fontName="Helvetica" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P8" fontName="Helvetica" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="Standard" fontName="Times-Roman"/>
+    <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Text body" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="List" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="Caption" fontName="Times-Roman" fontSize="12.0" leading="15" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="Index" fontName="Times-Roman"/>
+    <paraStyle name="Table Contents" fontName="Times-Roman"/>
+    <paraStyle name="terp_header" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="LEFT" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="terp_header_Centre" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Table Heading" fontName="Times-Roman" alignment="CENTER"/>
+    <paraStyle name="terp_default_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_9" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="Center" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_9_italic" fontName="Helvetica-Oblique" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <images/>
+</stylesheet>
+<story>
+	<blockTable colWidths="884" style="">
+	<para style="P2">[[repeatIn(get_challans(data),'record')]]</para>
+	<tr>
+    <td>
+	
+	<blockTable colWidths="0,260.0,32.0,260.0,32.0,260.0,10.0" style="Table_maintable">
+      <tr>
+      	<td>
+          	<blockTable colWidths="0" style="">
+      		<tr>
+        		<td>
+          		<para style="P2"></para>
+        		</td>
+      		</tr>
+      		</blockTable>
+        </td>
+        <td>
+          	<blockTable colWidths="50.0,210" style="">
+      		<tr>
+				<td><para style="P2-Bold-Left"></para></td>
+        		<td>
+          		<para style="P2-Bold-Left">Challan No. [[(record['challan_number'])]]</para>
+        		</td>
+      		</tr>
+			</blockTable>
+			<blockTable colWidths="260" style="Table_1">
+			<tr><td><para style="P1"></para></td></tr>
+			<tr><td><para style="P1"></para></td></tr>
+			<tr><td><para style="P1"></para></td></tr>
+			<tr>
+        		<td>
+          		<para style="P2">Alfalah Educational Complex- Peshawar</para>
+        		</td>
+      		</tr>
+			</blockTable>
+			<blockTable colWidths="260" style="Table_2">
+      		<tr>
+        		<td>
+          		<para style="P2-Bold">For Student/Parents</para>
+        		</td>
+      		</tr>
+			</blockTable>
+			<blockTable colWidths="260" style="">
+			<tr>
+        		<td>
+          		<para style="P2">[[repeatIn((record['banks']),'s')]]</para>
+          		<para style="P2">[[(s['bank_name'])]]</para>
+        		</td>
+      		</tr>			
+			<tr>
+        		<td>
+	          		<para style="P3">[[repeatIn((record['candidate_info']),'r')]]</para>
+					<blockTable colWidths="60.0,200.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Student:</para></td>
+						<td><para style="P4">[[(r['name'])]]</para></td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Father Name:</para></td>
+						<td><para style="P4">[[(r['father_name'])]]</para></td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Class:</para></td>
+						<td><para style="P4">[[(r['Class'])]]</para></td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Group:</para></td>
+						<td><para style="P4">[[(r['semester'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>		
+
+			<tr>
+        		<td>
+	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">On Account of:</para></td>
+						<td><para style="P4-Bold">Ruppees</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>		
+
+			<tr>
+        		<td>
+					<section>
+	          		<para style="P3">[[repeatIn((record['on_accounts']),'r')]]</para>
+					<blockTable colWidths="200.0,60.0" style="Table_2">
+		      		<tr>
+		        		<td><para style="P5">[[(r['head_name'])]]</para></td>
+						<td><para style="P6">[[(r['head_amount'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+					</section>
+				</td>
+      		</tr>
+			<tr>
+				<td>
+				<blockTable colWidths="32" style="">
+				<tr>
+					<td>
+					<para style="P2">[[repeatIn(get_vertical_lines_total(data),'s')]]</para>
+	          		<para style="P2-White">[[(s['line-style'])]]</para>
+	        		</td>
+	      		</tr>
+	      		</blockTable>
+	        	</td>
+			</tr>
+			<tr>
+        		<td>
+	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Total: </para></td>
+						<td><para style="P4-Bold-Right">[[(record['total_amount'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+			<tr>
+        		<td>
+	          		<blockTable colWidths="60.0,200.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Amount in Words: </para></td>
+						<td><para style="P5">[[(record['amount_in_words'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+      		</blockTable>
+        </td>
+        <td>
+			<blockTable colWidths="32" style="">
+			<tr>
+				<td>
+				<para style="P2">[[repeatIn(get_vertical_lines(data),'s')]]</para>
+          		<para style="P2">[[(s['line-style'])]]</para>
+        		</td>
+      		</tr>
+      		</blockTable>
+        </td>
+        <td>
+          	<blockTable colWidths="50.0,210" style="">
+      		<tr>
+				<td><para style="P2-Bold-Left"></para></td>
+        		<td>
+          		<para style="P2-Bold-Left">Challan No. [[(record['challan_number'])]]</para>
+        		</td>
+      		</tr>
+			</blockTable>
+			<blockTable colWidths="260" style="Table_1">
+			<tr><td><para style="P1"></para></td></tr>
+			<tr><td><para style="P1"></para></td></tr>
+			<tr><td><para style="P1"></para></td></tr>
+			<tr>
+        		<td>
+          		<para style="P2">Alfalah Educational Complex- Peshawar</para>
+        		</td>
+      		</tr>
+			</blockTable>
+			<blockTable colWidths="260" style="Table_2">
+      		<tr>
+        		<td>
+          		<para style="P2-Bold">For Accounts Department</para>
+        		</td>
+      		</tr>
+			</blockTable>
+			<blockTable colWidths="260" style="">
+			<tr>
+        		<td>
+          		<para style="P2">[[repeatIn((record['banks']),'s')]]</para>
+          		<para style="P2">[[(s['bank_name'])]]</para>
+        		</td>
+      		</tr>			
+			<tr>
+        		<td>
+	          		<para style="P3">[[repeatIn((record['candidate_info']),'r')]]</para>
+					<blockTable colWidths="60.0,200.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Name:</para></td>
+						<td><para style="P4">[[(r['name'])]]</para></td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Father Name:</para></td>
+						<td><para style="P4">[[(r['father_name'])]]</para></td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Class:</para></td>
+						<td><para style="P4">[[(r['Class'])]]</para></td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Group:</para></td>
+						<td><para style="P4">[[(r['semester'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>	
+			<tr>
+        		<td>
+	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">On Account of:</para></td>
+						<td><para style="P4-Bold">Ruppees</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+			<tr>
+        		<td>
+					<section>
+	          		<para style="P3">[[repeatIn((record['on_accounts']),'r')]]</para>
+					<blockTable colWidths="200.0,60.0" style="Table_2">
+		      		<tr>
+		        		<td><para style="P5">[[(r['head_name'])]]</para></td>
+						<td><para style="P6">[[(r['head_amount'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+					</section>
+				</td>
+      		</tr>
+			<tr>
+				<td>
+				<blockTable colWidths="32" style="">
+				<tr>
+					<td>
+					<para style="P2">[[repeatIn(get_vertical_lines_total(data),'s')]]</para>
+	          		<para style="P2-White">[[(s['line-style'])]]</para>
+	        		</td>
+	      		</tr>
+	      		</blockTable>
+	        	</td>
+			</tr>
+			<tr>
+        		<td>
+	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Total: </para></td>
+						<td><para style="P4-Bold-Right">[[(record['total_amount'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+			<tr>
+        		<td>
+	          		<blockTable colWidths="60.0,200.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Amount in Words: </para></td>
+						<td><para style="P5">[[(record['amount_in_words'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+      		</blockTable>
+        </td>
+        <td>
+          	<blockTable colWidths="32" style="">
+      		<tr>
+        		<td>
+          		<para style="P2">[[repeatIn(get_vertical_lines(data),'s')]]</para>
+          		<para style="P2">[[(s['line-style'])]]</para>
+        		</td>
+      		</tr>
+      		</blockTable>
+        </td>
+        <td>
+          	<blockTable colWidths="50.0,210" style="">
+      		<tr>
+				<td><para style="P2-Bold-Left"></para></td>
+        		<td>
+          		<para style="P2-Bold-Left">Challan No. [[(record['challan_number'])]]</para>
+        		</td>
+      		</tr>
+			</blockTable>
+			<blockTable colWidths="260" style="Table_1">
+			<tr><td><para style="P1"></para></td></tr>
+			<tr><td><para style="P1"></para></td></tr>
+			<tr><td><para style="P1"></para></td></tr>
+			<tr>
+        		<td>
+          		<para style="P2">Alfalah Educational Complex- Peshawar</para>
+        		</td>
+      		</tr>
+			</blockTable>
+			<blockTable colWidths="260" style="Table_2">
+      		<tr>
+        		<td>
+          		<para style="P2-Bold">For Fee Officer</para>
+        		</td>
+      		</tr>
+			</blockTable>
+			<blockTable colWidths="260" style="">
+			<tr>
+        		<td>
+          		<para style="P2">[[repeatIn((record['banks']),'s')]]</para>
+          		<para style="P2">[[(s['bank_name'])]]</para>
+        		</td>
+      		</tr>			
+			<tr>
+        		<td>
+	          		<para style="P3">[[repeatIn((record['candidate_info']),'r')]]</para>
+					<blockTable colWidths="60.0,200.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Name:</para></td>
+						<td><para style="P4">[[(r['name'])]]</para></td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Father Name:</para></td>
+						<td><para style="P4">[[(r['father_name'])]]</para></td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Class:</para></td>
+						<td><para style="P4">[[(r['Class'])]]</para></td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Group:</para></td>
+						<td><para style="P4">[[(r['semester'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+			<tr>
+        		<td>
+	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">On Account of:</para></td>
+						<td><para style="P4-Bold">Ruppees</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+			<tr>
+        		<td>
+					<section>
+	          		<para style="P3">[[repeatIn((record['on_accounts']),'r')]]</para>
+					<blockTable colWidths="200.0,60.0" style="Table_2">
+		      		<tr>
+		        		<td><para style="P5">[[(r['head_name'])]]</para></td>
+						<td><para style="P6">[[(r['head_amount'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+					</section>
+				</td>
+      		</tr>
+			<tr>
+				<td>
+				<blockTable colWidths="32" style="">
+				<tr>
+					<td>
+					<para style="P2">[[repeatIn(get_vertical_lines_total(data),'s')]]</para>
+	          		<para style="P2-White">[[(s['line-style'])]]</para>
+	        		</td>
+	      		</tr>
+	      		</blockTable>
+	        	</td>
+			</tr>
+
+			<tr>
+        		<td>
+	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Total: </para></td>
+						<td><para style="P4-Bold-Right">[[(record['total_amount'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+			<tr>
+        		<td>
+	          		<blockTable colWidths="60.0,200.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Amount in Words: </para></td>
+						<td><para style="P5">[[(record['amount_in_words'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+      		</blockTable>
+        </td>
+        <td>
+          	<blockTable colWidths="10" style="">
+      		<tr>
+        		<td>
+          		<para style="P2"></para>
+        		</td>
+      		</tr>
+      		</blockTable>
+        </td>
+      </tr>
+	</blockTable>
+	
+	</td>
+    </tr>
+	</blockTable>
+
+</story>
+</document>
+
+

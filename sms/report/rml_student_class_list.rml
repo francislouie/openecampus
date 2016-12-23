@@ -65,7 +65,7 @@
 		    
 			<tr>
 			<td><para style="Heading2"></para></td>
-			<td><para style="form_heading">[[ class_name(['form'])]]</para></td>
+			<td><para style="form_heading">[[ class_name(data['form'])]]</para></td>
 			<td><para style="Heading2"></para></td>
 			</tr>
 			<tr>
@@ -82,7 +82,7 @@
 					<td><para style="para_2">Student</para></td>
 					<td><para style="para_2">Father</para></td>
 					</tr>
-					<tr>[[ repeatIn(print_students_class_list('Form'),'s') ]]
+					<tr>[[ repeatIn(print_students_class_list(data['form']),'s') ]]
 					<td><para style="para_1">[[ s['sno'] ]]</para></td>
 					<td><para style="para_1">[[ s['admsn_no'] ]]</para></td>
 					<td><para style="para_1">[[ s['student'] ]]</para></td>

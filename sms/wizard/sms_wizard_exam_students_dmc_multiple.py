@@ -6,7 +6,7 @@ class sms_student_exam_dmc_multiple(osv.osv_memory):
     _description = "Student DMC"
     _columns = {
                 'report_type': fields.selection([('Single_Report','Single Report'),('Multiple_Report','Multiple Report')],'Select', required=True,),
-                'academiccalendar_id': fields.many2one('sms.academiccalendar','Select Class', domain="[('state','=','Active')]", required=True,),
+                'academiccalendar_id': fields.many2one('sms.academiccalendar','Select Class', domain="[('state','!=','Draft')]", required=True,),
                 'student_id': fields.many2one('sms.student','Select Student',),
 #                'exam_type': fields.many2many('sms.exam.datesheet','sms_wizard_exam_datesheet_exam_type_rel','exam_wizard_id','exam_type','Exam Types', required=True, domain="[('academiccalendar','=',academiccalendar_id)]"),
               }

@@ -2,7 +2,6 @@ import sms_wizard_admit_student
 import sms_wizard_swap_move_timetable_entry
 import sms_wizard_timetable_entry
 import sms_wizard_admission_form
-import sms_wizard_admit_student
 import sms_wizard_student_list
 import sms_wizard_exam_entry
 import sms_wizard_exam_students_lists
@@ -23,5 +22,6 @@ import sms_wizard_demote_student
 import sms_wizard_datesheet_list
 import sms_wizard_certificate_form
 import sms_wizard_readmit_student
+import custom_sale_client_installements_reports
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

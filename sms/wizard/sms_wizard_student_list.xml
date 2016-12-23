@@ -11,13 +11,16 @@
                 <form string="Students list" version="7.0">
 			    		<group col="4">
 						<newline/><field name="list_type"/>
-						<newline/><field name="acad_cal" attrs="{'invisible':[('list_type','=','check_admissions')], 'required':[('list_type','=','contact_list')]}"/>
+						<newline/><field name="acad_cal" attrs="{'invisible':[('list_type','=','check_admissions')], 'required':[('list_type','in',['contact_list','class_list','security_cards'])]}"/>
+						<newline/><field name="card_display_message" attrs="{'invisible':[('list_type','!=','security_cards')], 'required':[('list_type','=','security_cards')]}"/>
+						<newline/><field name="student_ids" attrs="{'invisible':[('list_type','!=','security_cards')], 'required':[('list_type','=','security_cards')]}" domain="[('current_class','=',acad_cal)]"/>
 						</group>
-						<newline/><group  attrs="{'invisible':[('list_type','=','contact_list')]}">              			
-							<newline/><field name="start_date"  attrs="{ 'required':[('list_type','=','check_admissions')]}"/>
-							<newline/><field name="end_date"  attrs="{ 'required':[('list_type','=','check_admissions')]}"/>
+						<newline/>
+						<group  attrs="{'invisible':[('list_type','in',['contact_list','class_list'])]}">              			
+							<newline/><field name="start_date"  attrs="{ 'required':[('list_type','in',['check_admissions','security_cards'])] , 'invisible':[('list_type','in',['contact_list','class_list'])] }"/>
+							<newline/><field name="end_date"  attrs="{ 'required':[('list_type','in',['check_admissions','security_cards'])] , 'invisible':[('list_type','in',['contact_list','class_list'])] }"/>
 						</group>
-						<newline/><field name="export_to_excel"/>
+						<newline/><group><field name="export_to_excel"/></group>
                     <footer>
                         <button string="Print" name="print_list" type="object" class="oe_highlight"/>
                         or

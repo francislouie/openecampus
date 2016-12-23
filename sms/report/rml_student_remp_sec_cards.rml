@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+  <template pageSize="(21cm, 29.7cm)" title="Test" author="Mohsin Yaseen" >
+    <pageTemplate id="first">
+      <frame id="first" x1="18" y1="10" width="21cm" height="29.7cm"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <blockTableStyle id="Standard_Outline">
+      <blockValign value="TOP"/>
+      <blockAlignment value="CENTER"/>
+    </blockTableStyle>
+    
+    <blockTableStyle id="TableGrid">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+
+    </blockTableStyle>
+
+    <blockTableStyle id="subims">
+	<blockBackground colorName="#0033CC" />
+    </blockTableStyle>
+
+    <initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="P0" fontName="Helvetica" fontSize="11.0" leading="7" alignment="LEFT" spaceBefore="0.0" spaceAfter="4.0" textColor="#000000"/>
+    <paraStyle name="P1" fontName="Helvetica" fontSize="10.0" leading="15" alignment="left" spaceBefore="0.0" spaceAfter="4.0" textColor="#000000"/>
+    <paraStyle name="Program" fontName="Helvetica" fontSize="9.0" leading="15" alignment="left" spaceBefore="0.0" spaceAfter="4.0" textColor="#000000"/>
+    <paraStyle name="P2" fontName="Helvetica" fontSize="4.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="4.0" textColor="#000000"/>
+    <paraStyle name="P3" fontName="Helvetica" fontSize="8.0" leading="3" alignment="LEFT" spaceBefore="0.0" spaceAfter="4.0" textColor="#000000"/>
+    <paraStyle name="P4" fontName="Helvetica" fontSize="11.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
+    <paraStyle name="found" fontName="Helvetica" fontSize="8.0" leading="3" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#FA5858"/>
+    <paraStyle name="note" fontName="Helvetica" fontSize="6.0" leading="3" alignment="CENTER" valign="middle" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
+    <paraStyle name="email" fontName="Helvetica" fontSize="6.0" leading="3" alignment="CENTER" valign="middle" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
+    <paraStyle name="frontims" fontName="Helvetica-bold" fontSize="11.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#FFFFFF"/>
+    <paraStyle name="backims" fontName="Helvetica" fontSize="8.0" leading="3" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#2E64FE"/>
+    <paraStyle name="backleft" fontName="Helvetica" fontSize="8.0" leading="6" alignment="left" valign="top" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000" leftPadding="15"/>
+    <paraStyle name="backright" fontName="Helvetica" fontSize="7.0" leading="6" alignment="left" valign="top" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
+    <paraStyle name="barcode" fontName="Helvetica" fontSize="7.0" leading="3" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="space" fontName="Helvetica" fontSize="4.0" leading="5" alignment="LEFT" spaceBefore="0.0" spaceAfter="2.0" textColor="#000000"/>
+    <paraStyle name="line" fontName="Helvetica" fontSize="15.0" leading="15" alignment="center" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
+    <paraStyle name="P5" fontName="Helvetica" fontSize="11.0" leading="15" alignment="CENTER" spaceBefore="3.0" spaceAfter="6.0" textColor="#000000"/>
+    <paraStyle name="P6" fontName="Helvetica" fontSize="11.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
+    <paraStyle name="P7" fontName="Helvetica" fontSize="10.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P8" fontName="Helvetica" fontSize="6.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="-1.0" textColor="#000000"/>
+    <paraStyle name="P9" fontName="Helvetica" fontSize="13.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P10" fontName="Helvetica" fontSize="6.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="Standard" fontName="Times-Roman"/>
+    <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Text body" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="List" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="Caption" fontName="Times-Roman" fontSize="12.0" leading="15" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="Index" fontName="Times-Roman"/>
+    <paraStyle name="Table Contents" fontName="Times-Roman"/>
+    <paraStyle name="terp_header" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="LEFT" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="terp_header_Centre" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Table Heading" fontName="Times-Roman" alignment="CENTER"/>
+    <paraStyle name="terp_default_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_9" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_9_italic" fontName="Helvetica-Oblique" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <images/>
+	</stylesheet>
+	<story>
+	<section>
+	
+    <blockTable colWidths="22cm" style="TableGrid">
+		<!-- Title Block Start -->
+    	<tr>
+    	<td>
+		    <para style="P5">[[repeatIn(print_student_se_passes(data['form']),'s')]]</para>
+			<blockTable colWidths="9cm,2cm,9cm" >
+		    	<tr>
+				<td>		
+					<blockTable colWidths="6cm,3cm">
+						<tr>
+				        <td>		
+							<para style="P1"><b>[[(s['name1'])]]</b></para>
+							<para style="P1"><b>[[(s['father_name1'])]]</b></para>
+							<para style="space">
+								<font color="white"> </font>
+							</para>
+							<para style="Program"><font color="#0033CC">[[(s['program1'])]]</font></para>
+							<para style="P1">[[(s['display_messge1'])]]</para>
+							<para style="space">
+								<font color="white"> </font>
+							</para>
+							<para style="P1">Valid Till:<b>[[(s['valid_upto1'])]]</b></para>
+				        </td>
+				        <td>		
+				          <para style="P2">[[ company.logo and setTag('para','image',{'width':'2.2cm','height':'2cm'}) ]][[ company.logo ]]</para>
+							<para style="P2">[[ (s['pic1']) and setTag('para','image',{'width':'2.2cm','height':'2.6cm'}) ]][[ s['pic1'] ]]</para>
+				        </td>
+						</tr>
+				    </blockTable>
+
+				    <blockTable colWidths="9cm" style="subims">
+						<tr>
+				        	<td>		
+							<para style="frontims"><b>Forward Girls College,Peshawar</b></para>
+				        	</td>
+						</tr>
+				    </blockTable>
+				    
+					<para style="space">
+					<font color="white"> </font>
+					</para>
+		        </td>
+		        <td>		
+					<para style="line">|</para>
+					<para style="line">|</para>
+					<para style="line">|</para>
+					<para style="line">|</para>
+					<para style="line">|</para>
+					<para style="line">|</para>
+					<para style="line">|</para>
+		        </td>
+				<td>		
+					<blockTable colWidths="6cm,3cm">
+						<tr>
+				        <td>		
+							<para style="P1"><b>[[(s['name2'])]]</b></para>
+							<para style="P1"><b>[[(s['father_name2'])]]</b></para>
+							<para style="space">
+								<font color="white"> </font>
+							</para>
+							<para style="Program"><font color="#0033CC">[[(s['program2'])]]</font></para>
+							<para style="P1">[[(s['display_messge2'])]]</para>
+							<para style="space">
+								<font color="white"> </font>
+							</para>
+							<para style="P1">Valid Till:<b>[[(s['valid_upto2'])]]</b></para>
+				        </td>
+				        <td>		
+				         <para style="P2">[[ company.logo and setTag('para','image',{'width':'2.2cm','height':'2cm'}) ]][[ company.logo ]]</para>
+					<para style="P2">[[ (s['pic2']) and setTag('para','image',{'width':'2.2cm','height':'2.6cm'}) ]][[ s['pic2'] ]]</para>
+				        </td>
+						</tr>
+				    </blockTable>
+
+				    <blockTable colWidths="9cm" style="subims">
+						<tr>
+				        	<td>		
+							<para style="frontims"><b>Forward Girls College, Peshawar</b></para>
+				        	</td>
+						</tr>
+				    </blockTable>
+				    
+					<para style="space">
+					<font color="white"> </font>
+					</para>
+		        </td>
+				</tr>
+		    </blockTable>
+    	</td>
+    	</tr>
+    </blockTable>
+
+</section>
+
+
+
+
+</story>
+</document>

@@ -95,6 +95,15 @@
             rml="smsfee/report/smsfee_annual_defaulter_list.rml"
             string="Annaul Defaulter List"
             />   
+		<!--report to print admitted student individual fee challan -->
+			<report
+            id="report_student_unpaidfee_receipts_id"
+            model="smsfee.classfees.register"
+            name="smsfee_stu_unpaidfee_receipt_name"
+            multi="True"
+            rml="smsfee/report/student_unpaid_fee_challan_view.rml"
+            string="Fee Receipts (Unpaid)"
+            />   
 	
    </data>
 </openerp>

@@ -13,6 +13,7 @@
              'wizard/smsfee_wizard_fee_reports.xml',
              'wizard/smsfee_wizard_class_fee_receipt_unpaid.xml',
              'wizard/smsfee_wizard_daily_fee_reports.xml',
+             'wizard/smsfee_wizard_std_admfee_receipt_unpaid.xml',
              'smsfee_report.xml',
              'smsfee_view.xml',
              'smsfee_menus.xml',

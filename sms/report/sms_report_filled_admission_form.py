@@ -22,7 +22,6 @@ class sms_report_filled_admission_form(report_sxw.rml_parse):
     def company_address(self, data):  
         company = self.pool.get('smsfee.classes.fees').get_company(self.cr, self.uid,self.uid)
         street = company.rml_header2
-        print "address:",street
         return street
     
     def get_logo(self, data):  

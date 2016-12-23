@@ -19,6 +19,7 @@
 #
 ##############################################################################
 import sms
+import custom_sale
 import wizard
 import report
 
