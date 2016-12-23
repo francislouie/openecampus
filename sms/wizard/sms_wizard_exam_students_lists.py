@@ -6,7 +6,7 @@ class sms_student_exam_lists(osv.osv_memory):
     _description = "Student Exam List"
     _columns = {
                 'list_type': fields.selection([('Signature_Sheet','Signature Sheet'),('Award_List','Award List'),('Result_List','Result List'),('Result_Sheet','Result Sheet')],'Select', required=True,),
-                'academiccalendar_id': fields.many2one('sms.academiccalendar','Select Class', domain="[('state','=','Active')]", required=True,),
+                'academiccalendar_id': fields.many2one('sms.academiccalendar','Select Class', domain="[('state','!=','Draft')]", required=True,),
                 'subject_id': fields.many2one('sms.academiccalendar.subjects','Subject', domain="[('academic_calendar','=',academiccalendar_id)]",),
                 'exam_type': fields.many2one('sms.exam.datesheet','Exam Type', required=True, domain="[('academiccalendar','=',academiccalendar_id)]"),
                 'order_by': fields.selection([('sms_student.name','Student Name'), ('marks desc','Marks'), ('percentage desc','Percentage'),('sms_student.gender','Gender')],'Order By', required=True,),

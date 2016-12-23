@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+		<report
+            id="report_class_transport_receipts_id"
+            model="sms.transport.fee.payments"
+            name="smstransport_unpaid_receipts_name"
+            multi="True"
+            rml="smstransport/report/smstransport_unpaid_receipts_report.rml"
+            string="Transport Fee Receipts (Unpaid)"
+            />  
+
+   </data>
+</openerp>

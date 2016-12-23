@@ -11,8 +11,12 @@
                 <form string="Subject Removal" version="7.0">
                     <group col="4">
 						<field name="academiccalendar_id" on_change="onchange_academiccalendar()"/>
+						
 						<field name="academiccalendar_subject_id"/>
 						<field name="delete_exams"/>
+						<field name="delete_from_class"/>
+						<newline/>
+						<field name="selected_students"/>
 					</group>
                     <footer>
                         <button string="Remove Subject" name="remove_subject" type="object" class="oe_highlight"/>

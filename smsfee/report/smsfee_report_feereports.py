@@ -130,9 +130,9 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         reporttype = this_form['report_type']
         mydict = {'sno':'SNO','month':'Month','ft1':'--','ft2':'--','ft3':'--','ft4':'--','ft5':'--','other':'Others','total':'TOTAL'}
         
-        sql_fs = """ SELECT DISTINCT (smsfee_feetypes.id) FROM smsfee_feetypes
+        sql_fs = """ SELECT DISTINCT (smsfee_classes_fees_lines.fee_type) FROM smsfee_classes_fees_lines
                     INNER JOIN smsfee_classes_fees
-                    ON smsfee_feetypes.id = smsfee_classes_fees.fee_type_id
+                    ON smsfee_classes_fees.id = smsfee_classes_fees_lines.parent_fee_structure_id
                     WHERE  smsfee_classes_fees.academic_cal_id = """+str(cls_id)
         
         self.cr.execute(sql_fs)
@@ -168,10 +168,10 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             
             for ft in ft_ids:
                 subtype = self.pool.get('smsfee.feetypes').browse(self.cr, self.uid,ft[0]).subtype
-                sql = """SELECT sum(smsfee_studentfee.paid_amount) FROM smsfee_studentfee
-                         INNER JOIN smsfee_classes_fees
-                         ON smsfee_classes_fees.id = smsfee_studentfee.fee_type  
-                         WHERE smsfee_classes_fees.fee_type_id = """+str(ft[0])+"""
+                sql = """SELECT  COALESCE(sum(smsfee_studentfee.paid_amount),'0') FROM smsfee_studentfee
+                         INNER JOIN smsfee_classes_fees_lines
+                         ON smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type  
+                         WHERE smsfee_classes_fees_lines.fee_type = """+str(ft[0])+"""
                          AND smsfee_studentfee.state = 'fee_paid'
                          AND acad_cal_id = """+str(cls_id)+"""
                          AND smsfee_studentfee.paid_amount>0
@@ -240,11 +240,11 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             
             for ft in ft_ids:
                 sql = """SELECT sum(smsfee_studentfee.paid_amount) FROM smsfee_studentfee
-                     INNER JOIN smsfee_classes_fees
-                     ON smsfee_classes_fees.id = smsfee_studentfee.fee_type  
-                     WHERE smsfee_classes_fees.fee_type_id = """+str(ft[0])+"""
+                     INNER JOIN smsfee_classes_fees_lines
+                     ON smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type  
+                     WHERE smsfee_classes_fees_lines.fee_type = """+str(ft[0])+"""
                      AND smsfee_studentfee.state = 'fee_paid'
-                     AND acad_cal_id = """+str(cls.id)+"""
+                     AND smsfee_studentfee.acad_cal_id = """+str(cls.id)+"""
                      AND smsfee_studentfee.paid_amount>0
                      AND smsfee_studentfee.due_month = """+str(self.datas['form']['month'][0])
                 self.cr.execute(sql)
@@ -276,13 +276,10 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         ###
         mydict = {'sno':'SNO','student':'Student','father':'Father','ft1':'','ft2':'','ft3':'','ft4':'','ft5':'','other':'','total':'TOTAL','gtotal':''}
         
-        sql_fs = """ SELECT DISTINCT smsfee_feetypes.id,smsfee_feetypes.subtype  FROM smsfee_feetypes
-                     INNER JOIN smsfee_classes_fees
-                     ON smsfee_feetypes.id = smsfee_classes_fees.fee_type_id
-                     WHERE  smsfee_classes_fees.academic_cal_id = """+str(cls_id)
+        sql_fs = """ SELECT  smsfee_feetypes.id FROM smsfee_feetypes"""
         self.cr.execute(sql_fs)
-        ft_ids = self.cr.fetchall()
-        
+        ft_ids = self.cr.fetchall()        
+                
         c = 1
         for idss in ft_ids:
             ftname = self.pool.get('smsfee.feetypes').browse(self.cr, self.uid,idss[0]).name
@@ -547,7 +544,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                     if fm_id:
                         fm = self.pool.get('sms.session.months').browse(self.cr,self.uid,fm_id)
                         print "fee_month:",fm.name
-                        ft_name = ft.name+"("+str(fm.name)+")"
+                        ft_name = str(ft.name)+"("+str(fm.name)+")"
                     else:
                         ft_name = ft.name 
                     fee_dic = {'sno':'','fee':'','fee_amount':'','discount':'','paid_amount':''} 
@@ -637,27 +634,23 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 
                 j = 1
                 for month in session_months_ids:
-                    sql = """SELECT sum(fee_amount) FROM smsfee_studentfee WHERE state = 'fee_unpaid'
+                    sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
                         AND acad_cal_id = """+str(class_id)+"""
                         AND student_id = """+str(stdid)+"""
                         AND due_month = """+str(month) 
                         
                     self.cr.execute(sql)
                     amount = self.cr.fetchone()[0]
-                    if amount is None:
-                        amount = "-"
-                        mtotal = mtotal + 0
-                    else:
-                        mtotal = mtotal + int(amount)
-                        if mtotal> 0:
-                            mydict['m'+str(j)] = '{0:,d}'.format(amount) #the variable amount hold the value and '{0:,d}'.format(variable) converts it to currency format
-                            mydict_total['m'+str(j)] = '{0:,d}'.format(int((str(mydict_total['m'+str(j)])).replace(",", "")) + int(amount))
-                            mydict['session_total'] = '{0:,d}'.format(mtotal)#the variable mtotal hold the value and '{0:,d}'.format(variable) converts it to currency format
-                            mydict_total['session_total'] = '{0:,d}'.format(int((str(mydict_total['session_total'])).replace(",", "")) + int(amount)) #this is actually annual grand total of all classes for all months 
+                    mtotal = mtotal + int(amount)
+                    if mtotal> 0:
+                        mydict['m'+str(j)] = '{0:,d}'.format(amount) #the variable amount hold the value and '{0:,d}'.format(variable) converts it to currency format
+                        mydict_total['m'+str(j)] = '{0:,d}'.format(int((str(mydict_total['m'+str(j)])).replace(",", "")) + int(amount))
+                        mydict['session_total'] = '{0:,d}'.format(mtotal)#the variable mtotal hold the value and '{0:,d}'.format(variable) converts it to currency format
+                        mydict_total['session_total'] = '{0:,d}'.format(int((str(mydict_total['session_total'])).replace(",", "")) + int(amount)) #this is actually annual grand total of all classes for all months 
                     j = j +1
                 
-                sql = """SELECT sum(fee_amount) FROM smsfee_studentfee WHERE state = 'fee_unpaid'
-                    AND acad_cal_id != """+str(class_id)+"""
+                sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
+                    AND acad_cal_id not in """+str(session_months_ids)+"""
                     AND student_id = """+str(stdid)
                 self.cr.execute(sql)
                 others = self.cr.fetchone()[0]
@@ -742,7 +735,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         sql = """SELECT sum(smsfee_studentfee.paid_amount) as sum FROM smsfee_studentfee
             WHERE smsfee_studentfee.date_fee_paid >= '"""+str(this_form['from_date'])+"""'
             AND smsfee_studentfee.date_fee_paid <= '"""+str(this_form['to_date'])+"""'
-            smsfee_studentfee.state = 'fee_paid'"""
+            AND smsfee_studentfee.state = 'fee_paid'"""
         self.cr.execute(sql)
         return self.cr.fetchone()[0]                
 
@@ -755,7 +748,7 @@ report_sxw.report_sxw('report.smsfee.monthlyfeecollection.allclasses.name', 'sms
 report_sxw.report_sxw('report.smsfee.monthly.feestructure.collections.allclasses.name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_monthly_feestructure_collections_allclasses.rml',parser = smsfee_report_feereports, header='external')
 report_sxw.report_sxw('report.smsfee_students_paidfee_report_name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_students_paid_fee_report.rml',parser = smsfee_report_feereports, header='external')
 report_sxw.report_sxw('report.smsfee_defaulter_studnent_list_name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_defaulter_student_list_report.rml',parser = smsfee_report_feereports, header='external')
-report_sxw.report_sxw('report.smsfee_unpaidfee_receipt_name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_unpaid_receipts_report.rml',parser = smsfee_report_feereports, header=None)
+
 report_sxw.report_sxw('report.smsfee.dailyfee.report.name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_dailyfee_report.rml',parser = smsfee_report_feereports, header='external')
 report_sxw.report_sxw('report.smsfee.paidfee.receipt.name', 'smsfee.receiptbook', 'addons/smsfee/print_paid_receipt_individual.rml',parser = smsfee_report_feereports, header='external')
 

@@ -8,22 +8,31 @@
             <field name="name">class.fee.receipts.unpaid.form</field>
             <field name="model">class.fee.receipts.unpaid</field>
             <field name="arch" type="xml">
-                <form string="Print Fee Receipts" version="7.0">
+                <form string="Student Admission" version="7.0">
                     <group>
-					<group>
-                        <h1><field name="class_id" readonly ="1" placeholder = "Class" nolabel = "1" /></h1>
-						<newline/><field nolabel = "1" required = "1" placeholder = "Date" name="today"/>
+					<group col="6" String = "" >
+                        <h1><field name="class_id" readonly ="1" nolabel = "1" /></h1>
+						 <newline/>
+						 <div class="oe_title">
+						 <label for="due_date" class="oe_edit_only"/><field name="due_date" nolabel = "1"/>
+						 </div>
+				    </group>
+						 
                     </group>
-					<group><field  name="helptext" nolabel = "1" />
-					</group>
-					</group>
-                    <footer>
+                    <group>
+                    
+                    <ol>
+                    <li> You can print Fee Receipts for all classes From Main Menu (Fee Management).</li>
+                    <li>You can also print Fee Receipt for a single student from Fee section of student form.</li>
+                    </ol>
+                    </group>
+                     <footer>
                         <button string="Print" name="print_fee_report" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
                </form>
-            </field>
+           </field>
           </record>
 
   <!-- action Fee Reports-->

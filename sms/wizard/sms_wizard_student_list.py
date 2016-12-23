@@ -12,12 +12,16 @@ class sms_student_list(osv.osv_memory):
     _description = "will print student list"
     _columns = {
               'acad_cal':fields.many2one('sms.academiccalendar','Academic Calendar',domain = [('state','=','Active')] ),
-              'list_type': fields.selection([('class_list','Class List'),('contact_list','Contact list'),('check_admissions','Check Admissions')], 'List Type', required = True),
+              'list_type': fields.selection([('class_list','1.Class List'),('contact_list','2.Contact list'),('check_admissions','3.Check Admissions Statistics'),('biodata','4. Student Biodata'),('security_cards','5. Students Security Cards')], 'List Type', required = True),
               'start_date': fields.date('Start Date'),
+              'student_ids':fields.many2many('sms.student','sms_student_cards_rel','student_id','card_id','Students'),
               'end_date':fields.date('End Ddate'),
+              'card_display_message':fields.char('Display Text'),
               'export_to_excel':fields.boolean('Save As MS Excel File')
              }
-    _defaults = {
+    _defaults = { 'list_type': 'check_admissions',
+                 'start_date': '2007-06-07',
+                 'end_date': '2016-06-09'
            }
 
     def print_list(self, cr, uid, ids, data):
@@ -28,7 +32,13 @@ class sms_student_list(osv.osv_memory):
             report = 'sms.std_admission_statistics.name'
         
         elif listtype == 'class_list':
-            report = 'ssms.class.list.name'
+            report = 'sms.class.list.name'
+        elif listtype == 'security_cards':
+            report = 'sms_students_securuty_cards_name'
+            
+            
+        elif listtype == 'biodata':
+            report = 'sms.students.biodata'
         else:
             student_cal_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',thisform['acad_cal'].id)])
             if not student_cal_ids:

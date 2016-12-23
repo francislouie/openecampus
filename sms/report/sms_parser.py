@@ -295,7 +295,7 @@ class crossovered_analytic(report_sxw.rml_parse):
             where sms_student_subject.subject = """ + str(subject_id) + """ 
             and sms_academiccalendar_student.name = """ + str(academiccalendar_id) + """
             and sms_student.state = 'Admitted'
-            and sms_academiccalendar_student.state = 'Current'
+            and sms_academiccalendar_student.state not in( 'Suspended')
             ORDER BY sms_student.name, sms_student.father_name"""
         
         self.cr.execute(students_sql)
@@ -340,7 +340,7 @@ class crossovered_analytic(report_sxw.rml_parse):
             where sms_student_subject.subject = """ + str(subject_id) + """ 
             and sms_academiccalendar_student.name = """ + str(academiccalendar_id) + """
             and sms_student.state = 'Admitted'
-            and sms_academiccalendar_student.state = 'Current'
+            and sms_academiccalendar_student.state not in( 'Suspended')
             ORDER BY subject_status, sms_student.name, sms_student.father_name"""
         
         print students_sql
@@ -461,7 +461,7 @@ class crossovered_analytic(report_sxw.rml_parse):
                 from sms_academiccalendar_subjects
                 inner join sms_subject on
                 sms_subject.id = sms_academiccalendar_subjects.subject_id
-                where sms_academiccalendar_subjects.academic_calendar = """ + str(academiccalendar_id) + """ 
+                where offered_as != 'practical' and sms_academiccalendar_subjects.academic_calendar = """ + str(academiccalendar_id) + """ 
                 order by sms_subject.name"""
                 
             self.cr.execute(subject_sql)
@@ -477,7 +477,7 @@ class crossovered_analytic(report_sxw.rml_parse):
                         from sms_academiccalendar_subjects
                         inner join sms_subject on
                         sms_subject.id = sms_academiccalendar_subjects.subject_id
-                        where sms_academiccalendar_subjects.id = """ + str(subject_row[2]) 
+                        where offered_as != 'practical' and sms_academiccalendar_subjects.id = """ + str(subject_row[2]) 
                     
                     self.cr.execute(sql)
                     practical = self.cr.fetchone()
