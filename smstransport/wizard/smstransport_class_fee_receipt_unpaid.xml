@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-    <!-- Fee Reports -->
+    	<!-- Fee Reports -->
 
         <record id="view_fee_receipts_2" model="ir.ui.view">
             <field name="name">class.fee.receipts.unpaid.2.form</field>
@@ -17,14 +17,6 @@
 						 <label for="payment_id" class="oe_edit_only" string="Payments"/><field name="payment_id"/>
 						 </div>
 				    </group>
-						 
-                    </group>
-                    <group>
-                    
-                    <ol>
-                    <li> You can print Fee Receipts for all classes From Main Menu (Fee Management).</li>
-                    <li>You can also print Fee Receipt for a single student from Fee section of student form.</li>
-                    </ol>
                     </group>
                      <footer>
                         <button string="Print" name="print_fee_report_2" type="object" class="oe_highlight"/>
@@ -35,7 +27,7 @@
            </field>
           </record>
 
-  <!-- action Fee Reports-->
+		<!-- action Fee Reports-->
 
         <record id="action_fee_receipts_2" model="ir.actions.act_window">
             <field name="name">Print Fee Receipts</field>
@@ -45,5 +37,6 @@
            <field name="view_id" ref="view_fee_receipts_2"/>
            <field name="target">new</field>
         </record>
+
 </data>
 </openerp>
