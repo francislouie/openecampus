@@ -63,27 +63,39 @@ class transport_unpaid_fee_challans(report_sxw.rml_parse):
         #********************************************************************************************
         
         challan_list = []
-        this_form = self.datas['form']
-        print this_form
         cls_id = self.datas['form']['class_id'][0]
         challan_ids = self.pool.get('sms.transportfee.challan.book').search(self.cr, self.uid,[('student_class_id','=',cls_id),('state','=','fee_calculated')])
         if challan_ids:
-            rec_challan_ids = self.pool.get('sms.transportfee.challan.book').browse(self.cr, self.uid,challan_ids) 
+            i = 1
+            rec_challan_ids = self.pool.get('sms.transportfee.challan.book').browse(self.cr, self.uid,challan_ids)
+            challan_dict = {'banks_1':'','challan_number_1':'','candidate_info_1':'','on_accounts_1':'','total_amount_1':'','amount_in_words_1':'',
+                            'banks_2':'','challan_number_2':'','candidate_info_2':'','on_accounts_2':'','total_amount_2':'','amount_in_words_2':''}
             for challan in rec_challan_ids:
-                challan_dict = {'banks':'','challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
-                challan_dict['banks'] = self.get_banks(challan.id)
-                challan_dict['challan_number'] = self.get_challan_number(challan.id)
-                challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
-                challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
-                challan_dict['total_amount'] = self.get_total_amount(challan.id)
-                challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id)
+                if (i % 2) == 0:
+                    index = 2
+                else:
+                    index = (i % 2) 
+                challan_dict['banks_'+ str(index)] = self.get_banks(challan.id)
+                challan_dict['challan_number_'+ str(index)] = self.get_challan_number(challan.id)
+                challan_dict['candidate_info_'+ str(index)] = self.get_candidate_info(challan.student_id.id)
+                challan_dict['on_accounts_'+ str(index)] = self.get_on_accounts(challan.id)
+                challan_dict['total_amount_'+ str(index)] = self.get_total_amount(challan.id)
+                challan_dict['amount_in_words_'+ str(index)] = self.get_amount_in_words(challan.id)
+                
+                if i % 2 == 0:
+                    challan_list.append(challan_dict)
+                    challan_dict = {'banks_1':'','challan_number_1':'','candidate_info_1':'','on_accounts_1':'','total_amount_1':'','amount_in_words_1':'',
+                                    'banks_2':'','challan_number_2':'','candidate_info_2':'','on_accounts_2':'','total_amount_2':'','amount_in_words_2':''}
+                i = i + 1
+                
+            if (i-1) % 2 != 0:
                 challan_list.append(challan_dict)
-            print "get challan===================",challan_list
+                                
         return challan_list  
      
     def get_user_name(self):
         user_name = self.pool.get('res.users').browse(self.cr, self.uid, self.uid, self.context).name
-        return   user_name
+        return user_name
  
     def get_vertical_lines(self, data):
         line_dots = []
@@ -165,4 +177,4 @@ class transport_unpaid_fee_challans(report_sxw.rml_parse):
         return_value=str(amt_en).replace('Cent','Paisa')
         return return_value
      
-report_sxw.report_sxw('report.smstransport_print_one_student_per_page', 'sms.transport.fee.payments', 'addons/smstransport/report/smstransport_unpaid_receipts_report.rml',parser = transport_unpaid_fee_challans, header=None)
+report_sxw.report_sxw('report.smstransport_print_three_student_per_page', 'sms.transport.fee.payments', 'addons/smstransport/report/smstransport_print_three_student_per_page.rml',parser = transport_unpaid_fee_challans, header=None)

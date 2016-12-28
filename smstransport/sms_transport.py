@@ -362,3 +362,14 @@ class sms_session_months(osv.osv):
     
 sms_session_months()
 
+class res_company(osv.osv):
+    """This object is used to add fields in company ."""
+    _name = 'res.company'
+    _inherit ='res.company'
+    _columns = {
+                 'one_on_one':fields.boolean('1 on 1'),
+                 'three_on_one':fields.boolean('3 on 1'),
+                 }
+res_company()              
+
+
