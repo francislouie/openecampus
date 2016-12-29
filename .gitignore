@@ -4,6 +4,7 @@
 *.pydev
 *.*~
 *.po
+*.pyc
 
 account/
 account_accountant/
