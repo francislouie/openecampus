@@ -21,42 +21,17 @@ class class_fee_receipts_unpaid(osv.osv_memory):
     _defaults = {'class_id':_get_class}
     
     def create_unpaid_challans(self, cr, uid, class_id):
-        print "&&&&&&&&&&&"
         _logger.warning("Deprecated, usle c............................................................................")
         student_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',class_id[0]),('state','=','Current')])
         if student_ids:
             recstudent = self.pool.get('sms.academiccalendar.student').browse(cr,uid,student_ids)
             for student in recstudent:
-                 
-                fee_ids = self.pool.get('smsfee.studentfee').search(cr,uid,[('student_id','=',student.std_id.id),('state','=','fee_unpaid')])
-                if fee_ids:
-                    total_paybles = 0
-                    receipt_id = self.pool.get('smsfee.receiptbook').create(cr ,uid , {'student_id':student.std_id.id,'student_class_id':class_id[0],'state':'fee_calculated','receipt_date':datetime.date.today()})
-                    std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr,uid,fee_ids)
-                    if receipt_id:
-                        for unpaidfee in std_unpaid_fees:
-                            total_paybles = total_paybles + unpaidfee.fee_amount
-                            feelinesdict = {
-                            'fee_type': unpaidfee.fee_type.id,
-                            'student_fee_id': unpaidfee.id,
-                            'fee_month': unpaidfee.fee_month.id,
-                            'receipt_book_id': receipt_id,
-                            'fee_amount':unpaidfee.fee_amount,
-                            'late_fee':0,
-                            'total':unpaidfee.fee_amount}
-                            create_recbook_lines = self.pool.get('smsfee.receiptbook.lines').create(cr, uid,feelinesdict)
+                self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id[0], student.std_id.id)
         return True
     
-
-    
     def print_fee_report(self, cr, uid, ids, data):
-       
-        print "))))((((((((((((((((((((((((((((((()()))))))))))))"
-       
-        result = []
         thisform = self.read(cr, uid, ids)[0]
-        print "**********",_logger.warning('class 1111111111111111111111111111111.')
-        create_challans = self.create_unpaid_challans(cr, uid, thisform['class_id'])
+        self.create_unpaid_challans(cr, uid, thisform['class_id'])
         report = 'smsfee_unpaidfee_receipt_name'        
  
         datas = {

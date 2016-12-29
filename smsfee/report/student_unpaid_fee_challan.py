@@ -40,101 +40,14 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         today = time.strftime('%d-%m-%Y')
         return today 
      
-    def create_unpaid_challans(self, cr, uid ,class_id ,student_id):
-#        recstudent = self.pool.get('sms.academiccalendar.student').browse(self.cr ,self.uid ,student_id)
-        fee_ids = self.pool.get('smsfee.studentfee').search(self.cr ,self.uid ,[('student_id','=',student_id),('state','=','fee_unpaid')])
-        receipt_id = []
-        
-        if fee_ids:
-            
-            stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , self.ids[0])
-            challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,
-                                                                     [('student_id','=',stu_rec.id),
-                                                                      ('student_class_id','=', stu_rec.current_class.id),
-                                                                      ('state','=','fee_calculated')])
-            if challan_ids:
-                #**************get unpaid fee amount**************************************
-                receipt_total_fee = []
-                std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(self.cr ,self.uid ,fee_ids)
-                if std_unpaid_fees:
-                    current_fee_amount = 0
-                    for unpaidfee in std_unpaid_fees:
-                        current_fee_amount = current_fee_amount + unpaidfee.fee_amount
-                        
-                #**************get fee receipt unpaid fee amount**************************************
-                print "challan_ids===",challan_ids
-                for recipt in self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid, challan_ids):
-                    tlt_line_fee = 0
-                    for lines in recipt.receiptbook_lines_ids:
-    #                print lines.total
-                        tlt_line_fee =tlt_line_fee + lines.total
-     #               print "*************",tlt_line_fee
-                    receipt_total_fee.append(tlt_line_fee)
-                #**************if old_val is not equal to new_val than create reciept**************************************
-                print "receipt_total_fee-======",receipt_total_fee,"**********",current_fee_amount
-                #old_val = max(receipt_total_fee)
-                old_val = receipt_total_fee[-1]
-                if old_val != current_fee_amount:
-                    print "create challan"
-                
-                    total_paybles = 0
-                    #self.pool.get('smsfee.receiptbook').write(self.cr ,self.uid ,challan_ids, {  'state':'Cancel'    })
-                    
-                    receipt_id = self.pool.get('smsfee.receiptbook').create(self.cr ,self.uid , {'student_id':student_id,
-                                                                                                 'student_class_id':class_id,
-                                                                                                 'state':'fee_calculated',
-                                                                                                 'receipt_date':datetime.date.today()})
-                    print "receipt_id===",receipt_id
-                    std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(self.cr ,self.uid ,fee_ids)
-                    if receipt_id:
-                        for unpaidfee in std_unpaid_fees:
-                            total_paybles = total_paybles + unpaidfee.fee_amount
-                            feelinesdict = {
-                            'fee_type': unpaidfee.fee_type.id,
-                            'student_fee_id': unpaidfee.id,
-                            'fee_month': unpaidfee.fee_month.id,
-                            'receipt_book_id': receipt_id,
-                            'fee_amount':unpaidfee.fee_amount,
-                            'late_fee':0,
-                            'total':unpaidfee.fee_amount}
-                            create_recbook_lines = self.pool.get('smsfee.receiptbook.lines').create(self.cr ,self.uid,feelinesdict)
-                    
-                else:
-                    print "donot create challan"
-               #**********no challan exist create new challan************************************************* 
-            else:
-             
-             total_paybles = 0
-             receipt_id = self.pool.get('smsfee.receiptbook').create(self.cr ,self.uid , {'student_id':student_id,
-                                                                                          'student_class_id':class_id,
-                                                                                          'state':'fee_calculated',
-                                                                                          'receipt_date':datetime.date.today()})
-             print "receipt_id===",receipt_id
-             std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(self.cr ,self.uid ,fee_ids)
-             if receipt_id:
-                 for unpaidfee in std_unpaid_fees:
-                     total_paybles = total_paybles + unpaidfee.fee_amount
-                     feelinesdict = {
-                     'fee_type': unpaidfee.fee_type.id,
-                     'student_fee_id': unpaidfee.id,
-                     'fee_month': unpaidfee.fee_month.id,
-                     'receipt_book_id': receipt_id,
-                     'fee_amount':unpaidfee.fee_amount,
-                     'late_fee':0,
-                     'total':unpaidfee.fee_amount}
-                     create_recbook_lines = self.pool.get('smsfee.receiptbook.lines').create(self.cr ,self.uid,feelinesdict)
-             
-        return True 
-     
-     
     def get_challans(self, data):
         challan_list = []
         stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , self.ids[0])
         
-        
-        self.create_unpaid_challans(self.cr, self.uid ,stu_rec.current_class.id ,stu_rec.id)
+        self.pool.get('smsfee.receiptbook').check_fee_challans_issued(self.cr, self.uid ,stu_rec.current_class.id ,stu_rec.id)
         
         challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=', stu_rec.current_class.id),
+                                                                                    ('student_id','=', stu_rec.id),
                                                                                     ('state','=','fee_calculated')])
         if challan_ids:
             rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
