@@ -271,11 +271,28 @@
 			  </header>
 				<notebook>
 				<page string = "Fee Management">
-		    	 <group><field name="class_forcasted_fee" readonly ="1"/><field name="class_fee_received" readonly ="1"/></group>
-		    	  <group><field name="recovery_ratio" readonly ="1"/></group>
-					
+		    	 <group>
+						<group>
+							<field name="class_forcasted_fee" readonly ="1"/>
+							<field name="class_fee_received" readonly ="1"/>
+						</group>
+		    	  		<group>
+							<h1><field name="recovery_ratio" nolabel="1" readonly ="1"/></h1>
+						</group>
+					</group>
 						<notebook>
-						<page string = "Fee Structure"><field name="fee_structures"/></page>
+						<page string = "Fee Structure">
+						<field name="fee_structures" widget="one2many_list" readonly="1">
+							<tree string = "Click to see details" delete="false">
+								<field name="name" />
+								<field name="focasted_amount" />
+								<field name="collected_amout" />
+								<field name="no_of_students" />
+								<field name="active"/>
+							</tree>
+
+						</field>
+						</page>
 						<page readonly = "1" string = "Fee Register"><field name="fee_register" readonly ="1"/></page>
 						</notebook>
 			    </page>
@@ -329,15 +346,15 @@
          <field name="arch" type="xml">
            <form string="Classes Fee" version="7.0">
  			 <sheet>
-					<group>
+					<group string = "Class Fee Structure">
 						<group>
-						<field name="fee_structure_id" required = "1"/>
+						<field name="name" required = "1"/>
 						<field name="active"/>
 						</group>
 						<group>
 						<field name="focasted_amount"/>
 						<field name="collected_amout"/>
-						<p><strong>Fee Structure for Student Admission</strong></p>
+						<field name="id" string = "#"/>
 						</group>
 					</group>
 						<field name="fee_type_ids"  nolabel="1"  />

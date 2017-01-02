@@ -5,6 +5,7 @@ import datetime
 import time
 import xlwt
 import xlrd
+import math
 
 
 
@@ -307,10 +308,10 @@ class sms_academiccalendar(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
              if f.class_forcasted_fee:
-                 recovery = (f.class_fee_received*100)/f.class_forcasted_fee
+                 recovery = math.ceil((f.class_fee_received*100)/f.class_forcasted_fee)
              else:
                  recovery = 0
-             result[f.id] = recovery
+             result[f.id] = str(recovery)+"%"
         return result
     
     _name = 'sms.academiccalendar'
@@ -326,7 +327,7 @@ class sms_academiccalendar(osv.osv):
             'fee_register':fields.one2many('smsfee.classfees.register','academic_cal_id','Register'),
             'class_forcasted_fee':fields.function(_calculate_class_forecasted_fee, method=True,  string='Fee Forecasted',type='float'),
             'class_fee_received':fields.function(_calculate_class_paid_fee, method=True,  string='Fee Received',type='float'),
-            'recovery_ratio':fields.function(_calculate_calculate_recovery, method=True,  string='Recovery(%)',type='float'),
+            'recovery_ratio':fields.function(_calculate_calculate_recovery, method=True,  string='Recovery(%)',type='char'),
             'annaul_fs_id':fields.many2one('smsfee.festructure.revision','Annual Fee Register'),
     }
        
@@ -426,9 +427,7 @@ class smsfee_classes_fees(osv.osv):
     def _set_name(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-             for fee_type_lines in f.fee_type_ids:
-                 ftyps = fee_type_lines.fee_type.name
-                 result[f.id] = str(ftyps)
+                 result[f.id] = str(f.fee_structure_id.name)
         return result
     
     def update_if_exists_or_create_ft(self, cr, uid,ids, parent_fs, fee_type,amount):
@@ -486,6 +485,16 @@ class smsfee_classes_fees(osv.osv):
                  row = cr.fetchone()
                  total = total + row[0]
             result[f.id] = total
+        return result
+    
+    def get_fs_std_qty(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+             sql = """SELECT COALESCE(count(id),'0') from sms_student
+                      WHERE current_class = """+str(f.academic_cal_id.id)+""" AND fee_type = """+str(f.fee_structure_id.id)
+             cr.execute(sql)
+             row = cr.fetchone()
+             result[f.id] = int(row[0])
         return result 
 
     
@@ -501,6 +510,7 @@ class smsfee_classes_fees(osv.osv):
         'active':fields.boolean('Active'),
         'academic_cal_id': fields.many2one('sms.academiccalendar','Academic Calendar',required = True),      
         'fee_structure_id': fields.many2one('sms.feestructure','Fee Structure',required = True),
+        'no_of_students':fields.function(get_fs_std_qty, method=True,  string='Applies on (#Students)',type='integer'),
         'focasted_amount':fields.function(forcasted_amount, method=True,  string='Forcasted',type='float'),
         'collected_amout':fields.function(collected_amout, method=True,  string='Collection',type='float'),
     }
@@ -1019,7 +1029,6 @@ class smsfee_receiptbook(osv.osv):
     """ A fee receopt book, stores fee payments history of students """
     
     def create(self, cr, uid, vals, context=None, check=True):
-        
         rec =  self.pool.get('sms.student').browse(cr,uid,vals['student_id'])
 #         slipno = self._set_slipno(self, cr, uid, None)
         vals['student_class_id'] = rec.current_class.id,

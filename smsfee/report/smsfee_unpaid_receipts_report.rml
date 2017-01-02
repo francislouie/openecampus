@@ -208,7 +208,7 @@
 				<blockTable colWidths="32" style="">
 				<tr>
 					<td>
-					<para style="P2">[[repeatIn(get_vertical_lines_total(data),'s')]]</para>
+					<para style="P2">[[repeatIn(get_vertical_lines_total(data['form']),'s')]]</para>
 	          		<para style="P2-White">[[(s['line-style'])]]</para>
 	        		</td>
 	      		</tr>
@@ -241,7 +241,7 @@
 			<blockTable colWidths="32" style="">
 			<tr>
 				<td>
-				<para style="P2">[[repeatIn(get_vertical_lines(data),'s')]]</para>
+				<para style="P2">[[repeatIn(get_vertical_lines(data['form']),'s')]]</para>
           		<para style="P2">[[(s['line-style'])]]</para>
         		</td>
       		</tr>
@@ -331,7 +331,7 @@
 				<blockTable colWidths="32" style="">
 				<tr>
 					<td>
-					<para style="P2">[[repeatIn(get_vertical_lines_total(data),'s')]]</para>
+					<para style="P2">[[repeatIn(get_vertical_lines_total(data['form']),'s')]]</para>
 	          		<para style="P2-White">[[(s['line-style'])]]</para>
 	        		</td>
 	      		</tr>
@@ -364,7 +364,7 @@
           	<blockTable colWidths="52" style="">
       		<tr>
         		<td>
-          		<para style="P2">[[repeatIn(get_vertical_lines(data),'s')]]</para>
+          		<para style="P2">[[repeatIn(get_vertical_lines(data['form']),'s')]]</para>
           		<para style="P2">[[(s['line-style'])]]</para>
         		</td>
       		</tr>
@@ -454,7 +454,7 @@
 				<blockTable colWidths="32" style="">
 				<tr>
 					<td>
-					<para style="P2">[[repeatIn(get_vertical_lines_total(data),'s')]]</para>
+					<para style="P2">[[repeatIn(get_vertical_lines_total(data['form']),'s')]]</para>
 	          		<para style="P2-White">[[(s['line-style'])]]</para>
 	        		</td>
 	      		</tr>
