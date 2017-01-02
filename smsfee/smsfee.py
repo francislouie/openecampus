@@ -7,10 +7,6 @@ import xlwt
 import xlrd
 import math
 
-
-
-
-
 class res_company(osv.osv):
     """This object inherits res company adds fields related to accounts ."""
     _name = 'res.company'
