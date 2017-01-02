@@ -200,5 +200,15 @@
             rml="sms/report/rml_report_class_datesheet.rml"
             string="Class Datesheet "/>   
             
+        <!-- Sale Invoice Report Declaration -->
+		<report id="report_sale_invoice_print_id"
+            model="account.invoice"
+            name="sale_invoice_print_receipt"
+            multi="True"
+            rml="sms/report/sale_invoice_report_print.rml"
+            string="Sale Invoice Report"
+            />   
+              
+        
    </data>
 </openerp>

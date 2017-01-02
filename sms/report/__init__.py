@@ -29,5 +29,6 @@ import sms_report_requested_certificate_form
 import sms_dmc_format2_parser
 import sms_report_datesheet
 import sms_report_class_datesheet
+import sale_invoice_print
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

@@ -95,24 +95,23 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             challan_dict['amount_in_words'] = return_value
             challan_list.append(challan_dict)                     
         else:
+            this_form = self.datas['form']
             cls_id = self.datas['form']['class_id'][0]
-            student_ids = self.pool.get('sms.academiccalendar.student').search(self.cr, self.uid,[('name','=',cls_id),('state','=','Current')])
-            if student_ids:
-                recstudent = self.pool.get('sms.academiccalendar.student').browse(self.cr, self.uid,student_ids)
-                for student in recstudent:
-                    challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_id','=',student.std_id.id),('student_class_id','=',cls_id),('state','=','fee_calculated')]) 
-                    if challan_ids:
-                        rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
-                        for challan in rec_challan_ids:
-                            challan_dict = {'banks':'','challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
-                            challan_dict['banks'] = self.get_banks(challan.id)
-                            challan_dict['challan_number'] = self.get_challan_number(challan.id)
-                            challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
-                            challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
-                            challan_dict['total_amount'] = self.get_total_amount(challan.id)
-                            challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id)
-                            challan_list.append(challan_dict)
-        print len(challan_list)
+            challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=',cls_id),('state','=','fee_calculated')]) 
+            if challan_ids:
+                rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
+                for challan in rec_challan_ids:
+                    challan_dict = {'banks':'','challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
+                    challan_dict['banks'] = self.get_banks(challan.id)
+                    challan_dict['challan_number'] = self.get_challan_number(challan.id)
+                    challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
+                    challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
+                    challan_dict['total_amount'] = self.get_total_amount(challan.id)
+                    challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id)
+                    challan_list.append(challan_dict)
+                print "get challan===================",challan_list
+                
+        
         return challan_list  
      
     def get_user_name(self):
@@ -121,7 +120,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
  
     def get_vertical_lines(self, data):
         line_dots = []
-        for num in range(1,10):
+        for num in range(1,47):
             dict = {'line-style':'|'}
             line_dots.append(dict)
         return line_dots
@@ -129,9 +128,10 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
     def get_vertical_lines_total(self, data):
         line_dots = []
         challan = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data)
-#        start = len(challan.receiptbook_lines_ids)
+#         start = len(challan.receiptbook_lines_ids)
+        
         start = 5
-        if start >=10:
+        if start >=47:
             dict = {'line-style':'|'}
             line_dots.append(dict)
         else:
@@ -177,10 +177,10 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         lines_ids = self.pool.get('smsfee.receiptbook.lines').search(self.cr,self.uid, [('receipt_book_id','=',data)])
         #print "++++++++",     
         if lines_ids:
-            challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr,self.uid,lines_ids)
+             challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr,self.uid,lines_ids)
         for challan in challans:
-            dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
-            result.append(dict) 
+             dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
+             result.append(dict) 
         return result
      
     def get_total_amount(self, data):

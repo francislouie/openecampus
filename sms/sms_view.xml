@@ -1200,7 +1200,15 @@
 			</group>  
 		   </page>
 			<page string="Students">
-			<field name="acad_cal_students" readonly="1"/>
+			<field name="acad_cal_students" widget="one2many_list" readonly="1">
+
+			<tree delete="false">
+								<field name="std_id" />
+								<field name="latest_fee_month" string="Project/Milestone" />
+								<field name="state" string = "Task/Site" />
+								<field name="id" string="File#" />
+							</tree>
+			</field>
 			</page>
 		  <page string="Subjects">
 		 		<field name="assigned_subjects"  attrs="{'readonly':[('state','=','Complete')]}" />
