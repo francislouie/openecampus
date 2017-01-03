@@ -71,7 +71,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             info_dict = {'name':rec.name,'father_name':rec.father_name,'Class':rec.student_class.name,'semester':''}
             
             fee_res = []
-            challan_dict = {'banks':'','challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
+            challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
             for fee in rec.fee_ids  :
                 fee_name = str(fee.name.name)+"  "+str(fee.fee_month.name)
                 dict = {'head_name':fee_name,'head_amount':fee.amount}
@@ -79,7 +79,6 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                 tlt_amount = tlt_amount+fee.amount
                 
                             
-            challan_dict['banks'] = '--'
             challan_dict['challan_number'] = rec.registration_no
             challan_dict['candidate_info'] =  [info_dict]
             challan_dict['on_accounts'] = fee_res
@@ -101,8 +100,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
-                    challan_dict = {'banks':'','challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
-                    challan_dict['banks'] = self.get_banks(challan.id)
+                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
                     challan_dict['challan_number'] = self.get_challan_number(challan.id)
                     challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                     challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
@@ -120,7 +118,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
  
     def get_vertical_lines(self, data):
         line_dots = []
-        for num in range(1,47):
+        for num in range(1,30):
             dict = {'line-style':'|'}
             line_dots.append(dict)
         return line_dots
@@ -129,9 +127,8 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         line_dots = []
         challan = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data)
 #         start = len(challan.receiptbook_lines_ids)
-        
         start = 5
-        if start >=47:
+        if start >=14:
             dict = {'line-style':'|'}
             line_dots.append(dict)
         else:
@@ -140,15 +137,12 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                 line_dots.append(dict)
         return line_dots    
      
-    def get_banks(self, data):
-        print "get banks",data
-#         banks = []
-#         challan = self.pool.get('cms.challan').browse(self.cr,self.uid,form['challan_id'])
-#         for category in challan.challan_banks:
-#             dict = {'bank_name':category.name.name}
-#             banks.append(dict) 
-#         return banks
-        return '--'
+    def get_banks(self):
+        banks_ids = self.pool.get('res.company').search(self.cr,self.uid,[])
+        banks_recs = self.pool.get('res.company').browse(self.cr,self.uid,banks_ids)
+        for rec in banks_recs:
+            bank = rec.fee_reception_account_bank.name + rec.fee_reception_account_bank.code 
+        return bank
  
     def get_challan_number(self, data):
         line_dots = []
