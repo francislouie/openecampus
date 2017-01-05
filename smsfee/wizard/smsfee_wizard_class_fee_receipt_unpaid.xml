@@ -10,22 +10,23 @@
             <field name="arch" type="xml">
                 <form string="Student Admission" version="7.0">
                     <group>
+                    <h1><field name="class_id" readonly ="1" nolabel = "1" /></h1>
 					<group col="6" String = "" >
-                        <h1><field name="class_id" readonly ="1" nolabel = "1" /></h1>
-						 <newline/>
-						 <div class="oe_title">
-						 <label for="due_date" class="oe_edit_only"/><field name="due_date" nolabel = "1"/>
-						 </div>
+						 <field name="due_date" />
 				    </group>
 						 
                     </group>
                     <group>
                     
                     <ol>
-                    <li> You can print Fee Receipts for all classes From Main Menu (Fee Management).</li>
-                    <li>You can also print Fee Receipt for a single student from Fee section of student form.</li>
+                    <li><p>You can print Fee challan for an individual student from student Form.</p></li>
+                    <li><p>To Cancel a challan, goto <strong>Open Challans</strong> under <strong>Fee Management</strong> menu.</p></li>
+                    <li><p><font color = "red">Generating New Fee Challan will cancel all previous unpaid challans</font></p></li>
+                    
                     </ol>
+                   
                     </group>
+                     
                      <footer>
                         <button string="Print" name="print_fee_report" type="object" class="oe_highlight"/>
                         or
@@ -38,7 +39,7 @@
   <!-- action Fee Reports-->
 
         <record id="action_fee_receipts" model="ir.actions.act_window">
-            <field name="name">Print Fee Receipts</field>
+            <field name="name">Generate and Print Fee challans for this class</field>
             <field name="res_model">class.fee.receipts.unpaid</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
