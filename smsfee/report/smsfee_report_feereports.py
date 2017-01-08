@@ -265,38 +265,52 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         result.append(mydict_total)
         return result
 #---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    #Report 4
     def students_paidfee_report(self, data):                                                         
         result = []
         ####
         this_form = self.datas['form']
         cls_id = this_form['class_id'][0]
+        class_rec = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,cls_id)
+        session_id = class_rec.session_id.id
         std_ids = self.pool.get('sms.student').search(self.cr, self.uid,[('current_class', '=', cls_id)])
         students_rec = self.pool.get('sms.student').browse(self.cr, self.uid,std_ids)
+        #session and its months
+        month_ids = self.pool.get('sms.session.months').search(self.cr, self.uid,[('session_id', '=', session_id)],order = 'id')
+        cal_months = self.pool.get('sms.session.months').browse(self.cr, self.uid,month_ids)
+#         cal_month_id = cal_month.session_month_id.id
         
         ###
-        mydict = {'sno':'SNO','student':'Student','father':'Father','ft1':'','ft2':'','ft3':'','ft4':'','ft5':'','other':'','total':'TOTAL','gtotal':''}
+        mydict = {'sno':'SNO','reg_no':'Reg No.','student':'Student','father':'Father','ft1':'','ft2':'','ft3':'','ft4':'','ft5':'','ft6':'','ft7':'','ft8':'','ft9':'','ft10':'','ft11':'','ft12':'','other':'','total':'TOTAL','gtotal':''}
         
-        sql_fs = """ SELECT  smsfee_feetypes.id FROM smsfee_feetypes"""
+        sql_fs = """ SELECT  smsfee_feetypes.id FROM smsfee_feetypes where subtype in('Monthly_Fee','at_admission','Annual_fee','Refundable')"""
         self.cr.execute(sql_fs)
         ft_ids = self.cr.fetchall()        
                 
         c = 1
         for idss in ft_ids:
-            ftname = self.pool.get('smsfee.feetypes').browse(self.cr, self.uid,idss[0]).name
-            mydict['ft'+str(c)] = ftname
+            rec_ft = self.pool.get('smsfee.feetypes').browse(self.cr, self.uid,idss[0])
+            if rec_ft.subtype == 'at_admission':
+                mydict['admission_fee'] = rec_ft.name
+            if rec_ft.subtype == 'Annual_fee':
+                mydict['annual_fee'] = rec_ft.name
+            if rec_ft.subtype == 'Refundable':
+                mydict['security'] = rec_ft.name
+            #furbish monthly fees
+            if rec_ft.subtype == 'Monthly_Fee':
+                m = 1
+                for this_month in cal_months:
+                    mydict['ft'+str(m)] = this_month.short_name[:3].upper()
+                    m = m+1
             c= c + 1
         result.append(mydict)
         ############################################################################################################################
         
-        cal_month = self.pool.get('sms.session.months').browse(self.cr, self.uid,self.datas['form']['month'][0])
-        cal_month_id = cal_month.session_month_id.id
-        cal_year = cal_month.session_year
-        month_end =str(cal_year)+"/"+str(self.pool.get('sms.session.months').get_month_end_date(self.cr, self.uid,cal_month_id,cal_year))
-        month_start = str(cal_year)+"/"+str(cal_month_id)+"/01"
+       
         
         i = 1
         #grand_total = 0
-        mydict_total = {'sno':'Total','class':'-','ft1':0,'ft2':0,'ft3':0,'ft4':0,'ft5':0,'other':0,'total':0}   
+        mydict = {'sno':'SNO','reg_no':'Reg No.','student':'Student','father':'Father','ft1':'','ft2':'','ft3':'','ft4':'','ft5':'','ft6':'','ft7':'','ft8':'','ft9':'','ft10':'','ft11':'','ft12':'','other':'','total':'TOTAL','gtotal':''}   
         for student in students_rec:
             mydict = {'sno':'SNO','student':'Student','father':'Father','ft1':'','ft2':'','ft3':'','ft4':'','ft5':'','other':'','total':float(0)}
             mydict['student'] = student.name
@@ -312,19 +326,17 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                          WHERE smsfee_classes_fees.fee_type_id = """+str(ft[0])+"""
                          AND smsfee_studentfee.student_id = """+str(student.id)+"""
                          AND smsfee_studentfee.acad_cal_id = """+str(cls_id)+"""
-                         AND smsfee_studentfee.due_month = """+str(self.datas['form']['month'][0])
+                         AND smsfee_studentfee.fee_month = """+str(self.datas['form']['month'][0])
                 
                 self.cr.execute(sql)
                 rows = self.cr.fetchone()
                 if rows: #if rows is not empty ie not none and contains a list
-                    amount = rows[0] #then assign the value at index 0 of rows list
-                    if amount is None and not rows[1]=='fee_paid':#if the assigned value to amount is None and not the value at index 1 of rows list then assign 0 to amount
-                        amount  = int(0)
+                    amount = int(rows[0]) #then assign the value at index 0 of rows list
                     mydict['ft'+str(j)] = '{0:,d}'.format(amount)#if the value at index [0] assigned to amount fails to satisfy this condition "if amount is None and not rows[1]" then assign it to ft1, ft2..etc 
-                    mydict_total['ft'+str(j)] = '{0:,d}'.format(int((str(mydict_total['ft'+str(j)])).replace(",", "")) + int(amount))
+#                     mydict_total['ft'+str(j)] = '{0:,d}'.format(int((str(mydict_total['ft'+str(j)])).replace(",", "")) + int(amount))
                     ft_total = int(ft_total) + int(amount)
-                    mydict['total'] = '{0:,d}'.format(ft_total)
-                    mydict_total['total'] = '{0:,d}'.format(int((str(mydict_total['total'])).replace(",", "")) + int(ft_total))
+#                     mydict['total'] = '{0:,d}'.format(ft_total)
+#                     mydict_total['total'] = '{0:,d}'.format(int((str(mydict_total['total'])).replace(",", "")) + int(ft_total))
                     
                     #grand_total = grand_total + ft_total
                        
@@ -336,7 +348,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             i = i + 1
             result.append(mydict)
             #mydict['gtotal'] = grand_total
-        result.append(mydict_total)
+        #result.append(mydict_total)
         return result
     
 #--------------------------------------------------------------------------------------------------------------------------------------------------------    

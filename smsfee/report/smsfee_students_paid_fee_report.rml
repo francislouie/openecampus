@@ -94,17 +94,25 @@
 	<tr><td><para style="para_title"></para></td></tr>
    	<tr><td></td></tr>
     <tr><td><para style="para_1">[[ repeatIn(students_paidfee_report('Form'),'r') ]]</para>
-   	<blockTable colWidths="35.0,95.0,57.0,57.0,57.0,57.0,57.0,57.0,57.0" repeatRows="1" style="Table2">
+   	<blockTable colWidths="35.0,95.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0.50.0" repeatRows="1" style="Table2">
       <tr>
 		<td><para style="para_heading2">[[ r['sno'] ]]</para></td>
         <td><para style="para_heading2">[[ r['student'] ]]</para></td>
+        <td><para style="para_heading">[[ r['admission_fee'] ]]</para></td>
+        <td><para style="para_heading">[[ r['annual_fee'] ]]</para></td>
+        <td><para style="para_heading">[[ r['security'] ]]</para></td>
         <td><para style="para_heading">[[ r['ft1'] ]]</para></td>
         <td><para style="para_heading">[[ r['ft2'] ]]</para></td>
-        <td><para style="para_heading">[[ r['ft3'] ]]</para></td>
-        <td><para style="para_heading">[[ r['ft4'] ]]</para></td>
-        <td><para style="para_heading">[[ r['ft5'] ]]</para></td>
-		<td><para style="para_heading">[[ r['other'] ]]</para></td>
-        <td><para style="bold_column">[[ r['total'] ]]</para></td>
+		<td><para style="para_heading">[[ r['ft3'] ]]</para></td>
+        <td><para style="bold_column">[[ r['ft4'] ]]</para></td>
+        <td><para style="bold_column">[[ r['ft5'] ]]</para></td>
+         <td><para style="para_heading">[[ r['ft6'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft7'] ]]</para></td>
+		<td><para style="para_heading">[[ r['ft8'] ]]</para></td>
+        <td><para style="bold_column">[[ r['ft9'] ]]</para></td>
+         <td><para style="para_heading">[[ r['ft10'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft11'] ]]</para></td>
+		<td><para style="para_heading">[[ r['ft12'] ]]</para></td>
       </tr>
 	
     </blockTable>

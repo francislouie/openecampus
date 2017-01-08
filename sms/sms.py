@@ -473,6 +473,12 @@ class sms_session_months(osv.osv):
                 result[f.id] = str(f.session_month_id.name) + "-" + str(f.session_year) 
         return result
     
+    def _set_short_name(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+                result[f.id] = str(f.session_month_id.name[:3]).upper() + "-" + str(f.session_year) 
+        return result
+    
     def is_leap_year(self,year):
         year = int(year)
         if year % 100 != 0 and year % 4 == 0:
@@ -521,6 +527,7 @@ class sms_session_months(osv.osv):
     _description = "stores months of a session"
     _columns = {
         'name':fields.function(_set_name, method=True, store = True, size=256, string='Code',type='char'), 
+        'short_name':fields.function(_set_short_name, method=True,  size=256, string='Code',type='char'), 
         'session_id':fields.many2one('sms.session', 'session'),
         'session_month_id': fields.many2one('sms.month', 'Month'),
         'session_year': fields.char('Year'),  
