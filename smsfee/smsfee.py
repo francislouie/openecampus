@@ -18,6 +18,8 @@ class res_company(osv.osv):
     'student_fee_expense_acc': fields.many2one('account.account', 'Fee Expense Account',  ondelete="cascade"),
     'fee_reception_account_cash': fields.many2one('account.account', 'Fee Cash Account', ondelete="cascade"), 
     'fee_reception_account_bank': fields.many2one('account.account', 'Fee Bank Account', ondelete="cascade"), 
+     'one_on_one':fields.boolean('One Student Per Page'),
+     'three_on_one':fields.boolean('Two Students Per Page'),
     }
     _defaults = {
     }

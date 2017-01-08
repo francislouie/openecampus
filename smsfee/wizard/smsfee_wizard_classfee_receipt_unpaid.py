@@ -28,24 +28,52 @@ class class_fee_receipts_unpaid(osv.osv_memory):
             for student in recstudent:
                 self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id[0], student.std_id.id)
         return True
+
+    def check_challan_print_type(self, cr, uid, thisform):
+        challan_type = self.pool.get('res.company').search(cr, uid, [])
+        challan_type = self.pool.get('res.company').browse(cr, uid, challan_type)
+        for obj in challan_type:
+            if obj.one_on_one:
+                return 'print_one_on_one'
+            else:
+                return 'print_three_on_one'
+        return True
     
-    def print_fee_report(self, cr, uid, ids, data):
+    
+    def print_fee_report_challan(self, cr, uid, ids, data):
+        
         thisform = self.read(cr, uid, ids)[0]
-        self.create_unpaid_challans(cr, uid, thisform['class_id'])
-        report = 'smsfee_unpaidfee_receipt_name'        
- 
-        datas = {
-             'ids': [],
-             'active_ids': '',
-             'model': 'smsfee.classfees.register',
-             'form': self.read(cr, uid, ids)[0],
-        }
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name':report,
-            'datas': datas,
-        }
-                
+        checking_challan = self.check_challan_print_type(cr, uid, thisform)
+        if checking_challan == 'print_three_on_one':
+            thisform = self.read(cr, uid, ids)[0]
+            self.create_unpaid_challans(cr, uid, thisform['class_id'])
+            report = 'smsfee_print_three_student_per_page'
+            datas = {
+                 'ids': [],
+                 'active_ids': '',
+                 'model': 'smsfee.classfees.register',
+                 'form': self.read(cr, uid, ids)[0],
+                 }
+            return {
+                'type': 'ir.actions.report.xml',
+                'report_name':report,
+                'datas': datas,
+                }
+        else:
+            thisform = self.read(cr, uid, ids)[0]
+            self.create_unpaid_challans(cr, uid, thisform['class_id'])
+            report = 'smsfee_print_one_student_per_page'        
+            datas = {
+                 'ids': [],
+                 'active_ids': '',
+                 'model': 'smsfee.classfees.register',
+                 'form': self.read(cr, uid, ids)[0],
+                 }
+            return {
+                'type': 'ir.actions.report.xml',
+                'report_name':report,
+                'datas': datas,
+                }
 class_fee_receipts_unpaid()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

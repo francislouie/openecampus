@@ -23,6 +23,10 @@
 							 <field name="student_fee_expense_acc"   attrs="{'required':[('enable_fm','=',True)]}"  domain="[('type','=','other')]"/>
 						     <field name="fee_reception_account_bank" attrs="{'required':[('enable_fm','=',True)]}"   colspan ="4" domain="[('type','=','liquidity')]"/>
 							</group>	
+							<group>
+							 <field name="one_on_one"/>
+						     <field name="three_on_one"/>
+							</group>	
 					      </group>
 		          	</page>
 				   </notebook>

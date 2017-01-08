@@ -28,7 +28,7 @@
                     </group>
                      
                      <footer>
-                        <button string="Print" name="print_fee_report" type="object" class="oe_highlight"/>
+                        <button string="Print" name="print_fee_report_challan" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
