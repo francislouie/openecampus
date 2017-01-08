@@ -125,9 +125,12 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
      
     def get_vertical_lines_total(self, data):
         line_dots = []
-        challan = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data)
-#         start = len(challan.receiptbook_lines_ids)
-        start = 5
+        challan_idd = []
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=',data['form']['class_id'][0]),('state','=','fee_calculated')])
+        for iddd in challan_ids:
+            challan = self.pool.get('smsfee.receiptbook.lines').search(self.cr, self.uid, [('receipt_book_id','=',iddd)])
+            challan_idd.append(challan)
+        start = len(challan_idd)
         if start >=14:
             dict = {'line-style':'|'}
             line_dots.append(dict)
