@@ -14,24 +14,25 @@
 			<setFont name="Helvetica-Bold" size="9" />
 			<setFont name="Helvetica" size="9" />
 
-			<drawString x="200" y="580">Date : [[ get_today() ]]</drawString>
-			<drawString x="495" y="580">Date : [[ get_today() ]]</drawString>
-			<drawString x="770" y="580">Date : [[ get_today() ]]</drawString>
+			<drawString x="180" y="580">Date : [[ get_today() ]]</drawString>
+			<drawString x="475" y="580">Date : [[ get_today() ]]</drawString>
+			<drawString x="750" y="580">Date : [[ get_today() ]]</drawString>
+
+			<setFont name="Helvetica" size="9"/>
+
+           	<drawString x="002" y="40">Bank Name: [[ get_banks() ]]</drawString>
+			<drawString x="300" y="40">Bank Name: [[ get_banks() ]]</drawString>
+			<drawString x="600" y="40">Bank Name: [[ get_banks() ]]</drawString>
 
 			<setFont name="Helvetica" size="7"/>
 
-           	<drawString x="115" y="15">Depositor's Signature: _____________________</drawString>
-			<drawString x="410" y="15">Depositor's Signature: _____________________</drawString>
-			<drawString x="700" y="15">Depositor's Signature: _____________________</drawString>
+           	<drawString x="115" y="20">Depositor's Signature: _____________________</drawString>
+			<drawString x="410" y="20">Depositor's Signature: _____________________</drawString>
+			<drawString x="700" y="20">Depositor's Signature: _____________________</drawString>
 
-           	<drawString x="002" y="15">Printed by: [[ get_user_name() ]]</drawString>
-			<drawString x="300" y="15">Printed by: [[ get_user_name() ]]</drawString>
-			<drawString x="600" y="15">Printed by: [[ get_user_name() ]]</drawString>
-
-			<setFont name="Helvetica" size="9"/>
-           	<drawString x="100" y="8">[[ get_banks() ]]</drawString>
-			<drawString x="398" y="8">[[ get_banks() ]]</drawString>
-			<drawString x="698" y="8">[[ get_banks() ]]</drawString>
+           	<drawString x="002" y="20">Printed by: [[ get_user_name() ]]</drawString>
+			<drawString x="300" y="20">Printed by: [[ get_user_name() ]]</drawString>
+			<drawString x="600" y="20">Printed by: [[ get_user_name() ]]</drawString>
 
            	<lineMode width="0.7" />
            	<lines>1cm 27.7cm 20cm 27.7cm</lines>
@@ -87,7 +88,7 @@
     <paraStyle name="P3" fontName="Helvetica" fontSize="8.0" leading="9" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
     <paraStyle name="P4" fontName="Helvetica" fontSize="9.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P4-Bold" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P4-Bold-Right" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P4-Bold-Right" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P5" fontName="Helvetica" fontSize="8.0" leading="9" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P6" fontName="Helvetica" fontSize="8.0" leading="9" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P7" fontName="Helvetica" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
@@ -165,11 +166,7 @@
 		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Class:</para></td>
-						<td><para style="P4">[[(r['Class'])]]</para></td>
-		      		</tr>
-		      		<tr>
-		        		<td><para style="P4-Bold">Group:</para></td>
-						<td><para style="P4">[[(r['semester'])]]</para></td>
+						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -180,7 +177,7 @@
 	          		<blockTable colWidths="200.0,60.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">On Account of:</para></td>
-						<td><para style="P4-Bold">Ruppees</para></td>
+						<td><para style="P4-Bold-Right">Amount</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -284,11 +281,7 @@
 		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Class:</para></td>
-						<td><para style="P4">[[(r['Class'])]]</para></td>
-		      		</tr>
-		      		<tr>
-		        		<td><para style="P4-Bold">Group:</para></td>
-						<td><para style="P4">[[(r['semester'])]]</para></td>
+						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -298,7 +291,7 @@
 	          		<blockTable colWidths="200.0,60.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">On Account of:</para></td>
-						<td><para style="P4-Bold">Ruppees</para></td>
+						<td><para style="P4-Bold-Right">Amount</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -401,11 +394,7 @@
 		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Class:</para></td>
-						<td><para style="P4">[[(r['Class'])]]</para></td>
-		      		</tr>
-		      		<tr>
-		        		<td><para style="P4-Bold">Group:</para></td>
-						<td><para style="P4">[[(r['semester'])]]</para></td>
+						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -415,7 +404,7 @@
 	          		<blockTable colWidths="200.0,60.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">On Account of:</para></td>
-						<td><para style="P4-Bold">Ruppees</para></td>
+						<td><para style="P4-Bold-Right">Amount</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -486,5 +475,3 @@
 
 </story>
 </document>
-
-
