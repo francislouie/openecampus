@@ -33,12 +33,17 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             'get_on_accounts':self.get_on_accounts,
             'get_total_amount':self.get_total_amount,
             'get_amount_in_words':self.get_amount_in_words,
+            'get_due_date':self.get_due_date,
          })
         self.context = context
      
     def get_today(self):
         today = time.strftime('%d-%m-%Y')
         return today 
+
+    def get_due_date(self):
+        due_date = self.datas['form']['due_date']
+        return due_date 
      
     def get_challans(self, data):
         challan_list = []
@@ -56,14 +61,12 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                 challan_dict['challan_number'] =  self.get_challan_number(challan.id)
                 challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                 if self.get_on_accounts(challan.id) == []:
-                    print "*************"
                     challan_dict['on_accounts'] =  ' '
                 else:
                     challan_dict['on_accounts'] =  self.get_on_accounts(challan.id)
                 challan_dict['total_amount'] =  self.get_total_amount(challan.id)
                 challan_dict['amount_in_words'] =   self.get_amount_in_words(challan.id)
                 challan_list.append(challan_dict)
-                
         return challan_list  
      
     def get_user_name(self):
@@ -72,16 +75,20 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
  
     def get_vertical_lines(self, data):
         line_dots = []
-        for num in range(1,20):
+        for num in range(1,30):
             dict = {'line-style':'|'}
             line_dots.append(dict)
         return line_dots
      
     def get_vertical_lines_total(self, data):
         line_dots = []
-        challan = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data)
-#         start = len(challan.receiptbook_lines_ids)
-        start = 5
+        challan_idd = []
+        stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , self.ids[0])
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=',stu_rec.current_class.id),('state','=','fee_calculated')])
+        for iddd in challan_ids:
+            challan = self.pool.get('smsfee.receiptbook.lines').search(self.cr, self.uid, [('receipt_book_id','=',iddd)])
+            challan_idd.append(challan)
+        start = len(challan_idd)
         if start >=14:
             dict = {'line-style':'|'}
             line_dots.append(dict)
@@ -108,14 +115,12 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
  
     def get_candidate_info(self, data):
         info_list = []
-        stdrec = self.pool.get('sms.student').browse(self.cr,self.uid,self.ids[0])
-        info_dict = {'name':'','father_name':'','Class':'','semester':''}
-         
+        stdrec = self.pool.get('sms.student').browse(self.cr,self.uid,data)
+        info_dict = {'name':'','father_name':'','class':''}
         info_dict['name'] = stdrec.name
         info_dict['father_name'] = stdrec.father_name
         info_dict['class'] = stdrec.current_class.name
         info_list.append(info_dict)
-        print "info_list>>>>>>>>>>>>",info_list
         return info_list
  
     def get_on_accounts(self, data):

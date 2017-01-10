@@ -15,8 +15,7 @@ class class_fee_receipts_unpaid(osv.osv_memory):
     _description = "admits student in a selected class"
     _columns = {
               "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
-              'due_date': fields.date('Due Date'),
-              
+              'due_date': fields.date('Due Date', required=True),
                }
     _defaults = {'class_id':_get_class}
     
@@ -33,7 +32,7 @@ class class_fee_receipts_unpaid(osv.osv_memory):
         challan_type = self.pool.get('res.company').search(cr, uid, [])
         challan_type = self.pool.get('res.company').browse(cr, uid, challan_type)
         for obj in challan_type:
-            if obj.one_on_one:
+            if obj.fee_report_type == 'One_on_One':
                 return 'print_one_on_one'
             else:
                 return 'print_three_on_one'
