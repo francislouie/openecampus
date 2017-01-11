@@ -130,10 +130,13 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         print "++++++++",  lines_ids   
         if lines_ids:
              challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr,self.uid,lines_ids)
+        counter = 1
         for challan in challans:
              print challan.fee_name,"+++++======+++++++",challan.fee_amount
-             dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
-             result.append(dict) 
+             if counter <7:
+                 dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
+                 result.append(dict)
+             counter = counter + 1 
         return result
      
     def get_total_amount(self, data):
