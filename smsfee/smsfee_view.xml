@@ -1067,7 +1067,70 @@
 			   </notebook>
 		      </field>
 		    </record>
-		
+
+<!-- smsfee.receive.challan.in.bank -->
+    <record model="ir.ui.view" id="smsfee_receive_challan_in_bank_form">
+      <field name="name">smsfee.receive.challan.in.bank.form</field>
+      <field name="model">smsfee.receive.challan.in.bank</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+        <form string="Received challan in bank" version="7.0">
+	        <header>
+				    <field name="state" widget="statusbar" statusbar_visible="Draft,Receive,Confirm"/>
+					<button name="load_challan_details"  type="object" string="Load Challan Info" states="Draft" class="oe_highlight" groups=""/>
+					<button name="confirm_challan_receive_from_bank"  type="object" string="Confirm" states="Receive" class="oe_highlight" groups=""/>
+					
+			</header>
+			<group string= "Received challan in bank">
+				<group >
+	          	<field name="acd_cal" widget="many2many_tags" />
+	          	<field name="state" readonly="1"/>
+	          	</group>
+				<group colspan="6">
+	          	<field name="receive_challan_by_bank" nolabel="1"/>
+	          	</group>
+
+	       </group>
+        </form>
+      </field>
+    </record>
+    
+    <record model="ir.ui.view" id="smsfee_receive_challan_in_bank_tree">
+      <field name="name">smsfee.receive.challan.in.bank.tree</field>
+      <field name="model">smsfee.receive.challan.in.bank</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+        <tree string="Received challan in bank">
+          <field name="acd_cal"/>
+          <field name="state"/>
+		  <field name="receive_challan_by_bank"/>
+        </tree>
+      </field>
+    </record>
+    
+    <record model="ir.actions.act_window" id="action_smsfee_receive_challan_in_bank">
+      <field name="name">Received challan in bank</field>
+      <field name="res_model">smsfee.receive.challan.in.bank</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.ui.view" id="smsfee_receive_challan_in_bank_lines_tree">
+      <field name="name">smsfee.receive.challan.in.bank.lines</field>
+      <field name="model">smsfee.receive.challan.in.bank.lines</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+	        <tree string="Detail"  editable="top">
+	          <field name="challan_no" />
+	          <field name="due_date"  />
+	          <field name="student_name" />
+	          <field name="amount"  />
+	          <field name="late_fee" />
+	          <field name="received"  />
+	          <field name="challan_produced_by_bank" />	
+	        </tree>	
+      </field>
+    </record>
 
 	</data>
 </openerp>
