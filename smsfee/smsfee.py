@@ -2749,7 +2749,8 @@ class smsfee_receive_challan_in_bank(osv.osv):
         record = cr.fetchall()
         for id  in record:
             rec = _pooler.browse(cr ,uid ,id[0])
-            print rec.student_name.name,rec.challan_no.id
+            #print rec.student_name.name,"******",rec.challan_no.id
+            print "call to recepit function==",pooler_receiptbook.confirm_fee_received(cr ,uid ,[rec.challan_no.id])
         return True
     
     _name = 'smsfee.receive.challan.in.bank'
