@@ -24,8 +24,7 @@
 						     <field name="fee_reception_account_bank" attrs="{'required':[('enable_fm','=',True)]}"   colspan ="4" domain="[('type','=','liquidity')]"/>
 							</group>	
 							<group>
-							 <field name="one_on_one"/>
-						     <field name="three_on_one"/>
+							 <field name="fee_report_type"/>
 							</group>	
 					      </group>
 		          	</page>

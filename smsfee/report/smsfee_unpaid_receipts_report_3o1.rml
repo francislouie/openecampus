@@ -5,22 +5,28 @@
      <header>
         <pageGraphics>
            	<!-- Header -->			
-			<image x="002" y="560" height="33.0" >[[company.logo]]</image>
-			<image x="525" y="560" height="33.0" >[[company.logo]]</image>
+			<image x="010" y="560" height="33.0" >[[company.logo]]</image>
+			<image x="415" y="560" height="33.0" >[[company.logo]]</image>
 			
 			<setFont name="Helvetica-Bold" size="9" />
 			<setFont name="Helvetica" size="9" />
 
-			<drawString x="200" y="580">Date : [[ get_today() ]]</drawString>
-			<drawString x="710" y="580">Date : [[ get_today() ]]</drawString>
+			<drawString x="290" y="580">Due Date : [[ get_due_date() ]]</drawString>
+			<drawString x="690" y="580">Due Date : [[ get_due_date() ]]</drawString>
+
+           	<drawString x="010" y="40">Bank Name: [[ get_banks() ]]</drawString>
+			<drawString x="415" y="40">Bank Name: [[ get_banks() ]]</drawString>
 
 			<setFont name="Helvetica" size="7"/>
 
-           	<drawString x="115" y="15">Depositor's Signature: _____________________</drawString>
-			<drawString x="645" y="15">Depositor's Signature: _____________________</drawString>
+           	<drawString x="235" y="20">Depositor's Signature: _____________________</drawString>
+			<drawString x="645" y="20">Depositor's Signature: _____________________</drawString>
 
-           	<drawString x="002" y="15">Printed by: [[ get_user_name() ]]</drawString>
-			<drawString x="525" y="15">Printed by: [[ get_user_name() ]]</drawString>
+           	<drawString x="010" y="20">Printed by: [[ get_user_name() ]]</drawString>
+			<drawString x="415" y="20">Printed by: [[ get_user_name() ]]</drawString>
+
+           	<drawString x="152" y="5">Print Date: [[ get_today() ]]</drawString>
+			<drawString x="558" y="5">Print Date: [[ get_today() ]]</drawString>
 
            	<lineMode width="0.7" />
            	<lines>1cm 27.7cm 20cm 27.7cm</lines>
@@ -75,7 +81,7 @@
     <paraStyle name="P3" fontName="Helvetica" fontSize="8.0" leading="9" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
     <paraStyle name="P4" fontName="Helvetica" fontSize="9.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P4-Bold" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P4-Bold-Right" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P4-Bold-Right" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P5" fontName="Helvetica" fontSize="8.0" leading="9" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P6" fontName="Helvetica" fontSize="8.0" leading="9" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P7" fontName="Helvetica" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
@@ -100,20 +106,10 @@
 	<para style="P2">[[repeatIn(get_challans(data),'record')]]</para>
 	<tr>
     <td>
-	
-	<blockTable colWidths="0,260.0,260.0,260.0" style="Table_maintable">
+	<blockTable colWidths="380.0,20.0,380.0" style="Table_maintable">
       <tr>
-      	<td>
-          	<blockTable colWidths="0" style="">
-      		<tr>
-        		<td>
-          		<para style="P2"></para>
-        		</td>
-      		</tr>
-      		</blockTable>
-        </td>
         <td>
-          	<blockTable colWidths="50.0,210" style="">
+          	<blockTable colWidths="80.0,300" style="">
       		<tr>
 				<td><para style="P2-Bold-Left"></para></td>
         		<td>
@@ -121,7 +117,7 @@
         		</td>
       		</tr>
 			</blockTable>
-			<blockTable colWidths="260" style="Table_1">
+			<blockTable colWidths="380" style="Table_1">
 			<tr><td><para style="P1"></para></td></tr>
 			<tr><td><para style="P1"></para></td></tr>
 			<tr><td><para style="P1"></para></td></tr>
@@ -131,18 +127,18 @@
         		</td>
       		</tr>
 			</blockTable>
-			<blockTable colWidths="260" style="Table_2">
+			<blockTable colWidths="380" style="Table_2">
       		<tr>
         		<td>
           		<para style="P2-Bold">For Student/Parents</para>
         		</td>
       		</tr>
 			</blockTable>
-			<blockTable colWidths="260" style="">
+			<blockTable colWidths="380" style="">
 			<tr>
         		<td>
 	          		<para style="P3">[[repeatIn((record['candidate_info_1']),'r')]]</para>
-					<blockTable colWidths="60.0,200.0" style="Table_1">
+					<blockTable colWidths="100.0,280.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Student:</para></td>
 						<td><para style="P4">[[(r['name'])]]</para></td>
@@ -153,11 +149,7 @@
 		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Class:</para></td>
-						<td><para style="P4">[[(r['Class'])]]</para></td>
-		      		</tr>
-		      		<tr>
-		        		<td><para style="P4-Bold">Group:</para></td>
-						<td><para style="P4">[[(r['semester'])]]</para></td>
+						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -165,10 +157,10 @@
 
 			<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+	          		<blockTable colWidths="300.0,80.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">On Account of:</para></td>
-						<td><para style="P4-Bold">Ruppees</para></td>
+						<td><para style="P4-Bold-Right">Amount</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -178,7 +170,7 @@
         		<td>
 					<section>
 	          		<para style="P3">[[repeatIn((record['on_accounts_1']),'r')]]</para>
-					<blockTable colWidths="200.0,60.0" style="Table_2">
+					<blockTable colWidths="300.0,80.0" style="Table_2">
 		      		<tr>
 		        		<td><para style="P5">[[(r['head_name'])]]</para></td>
 						<td><para style="P6">[[(r['head_amount'])]]</para></td>
@@ -201,7 +193,7 @@
 			</tr>
 			<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+	          		<blockTable colWidths="300.0,80.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Total: </para></td>
 						<td><para style="P4-Bold-Right">[[(record['total_amount_1'])]]</para></td>
@@ -211,7 +203,7 @@
       		</tr>
 			<tr>
         		<td>
-	          		<blockTable colWidths="60.0,200.0" style="Table_1">
+	          		<blockTable colWidths="150.0,230.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Amount in Words: </para></td>
 						<td><para style="P5">[[(record['amount_in_words_1'])]]</para></td>
@@ -222,7 +214,7 @@
       		</blockTable>
         </td>
         <td>
-			<blockTable colWidths="260.0" style="">
+			<blockTable colWidths="20.0" style="">
 			<tr>
 				<td>
 				<para style="P2">[[repeatIn(get_vertical_lines(data),'s')]]</para>
@@ -232,7 +224,7 @@
       		</blockTable>
         </td>
         <td>
-          	<blockTable colWidths="50.0,210" style="">
+          	<blockTable colWidths="80.0,300.0" style="">
       		<tr>
 				<td><para style="P2-Bold-Left"></para></td>
         		<td>
@@ -240,7 +232,7 @@
         		</td>
       		</tr>
 			</blockTable>
-			<blockTable colWidths="260" style="Table_1">
+			<blockTable colWidths="380" style="Table_1">
 			<tr><td><para style="P1"></para></td></tr>
 			<tr><td><para style="P1"></para></td></tr>
 			<tr><td><para style="P1"></para></td></tr>
@@ -250,18 +242,18 @@
         		</td>
       		</tr>
 			</blockTable>
-			<blockTable colWidths="260" style="Table_2">
+			<blockTable colWidths="380" style="Table_2">
       		<tr>
         		<td>
           		<para style="P2-Bold">For Accounts Department</para>
         		</td>
       		</tr>
 			</blockTable>
-			<blockTable colWidths="260" style="">
+			<blockTable colWidths="380" style="">
 			<tr>
         		<td>
 	          		<para style="P3">[[repeatIn((record['candidate_info_2']),'r')]]</para>
-					<blockTable colWidths="60.0,200.0" style="Table_1">
+					<blockTable colWidths="100.0,280.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Name:</para></td>
 						<td><para style="P4">[[(r['name'])]]</para></td>
@@ -272,21 +264,17 @@
 		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Class:</para></td>
-						<td><para style="P4">[[(r['Class'])]]</para></td>
-		      		</tr>
-		      		<tr>
-		        		<td><para style="P4-Bold">Group:</para></td>
-						<td><para style="P4">[[(r['semester'])]]</para></td>
+						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
       		</tr>	
 			<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+	          		<blockTable colWidths="300.0,80.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">On Account of:</para></td>
-						<td><para style="P4-Bold">Ruppees</para></td>
+						<td><para style="P4-Bold-Right">Amount</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -295,7 +283,7 @@
         		<td>
 					<section>
 	          		<para style="P3">[[repeatIn((record['on_accounts_2']),'r')]]</para>
-					<blockTable colWidths="200.0,60.0" style="Table_2">
+					<blockTable colWidths="300.0,80.0" style="Table_2">
 		      		<tr>
 		        		<td><para style="P5">[[(r['head_name'])]]</para></td>
 						<td><para style="P6">[[(r['head_amount'])]]</para></td>
@@ -318,7 +306,7 @@
 			</tr>
 			<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+	          		<blockTable colWidths="300.0,80.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Total: </para></td>
 						<td><para style="P4-Bold-Right">[[(record['total_amount_2'])]]</para></td>
@@ -328,7 +316,7 @@
       		</tr>
 			<tr>
         		<td>
-	          		<blockTable colWidths="60.0,200.0" style="Table_1">
+	          		<blockTable colWidths="150.0,230.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Amount in Words: </para></td>
 						<td><para style="P5">[[(record['amount_in_words_2'])]]</para></td>
