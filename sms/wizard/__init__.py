@@ -23,5 +23,6 @@ import sms_wizard_datesheet_list
 import sms_wizard_certificate_form
 import sms_wizard_readmit_student
 import custom_sale_client_installements_reports
+import sms_hr_attendance_load_csv
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 
