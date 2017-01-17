@@ -94,7 +94,7 @@
 	<tr><td><para style="para_title"></para></td></tr>
    	<tr><td></td></tr>
     <tr><td><para style="para_1">[[ repeatIn(students_paidfee_report('Form'),'r') ]]</para>
-   	<blockTable colWidths="35.0,95.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0.50.0" repeatRows="1" style="Table2">
+   	<blockTable colWidths="35.0,95.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0" repeatRows="1" style="Table2">
       <tr>
 		<td><para style="para_heading2">[[ r['sno'] ]]</para></td>
         <td><para style="para_heading2">[[ r['student'] ]]</para></td>

@@ -1083,11 +1083,11 @@
 			</header>
 			<group string= "Received challan in bank">
 				<group >
-	          	<field name="acd_cal" widget="many2many_tags" />
+	          	<field name="acd_cal" widget="many2many_tags" attrs="{'readonly':[('state','=','Receive')]}"  />
 	          	<field name="state" readonly="1"/>
 	          	</group>
 				<group colspan="6">
-	          	<field name="receive_challan_by_bank" nolabel="1"/>
+	          	<field name="receive_challan_by_bank" nolabel="1" attrs="{'readonly':[('state','=','Confirm')]}"   />
 	          	</group>
 
 	       </group>
