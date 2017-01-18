@@ -110,7 +110,8 @@
 	
 	<menuitem id="menu_sms_load_student_wizard" parent="general_setting_id" sequence="" groups="" action="action_load_student_wizard"/>
 	<menuitem id="menu_sms_expense_report" parent="hr_expense.next_id_49" sequence="" groups="group_sms_director,group_sms_admin" action="action_expense_report"/>
-	
+	<!--HR Attendance Device-->
+	<menuitem id="menu_sms_expense_report" parent="hr.menu_hr_configuration" sequence="" groups="group_sms_director,group_sms_admin" action="action_import_hr_attendance_data"/>
 
 <!-- Calander Weeks -->
 	<menuitem id="menu_sms_calander" name="Calander Weeks" parent="menu_sms_root" sequence="3" groups="group_sms_director,group_sms_principal,group_sms_admin,group_sms_officer,group_sms_admission_manager"/>

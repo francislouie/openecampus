@@ -286,69 +286,64 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         sql_fs = """ SELECT  smsfee_feetypes.id FROM smsfee_feetypes where subtype in('Monthly_Fee','at_admission','Annual_fee','Refundable')"""
         self.cr.execute(sql_fs)
         ft_ids = self.cr.fetchall()        
-                
-        c = 1
-        for idss in ft_ids:
-            rec_ft = self.pool.get('smsfee.feetypes').browse(self.cr, self.uid,idss[0])
-            if rec_ft.subtype == 'at_admission':
-                mydict['admission_fee'] = rec_ft.name
-            if rec_ft.subtype == 'Annual_fee':
-                mydict['annual_fee'] = rec_ft.name
-            if rec_ft.subtype == 'Refundable':
-                mydict['security'] = rec_ft.name
-            #furbish monthly fees
-            if rec_ft.subtype == 'Monthly_Fee':
-                m = 1
-                for this_month in cal_months:
-                    mydict['ft'+str(m)] = this_month.short_name[:3].upper()
-                    m = m+1
-            c= c + 1
-        result.append(mydict)
-        ############################################################################################################################
-        
-       
-        
-        i = 1
-        #grand_total = 0
-        mydict = {'sno':'SNO','reg_no':'Reg No.','student':'Student','father':'Father','ft1':'','ft2':'','ft3':'','ft4':'','ft5':'','ft6':'','ft7':'','ft8':'','ft9':'','ft10':'','ft11':'','ft12':'','other':'','total':'TOTAL','gtotal':''}   
-        for student in students_rec:
-            mydict = {'sno':'SNO','student':'Student','father':'Father','ft1':'','ft2':'','ft3':'','ft4':'','ft5':'','other':'','total':float(0)}
-            mydict['student'] = student.name
-            mydict['father'] = student.father_name
-            mydict['sno'] = i
-            j = 1
-            ft_total = 0
-            for ft in ft_ids:
-                mydict['ft'+str(j)] = '-'
-                sql = """SELECT smsfee_studentfee.paid_amount,smsfee_studentfee.state FROM smsfee_studentfee
-                         INNER JOIN smsfee_classes_fees
-                         ON smsfee_classes_fees.id = smsfee_studentfee.fee_type  
-                         WHERE smsfee_classes_fees.fee_type_id = """+str(ft[0])+"""
-                         AND smsfee_studentfee.student_id = """+str(student.id)+"""
-                         AND smsfee_studentfee.acad_cal_id = """+str(cls_id)+"""
-                         AND smsfee_studentfee.fee_month = """+str(self.datas['form']['month'][0])
-                
-                self.cr.execute(sql)
-                rows = self.cr.fetchone()
-                if rows: #if rows is not empty ie not none and contains a list
-                    amount = int(rows[0]) #then assign the value at index 0 of rows list
-                    mydict['ft'+str(j)] = '{0:,d}'.format(amount)#if the value at index [0] assigned to amount fails to satisfy this condition "if amount is None and not rows[1]" then assign it to ft1, ft2..etc 
-#                     mydict_total['ft'+str(j)] = '{0:,d}'.format(int((str(mydict_total['ft'+str(j)])).replace(",", "")) + int(amount))
-                    ft_total = int(ft_total) + int(amount)
-#                     mydict['total'] = '{0:,d}'.format(ft_total)
-#                     mydict_total['total'] = '{0:,d}'.format(int((str(mydict_total['total'])).replace(",", "")) + int(ft_total))
-                    
-                    #grand_total = grand_total + ft_total
-                       
-                else:
-                    mydict['ft'+str(j)] ='---'
-                
-                j = j + 1
+        ft_idss = self.pool.get('smsfee.feetypes').search(self.cr, self.uid,[('subtype','in',['Monthly_Fee','at_admission','Annual_fee','Refundable'])])
+        if ft_idss:
+            rec_ft = self.pool.get('smsfee.feetypes').browse(self.cr, self.uid,ft_idss)       
+            c = 1
+            for idss in rec_ft:
             
-            i = i + 1
+                if idss.subtype == 'at_admission':
+                    mydict['admission_fee'] = idss.name
+                if idss.subtype == 'Annual_fee':
+                    mydict['annual_fee'] = idss.name
+                if idss.subtype == 'Refundable':
+                    mydict['security'] = idss.name
+                #furbish monthly fees
+                if idss.subtype == 'Monthly_Fee':
+                    m = 1
+                    for this_month in cal_months:
+                        mydict['ft'+str(m)] = this_month.short_name[:3].upper()
+                        m = m+1
+                c= c + 1
             result.append(mydict)
-            #mydict['gtotal'] = grand_total
-        #result.append(mydict_total)
+            ############################################################################################################################
+            
+           
+            
+            i = 1
+            #grand_total = 0
+               
+            for student in students_rec:
+                mydict = {'sno':'SNO','reg_no':'Reg No.','student':'Student','father':'Father','ft1':'','ft2':'','ft3':'','ft4':'','ft5':'','ft6':'','ft7':'','ft8':'','ft9':'','ft10':'','ft11':'','ft12':'','other':'','total':'TOTAL','gtotal':''}
+                mydict['student'] = student.name
+                mydict['father'] = student.father_name
+                mydict['sno'] = i
+                j = 1
+                ft_total = 0
+                for ft in rec_ft:
+                    mydict['ft'+str(j)] = '-'
+                    if ft.subtype == 'Monthly_Fee':
+                        m = 1
+                        for this_month in cal_months:
+                            
+                            sql = """SELECT  COALESCE(sum(paid_amount),'0') FROM smsfee_studentfee
+                                     WHERE  smsfee_studentfee.student_id = """+str(student.id)+"""
+                                     and smsfee_studentfee.state = 'fee_paid'
+                                     AND smsfee_studentfee.acad_cal_id = """+str(cls_id)+"""
+                                     AND smsfee_studentfee.fee_month = """+str(this_month.id)
+                            
+                            self.cr.execute(sql)
+                            rows = self.cr.fetchone()
+                            if rows: #if rows is not empty ie not none and contains a list
+                                mydict['ft'+str(m)] = '{0:,d}'.format(rows[0])#if the value at index [0] assigned to amount fails to satisfy this condition "if amount is None and not rows[1]" then assign it to ft1, ft2..etc
+                                m = m+1 
+                           
+                   
+                
+                i = i + 1
+                result.append(mydict)
+                #mydict['gtotal'] = grand_total
+            #result.append(mydict_total)
         return result
     
 #--------------------------------------------------------------------------------------------------------------------------------------------------------    

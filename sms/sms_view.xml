@@ -2708,6 +2708,7 @@
 		      	<field name="address_id" position="before">
             		<!-- <label for="father_name" class="oe_edit_only"/> -->
 					<field name="father_name"/>
+					<field name="attendance_id"/>
 				</field>
 		      </field>
 		    </record>

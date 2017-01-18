@@ -4196,8 +4196,19 @@ class hr_employee(osv.osv):
         
     _columns = {
         'father_name': fields.char("Father Name", size=32),
+        'attendance_id':fields.integer('Attendance iD')
     }
 hr_employee()
+
+class hr_attendance(osv.osv):
+    """This object is used to add fields in employee"""
+    _name = 'hr.attendance'
+    _inherit ='hr.employee'
+        
+    _columns = {
+        'action': fields.selection([('sign_in','sign_out'),('sign_out','sign_out')]),
+    }
+hr_attendance()
 
 class sms_registration_format(osv.osv):
     """This object is used for regitration format"""
