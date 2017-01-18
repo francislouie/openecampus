@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		
+		<report
+            id="report_class_transport_one_on_one_id"
+            model="sms.transport.fee.payments"
+            name="smstransport_print_one_student_per_page"
+            multi="True"
+            rml="smstransport/report/smstransport_print_one_student_per_page.rml"
+            string="Transport Fee Receipts (Unpaid)"
+            />  
+
+		<report
+            id="report_class_transport_three_on_one_id"
+            model="sms.transport.fee.payments"
+            name="smstransport_print_three_student_per_page"
+            multi="True"
+            rml="smstransport/report/smstransport_print_three_student_per_page.rml"
+            string="Transport Fee Receipts (Unpaid)"
+            />  
+
+   </data>
+</openerp>
