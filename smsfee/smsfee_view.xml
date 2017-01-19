@@ -925,8 +925,9 @@
 		<group>
 			<group string= "Paid-Unpaid Fee Adjustments" col="4" colspan="4">>
 	          	<field name="name" readonly="1" />
+				<field name="date" attrs="{'readonly':[('state','!=','Draft' )]}" />
+	          	<field name="class" attrs="{'readonly':[('state','!=','Draft' )]}" />
 	          	<field name="student" attrs="{'readonly':[('state','!=','Draft' )]}" on_change="onchange_set_domain(student)" />
-	          	<field name="date" attrs="{'readonly':[('state','!=','Draft' )]}" />
 	          	<field name="receipt_no" attrs="{'readonly':[('state','!=','Draft' )] , 'required':[('action','=','paid_fee_adjustment')]    }" />
 	          	<field name="action" attrs="{'readonly':[('state','!=','Draft' )]}" />
 	          	<field name="state" reaonly="1"/>

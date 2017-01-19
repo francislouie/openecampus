@@ -179,7 +179,7 @@ class smsfee_festructure_revision(osv.osv):
     def close_annual_fee_structure(self, cr, uid, ids, name, args, context=None):
         print "starting method is called"
         for f in self.browse(cr, uid, ids, context=context):
-            result = self.write(cr, uid, f.id, {'state':'Closed','effective_till':dattime.now()})
+            result = self.write(cr, uid, f.id, {'state':'Closed','effective_till':datetime.datetime.now()})
         return result
     
     _name = 'smsfee.festructure.revision'
@@ -452,7 +452,7 @@ class smsfee_classes_fees(osv.osv):
                     })
             #
         
-        return result
+        return #result
 
     def forcasted_amount(self, cr, uid, ids, name, args, context=None):
         result = {}
@@ -871,7 +871,7 @@ class smsfee_std_withdraw(osv.osv):
         return
     
     def reject_std_withdraw(self, cr, uid, ids, context=None):
-        self.write(cr, uid, ids[0], {'state':'Rejected','decision_by':uid,'decision_date':datetime.today()})
+        self.write(cr, uid, ids[0], {'state':'Rejected','decision_by':uid,'decision_date':datetime.datetime.today()})
         return
     
     def confirm_std_withdraw(self, cr, uid, ids, context=None):
@@ -2565,7 +2565,8 @@ class smsfee_paid_unpaid_adjustments(osv.osv):
     _name = 'smsfee.paid.unpaid.adjustments'
     _columns = {
         'name' : fields.char('Fee Adjustment No' ,size=256),
-        'student' : fields.many2one('sms.student' , 'Student Name' ,required=True ),
+        'class' : fields.many2one('sms.academiccalendar' , 'Class' ,required=True ),
+        'student' : fields.many2one('sms.student' , 'Student Name' ,required=True , domain="[('current_class','=',class)]"),
         'date': fields.date("Date" ,required=True),
         'receipt_no':fields.many2one('smsfee.receiptbook','Receipt No'),
         'action':fields.selection([('paid_fee_adjustment','Paid Fee Adjustment'),('unpaid_fee_adjustment','Unpaid Fee Adjustment')],'Action' ,required=True ),
