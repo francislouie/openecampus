@@ -1138,11 +1138,16 @@ class smsfee_receiptbook(osv.osv):
         search_lines_id = self.pool.get('smsfee.receiptbook.lines').search(cr, uid, [('receipt_book_id','=',ids[0])], context=context)
         lines_obj = self.pool.get('smsfee.receiptbook.lines').browse(cr, uid, search_lines_id)
         generate_receipt = False
+        
+        print search_lines_id,"******",search_lines_id
+        
         total_paid_amount = 0 
         for line in lines_obj:
              
             std_fee_id = line.student_fee_id.id
             late_fee = 0
+            
+            print std_fee_id,"*******",line.reconcile
              
             if line.reconcile:
                 total_paid_amount = total_paid_amount+ line.paid_amount
@@ -2711,22 +2716,16 @@ class smsfee_receive_challan_in_bank(osv.osv):
     """This object enter detail about fee challan that in received by bank """
 
     def load_challan_details(self, cr, uid, ids, name):
-        print "******load_challan_details********"
         record = self.browse(cr, uid, ids)
         pooler_receiptbook = self.pool.get('smsfee.receiptbook')
         for f in record:
-#            print f.acd_cal,f.state
             for acd_cal in f.acd_cal:
-                #print "****",acd_cal.acad_cal_students
                 for std in acd_cal.acad_cal_students:
-                    #print std.std_id.name,"total_paybles==",std.std_id.total_paybles
                    
                     challan_id = pooler_receiptbook.search(cr ,uid ,[('state','=','fee_calculated'),('student_id','=',std.std_id.id),
                                                                                       ('student_class_id','=',acd_cal.id)])
-                    #print "challan_id===",challan_id
                     for challan in pooler_receiptbook.browse(cr ,uid ,challan_id):
-                        print challan.name,"challan===",challan.id,challan.total_paid_amount#,"++++",challan.total_paybles
-                        print "*****",self.pool.get('smsfee.receive.challan.in.bank.lines').create(cr ,uid ,{'parent_id':f.id,
+                        self.pool.get('smsfee.receive.challan.in.bank.lines').create(cr ,uid ,{'parent_id':f.id,
                                                                                                              'challan_no':challan.id,
                                                                                                              #'due_date':,
                                                                                                              'student_name':std.std_id.id,
@@ -2750,8 +2749,17 @@ class smsfee_receive_challan_in_bank(osv.osv):
         record = cr.fetchall()
         for id  in record:
             rec = _pooler.browse(cr ,uid ,id[0])
-            #print rec.student_name.name,"******",rec.challan_no.id
-            print "call to recepit function==",pooler_receiptbook.confirm_fee_received(cr ,uid ,[rec.challan_no.id])
+            
+            #--------------update smsfee.receiptbook.lines--------------------
+            receipt_lines_ids = self.pool.get('smsfee.receiptbook.lines').search(cr ,uid , [('receipt_book_id','=',rec.challan_no.id)])
+            self.pool.get('smsfee.receiptbook.lines').write(cr ,uid ,receipt_lines_ids,{
+                                                                                                                         'paid_amount': rec.amount+rec.late_fee ,
+                                                                                                                         'discount': 0 ,
+                                                                                                                         'reconcile': True ,
+                                                                                                                         })
+            
+            
+            pooler_receiptbook.confirm_fee_received(cr ,uid ,[rec.challan_no.id])
         self.write(cr ,uid , ids ,{'state':'Confirm'})
         
         return True
