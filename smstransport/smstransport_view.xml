@@ -12,6 +12,7 @@
 					<field name="state" widget="statusbar"/>
 				</header>
 				<sheet>
+					<separator string="Location"/>
 					<group name="location_form_main">
 						<field name="name"/>
 					</group>
@@ -128,10 +129,10 @@
 							<field name="drivers" nolabel="1" colspan="4"/>
 						</page>
 						<page string="Registered Students">
-							<field name="registered_students" nolabel="1" colspan="4"/>
+							<field name="registered_students" nolabel="1" colspan="4" readonly="1"/>
 						</page>
 						<page string="Registered Staff">
-							<field name="registered_staff" nolabel="1" colspan="4"/>	
+							<field name="registered_staff" nolabel="1" colspan="4" readonly="1"/>	
 						</page>
 					</notebook>
 				</sheet>	 	
@@ -244,13 +245,21 @@
 				</header>
 				<sheet>
 					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
-					<group name="transport_registration_main" col="4" colspan="2">
-						<field name="registration_type"/>
-						<field name="current_vehcile"/>
-						<field name="employee_id"/>
-						<field name="student_id" domain="[('state','=','Admitted')]"/>
-						<field name="reg_start_date"/>
-						<field name="reg_end_date"/>
+					<group name="transport_registration_main">
+						<group col="4" colspan="2">
+							<field name="registration_type"/>
+							<field name="current_vehcile"/>
+						</group>
+						<group attrs="{'invisible':[('registration_type','=','Student')]}">
+							<field name="employee_id"/>
+						</group>
+						<group attrs="{'invisible':[('registration_type','=','Employee')]}">
+							<field name="student_id" domain="[('state','=','Admitted')]"/>
+						</group>
+						<group col="4" colspan="2">
+							<field name="reg_start_date"/>
+							<field name="reg_end_date"/>
+						</group>
 					</group>
 					<notebook>
 						<page string="Registration Histories">
