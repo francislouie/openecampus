@@ -10,6 +10,7 @@
     'data': ['security/smstransport_security.xml',
              'security/ir.model.access.csv',
              'wizard/smstransport_class_fee_receipt_unpaid.xml',
+             'wizard/smstransport_wizard_registerations.xml',
              'smstransport_view.xml',
              'smstransport_report.xml',
              'smstransport_menus.xml',],

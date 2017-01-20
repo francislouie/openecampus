@@ -117,16 +117,17 @@ class sms_transport_registrations(osv.osv):
             if result:
                 if record.registration_type == 'Employee':
                     registration_id = self.pool.get('sms.transport.registrations.lines').create(cr,uid,
-                                                                            {
+                                                                             {
                                                                             'registeration_id': record.id,
                                                                             'state': record.state, 
-                                                                            'current_vehcile':record.current_vehcile,
+                                                                            'current_vehcile':record.current_vehcile.id,
                                                                             'employee_id':record.employee_id.id,
                                                                             })
                     if registration_id:
-                        self.pool.get('hr.employee').write(cr, uid, record.employee_id.id,{'transport_availed':True,
-                                                                                   'vehcile_reg_students_id':record.current_vehcile
-                                                                                    })
+                        employee_id = self.pool.get('hr.employee').search(cr,uid,[('id','=',record.employee_id.id)])
+                        self.pool.get('hr.employee').write(cr, uid, employee_id,{'transport_availed':True,
+                                                                               'vehcile_reg_employee_id':record.current_vehcile.id
+                                                                                })
                         
                 elif record.registration_type == 'Student':
                     registration_id = self.pool.get('sms.transport.registrations.lines').create(cr,uid,
