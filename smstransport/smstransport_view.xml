@@ -242,6 +242,7 @@
 				<header>
 					<field name="state" widget="statusbar"/>
 					<button name="register_person" string="Register" states="Draft" type="object" icon="terp-gtk-jump-to-ltr"/>
+					<button name="%(action_transport_registered_persons)d" string="Registered Students" type="action" icon="gtk-print"/>
 				</header>
 				<sheet>
 					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>

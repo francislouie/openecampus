@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_smstransport_registrations_entries" model="ir.ui.view">
+            <field name="name">class.smstransport_registrations_form</field>
+            <field name="model">class.smstransport_registrations</field>
+            <field name="arch" type="xml">
+                <form string="Registered Persons in Transport" version="7.0">
+                    <group>
+						<field name="class_filter"/>
+						<group attrs="{'invisible':[('class_filter','=',False)]}">						
+							<field name="class_id"/>
+						</group>						
+						<field name="vehcile_filter" />
+						<group attrs="{'invisible':[('vehcile_filter','=',False)]}">						
+							<field name="vehcile_id"/>
+						</group>						
+						<field name="route_filter" />
+						<group attrs="{'invisible':[('route_filter','=',False)]}">						
+							<field name="route_id"/>
+						</group>						
+                    </group>
+                    <group>
+                    <ol>
+	                    <li><p>List of All Students Registered in Transort Department.</p></li>
+	                    <li><p>Multiple Search Options have been provided which enables to search with multiple options.</p></li>
+                    </ol>
+                    </group>
+                     <footer>
+                        <button string="Print" name="print_transport_registered_entries" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+           </field>
+          </record>
+
+        <record id="action_transport_registered_persons" model="ir.actions.act_window">
+            <field name="name">Display registered Students in Transport Department</field>
+            <field name="res_model">class.smstransport_registrations</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_smstransport_registrations_entries"/>
+           <field name="target">new</field>
+        </record>
+
+</data>
+</openerp>
