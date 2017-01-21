@@ -7,18 +7,25 @@
             <field name="model">class.smstransport_registrations</field>
             <field name="arch" type="xml">
                 <form string="Registered Persons in Transport" version="7.0">
-                    <group>
-						<field name="class_filter"/>
-						<group attrs="{'invisible':[('class_filter','=',False)]}">						
-							<field name="class_id"/>
-						</group>						
-						<field name="vehcile_filter" />
-						<group attrs="{'invisible':[('vehcile_filter','=',False)]}">						
-							<field name="vehcile_id"/>
-						</group>						
-						<field name="route_filter" />
-						<group attrs="{'invisible':[('route_filter','=',False)]}">						
-							<field name="route_id"/>
+                    <group col="2">
+						<group col="4" colspan="2"> 
+							<field name="class_filter"/>
+							<newline/>
+							<group attrs="{'invisible':[('class_filter','=',False)]}" colspan="2">						
+								<field name="class_id" width="200"/>
+							</group>						
+							<newline/>
+							<field name="vehcile_filter" />
+							<newline/>
+							<group attrs="{'invisible':[('vehcile_filter','=',False)]}" colspan="2">						
+								<field name="vehcile_id" width="200"/>
+							</group>						
+							<newline/>
+							<field name="route_filter" />
+							<newline/>
+							<group attrs="{'invisible':[('route_filter','=',False)]}" colspan="2">						
+								<field name="route_id" width="200"/>
+							</group>
 						</group>						
                     </group>
                     <group>
