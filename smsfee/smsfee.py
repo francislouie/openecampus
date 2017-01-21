@@ -2706,3 +2706,88 @@ class admission_register_student_fees(osv.osv):
 
     _defaults = {    }    
 admission_register_student_fees()
+
+
+
+#$$$$--
+class smsfee_receive_challan_in_bank(osv.osv):
+    """This object enter detail about fee challan that in received by bank """
+
+    def load_challan_details(self, cr, uid, ids, name):
+        record = self.browse(cr, uid, ids)
+        pooler_receiptbook = self.pool.get('smsfee.receiptbook')
+        for f in record:
+            for acd_cal in f.acd_cal:
+                for std in acd_cal.acad_cal_students:
+                   
+                    challan_id = pooler_receiptbook.search(cr ,uid ,[('state','=','fee_calculated'),('student_id','=',std.std_id.id),
+                                                                                      ('student_class_id','=',acd_cal.id)])
+                    for challan in pooler_receiptbook.browse(cr ,uid ,challan_id):
+                        self.pool.get('smsfee.receive.challan.in.bank.lines').create(cr ,uid ,{'parent_id':f.id,
+                                                                                                             'challan_no':challan.id,
+                                                                                                             #'due_date':,
+                                                                                                             'student_name':std.std_id.id,
+                                                                                                             'amount':challan.total_paybles,
+                                                                                                            # 'late_fee':,
+                                                                                                            # 'received':,
+                                                                                                             'challan_produced_by_bank':True,
+                                                                                                             })
+        self.write(cr ,uid , ids ,{'state':'Receive'})
+        return True
+    
+    def confirm_challan_receive_from_bank(self ,cr ,uid ,ids ,context=None):
+        _pooler = self.pool.get('smsfee.receive.challan.in.bank.lines')
+        pooler_receiptbook = self.pool.get('smsfee.receiptbook')
+        sql = """ SELECT smsfee_receive_challan_in_bank_lines.id from smsfee_receive_challan_in_bank_lines
+                    INNER JOIN smsfee_receive_challan_in_bank ON smsfee_receive_challan_in_bank_lines.parent_id =smsfee_receive_challan_in_bank.id 
+                    WHERE smsfee_receive_challan_in_bank.id = """ +str(ids[0])+ """
+                          AND smsfee_receive_challan_in_bank_lines.received = True
+        """
+        cr.execute(sql)
+        record = cr.fetchall()
+        for id  in record:
+            rec = _pooler.browse(cr ,uid ,id[0])
+            
+            #--------------update smsfee.receiptbook.lines--------------------
+            receipt_lines_ids = self.pool.get('smsfee.receiptbook.lines').search(cr ,uid , [('receipt_book_id','=',rec.challan_no.id)])
+            self.pool.get('smsfee.receiptbook.lines').write(cr ,uid ,receipt_lines_ids,{
+                                                                                                                         'paid_amount': rec.amount,#+rec.late_fee ,
+                                                                                                                         'discount': 0 ,
+                                                                                                                         'reconcile': True ,
+                                                                                                                         })
+            
+            pooler_receiptbook.confirm_fee_received(cr ,uid ,[rec.challan_no.id])
+        self.write(cr ,uid , ids ,{'state':'Confirm'})
+        
+        return True
+    
+    _name = 'smsfee.receive.challan.in.bank'
+    _columns = {
+        'acd_cal':fields.many2many('sms.academiccalendar', 'receive_challan_academiccalendar_rel', 'receive_challan_id', 'academiccalendar_id', 'Class'),
+        'state':fields.selection([('Draft','Draft'),('Receive','Receive'),('Confirm','Confirm')],'State'),
+        'receive_challan_by_bank':fields.one2many('smsfee.receive.challan.in.bank.lines','parent_id','Challan Received By Bank')
+    }
+    _sql_constraints = []
+
+    _defaults = { 'state':'Draft'   }    
+smsfee_receive_challan_in_bank()
+
+class smsfee_receive_challan_in_bank_lines(osv.osv):
+    """Child object of smsfee_receive_challan_in_bank  """
+    _name = 'smsfee.receive.challan.in.bank.lines'
+    _columns = {
+        'parent_id':fields.many2one('smsfee.receive.challan.in.bank', 'Parent Id'),
+        'challan_no':fields.many2one('smsfee.receiptbook', 'Challan No'),
+        'due_date':fields.date('Due Date'),
+        'student_name':fields.many2one('sms.student', 'Student'),
+        'amount':fields.integer('Amount'),
+        'late_fee':fields.integer('Late Fee'),
+        'received':fields.boolean('Received'),
+        'challan_produced_by_bank':fields.boolean('Challan By Bank'),
+        
+
+    }
+    _sql_constraints = []
+
+    _defaults = { }    
+smsfee_receive_challan_in_bank_lines()
