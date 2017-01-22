@@ -27,6 +27,10 @@ class transport_registered_students(report_sxw.rml_parse):
         class_filter = self.datas['form']['class_filter']
         vehcile_filter = self.datas['form']['vehcile_filter']
         route_filter = self.datas['form']['route_filter']
+        display_phone = self.datas['form']['display_phone']
+        display_email = self.datas['form']['display_email']
+        display_class = self.datas['form']['display_class']
+        display_address = self.datas['form']['display_address']
 
         if class_filter:
             class_id = self.datas['form']['class_id'][0]
@@ -110,14 +114,37 @@ class transport_registered_students(report_sxw.rml_parse):
                             
         counter = 0
         for rec in student_records:
-            my_dict = {'sno':'','name':'','father_name':'', 'phone':'', 'email':'', 'class':''}
             counter = counter + 1
-            student_record = """SELECT name, father_name FROM sms_student WHERE id = """+ str(rec[0]) +""""""
+            my_dict = {'sno':'', 'name':'', 'father_name':'', 'phone':'', 'email':'', 'class':'', 'address':''}
+            student_record = """SELECT sms_student.name, sms_student.father_name, sms_student.email, sms_student.cell_no, 
+                                sms_student.permanent_address, sms_academiccalendar.name 
+                                FROM sms_student
+                                INNER JOIN sms_academiccalendar ON 
+                                sms_student.current_class = sms_academiccalendar.id
+                                WHERE sms_student.id = """+ str(rec[0]) +""""""
             self.cr.execute(student_record)
             student_record  = self.cr.fetchone()
             my_dict['sno']  = counter
             my_dict['name'] = student_record[0]
             my_dict['father_name']  = student_record[1]
+            if display_email:
+                my_dict['email']  = student_record[2]
+            else:
+                my_dict['email']  = ''
+            if display_phone:
+                my_dict['phone']  = student_record[3]
+            else:
+                my_dict['phone']  = ''
+            if display_address:
+                my_dict['address']  = student_record[4]
+            else:
+                my_dict['address']  = ''
+            if display_class:
+                print 'Checking Class Boolean'
+                my_dict['class']  = student_record[5]
+                print "------",my_dict['class']
+            else:
+                my_dict['class']  = ''
             result.append(my_dict)
         return result  
               
