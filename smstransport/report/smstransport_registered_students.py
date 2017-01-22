@@ -25,55 +25,129 @@ class transport_registered_students(report_sxw.rml_parse):
     def get_registered_students_transport(self, data):
         result = []
         class_filter = self.datas['form']['class_filter']
-        class_id = self.datas['form']['class_id'][0]
         vehcile_filter = self.datas['form']['vehcile_filter']
-        vehcile_id = self.datas['form']['vehcile_id'][0]
         route_filter = self.datas['form']['route_filter']
-#        route_id = self.datas['form']['route_id'][0]
-        if class_filter and vehcile_filter:
-            
-            student_sql = """SELECT id FROM sms_student WHERE current_class = """+ str(class_id) +""" 
-            AND transport_availed = True
-            AND vehcile_reg_students_id = """+ str(vehcile_id) +""""""
+        display_phone = self.datas['form']['display_phone']
+        display_email = self.datas['form']['display_email']
+        display_class = self.datas['form']['display_class']
+        display_address = self.datas['form']['display_address']
+
+        if class_filter:
+            class_id = self.datas['form']['class_id'][0]
+            student_sql = """SELECT sms_transport_registrations.student_id FROM sms_transport_registrations 
+                            INNER JOIN sms_student
+                            ON sms_transport_registrations.student_id = sms_student.id
+                            INNER JOIN sms_academiccalendar
+                            ON sms_student.current_class = sms_academiccalendar.id
+                            AND current_class = """+ str(class_id) +""" 
+                            ORDER BY sms_transport_registrations.student_id"""
             self.cr.execute(student_sql)
             student_records = self.cr.fetchall()
-                
-        if class_filter and route_filter:
-            student_ids = self.pool.get('sms.student').search(self.cr, self.uid,[('admitted_to_class','=',class_id)])
-            student_transportreg_ids = self.pool.get('sms.transport.registrations').search(self.cr, self.uid,[('student_id','in',student_ids)])        
-        if route_filter and vehcile_filter:
-            student_ids = self.pool.get('sms.student').search(self.cr, self.uid,[])
-        if class_filter and vehcile_filter and route_filter:
-            student_ids = self.pool.get('sms.student').search(self.cr, self.uid,[])
-        
+
+        elif route_filter:
+            route_id = self.datas['form']['route_id'][0]
+            student_sql = """SELECT sms_transport_registrations.student_id FROM sms_transport_registrations 
+                            INNER JOIN sms_student
+                            ON sms_transport_registrations.student_id = sms_student.id
+                            INNER JOIN sms_transport_route_vehcile_rel
+                            ON sms_transport_registrations.current_vehcile = sms_transport_route_vehcile_rel.sms_transport_route_id
+                            AND sms_transport_route_vehcile_rel.sms_transport_vehcile_id = """+ str(route_id) +"""
+                            ORDER BY sms_transport_registrations.student_id"""
+            self.cr.execute(student_sql)
+            student_records = self.cr.fetchall()
+
+        elif vehcile_filter:
+            vehcile_id = self.datas['form']['vehcile_id'][0]
+            student_sql = """SELECT sms_transport_registrations.student_id FROM sms_transport_registrations 
+                            INNER JOIN sms_student
+                            ON sms_transport_registrations.student_id = sms_student.id
+                            INNER JOIN sms_transport_route_vehcile_rel
+                            ON sms_transport_registrations.current_vehcile = sms_transport_route_vehcile_rel.sms_transport_route_id
+                            AND sms_transport_route_vehcile_rel.sms_transport_route_id = """+ str(vehcile_id) +"""
+                            ORDER BY sms_transport_registrations.student_id"""
+            self.cr.execute(student_sql)
+            student_records = self.cr.fetchall()
+            
+        elif class_filter and vehcile_filter:
+            class_id = self.datas['form']['class_id'][0]
+            vehcile_id = self.datas['form']['vehcile_id'][0]
+            student_sql = """SELECT sms_transport_registrations.student_id FROM sms_transport_registrations 
+                            INNER JOIN sms_student
+                            ON sms_transport_registrations.student_id = sms_student.id
+                            INNER JOIN sms_academiccalendar
+                            ON sms_student.current_class = sms_academiccalendar.id
+                            AND current_class = """+ str(class_id) +""" 
+                            AND vehcile_reg_students_id = """+ str(vehcile_id) +"""
+                            ORDER BY sms_transport_registrations.student_id"""
+            self.cr.execute(student_sql)
+            student_records = self.cr.fetchall()
+            
+        elif class_filter and route_filter :
+            class_id = self.datas['form']['class_id'][0]
+            route_id = self.datas['form']['route_id'][0]
+            student_sql = """SELECT sms_transport_registrations.student_id FROM sms_transport_registrations 
+                            INNER JOIN sms_student
+                            ON sms_transport_registrations.student_id = sms_student.id
+                            INNER JOIN sms_academiccalendar
+                            ON sms_student.current_class = sms_academiccalendar.id
+                            INNER JOIN sms_transport_route_vehcile_rel
+                            ON sms_transport_registrations.current_vehcile = sms_transport_route_vehcile_rel.sms_transport_route_id
+                            AND current_class = """+ str(class_id) +""" 
+                            AND sms_transport_route_vehcile_rel.sms_transport_vehcile_id = """+ str(route_id) +"""
+                            ORDER BY sms_transport_registrations.student_id"""
+            self.cr.execute(student_sql)
+            student_records = self.cr.fetchall()
+            
+        elif route_filter and vehcile_filter:
+            route_id = self.datas['form']['route_id'][0]
+            vehcile_id = self.datas['form']['vehcile_id'][0]
+            student_sql = """SELECT sms_transport_registrations.student_id FROM sms_transport_registrations 
+                            INNER JOIN sms_student
+                            ON sms_transport_registrations.student_id = sms_student.id
+                            INNER JOIN sms_transport_route_vehcile_rel
+                            ON sms_transport_registrations.current_vehcile = sms_transport_route_vehcile_rel.sms_transport_route_id
+                            AND sms_transport_route_vehcile_rel.sms_transport_vehcile_id = """+ str(route_id) +"""
+                            AND sms_transport_route_vehcile_rel.sms_transport_route_id = """+ str(vehcile_id) +"""
+                            ORDER BY sms_transport_registrations.student_id"""
+            self.cr.execute(student_sql)
+            student_records = self.cr.fetchall()
+                            
         counter = 0
         for rec in student_records:
-            my_dict = {'sno':'','name':'','father_name':'', 'phone':'', 'email':'', 'class':''}
             counter = counter + 1
-            student_record = """SELECT name, father_name FROM sms_student WHERE id = """+ str(rec[0]) +""""""
+            my_dict = {'sno':'', 'name':'', 'father_name':'', 'phone':'', 'email':'', 'class':'', 'address':''}
+            student_record = """SELECT sms_student.name, sms_student.father_name, sms_student.email, sms_student.cell_no, 
+                                sms_student.permanent_address, sms_academiccalendar.name 
+                                FROM sms_student
+                                INNER JOIN sms_academiccalendar ON 
+                                sms_student.current_class = sms_academiccalendar.id
+                                WHERE sms_student.id = """+ str(rec[0]) +""""""
             self.cr.execute(student_record)
             student_record  = self.cr.fetchone()
             my_dict['sno']  = counter
             my_dict['name'] = student_record[0]
             my_dict['father_name']  = student_record[1]
+            if display_email:
+                my_dict['email']  = student_record[2]
+            else:
+                my_dict['email']  = ''
+            if display_phone:
+                my_dict['phone']  = student_record[3]
+            else:
+                my_dict['phone']  = ''
+            if display_address:
+                my_dict['address']  = student_record[4]
+            else:
+                my_dict['address']  = ''
+            if display_class:
+                print 'Checking Class Boolean'
+                my_dict['class']  = student_record[5]
+                print "------",my_dict['class']
+            else:
+                my_dict['class']  = ''
             result.append(my_dict)
-        print "",result
         return result  
-     
-#     def get_vertical_lines_total(self, data):
-#         line_dots = []
-#         challan = self.pool.get('sms.transportfee.challan.book').browse(self.cr,self.uid,data)
-# #         start = len(challan.receiptbook_lines_ids)
-#         start = 5
-#         if start >=14:
-#             dict = {'line-style':'|'}
-#             line_dots.append(dict)
-#         else:
-#             for num in range(start,14):
-#                 dict = {'line-style':'|'}
-#                 line_dots.append(dict)
-#         return line_dots    
-         
+              
 report_sxw.report_sxw('report.smstransport_registered_entries', 
                       'sms.transport.registrations', 
                       'addons/smstransport/report/smstransport_registered_students.rml',

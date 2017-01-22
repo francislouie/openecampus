@@ -78,8 +78,8 @@
 				<td><para style="para_2">S.No</para></td>
 				<td><para style="para_2">Name</para></td>
 				<td><para style="para_2">Father Name</para></td>
-				<td><para style="para_2">Phone</para></td>
 				<td><para style="para_2">Email</para></td>
+				<td><para style="para_2">Phone</para></td>
 				<td><para style="para_2">Class</para></td>
 				<td><para style="para_2">Address</para></td>
 			</tr>
@@ -92,15 +92,13 @@
 				<td><para style="para_1">[[ s['sno'] ]]</para></td>
 				<td><para style="para_1">[[ s['name'] ]]</para></td>
 				<td><para style="para_1">[[ s['father_name'] ]]</para></td>
-				<td><para style="P2-White">.</para></td>
-				<td><para style="P2-White">.</para></td>
-				<td><para style="P2-White">.</para></td>
-				<td><para style="P2-White">.</para></td>
+				<td><para style="para_1">[[ s['email'] ]]</para></td>
+				<td><para style="para_1">[[ s['phone'] ]]</para></td>
+				<td><para style="para_1">[[ s['class'] ]]</para></td>
+				<td><para style="para_1">[[ s['address'] ]]</para></td>
 			</tr>
 		</blockTable>
 	</section>
 </pto>
 </story>
 </document>
-
-

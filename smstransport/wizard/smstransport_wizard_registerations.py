@@ -19,6 +19,10 @@ class class_smstransport_registrations(osv.osv_memory):
               'vehcile_id'    :   fields.many2one('sms.transport.vehcile', 'Vehcile'),   
               'route_filter'    : fields.boolean('Filter on Route'),
               'route_id'    :   fields.many2one('sms.transport.route', 'Route'),   
+              'display_phone':   fields.boolean('Display Phone?'),
+              'display_email':   fields.boolean('Display Email?'),
+              'display_class':   fields.boolean('Display Class?'),
+              'display_address':   fields.boolean('Display Address?'),
                }
     _defaults = {
                  'class_filter': lambda*a :True,

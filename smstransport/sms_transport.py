@@ -54,7 +54,9 @@ class sms_transport_vehcile(osv.osv):
         'vehcile_type': fields.selection([('Bus', 'Bus'),('Van', 'Van')], 'Vehcile Type'),
         'max_accomodation':fields.integer('Maximum Seats'),
         'current_accomodation':fields.integer('Filled Seats'),
+        #---------- Ids are inverted in many2many object in sms_transport_route_vehcile_rel table. sms_transport_route_id, contains vehcile ids and sms_transport_vehcile_id, contains route id 
         'transport_route':fields.many2many('sms.transport.route', 'sms_transport_route_vehcile_rel', 'sms_transport_route_id', 'sms_transport_vehcile_id','Transport Route'),
+        #---------- Ids are inverted in many2many object in hr_driver_vehcile_rel table. hr_driver_id, contains vehcile ids and sms_transport_vehcile_id, contains driver ids 
         'drivers':fields.many2many('hr.employee', 'hr_driver_vehcile_rel', 'hr_driver_id', 'sms_transport_vehcile_id','Vehcile Drivers'),
         'income_amount':fields.float('Income Amount'),
         'expanse_amount':fields.float('Expanse Amount'),
