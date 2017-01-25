@@ -16,6 +16,7 @@ class class_fee_receipts_unpaid(osv.osv_memory):
     _columns = {
               "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
               'due_date': fields.date('Due Date', required=True),
+              'amount_after_due_date': fields.integer('Payment After Due Date'),
                }
     _defaults = {'class_id':_get_class}
     

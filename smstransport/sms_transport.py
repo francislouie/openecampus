@@ -38,6 +38,20 @@ class sms_transport_route(osv.osv):
                     ]
 sms_transport_route()
 
+class sms_transport_shift(osv.osv):
+    
+    """This object maintains transport shifts """
+    
+    _name="sms.transport.shift"
+    _columns = {
+        'name' : fields.char('Name', size=256),
+        'desc': fields.char('Description', size=256),
+            } 
+    _defaults = {}
+    _sql_constraints = []
+    
+sms_transport_shift()
+
 class sms_transport_vehcile(osv.osv):
     """This object maintains transport vehciles """
 
@@ -58,6 +72,7 @@ class sms_transport_vehcile(osv.osv):
         'transport_route':fields.many2many('sms.transport.route', 'sms_transport_route_vehcile_rel', 'sms_transport_route_id', 'sms_transport_vehcile_id','Transport Route'),
         #---------- Ids are inverted in many2many object in hr_driver_vehcile_rel table. hr_driver_id, contains vehcile ids and sms_transport_vehcile_id, contains driver ids 
         'drivers':fields.many2many('hr.employee', 'hr_driver_vehcile_rel', 'hr_driver_id', 'sms_transport_vehcile_id','Vehcile Drivers'),
+        'transport_shifts':fields.many2many('sms.transport.shift', 'smstransport_shift_vehcile_rel', 'sms_transport_vehcile_id',  'sms_transport_shift_id', 'Vehcile Shifts'),
         'income_amount':fields.float('Income Amount'),
         'expanse_amount':fields.float('Expanse Amount'),
         'registered_students':fields.one2many('sms.student', 'vehcile_reg_students_id', 'Students', readonly=True),
@@ -110,8 +125,11 @@ class sms_transport_registrations(osv.osv):
     def register_person(self, cr, uid, ids, name):
         fee_structure = self.pool.get('sms.transport.fee.structure').search(cr,uid,[])
         fee_structure = self.pool.get('sms.transport.fee.structure').browse(cr,uid,fee_structure)
-        for rec in fee_structure:
-            registration_fee = rec.registration_fee
+        if fee_structure:
+            for rec in fee_structure:
+                registration_fee = rec.registration_fee
+        else:
+            raise osv.except_osv(('Fee structure does not exist'),('Please define transport fee structure first'))
             
         for record in self.browse(cr, uid, ids):
             # --------- Register Person requesting to avail transport and also make entry in registration lines object. ------------
@@ -155,6 +173,17 @@ class sms_transport_registrations(osv.osv):
                                                                 
                                                                 
         return result
+
+    def onchange_load_student(self, cr, uid, ids, std_reg_no):
+        result = {}
+        search_student_sql = """SELECT id FROM sms_student WHERE registration_no like '%""" + str(std_reg_no) + """%'"""
+        cr.execute(search_student_sql)
+        student_id = cr.fetchone()
+        if student_id:
+            result['student_id'] = student_id
+        else:
+            result['student_id'] = ''
+        return {'value':result}
     
     _name="sms.transport.registrations"
     _columns = {
@@ -162,9 +191,11 @@ class sms_transport_registrations(osv.osv):
         'registration_type':fields.selection([('Employee', 'Employee'),('Student', 'Student')], 'Registration For'),
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
+        'student_reg_no':fields.char('Search By Reg Number', size=256),
+        'shift':fields.many2one('sms.transport.shift','Transport Shift'),
         'reg_start_date': fields.date('Start Date'),
         'reg_end_date': fields.date('End Date'),
-        'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile'),
+        'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile', domain="[('transport_shifts','=',shift)]"),
         'state':fields.selection([('Draft', 'Draft'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn'),('Withdrawn', 'Withdrawn')], 'State'),
         'registered_lines':fields.one2many('sms.transport.registrations.lines','registeration_id','Registered Candidates'),
         #current dues ff
@@ -174,7 +205,6 @@ class sms_transport_registrations(osv.osv):
                  'state': lambda*a :'Draft',
                  'registration_type': 'Student',                 
                  }
-    
 sms_transport_registrations()
 
 class sms_transport_registrations_lines(osv.osv):
@@ -243,7 +273,63 @@ class sms_transport_fee_payments(osv.osv):
             else:
                 return False
               
-    def check_fee_challans_issued(self, cr, uid, class_id, student_id):
+    _name="sms.transport.fee.payments"
+    _columns = {
+        'name' : fields.function(_set_transport_fee, method=True, store = True, size=256, string='Code',type='char'),
+        'registeration_id' :fields.many2one('sms.transport.registrations','Transport Registration'),
+        'employee_id':fields.many2one('hr.employee','Employee'),
+        'student_id':fields.many2one('sms.student','Student'),
+        'fee_amount':fields.float('Fee Amount'),
+        'date_fee_charged':fields.date('Date Fee Charged'),
+        'date_fee_paid':fields.date('Date Fee Paid'),
+        'fee_month':fields.many2one('sms.session.months','Fee Month'),
+        'due_month':fields.many2one('sms.session.months','Payment Month'),
+        'late_fee':fields.float('Late Fee Charges'),
+        'total_fees':fields.float('Total Fee'),
+        'registration_fee':fields.float('Registration Fee'),
+        'state':fields.selection([('Draft', 'Draft'),('Paid', 'Paid'),('Unpaid', 'Unpaid'),('Exemption', 'Exemption')], 'State'),
+            }
+#    _sql_constraints = [('Fee_Payment_Unique', 'unique (name)', """ Only One Entry Can be Made""")]
+    _defaults = {
+                 'state': lambda*a :'Draft',
+                 }
+    
+sms_transport_fee_payments()
+
+class hr_employee(osv.osv):
+    
+    """This object is used to add fields in employee"""
+    _name = 'hr.employee'
+    _inherit ='hr.employee'
+        
+    _columns = {
+        'vehcile_reg_employee_id': fields.many2one('sms.transport.vehcile','Vehcile Registration'),
+        'transport_availed':fields.boolean('Transport Availed?'),
+        'transport_regis_id':fields.many2one('sms.transport.registrations','Transport Registration'),
+        'transport_fee_payment_ids':fields.one2many('sms.transport.fee.payments','employee_id','Transport Payments'),
+        }
+hr_employee()
+
+class sms_student(osv.osv):
+    
+    """This object is used to add fields in sms.student"""
+    
+    _name = 'sms.student'
+    _inherit ='sms.student'
+        
+    _columns = {
+            'vehcile_reg_students_id':fields.many2one('sms.transport.vehcile','Vechile Registration'),
+            'transport_availed':fields.boolean('Transport Availed?'),
+            'transport_fee_history':fields.float('Fee History'),
+            'transoprt_amount':fields.float('Transport Amount'),
+            'transport_reg_id':fields.many2one('sms.transport.registrations','Transport Registration'),
+            'transport_fee_payment_ids':fields.one2many('sms.transport.fee.payments','student_id','Transport Payments'),
+                }
+sms_student()
+
+class sms_transportfee_challan_book(osv.osv):
+    
+    def check_transportfee_challans_issued(self, cr, uid, class_id, student_id):
         result = {}
         fee_ids = self.pool.get('smsfee.studentfee').search(cr ,uid ,[('student_id','=',student_id),('state','=','fee_unpaid')])
         if fee_ids:
@@ -311,62 +397,6 @@ class sms_transport_fee_payments(osv.osv):
                         self.pool.get('smsfee.receiptbook.lines').create(cr ,uid,feelinesdict)
         return True 
 
-    _name="sms.transport.fee.payments"
-    _columns = {
-        'name' : fields.function(_set_transport_fee, method=True, store = True, size=256, string='Code',type='char'),
-        'registeration_id' :fields.many2one('sms.transport.registrations','Transport Registration'),
-        'employee_id':fields.many2one('hr.employee','Employee'),
-        'student_id':fields.many2one('sms.student','Student'),
-        'fee_amount':fields.float('Fee Amount'),
-        'date_fee_charged':fields.date('Date Fee Charged'),
-        'date_fee_paid':fields.date('Date Fee Paid'),
-        'fee_month':fields.many2one('sms.session.months','Fee Month'),
-        'due_month':fields.many2one('sms.session.months','Payment Month'),
-        'late_fee':fields.float('Late Fee Charges'),
-        'total_fees':fields.float('Total Fee'),
-        'registration_fee':fields.float('Registration Fee'),
-        'state':fields.selection([('Draft', 'Draft'),('Paid', 'Paid'),('Unpaid', 'Unpaid'),('Exemption', 'Exemption')], 'State'),
-            }
-#    _sql_constraints = [('Fee_Payment_Unique', 'unique (name)', """ Only One Entry Can be Made""")]
-    _defaults = {
-                 'state': lambda*a :'Draft',
-                 }
-    
-sms_transport_fee_payments()
-
-class hr_employee(osv.osv):
-    
-    """This object is used to add fields in employee"""
-    _name = 'hr.employee'
-    _inherit ='hr.employee'
-        
-    _columns = {
-        'vehcile_reg_employee_id': fields.many2one('sms.transport.vehcile','Vehcile Registration'),
-        'transport_availed':fields.boolean('Transport Availed?'),
-        'transport_regis_id':fields.many2one('sms.transport.registrations','Transport Registration'),
-        'transport_fee_payment_ids':fields.one2many('sms.transport.fee.payments','employee_id','Transport Payments'),
-        }
-hr_employee()
-
-class sms_student(osv.osv):
-    
-    """This object is used to add fields in sms.student"""
-    
-    _name = 'sms.student'
-    _inherit ='sms.student'
-        
-    _columns = {
-            'vehcile_reg_students_id':fields.many2one('sms.transport.vehcile','Vechile Registration'),
-            'transport_availed':fields.boolean('Transport Availed?'),
-            'transport_fee_history':fields.float('Fee History'),
-            'transoprt_amount':fields.float('Transport Amount'),
-            'transport_reg_id':fields.many2one('sms.transport.registrations','Transport Registration'),
-            'transport_fee_payment_ids':fields.one2many('sms.transport.fee.payments','student_id','Transport Payments'),
-                }
-sms_student()
-
-class sms_transportfee_challan_book(osv.osv):
-    
     _name = 'sms.transportfee.challan.book'
     _description = "This object contains the challan issued to transport availers."
     _columns = {
