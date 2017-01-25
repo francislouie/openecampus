@@ -13,6 +13,8 @@
                     <h1><field name="class_id" readonly ="1" nolabel = "1" /></h1>
 					<group col="6" String = "" >
 						 <field name="due_date" />
+						 <newline/>
+						 <field name="amount_after_due_date"/>
 				    </group>
 						 
                     </group>
