@@ -6,7 +6,6 @@ _logger = logging.getLogger(__name__)
 class class_fee_receipts_unpaid(osv.osv_memory):
     
     def _get_class(self, cr, uid, ids):
-        
         obj = self.browse(cr, uid, ids['active_id'])
         std_id =  obj.id
         return std_id

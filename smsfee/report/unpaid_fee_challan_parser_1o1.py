@@ -1,7 +1,7 @@
 import pooler
 import time
 import mx.DateTime
-import datetime
+from datetime import datetime
 from report import report_sxw
 import netsvc
 import locale
@@ -137,36 +137,42 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
  
     def get_candidate_info(self, data):
         info_list = []
-        stdrec = self.pool.get('sms.student').browse(self.cr,self.uid,data)
-        info_dict = {'name':'','father_name':'','class':'','section':''}
+        student_id = self.datas['form']['student_id'][0]
+        stdrec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
+        info_dict = {'name':'','father_name':'','class':'','fee_month':''}
         info_dict['name'] = stdrec.name
         info_dict['father_name'] = stdrec.father_name
         info_dict['class'] = stdrec.current_class.name
-        info_dict['section'] = stdrec.current_class.section_id.name
+        fee_month = self.datas['form']['due_date']
+        due_date = datetime.strptime(fee_month, '%Y-%m-%d')
+        str_date = due_date.strftime('%b %Y')
+        info_dict['fee_month'] = str_date
         info_list.append(info_dict)
         return info_list
  
     def get_on_accounts(self, data):
         result = []
         lines_ids = self.pool.get('smsfee.receiptbook.lines').search(self.cr,self.uid, [('receipt_book_id','=',data)])
-        #print "++++++++",     
         if lines_ids:
-             challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr,self.uid,lines_ids)
+            challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr,self.uid,lines_ids)
         for challan in challans:
-             dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
-             result.append(dict) 
+            dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
+            result.append(dict) 
         return result
      
     def get_total_amount(self, data):
-        line_dots = []
         receipt = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data)
-#         total_amount_str = str(babel.numbers.format_currency((receipt.total_amount), "" )) + " /="
-        #print receipt,"receipt.total_paybles",receipt.total_paybles 
-        total_amount_str = receipt.total_paybles
+        if self.datas['form']['amount_after_due_date']:
+            total_amount_str = receipt.total_paybles + self.datas['form']['amount_after_due_date'] 
+        else:
+            total_amount_str = receipt.total_paybles
         return total_amount_str
      
     def get_amount_in_words(self,data):
-        amount = challan = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data).total_paybles
+        if self.datas['form']['amount_after_due_date']:
+            amount = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data).total_paybles + self.datas['form']['amount_after_due_date'] 
+        else:   
+            amount = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data).total_paybles        
         user_id = self.pool.get('res.users').browse(self.cr, self.uid,[self.uid])[0]
         cur = user_id.company_id.currency_id.name
         amt_en = amount_to_text_en.amount_to_text(amount,'en',cur);
