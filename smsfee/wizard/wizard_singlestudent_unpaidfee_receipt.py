@@ -19,7 +19,7 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
     _defaults = {'student_id':_get_student}
     
     def create_unpaid_challans(self, cr, uid, student_id):
-        _logger.warning("Deprecated, usle c............................................................................")
+        _logger.warning("Deprecated ............................................................................")
         student_id = self.pool.get('sms.student').search(cr,uid,[('id','=',student_id[0])])
         class_id = self.pool.get('sms.student').browse(cr,uid,student_id)[0].current_class.id
         self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id, student_id)
