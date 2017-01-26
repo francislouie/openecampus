@@ -707,6 +707,15 @@ class smsfee_studentfee(osv.osv):
     """ Stores student fee record"""
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        #*00*************create log for updation in student fee**************************
+        for k,v in vals.iteritems():
+            sql = """ select """ +str(k)+ """ from smsfee_studentfee where id ="""+str(ids)+ """
+            """
+            cr.execute(sql)
+            pre_val = cr.fetchone()[0]
+            dict={k:v}
+            self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'smsfee_studentfee','write',pre_val)
+        #-----------------------------------------------------
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
         return result
     
@@ -815,6 +824,24 @@ class smsfee_studentfee(osv.osv):
                     raise osv.except_osv(('Alert '), ('Fee May be defined but not set for New Class.'))
         return None
         
+    def _get_total_payables(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+             result[f.id] = f.late_fee + f.fee_amount
+        return result
+    
+    def onchange_set_domain(self, cr, uid,ids,fee_type):
+        #********************inprogress still have to do stuff******************************************
+#         rec = self.browse(cr ,uid ,ids)
+#         print "rec==",rec
+#         fee_struct = rec.student_id.fee_type.id  
+#         cls_fee_id = self.pool.get('smsfee.classes.fees').search(cr ,uid ,[('fee_structure_id','=',fee_struct)])
+#         val = [i.id for i in self.pool.get('smsfee.classes.fees').browse(cr ,uid ,cls_fee_id)]
+#         print "val===",val
+#         #cls_fee_lines_id = self.pool.get('smsfee.classes.fees.lines').search(cr ,uid ,[('parent_fee_structure_id','=',cls_fee_id)])
+#         #print fee_struct,"******",cls_fee_id,"******",cls_fee_lines_id
+#         return {'domain': {'fee_type': [('parent_fee_structure_id', 'in', cls_fee_id)]} }   
+        return  
     
     _name = 'smsfee.studentfee'
     _description = "Stores student fee record"
@@ -839,10 +866,22 @@ class smsfee_studentfee(osv.osv):
         'net_total': fields.integer('Balance'),  
         'reconcile':fields.boolean('Reconcile'), 
         'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
-    } 
-    
+        #------------total payables---------------------------------
+        'total_payable': fields.function(_get_total_payables,string = 'Total Payable',type = 'integer',method = True,store = True),  
+    }
+     
+    def get_student_class(self, cr, uid,context):
+        if context:
+            acd_cal_stu = self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('std_id','=',context['student_id'])])
+            clss_id = self.pool.get('sms.academiccalendar').search(cr ,uid ,[('acad_cal_students','=',acd_cal_stu),('state','=','Active')])
+            if clss_id:
+                rec = self.pool.get('sms.academiccalendar').browse(cr ,uid ,clss_id)[0]
+            return rec.id
+        
     _defaults = {
-        'reconcile': False
+        'reconcile': False,
+        'student_id': lambda self, cr, uid, context: context.get('student_id', False),
+        'acad_cal_id':get_student_class, 
     }
 smsfee_studentfee()
 

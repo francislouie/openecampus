@@ -86,7 +86,7 @@
 	    </blockTable>
 
     <section>
-   	<blockTable colWidths="30.0,95.0,40.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0" repeatRows="1" style="Table_maintable">
+   	<blockTable colWidths="30.0,95.0,57.0,34.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0" repeatRows="1" style="Table_maintable">
       <para style="para_1">[[ repeatIn(students_paidfee_report('Form'),'r') ]]</para>
       <tr>
 		<td><para style="para_heading2">[[ r['sno'] ]]</para></td>

@@ -235,7 +235,7 @@
 						</group>
 					</group>
 					<group readonly ="1">		    	 		
-					<field name="studen_fee_ids"  nolabel="1" attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" />
+					<field name="studen_fee_ids"  nolabel="1" attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}" />
 					</group>
 			    	</page>
 			   </notebook>
@@ -480,10 +480,15 @@
 			<h2><field name="name"/></h2>
 			<group >
 			<group>
-				<field name="fee_amount" readonly = "1"/>
-				<field name="late_fee" readonly = "1"/>
+
+				<field name="fee_type" on_change="onchange_set_domain(fee_type)" />
+				<field name="fee_amount" />
+<!--
+				<field name="total_payable" />
+				<field name="late_fee" />
 				<field name="total_amount" readonly = "1"/>
 				<field name="returned_amount" attrs="{'invisible':[('state','IN',['fee_unpaid','fee_paid'])]}" readonly = "1" />
+-->
 			</group>
 				 <group>
 			<field name="paid_amount" readonly = "1"/>

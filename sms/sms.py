@@ -3075,10 +3075,19 @@ class sms_exam_default_lines(osv.osv):
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         super(osv.osv, self).write(cr, uid, ids, vals, context)
-        
         default_details_obj = self.browse(cr, uid, ids, context=context)
         
         for obj in default_details_obj:
+
+            #*00*************create log for updation in exam marks**************************
+            for k,v in vals.iteritems():
+                sql = """ select """ +str(k)+ """ from sms_exam_lines where id ="""+str(obj.exam_id.id)+ """
+                """
+                cr.execute(sql)
+                pre_val = cr.fetchone()[0]
+                dict={k:v}
+                self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_lines','write',pre_val)
+         
             
             self.pool.get('sms.exam.lines').write(cr, uid, [obj.exam_id.id], {
                     'exam_status':obj.exam_status,
@@ -3087,7 +3096,7 @@ class sms_exam_default_lines(osv.osv):
                     })
         
         return True
-     
+    
 #     def unlink(self, cr, uid, ids, context=None):
 #         obj =  self.browse(cr, uid, ids, context=context)
 #         if obj[0].exam_id:
@@ -4751,34 +4760,47 @@ sms_weekly_plan()
 class project_transactional_log(osv.osv):
 
     def create_transactional_logs(self, cr, uid,vals,obj,operation,pre_val):
+        
+        print "******create_transactional_logs*****",vals,obj,operation,pre_val
+        
         """ this method creates transactional logs for project and will be called from write method of project"""
-        post_value = ''
-        column_name = ''
-        for k,v in vals.iteritems():
-            column_name = k
-            post_value = v
         import datetime
-        result = self.pool.get('project.transactional.log').create(cr,uid,{
-                                                                        'object_name': obj,
-                                                                        'pre_value': pre_val,
-                                                                        'post_value': post_value,
-                                                                        'operation':operation,
-                                                                        'column_name':column_name,
-                                                                        'project_id':'project_id',
-                                                                        'event_date':datetime.datetime.now(),
-                                                                        'event_by': uid,
-                                                                        }) 
+        if vals:
+            post_value = ''
+            column_name = ''
+            for k,v in vals.iteritems():
+                print k,"****",v,"pre_val==",pre_val
+                column_name = k
+                post_value = v
+            result = self.pool.get('project.transactional.log').create(cr,uid,{
+                                                                            'object_name': obj,
+                                                                            'pre_value': str(pre_val),
+                                                                            'post_value': str(post_value),
+                                                                            'operation':operation,
+                                                                            'column_name':column_name,
+                                                                            'project_id':'project_id',
+                                                                            'event_date':datetime.datetime.now(),
+                                                                            'event_by': uid,
+                                                                            })
+        else:
+            print "function call to maintain logs of dmc printing" 
+            result = self.pool.get('project.transactional.log').create(cr,uid,{
+                                                                            'object_name': obj,
+                                                                            'pre_value': pre_val,
+                                                                            'post_value': '',
+                                                                            'operation':operation,
+                                                                            'column_name':'',
+                                                                            'project_id':'project_id',
+                                                                            'event_date':datetime.datetime.now(),
+                                                                            'event_by': uid,
+                                                                            })            
         return result
 
 
     _name = "project.transactional.log"
     _description = "maintains project logs"
     _columns = {
-        'operation': fields.selection([('Insert', 'Create'),
-                                        ('write','Update'),
-                                        ('unlink','Deleted'),
-                                        ('read','Read'),
-                                        ('Transaction','Transaction')] ,'Operation' ),
+        'operation': fields.char('Operation',size=300),
         'object_name': fields.char('Data Object Affected'),
         'pre_value': fields.char('Previous Data Value'),
         'post_value': fields.char('Post Data Value'),

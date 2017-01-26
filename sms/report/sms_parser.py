@@ -554,6 +554,14 @@ class crossovered_analytic(report_sxw.rml_parse):
         if dmc_type == 'Single_DMC':
             student = str(form['student_id'][0])
             student_query = "AND sms_student.id = " + str(student)
+            #*00*-------------function call to maintain logs of dmc printing--------------------
+            print "create printing dmc log for single student===",self.pool.get('project.transactional.log').create_transactional_logs( self.cr, self.uid,None,'sms.student','Print single student DMC',None)
+        else:
+            #*00*-------------function call to maintain logs of multiple students 'dmc printing--------------------
+            print "create printing dmc log for class===",self.pool.get('project.transactional.log').create_transactional_logs( self.cr, self.uid,None,'sms.student','Print class DMCs',None)
+        
+            
+        
            
         student_sql = """SELECT distinct sms_student.id, sms_student.name, sms_student.father_name, sms_student.current_class from sms_student
                     inner join sms_academiccalendar_student on
@@ -775,7 +783,6 @@ class crossovered_analytic(report_sxw.rml_parse):
         return final_result
 
     def get_students_dmc_multiple(self,form):
-        
         final_result = []
         report_type = str(form['report_type'])
         academiccalendar_id = form['academiccalendar_id'][0]
