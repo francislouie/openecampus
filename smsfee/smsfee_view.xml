@@ -219,10 +219,11 @@
 				<notebook>
 				
 					<page string = "Fee Details">
-<!--#$$$$$ -->
+					<!--
 					<button name="%(report_student_unpaidfee_receipts_id)d" string="Fee Receipt" 
 					states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-<!--#$$$$$ -->
+					-->
+					<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 					<button name="action_pay_student_fee" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="object" class="oe_highlight" groups=""/>
 					<group>
 						<group>					
