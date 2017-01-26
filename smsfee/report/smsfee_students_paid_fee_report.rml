@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <document filename="test.pdf">
-  <template pageSize="(970.0,600.0)" title="Test" author="BaharAli" allowSplitting="20">
+  <template pageSize="(750.0,900.0)" title="Test" author="BaharAli" allowSplitting="20">
 	<pageTemplate id="first">
-    	<frame id="first" x1="10.0" y1="0.0" width="950" height="580"/>
+    	<frame id="first" x1="20.0" y1="28.0" width="670" height="986"/>
     </pageTemplate>
   	</template>
   	<stylesheet>
@@ -74,18 +74,19 @@
   </stylesheet>
   <story>
      
-    	 <blockTable colWidths="600" repeatRows="2" style="Table1">
-  	<tr><td><para style="para_title"></para></td></tr>
-	<tr><td><para style="para_title"></para></td></tr>
-	<tr><td><para style="para_title">Fee Collection Report</para></td></tr>
-	<tr><td><para style="para_title">[[ get_class_name(data['form'])]]</para></td></tr>
-	<tr><td><para style="para_title"></para></td></tr>
-   	<tr><td></td></tr>
-    <tr><td></td></tr>
-	<tr><td><para style="para_heading3">Grand Total: </para></td></tr>
-    </blockTable>
+    	 <blockTable colWidths="610" repeatRows="2" style="Table1">
+		  	<tr><td><para style="para_title"></para></td></tr>
+			<tr><td><para style="para_title"></para></td></tr>
+			<tr><td><para style="para_title">Fee Collection Report</para></td></tr>
+			<tr><td><para style="para_title">[[ get_class_name(data['form'])]]</para></td></tr>
+			<tr><td><para style="para_title"></para></td></tr>
+		   	<tr><td></td></tr>
+		    <tr><td></td></tr>
+			<tr><td><para style="para_heading3">Grand Total: </para></td></tr>
+	    </blockTable>
+
     <section>
-   	<blockTable colWidths="35.0,95.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0" repeatRows="1" style="Table_maintable">
+   	<blockTable colWidths="30.0,95.0,57.0,34.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0" repeatRows="1" style="Table_maintable">
       <para style="para_1">[[ repeatIn(students_paidfee_report('Form'),'r') ]]</para>
       <tr>
 		<td><para style="para_heading2">[[ r['sno'] ]]</para></td>

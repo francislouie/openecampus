@@ -294,6 +294,9 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             
                 if idss.subtype == 'at_admission':
                     mydict['admission_fee'] = idss.name
+                    
+                    print "idss.namev=====",idss.name
+                    
                 if idss.subtype == 'Annual_fee':
                     mydict['annual_fee'] = idss.name
                 if idss.subtype == 'Refundable':

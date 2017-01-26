@@ -179,7 +179,7 @@ class smsfee_festructure_revision(osv.osv):
     def close_annual_fee_structure(self, cr, uid, ids, name, args, context=None):
         print "starting method is called"
         for f in self.browse(cr, uid, ids, context=context):
-            result = self.write(cr, uid, f.id, {'state':'Closed','effective_till':dattime.now()})
+            result = self.write(cr, uid, f.id, {'state':'Closed','effective_till':datetime.datetime.now()})
         return result
     
     _name = 'smsfee.festructure.revision'
@@ -452,7 +452,7 @@ class smsfee_classes_fees(osv.osv):
                     })
             #
         
-        return result
+        return #result
 
     def forcasted_amount(self, cr, uid, ids, name, args, context=None):
         result = {}
@@ -707,6 +707,15 @@ class smsfee_studentfee(osv.osv):
     """ Stores student fee record"""
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        #*00*************create log for updation in student fee**************************
+        for k,v in vals.iteritems():
+            sql = """ select """ +str(k)+ """ from smsfee_studentfee where id ="""+str(ids)+ """
+            """
+            cr.execute(sql)
+            pre_val = cr.fetchone()[0]
+            dict={k:v}
+            self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'smsfee_studentfee','write',pre_val)
+        #-----------------------------------------------------
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
         return result
     
@@ -815,6 +824,24 @@ class smsfee_studentfee(osv.osv):
                     raise osv.except_osv(('Alert '), ('Fee May be defined but not set for New Class.'))
         return None
         
+    def _get_total_payables(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+             result[f.id] = f.late_fee + f.fee_amount
+        return result
+    
+    def onchange_set_domain(self, cr, uid,ids,fee_type):
+        #********************inprogress still have to do stuff******************************************
+#         rec = self.browse(cr ,uid ,ids)
+#         print "rec==",rec
+#         fee_struct = rec.student_id.fee_type.id  
+#         cls_fee_id = self.pool.get('smsfee.classes.fees').search(cr ,uid ,[('fee_structure_id','=',fee_struct)])
+#         val = [i.id for i in self.pool.get('smsfee.classes.fees').browse(cr ,uid ,cls_fee_id)]
+#         print "val===",val
+#         #cls_fee_lines_id = self.pool.get('smsfee.classes.fees.lines').search(cr ,uid ,[('parent_fee_structure_id','=',cls_fee_id)])
+#         #print fee_struct,"******",cls_fee_id,"******",cls_fee_lines_id
+#         return {'domain': {'fee_type': [('parent_fee_structure_id', 'in', cls_fee_id)]} }   
+        return  
     
     _name = 'smsfee.studentfee'
     _description = "Stores student fee record"
@@ -839,10 +866,22 @@ class smsfee_studentfee(osv.osv):
         'net_total': fields.integer('Balance'),  
         'reconcile':fields.boolean('Reconcile'), 
         'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
-    } 
-    
+        #------------total payables---------------------------------
+        'total_payable': fields.function(_get_total_payables,string = 'Total Payable',type = 'integer',method = True,store = True),  
+    }
+     
+    def get_student_class(self, cr, uid,context):
+        if context:
+            acd_cal_stu = self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('std_id','=',context['student_id'])])
+            clss_id = self.pool.get('sms.academiccalendar').search(cr ,uid ,[('acad_cal_students','=',acd_cal_stu),('state','=','Active')])
+            if clss_id:
+                rec = self.pool.get('sms.academiccalendar').browse(cr ,uid ,clss_id)[0]
+            return rec.id
+        
     _defaults = {
-        'reconcile': False
+        'reconcile': False,
+        'student_id': lambda self, cr, uid, context: context.get('student_id', False),
+        'acad_cal_id':get_student_class, 
     }
 smsfee_studentfee()
 
@@ -871,7 +910,7 @@ class smsfee_std_withdraw(osv.osv):
         return
     
     def reject_std_withdraw(self, cr, uid, ids, context=None):
-        self.write(cr, uid, ids[0], {'state':'Rejected','decision_by':uid,'decision_date':datetime.today()})
+        self.write(cr, uid, ids[0], {'state':'Rejected','decision_by':uid,'decision_date':datetime.datetime.today()})
         return
     
     def confirm_std_withdraw(self, cr, uid, ids, context=None):
@@ -2565,7 +2604,8 @@ class smsfee_paid_unpaid_adjustments(osv.osv):
     _name = 'smsfee.paid.unpaid.adjustments'
     _columns = {
         'name' : fields.char('Fee Adjustment No' ,size=256),
-        'student' : fields.many2one('sms.student' , 'Student Name' ,required=True ),
+        'class' : fields.many2one('sms.academiccalendar' , 'Class' ,required=True ),
+        'student' : fields.many2one('sms.student' , 'Student Name' ,required=True , domain="[('current_class','=',class)]"),
         'date': fields.date("Date" ,required=True),
         'receipt_no':fields.many2one('smsfee.receiptbook','Receipt No'),
         'action':fields.selection([('paid_fee_adjustment','Paid Fee Adjustment'),('unpaid_fee_adjustment','Unpaid Fee Adjustment')],'Action' ,required=True ),
@@ -2705,3 +2745,88 @@ class admission_register_student_fees(osv.osv):
 
     _defaults = {    }    
 admission_register_student_fees()
+
+
+
+#$$$$--
+class smsfee_receive_challan_in_bank(osv.osv):
+    """This object enter detail about fee challan that in received by bank """
+
+    def load_challan_details(self, cr, uid, ids, name):
+        record = self.browse(cr, uid, ids)
+        pooler_receiptbook = self.pool.get('smsfee.receiptbook')
+        for f in record:
+            for acd_cal in f.acd_cal:
+                for std in acd_cal.acad_cal_students:
+                   
+                    challan_id = pooler_receiptbook.search(cr ,uid ,[('state','=','fee_calculated'),('student_id','=',std.std_id.id),
+                                                                                      ('student_class_id','=',acd_cal.id)])
+                    for challan in pooler_receiptbook.browse(cr ,uid ,challan_id):
+                        self.pool.get('smsfee.receive.challan.in.bank.lines').create(cr ,uid ,{'parent_id':f.id,
+                                                                                                             'challan_no':challan.id,
+                                                                                                             #'due_date':,
+                                                                                                             'student_name':std.std_id.id,
+                                                                                                             'amount':challan.total_paybles,
+                                                                                                            # 'late_fee':,
+                                                                                                            # 'received':,
+                                                                                                             'challan_produced_by_bank':True,
+                                                                                                             })
+        self.write(cr ,uid , ids ,{'state':'Receive'})
+        return True
+    
+    def confirm_challan_receive_from_bank(self ,cr ,uid ,ids ,context=None):
+        _pooler = self.pool.get('smsfee.receive.challan.in.bank.lines')
+        pooler_receiptbook = self.pool.get('smsfee.receiptbook')
+        sql = """ SELECT smsfee_receive_challan_in_bank_lines.id from smsfee_receive_challan_in_bank_lines
+                    INNER JOIN smsfee_receive_challan_in_bank ON smsfee_receive_challan_in_bank_lines.parent_id =smsfee_receive_challan_in_bank.id 
+                    WHERE smsfee_receive_challan_in_bank.id = """ +str(ids[0])+ """
+                          AND smsfee_receive_challan_in_bank_lines.received = True
+        """
+        cr.execute(sql)
+        record = cr.fetchall()
+        for id  in record:
+            rec = _pooler.browse(cr ,uid ,id[0])
+            
+            #--------------update smsfee.receiptbook.lines--------------------
+            receipt_lines_ids = self.pool.get('smsfee.receiptbook.lines').search(cr ,uid , [('receipt_book_id','=',rec.challan_no.id)])
+            self.pool.get('smsfee.receiptbook.lines').write(cr ,uid ,receipt_lines_ids,{
+                                                                                                                         'paid_amount': rec.amount,#+rec.late_fee ,
+                                                                                                                         'discount': 0 ,
+                                                                                                                         'reconcile': True ,
+                                                                                                                         })
+            
+            pooler_receiptbook.confirm_fee_received(cr ,uid ,[rec.challan_no.id])
+        self.write(cr ,uid , ids ,{'state':'Confirm'})
+        
+        return True
+    
+    _name = 'smsfee.receive.challan.in.bank'
+    _columns = {
+        'acd_cal':fields.many2many('sms.academiccalendar', 'receive_challan_academiccalendar_rel', 'receive_challan_id', 'academiccalendar_id', 'Class'),
+        'state':fields.selection([('Draft','Draft'),('Receive','Receive'),('Confirm','Confirm')],'State'),
+        'receive_challan_by_bank':fields.one2many('smsfee.receive.challan.in.bank.lines','parent_id','Challan Received By Bank')
+    }
+    _sql_constraints = []
+
+    _defaults = { 'state':'Draft'   }    
+smsfee_receive_challan_in_bank()
+
+class smsfee_receive_challan_in_bank_lines(osv.osv):
+    """Child object of smsfee_receive_challan_in_bank  """
+    _name = 'smsfee.receive.challan.in.bank.lines'
+    _columns = {
+        'parent_id':fields.many2one('smsfee.receive.challan.in.bank', 'Parent Id'),
+        'challan_no':fields.many2one('smsfee.receiptbook', 'Challan No'),
+        'due_date':fields.date('Due Date'),
+        'student_name':fields.many2one('sms.student', 'Student'),
+        'amount':fields.integer('Amount'),
+        'late_fee':fields.integer('Late Fee'),
+        'received':fields.boolean('Received'),
+        'challan_produced_by_bank':fields.boolean('Challan By Bank'),
+        
+
+    }
+    _sql_constraints = []
+
+    _defaults = { }    
+smsfee_receive_challan_in_bank_lines()

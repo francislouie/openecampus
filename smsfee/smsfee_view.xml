@@ -235,7 +235,7 @@
 						</group>
 					</group>
 					<group readonly ="1">		    	 		
-					<field name="studen_fee_ids"  nolabel="1" attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" />
+					<field name="studen_fee_ids"  nolabel="1" attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}" />
 					</group>
 			    	</page>
 			   </notebook>
@@ -480,10 +480,15 @@
 			<h2><field name="name"/></h2>
 			<group >
 			<group>
-				<field name="fee_amount" readonly = "1"/>
-				<field name="late_fee" readonly = "1"/>
+
+				<field name="fee_type" on_change="onchange_set_domain(fee_type)" />
+				<field name="fee_amount" />
+<!--
+				<field name="total_payable" />
+				<field name="late_fee" />
 				<field name="total_amount" readonly = "1"/>
 				<field name="returned_amount" attrs="{'invisible':[('state','IN',['fee_unpaid','fee_paid'])]}" readonly = "1" />
+-->
 			</group>
 				 <group>
 			<field name="paid_amount" readonly = "1"/>
@@ -925,8 +930,9 @@
 		<group>
 			<group string= "Paid-Unpaid Fee Adjustments" col="4" colspan="4">>
 	          	<field name="name" readonly="1" />
+				<field name="date" attrs="{'readonly':[('state','!=','Draft' )]}" />
+	          	<field name="class" attrs="{'readonly':[('state','!=','Draft' )]}" />
 	          	<field name="student" attrs="{'readonly':[('state','!=','Draft' )]}" on_change="onchange_set_domain(student)" />
-	          	<field name="date" attrs="{'readonly':[('state','!=','Draft' )]}" />
 	          	<field name="receipt_no" attrs="{'readonly':[('state','!=','Draft' )] , 'required':[('action','=','paid_fee_adjustment')]    }" />
 	          	<field name="action" attrs="{'readonly':[('state','!=','Draft' )]}" />
 	          	<field name="state" reaonly="1"/>
@@ -1067,7 +1073,75 @@
 			   </notebook>
 		      </field>
 		    </record>
-		
+	
+
+<!-- smsfee.receive.challan.in.bank -->
+    <record model="ir.ui.view" id="smsfee_receive_challan_in_bank_form">
+      <field name="name">smsfee.receive.challan.in.bank.form</field>
+      <field name="model">smsfee.receive.challan.in.bank</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+        <form string="Received challan in bank" version="7.0">
+	        <header>
+				    <field name="state" widget="statusbar" statusbar_visible="Draft,Receive,Confirm"/>
+					<button name="load_challan_details"  type="object" string="Load Challan Info" states="Draft" class="oe_highlight" groups=""/>
+					<button name="confirm_challan_receive_from_bank"  type="object" string="Confirm" states="Receive" class="oe_highlight" groups=""/>
+					
+			</header>
+			<group string= "Received challan in bank">
+				<group >
+	          	<field name="acd_cal" widget="many2many_tags" attrs="{'readonly':[('state','in',['Confirm','Receive'] )]}"  />
+	          	<field name="state" readonly="1"/>
+	          	</group>
+				<group colspan="6">
+	          	<field name="receive_challan_by_bank" nolabel="1" attrs="{'readonly':[('state','=','Confirm')]}"   />
+	          	</group>
+
+	       </group>
+        </form>
+      </field>
+    </record>
+    
+    <record model="ir.ui.view" id="smsfee_receive_challan_in_bank_tree">
+      <field name="name">smsfee.receive.challan.in.bank.tree</field>
+      <field name="model">smsfee.receive.challan.in.bank</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+        <tree string="Received challan in bank">
+          <field name="acd_cal"/>
+          <field name="state"/>
+		  <field name="receive_challan_by_bank"/>
+        </tree>
+      </field>
+    </record>
+    
+    <record model="ir.actions.act_window" id="action_smsfee_receive_challan_in_bank">
+      <field name="name">Received challan in bank</field>
+      <field name="res_model">smsfee.receive.challan.in.bank</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+    <record model="ir.ui.view" id="smsfee_receive_challan_in_bank_lines_tree">
+      <field name="name">smsfee.receive.challan.in.bank.lines</field>
+      <field name="model">smsfee.receive.challan.in.bank.lines</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+	        <tree string="Detail"  editable="top">
+	          <field name="challan_no" />
+	          <field name="due_date"  />
+	          <field name="student_name" />
+	          <field name="amount"  />
+	          <field name="late_fee" readonly="1" />
+	          <field name="received"  />
+	          <field name="challan_produced_by_bank" />	
+	        </tree>	
+      </field>
+    </record>
+
+
+
+	
 
 	</data>
 </openerp>
