@@ -34,7 +34,7 @@ class sms_transport_route(osv.osv):
                  'state': lambda*a :'Active',
                  }
     _sql_constraints = [
-                ('unique_name_transport_route', 'unique (name)', 'Transport Route Can be Entered Once Only')
+                ('unique_name_transport_route', 'unique (name, transport_location)', 'Transport Route Can be Entered Once Only')
                     ]
 sms_transport_route()
 
@@ -99,6 +99,7 @@ class sms_transport_fee_structure(osv.osv):
     _columns = {
         'name' : fields.function(_set_fee_structure_name, method=True, store = True, size=256, string='Code',type='char'),
         'transport_route': fields.many2one('sms.transport.route','Transport Route'),
+        'vehcile_id':fields.many2one('sms.transport.vehcile', 'Vechile'),
         'start_date': fields.date('Start Date'),
         'end_date': fields.date('End Date'),
         'fiscal_year':fields.many2one('account.fiscalyear', 'Fiscal Year'),
@@ -184,6 +185,18 @@ class sms_transport_registrations(osv.osv):
         else:
             result['student_id'] = ''
         return {'value':result}
+
+    def set_transportfee_amount(self, cr, uid, ids, context={}, arg=None, obj=None):
+        result = {}
+        amount = '0'
+        records =  self.browse(cr, uid, ids, context)
+        for f in records:
+            sql =   """SELECT COALESCE(sum(amount),'0') FROM sms_transport_fee_registration
+                     WHERE parent_id =""" + str(f.id)
+            cr.execute(sql)
+            amount = cr.fetchone()[0]
+        result[f.id] = amount
+        return result
     
     _name="sms.transport.registrations"
     _columns = {
@@ -198,6 +211,8 @@ class sms_transport_registrations(osv.osv):
         'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile', domain="[('transport_shifts','=',shift)]"),
         'state':fields.selection([('Draft', 'Draft'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn'),('Withdrawn', 'Withdrawn')], 'State'),
         'registered_lines':fields.one2many('sms.transport.registrations.lines','registeration_id','Registered Candidates'),
+        'transportfee_ids':fields.one2many('sms.transport.fee.registration','parent_id','Fee'),
+        'total_fee_applicable':fields.function(set_transportfee_amount, method=True, string='Total Fee',type='float'),
         #current dues ff
             }
     _sql_constraints = [('Unique_registration', 'unique (name)', """Person Can bE Registered Only Once""")]
@@ -206,6 +221,28 @@ class sms_transport_registrations(osv.osv):
                  'registration_type': 'Student',                 
                  }
 sms_transport_registrations()
+
+class sms_transport_fee_registration(osv.osv):
+    
+    def _set_transport_fee(self, cr, uid, ids, fields,args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            string =  "Transport Fee - " + str(f.fee_month.session_month_id) + str(f.registeration_id)
+            result[f.id] = string
+        return result
+
+    _name="sms.transport.fee.registration"
+    _columns = {
+        'name' : fields.function(_set_transport_fee, method=True, store = True, size=256, string='Code',type='char'),
+        'parent_id':fields.many2one('sms.transport.registrations','Transport Register'),
+        'fee_month': fields.date('Fee Month'),
+        'fee_amount':fields.float('Amount'),
+        'hidden_parent_feestr':fields.integer('Hidden classes Fees id'),
+            }
+#    _sql_constraints = [('Fee_Payment_Unique', 'unique (name)', """ Only One Entry Can be Made""")]
+    _defaults = {}
+    
+sms_transport_fee_registration()
 
 class sms_transport_registrations_lines(osv.osv):
     """This object record of transport registrations vehciles """
