@@ -1,10 +1,5 @@
 from openerp.osv import fields, osv
-#from openerp import tools
-#from openerp import addons
-#import datetime
-#import xlwt
-#import xlrd
-#from dateutil import parser
+from datetime import datetime, timedelta
 import logging
 _logger = logging.getLogger(__name__)
       
@@ -20,6 +15,9 @@ class sms_transport_location(osv.osv):
     _defaults = {
                  'state': lambda*a :'Active',
                 }
+    _sql_constraints = [
+                ('unique_name_transport_location', 'unique (name)', 'Transport Location Must Unique')
+                    ]
 sms_transport_location()
 
 class sms_transport_route(osv.osv):
@@ -35,44 +33,71 @@ class sms_transport_route(osv.osv):
     _defaults = {
                  'state': lambda*a :'Active',
                  }
+    _sql_constraints = [
+                ('unique_name_transport_route', 'unique (name)', 'Transport Route Can be Entered Once Only')
+                    ]
 sms_transport_route()
+
+class sms_transport_shift(osv.osv):
+    
+    """This object maintains transport shifts """
+    
+    _name="sms.transport.shift"
+    _columns = {
+        'name' : fields.char('Name', size=256),
+        'desc': fields.char('Description', size=256),
+            } 
+    _defaults = {}
+    _sql_constraints = []
+    
+sms_transport_shift()
 
 class sms_transport_vehcile(osv.osv):
     """This object maintains transport vehciles """
-    
-#     def _get_vehcile_name(self, cr, uid, ids):
-#         result = []
-#         for rec in self.browse(cr, uid, ids):
-#             result = rec.vehcile_type + ' - ' +rec.vehcile_no
-#         return result
+
+    def _get_vehcile_name(self, cr, uid, ids, fields,args, context=None):
+        result = {}
+        for rec in self.browse(cr, uid, ids, context=context):
+            string =  str(rec.vehcile_type) + ' - ' + str(rec.vehcile_no)
+            result[rec.id] = string
+        return result
     
     _name="sms.transport.vehcile"
     _columns = {
-        'name' : fields.char('Name', size=256),
+        'name' : fields.function(_get_vehcile_name, method=True, store = True, size=256, string='Code',type='char'),
         'vehcile_type': fields.selection([('Bus', 'Bus'),('Van', 'Van')], 'Vehcile Type'),
         'max_accomodation':fields.integer('Maximum Seats'),
         'current_accomodation':fields.integer('Filled Seats'),
+        #---------- Ids are inverted in many2many object in sms_transport_route_vehcile_rel table. sms_transport_route_id, contains vehcile ids and sms_transport_vehcile_id, contains route id 
         'transport_route':fields.many2many('sms.transport.route', 'sms_transport_route_vehcile_rel', 'sms_transport_route_id', 'sms_transport_vehcile_id','Transport Route'),
+        #---------- Ids are inverted in many2many object in hr_driver_vehcile_rel table. hr_driver_id, contains vehcile ids and sms_transport_vehcile_id, contains driver ids 
         'drivers':fields.many2many('hr.employee', 'hr_driver_vehcile_rel', 'hr_driver_id', 'sms_transport_vehcile_id','Vehcile Drivers'),
+        'transport_shifts':fields.many2many('sms.transport.shift', 'smstransport_shift_vehcile_rel', 'sms_transport_vehcile_id',  'sms_transport_shift_id', 'Vehcile Shifts'),
         'income_amount':fields.float('Income Amount'),
         'expanse_amount':fields.float('Expanse Amount'),
-        'registered_students':fields.one2many('sms.student', 'vehcile_reg_students_id', 'Students'),
-        'registered_staff':fields.one2many('hr.employee', 'vehcile_reg_employee_id', 'Employees'),
+        'registered_students':fields.one2many('sms.student', 'vehcile_reg_students_id', 'Students', readonly=True),
+        'registered_staff':fields.one2many('hr.employee', 'vehcile_reg_employee_id', 'Employees', readonly=True),
         'vehcile_no':fields.integer('Vehicle Number'), 
             } 
     _defaults = {
                  'vehcile_type': lambda*a :'Bus',
-                 #'name':_get_vehcile_name,
                  }
     
 sms_transport_vehcile()
 
 class sms_transport_fee_structure(osv.osv):
     """This object maintains transport vehciles """
+
+    def _set_fee_structure_name(self, cr, uid, ids, fields,args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            string =  str(f.transport_route.name) + ' - ' + str(f.fiscal_year.name)
+            result[f.id] = string
+        return result
     
     _name="sms.transport.fee.structure"
     _columns = {
-        'name' : fields.char('Name', size=256),
+        'name' : fields.function(_set_fee_structure_name, method=True, store = True, size=256, string='Code',type='char'),
         'transport_route': fields.many2one('sms.transport.route','Transport Route'),
         'start_date': fields.date('Start Date'),
         'end_date': fields.date('End Date'),
@@ -91,17 +116,20 @@ class sms_transport_registrations(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             if f.registration_type == 'Student':
-                string =  'Std: ' + str(f.student_id.name)
+                string =  str(f.student_id.name) + ' - ' + str(f.id)  
             else:
-                string =  'Emp: ' + str(f.employee_id.name)
+                string =  str(f.employee_id.name) + ' - ' + str(f.id)
             result[f.id] = string
         return result
 
     def register_person(self, cr, uid, ids, name):
         fee_structure = self.pool.get('sms.transport.fee.structure').search(cr,uid,[])
         fee_structure = self.pool.get('sms.transport.fee.structure').browse(cr,uid,fee_structure)
-        for rec in fee_structure:
-            registration_fee = rec.registration_fee
+        if fee_structure:
+            for rec in fee_structure:
+                registration_fee = rec.registration_fee
+        else:
+            raise osv.except_osv(('Fee structure does not exist'),('Please define transport fee structure first'))
             
         for record in self.browse(cr, uid, ids):
             # --------- Register Person requesting to avail transport and also make entry in registration lines object. ------------
@@ -109,16 +137,17 @@ class sms_transport_registrations(osv.osv):
             if result:
                 if record.registration_type == 'Employee':
                     registration_id = self.pool.get('sms.transport.registrations.lines').create(cr,uid,
-                                                                            {
+                                                                             {
                                                                             'registeration_id': record.id,
                                                                             'state': record.state, 
-                                                                            'current_vehcile':record.current_vehcile,
+                                                                            'current_vehcile':record.current_vehcile.id,
                                                                             'employee_id':record.employee_id.id,
                                                                             })
                     if registration_id:
-                        self.pool.get('hr.employee').write(cr, uid, record.employee_id.id,{'transport_availed':True,
-                                                                                   'vehcile_reg_students_id':record.current_vehcile
-                                                                                    })
+                        employee_id = self.pool.get('hr.employee').search(cr,uid,[('id','=',record.employee_id.id)])
+                        self.pool.get('hr.employee').write(cr, uid, employee_id,{'transport_availed':True,
+                                                                               'vehcile_reg_employee_id':record.current_vehcile.id
+                                                                                })
                         
                 elif record.registration_type == 'Student':
                     registration_id = self.pool.get('sms.transport.registrations.lines').create(cr,uid,
@@ -144,26 +173,38 @@ class sms_transport_registrations(osv.osv):
                                                                 
                                                                 
         return result
+
+    def onchange_load_student(self, cr, uid, ids, std_reg_no):
+        result = {}
+        search_student_sql = """SELECT id FROM sms_student WHERE registration_no like '%""" + str(std_reg_no) + """%'"""
+        cr.execute(search_student_sql)
+        student_id = cr.fetchone()
+        if student_id:
+            result['student_id'] = student_id
+        else:
+            result['student_id'] = ''
+        return {'value':result}
     
     _name="sms.transport.registrations"
     _columns = {
-#        'name' : fields.function(_set_registration_name, method=True,  string='Transport Fee',type='char', store=True),
-        'name' : fields.char('Name', size=256),
+        'name' : fields.function(_set_registration_name, method=True, store = True, size=256, string='Code',type='char'),
         'registration_type':fields.selection([('Employee', 'Employee'),('Student', 'Student')], 'Registration For'),
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
+        'student_reg_no':fields.char('Search By Reg Number', size=256),
+        'shift':fields.many2one('sms.transport.shift','Transport Shift'),
         'reg_start_date': fields.date('Start Date'),
         'reg_end_date': fields.date('End Date'),
-        'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile'),
+        'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile', domain="[('transport_shifts','=',shift)]"),
         'state':fields.selection([('Draft', 'Draft'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn'),('Withdrawn', 'Withdrawn')], 'State'),
         'registered_lines':fields.one2many('sms.transport.registrations.lines','registeration_id','Registered Candidates'),
         #current dues ff
             }
     _sql_constraints = [('Unique_registration', 'unique (name)', """Person Can bE Registered Only Once""")]
     _defaults = {
-                 'state': lambda*a :'Draft',                 
+                 'state': lambda*a :'Draft',
+                 'registration_type': 'Student',                 
                  }
-    
 sms_transport_registrations()
 
 class sms_transport_registrations_lines(osv.osv):
@@ -192,7 +233,7 @@ class sms_transport_fee_payments(osv.osv):
     def _set_transport_fee(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            string =  "Transport Fee- " + str(f.fee_month.session_month_id.name) + str(f.registeration_id)
+            string =  "Transport Fee - " + str(f.fee_month.session_month_id) + str(f.registeration_id)
             result[f.id] = string
         return result
     
@@ -230,12 +271,11 @@ class sms_transport_fee_payments(osv.osv):
             if create_trans_fee:
                 return True
             else:
-                return False  
-    
+                return False
+              
     _name="sms.transport.fee.payments"
     _columns = {
-        'name' : fields.char('Name', size=256),
-#        'name' : fields.function(_set_transport_fee, method=True,  string='Transport Fee',type='char', store=True),
+        'name' : fields.function(_set_transport_fee, method=True, store = True, size=256, string='Code',type='char'),
         'registeration_id' :fields.many2one('sms.transport.registrations','Transport Registration'),
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
@@ -289,6 +329,74 @@ sms_student()
 
 class sms_transportfee_challan_book(osv.osv):
     
+    def check_transportfee_challans_issued(self, cr, uid, class_id, student_id):
+        result = {}
+        fee_ids = self.pool.get('smsfee.studentfee').search(cr ,uid ,[('student_id','=',student_id),('state','=','fee_unpaid')])
+        if fee_ids:
+            challan_ids = self.pool.get('smsfee.receiptbook').search(cr, uid,
+                                                                     [('student_id','=',student_id),
+                                                                      ('student_class_id','=', class_id),
+                                                                      ('state','=','fee_calculated')])
+            if challan_ids:
+                #---------------------- Get all unpaid amount receiveable from student -------------------------------------
+                receipt_total_fee = []
+                std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr ,uid ,fee_ids)
+                if std_unpaid_fees:
+                    current_fee_amount = 0
+                    for unpaidfee in std_unpaid_fees:
+                        current_fee_amount = current_fee_amount + unpaidfee.fee_amount
+                #---------------------- Get Unpaid Amount Appearing in the Cuurent Fee Receipt -----------------------------
+                for recipt in self.pool.get('smsfee.receiptbook').browse(cr, uid, challan_ids):
+                    tlt_line_fee = 0
+                    for lines in recipt.receiptbook_lines_ids:
+                        tlt_line_fee =tlt_line_fee + lines.total
+                    receipt_total_fee.append(tlt_line_fee)
+                #---------------------- if old_val is not equal to new_val than create reciept -----------------------------
+                old_val = receipt_total_fee[-1]
+                if old_val <= current_fee_amount:
+                    total_paybles = 0
+                    self.pool.get('smsfee.receiptbook').write(cr ,uid ,challan_ids, {'state':'Cancel'})
+                    receipt_id = self.pool.get('smsfee.receiptbook').create(cr ,uid , {'student_id':student_id,
+                                                                                     'student_class_id':class_id,
+                                                                                     'state':'fee_calculated',
+                                                                                     'receipt_date':datetime.date.today()})
+                    std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr ,uid ,fee_ids)
+                    if receipt_id:
+                        for unpaidfee in std_unpaid_fees:
+                            total_paybles = total_paybles + unpaidfee.fee_amount
+                            feelinesdict = {
+                            'fee_type': unpaidfee.fee_type.id,
+                            'student_fee_id': unpaidfee.id,
+                            'fee_month': unpaidfee.fee_month.id,
+                            'receipt_book_id': receipt_id,
+                            'fee_amount':unpaidfee.fee_amount,
+                            'late_fee':0,
+                            'total':unpaidfee.fee_amount}
+                            self.pool.get('smsfee.receiptbook.lines').create(cr ,uid, feelinesdict)
+                    
+                else:
+                    print "donot create challan"
+            else:
+                total_paybles = 0
+                receipt_id = self.pool.get('smsfee.receiptbook').create(cr ,uid , {'student_id':student_id,
+                                                                                  'student_class_id':class_id,
+                                                                                  'state':'fee_calculated',
+                                                                                  'receipt_date':datetime.date.today()})
+                std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr ,uid ,fee_ids)
+                if receipt_id:
+                    for unpaidfee in std_unpaid_fees:
+                        total_paybles = total_paybles + unpaidfee.fee_amount
+                        feelinesdict = {
+                        'fee_type': unpaidfee.fee_type.id,
+                        'student_fee_id': unpaidfee.id,
+                        'fee_month': unpaidfee.fee_month.id,
+                        'receipt_book_id': receipt_id,
+                        'fee_amount':unpaidfee.fee_amount,
+                        'late_fee':0,
+                        'total':unpaidfee.fee_amount}
+                        self.pool.get('smsfee.receiptbook.lines').create(cr ,uid,feelinesdict)
+        return True 
+
     _name = 'sms.transportfee.challan.book'
     _description = "This object contains the challan issued to transport availers."
     _columns = {

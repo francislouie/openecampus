@@ -11,24 +11,29 @@
 	<menuitem name="Locations" id="sms_transport_location_id" sequence = "2" parent="sms_transport_configuration_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_location"/>
 
+	<menuitem name="Shifts" id="sms_transport_shift_id" sequence = "4" parent="sms_transport_configuration_id"
+	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_shift"/>
+
 	<menuitem name="Routes" id="sms_transport_route_id" sequence = "3" parent="sms_transport_configuration_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_route"/>
 
-	<menuitem name="Vehciles" id="sms_transport_vechiles_id" sequence = "4" parent="sms_transport_configuration_id"
+	<menuitem name="Vehciles" id="sms_transport_vechiles_id" sequence = "5" parent="sms_transport_configuration_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_vehcile"/>
 
-	<menuitem name="Transport" id="sms_transport_fee_config_id" sequence = "5" parent="sms_transport_root_id"
+	<menuitem name="Transport" id="sms_transport_fee_config_id" sequence = "6" parent="sms_transport_root_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager"/>
 
-	<menuitem name="Transport Fees Structure" id="sms_transport_fee_strucure_id" sequence = "6" parent="sms_transport_fee_config_id"
+	<menuitem name="Transport Fees Structure" id="sms_transport_fee_strucure_id" sequence = "7" parent="sms_transport_fee_config_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_fee_structure"/>
 
-	<menuitem name="Transport Registration" id="sms_transport_regis_id" sequence = "7" parent="sms_transport_fee_config_id"
+	<menuitem name="Transport Registration" id="sms_transport_regis_id" sequence = "8" parent="sms_transport_fee_config_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_registration"/>
+
 	<!-- Menu Removed As no Direct Form is to be given its entries are controlled via process 
 	<menuitem name="Transport Fee Payments" id="sms_transport_fee_payments_id" sequence = "8" parent="sms_transport_fee_config_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_fee_payments"/>
 	-->
+
 	<menuitem name="Transport Fee Challan" id="sms_transport_fee_challan_id" sequence = "9" parent="sms_transport_fee_config_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_fee_challan"/>
 

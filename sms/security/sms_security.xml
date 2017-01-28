@@ -3,6 +3,7 @@
 <data noupdate="0">
 
 	<!-- SMS Groups  -->
+
     <record id="group_sms_admin" model="res.groups">
         <field name="name">SMS Admin</field>
     </record>
@@ -46,8 +47,6 @@
      <record id="group_sms_director" model="res.groups">
         <field name="name">Director</field>
     </record>
-    
-    
    
 </data>
 </openerp>

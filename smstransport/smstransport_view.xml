@@ -12,6 +12,7 @@
 					<field name="state" widget="statusbar"/>
 				</header>
 				<sheet>
+					<separator string="Location"/>
 					<group name="location_form_main">
 						<field name="name"/>
 					</group>
@@ -102,6 +103,56 @@
 		<field name="search_view_id" ref="view_sms_transport_route_search"/>
 	</record>
 
+	<!-- Transport Shifts -->
+	<record model="ir.ui.view" id="view_sms_transport_shift_form">
+		<field name="name">sms.transport.shift.form</field>
+		<field name="model">sms.transport.shift</field>
+		<field name="arch" type="xml">
+			<form string="Transport Shift" version="7.0">
+				<header>
+				</header>
+				<sheet>
+					<separator string="Location"/>
+					<group name="shift_form_main">
+						<field name="name"/>
+						<field name="desc"/>
+					</group>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_sms_transport_shift_tree">
+		<field name="name">sms.transport.shift.tree</field>
+		<field name="model">sms.transport.shift</field>
+		<field name="arch" type="xml">
+			<tree string="Transport Shift">
+				<field name="name"/>
+				<field name="desc"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_sms_transport_shift_search" model="ir.ui.view">
+		<field name="name">sms.transport.shiftsearch</field>
+		<field name="model">sms.transport.shift</field>
+		<field name="arch" type="xml">
+			<search string="Transport Shift">
+				<field name="name" string="Shift"/>
+				<field name="desc" string="Description"/>
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_shift">
+		<field name="name">Transport Shift</field>
+		<field name="res_model">sms.transport.shift</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="view_sms_transport_shift_search"/>
+	</record>
+
 	<!--Transport Vehciles-->
 	<record model="ir.ui.view" id="view_sms_transport_vehcile_form">
 		<field name="name">sms.transport.vehcile.form</field>
@@ -128,10 +179,13 @@
 							<field name="drivers" nolabel="1" colspan="4"/>
 						</page>
 						<page string="Registered Students">
-							<field name="registered_students" nolabel="1" colspan="4"/>
+							<field name="registered_students" nolabel="1" colspan="4" readonly="1"/>
 						</page>
 						<page string="Registered Staff">
-							<field name="registered_staff" nolabel="1" colspan="4"/>	
+							<field name="registered_staff" nolabel="1" colspan="4" readonly="1"/>	
+						</page>
+						<page string="Vechile Shifts">
+							<field name="transport_shifts" nolabel="1" colspan="4"/>
 						</page>
 					</notebook>
 				</sheet>	 	
@@ -241,16 +295,31 @@
 				<header>
 					<field name="state" widget="statusbar"/>
 					<button name="register_person" string="Register" states="Draft" type="object" icon="terp-gtk-jump-to-ltr"/>
+					<button name="%(action_transport_registered_persons)d" string="Registered Students" type="action" icon="gtk-print"/>
 				</header>
 				<sheet>
 					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
-					<group name="transport_registration_main" col="4" colspan="2">
-						<field name="registration_type"/>
-						<field name="current_vehcile"/>
-						<field name="employee_id"/>
-						<field name="student_id" domain="[('state','=','Admitted')]"/>
-						<field name="reg_start_date"/>
-						<field name="reg_end_date"/>
+					<group name="transport_registration_main">
+						<group col="4" colspan="2">
+							<field name="registration_type"/>
+							<field name="student_reg_no" on_change="onchange_load_student(student_reg_no)"/>
+						</group>
+						<group attrs="{'invisible':[('registration_type','=','Student')]}">
+							<field name="employee_id"/>
+						</group>
+						<group attrs="{'invisible':[('registration_type','=','Employee')]}">
+							<field name="student_id" domain="[('state','=','Admitted')]"/>
+						</group>
+						<newline/>
+						<group col="4" colspan="2">
+							<field name="shift"/>
+							<field name="current_vehcile"/>
+						</group>
+						<newline/>
+						<group col="4" colspan="2">
+							<field name="reg_start_date"/>
+							<field name="reg_end_date"/>
+						</group>
 					</group>
 					<notebook>
 						<page string="Registration Histories">

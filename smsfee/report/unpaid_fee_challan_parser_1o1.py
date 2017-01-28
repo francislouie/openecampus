@@ -83,12 +83,13 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
-                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
+                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':'','amount_after_due_date':''}
                     challan_dict['challan_number'] = self.get_challan_number(challan.id)
                     challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                     challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
                     challan_dict['total_amount'] = self.get_total_amount(challan.id)
                     challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id)
+                    challan_dict['amount_after_due_date'] = data['form']['amount_after_due_date']
                     challan_list.append(challan_dict)
         return challan_list  
      
@@ -137,10 +138,11 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
     def get_candidate_info(self, data):
         info_list = []
         stdrec = self.pool.get('sms.student').browse(self.cr,self.uid,data)
-        info_dict = {'name':'','father_name':'','class':''}
+        info_dict = {'name':'','father_name':'','class':'','section':''}
         info_dict['name'] = stdrec.name
         info_dict['father_name'] = stdrec.father_name
         info_dict['class'] = stdrec.current_class.name
+        info_dict['section'] = stdrec.current_class.section_id.name
         info_list.append(info_dict)
         return info_list
  
