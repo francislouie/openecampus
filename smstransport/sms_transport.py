@@ -1,5 +1,6 @@
 from openerp.osv import fields, osv
-from datetime import datetime, timedelta
+from datetime import datetime
+from datetime import timedelta
 import logging
 _logger = logging.getLogger(__name__)
       
@@ -91,15 +92,15 @@ class sms_transport_fee_structure(osv.osv):
     def _set_fee_structure_name(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            string =  str(f.transport_route.name) + ' - ' + str(f.fiscal_year.name)
+            string =  str(f.transport_route.name) + ' - '+ str(f.vehcile_id.name) +' - ' + str(f.fiscal_year.name)
             result[f.id] = string
         return result
     
     _name="sms.transport.fee.structure"
     _columns = {
         'name' : fields.function(_set_fee_structure_name, method=True, store = True, size=256, string='Code',type='char'),
-        'transport_route': fields.many2one('sms.transport.route','Transport Route'),
-        'vehcile_id':fields.many2one('sms.transport.vehcile', 'Vechile'),
+        'transport_route': fields.many2one('sms.transport.route','Transport Route', required=True),
+        'vehcile_id':fields.many2one('sms.transport.vehcile', 'Vechile', required=True, domain="[('transport_route','=',transport_route)]"),
         'start_date': fields.date('Start Date'),
         'end_date': fields.date('End Date'),
         'fiscal_year':fields.many2one('account.fiscalyear', 'Fiscal Year'),
@@ -112,7 +113,7 @@ sms_transport_fee_structure()
 
 class sms_transport_registrations(osv.osv):
     """This object maintains transport registrations """
-    
+
     def _set_registration_name(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -128,10 +129,7 @@ class sms_transport_registrations(osv.osv):
         fee_structure = self.pool.get('sms.transport.fee.structure').browse(cr,uid,fee_structure)
         if fee_structure:
             for rec in fee_structure:
-                registration_fee = rec.registration_fee
-        else:
-            raise osv.except_osv(('Fee structure does not exist'),('Please define transport fee structure first'))
-            
+                registration_fee = rec.registration_fee            
         for record in self.browse(cr, uid, ids):
             # --------- Register Person requesting to avail transport and also make entry in registration lines object. ------------
             result = self.write(cr,uid,record.id,{'state':'Registered'})
@@ -175,6 +173,39 @@ class sms_transport_registrations(osv.osv):
                                                                 
         return result
 
+    def months_between(self, cr, date1, date2):
+        if date1>date2:
+            date1,date2=date2,date1
+        m1=date1.year*12+date1.month
+        m2=date2.year*12+date2.month
+        months=m2-m1
+        if date1.day>date2.day:
+            months-=1
+        elif date1.day==date2.day:
+            seconds1=date1.hour*3600+date1.minute+date1.second
+            seconds2=date2.hour*3600+date2.minute+date2.second
+            if seconds1>seconds2:
+                months-=1
+        return months
+    
+    def load_transport_fee(self, cr, uid, ids, context):
+        for record in self.browse(cr, uid, ids):
+            fee_structure = self.pool.get('sms.transport.fee.structure').search(cr,uid,[('vehcile_id','=',record.current_vehcile.id)])
+            fee_structure = self.pool.get('sms.transport.fee.structure').browse(cr,uid,fee_structure)
+            if not fee_structure:
+                raise osv.except_osv(('Fee structure does not exist'),('Please define transport fee structure first'))
+            for rec in fee_structure:
+                print "===",record.reg_start_date
+                print "+++",rec.start_date
+                if record.reg_start_date > rec.start_date:
+                    date1 = datetime.strptime(record.reg_start_date, '%Y-%m-%d')
+                    date2 = datetime.strptime(rec.start_date, '%Y-%m-%d')
+                    months = self.months_between(cr, date1, date2) 
+                    print "----",months
+                    registration_fee = rec.registration_fee            
+            print alpha
+        return True
+
     def onchange_load_student(self, cr, uid, ids, std_reg_no):
         result = {}
         search_student_sql = """SELECT id FROM sms_student WHERE registration_no like '%""" + str(std_reg_no) + """%'"""
@@ -191,7 +222,7 @@ class sms_transport_registrations(osv.osv):
         amount = '0'
         records =  self.browse(cr, uid, ids, context)
         for f in records:
-            sql =   """SELECT COALESCE(sum(amount),'0') FROM sms_transport_fee_registration
+            sql =   """SELECT COALESCE(sum(fee_amount),'0') FROM sms_transport_fee_registration
                      WHERE parent_id =""" + str(f.id)
             cr.execute(sql)
             amount = cr.fetchone()[0]
@@ -205,11 +236,11 @@ class sms_transport_registrations(osv.osv):
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
         'student_reg_no':fields.char('Search By Reg Number', size=256),
-        'shift':fields.many2one('sms.transport.shift','Transport Shift'),
+        'shift':fields.many2one('sms.transport.shift','Transport Shift', required=True),
         'reg_start_date': fields.date('Start Date'),
         'reg_end_date': fields.date('End Date'),
-        'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile', domain="[('transport_shifts','=',shift)]"),
-        'state':fields.selection([('Draft', 'Draft'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn'),('Withdrawn', 'Withdrawn')], 'State'),
+        'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile', domain="[('transport_shifts','=',shift)]", required=True),
+        'state':fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn'),('Withdrawn', 'Withdrawn')], 'State'),
         'registered_lines':fields.one2many('sms.transport.registrations.lines','registeration_id','Registered Candidates'),
         'transportfee_ids':fields.one2many('sms.transport.fee.registration','parent_id','Fee'),
         'total_fee_applicable':fields.function(set_transportfee_amount, method=True, string='Total Fee',type='float'),
