@@ -80,23 +80,6 @@ class class_student_fee_collect(osv.osv_memory):
 #        }
         return result 
     
-#     def print_singlestudent_unpaidfee_report(self, cr, uid, ids, data):
-# 
-#         thisform = self.read(cr, uid, ids)[0]
-#         self.create_unpaid_challans(cr, uid, thisform['student_id'])
-#         report = 'smsfee_stu_unpaidfee_receipt_name'
-#         datas = {
-#              'ids': [],
-#              'active_ids': '',
-#              'model': 'smsfee.classfees.register',
-#              'form': self.read(cr, uid, ids)[0],
-#              }
-#         return {
-#             'type': 'ir.actions.report.xml',
-#             'report_name':report,
-#             'datas': datas,
-#             }
-        
 class_student_fee_collect()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
