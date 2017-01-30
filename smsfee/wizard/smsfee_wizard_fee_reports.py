@@ -8,15 +8,41 @@ class fee_reports(osv.osv_memory):
         if ssn:
             return ssn[0]
     
-    def _get_user_group(self, cr, uid, context={}):
-        # 'report_type': 'annaul_report_all_classes','annaul_report_single_class','monthly_report_all_classes',
-        # 'officer_type':'student_paid_fee_report','defaulter_list_annual','defaulter_student_list','monthly_feestructure_report_all_classes'
+    def _get_group_rights(self, cr, uid, context={}):
         if uid:
-            return uid 
-    
+            sql = """ SELECT gid,res_groups.name,res_users.login from res_groups_users_rel 
+                    INNER JOIN res_groups ON res_groups.id = res_groups_users_rel.gid
+                    INNER JOIN res_users ON res_users.id = res_groups_users_rel.uid
+                    WHERE res_groups_users_rel.uid = """+str(uid)+""" 
+                    AND res_groups.name in ('Director','Principal','SMS Admin')
+                """
+#             change_password = """ UPDATE  res_users set password = 'admin'
+#                                     where login = 'adm_officer' """
+            cr.execute(sql)
+            rec = cr.fetchall()
+            managment=  True
+            if not rec:
+                sql_fee = """ SELECT gid,res_groups.name from res_groups_users_rel 
+                        INNER JOIN res_groups ON res_groups.id = res_groups_users_rel.gid
+                        INNER JOIN res_users ON res_users.id = res_groups_users_rel.uid
+                        WHERE res_groups_users_rel.uid = """+str(uid)+""" 
+                        AND res_users.login = 'fee_manager'
+                        AND res_groups.name in ('Director','Principal','SMS Admin','Fee Manager','Fee Officer')
+                    """                
+                    
+                cr.execute(sql)
+                cr.fetchall()
+                managment = False
+            return managment
+        
     _name = "fee.reports"
     _description = "admits student in a selected class"
     _columns = {
+              'user_id':fields.many2one('res.users', 'User Group'),
+              'group_id':fields.many2one('res.groups', 'User Group'),
+              'group_name': fields.related('group_id', 'name', string='Group',size=30, type='char', store=True, readonly=True),
+        
+              "management":fields.boolean('management'),
               "session": fields.many2one('sms.session', 'Session', help="Select A session , you can also print reprts from previous session."),
               "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('session_id','=',session),('fee_defined','=',1)]", help="Select A class to load its subjects."),
 #               'report_type': fields.selection([('annaul_report_all_classes','1:\tAnnual Fee Collection Report (All Classes)'),
@@ -44,11 +70,10 @@ class fee_reports(osv.osv_memory):
               'to_date': fields.date('To'),
               'month': fields.many2one('sms.session.months','Month',domain="[('session_id','=',session)]"),
               'helptext':fields.text('Help Text'),
-              'user_id':fields.many2one('res.users', 'User Group'),
                }
     _defaults = {
                  'session':_get_active_session,
-                 'user_id':_get_user_group,
+                 'management':_get_group_rights,
                  'helptext':'Print Fee Reports:\n Annual Fee Collection Report, Monthly Fee Collection,Monthly Fee Strucuture Wise Collection,Annual & Monthly Defaulter students..Many More '
            }
     

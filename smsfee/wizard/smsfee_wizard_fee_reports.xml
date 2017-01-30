@@ -11,13 +11,10 @@
                 <form string="Fee Reports" version="7.0">
                     <group>
 					<group >
-						<field name="report_type" placeholder = "Report Type" nolabel = "1"  />
-<!--('user_id','!=',1) where instead of 1 we will grab id pf user according to roll attrs="{'invisible':[('user_id','=',1)]}" -->
-<newline/><field name="officer_type" placeholder = "officer" nolabel = "1" />
-						
+						<field name="report_type" placeholder = "Report Type" nolabel = "1"  attrs="{'invisible':[('management','=',False)]}" />
+						<newline/><field name="officer_type" placeholder = "Report Type" nolabel = "1" attrs="{'invisible':[('management','=',True)]}"  />
 
 						<newline/><field name="session" placeholder = "Session" nolabel = "1" required="1"/>
-
 <!-- 
 <newline/><field name="class_id" placeholder = "Class" nolabel = "1" attrs="{'required':[('report_type','IN',['annaul_report_single_class','monthly_report_single_class','student_paid_fee_report','defaulter_student_list','defaulter_list_annual','defaulter_student_list'])],'invisible':[('report_type','IN',['annaul_report_all_classes','monthly_report_all_classes','monthly_feestructure_report_all_classes'])]}"/>
 <newline/><field name="month" placeholder = "Month" nolabel = "1" attrs="{'required':[('report_type','IN',['monthly_report_all_classes','monthly_report_single_class','student_paid_fee_report'])],'invisible':[('report_type','IN',['annaul_report_all_classes','annaul_report_single_class','defaulter_list_annual','defaulter_student_list','monthly_feestructure_report_all_classes',])]}"  />
@@ -30,7 +27,7 @@ attrs="{'required':[('report_type','IN',['monthly_feestructure_report_all_classe
 						<newline/><field name="month" placeholder = "Month" nolabel = "1" attrs="{'required':['|',('report_type','IN',['monthly_report_all_classes','monthly_report_single_class']),('officer_type','IN',['student_paid_fee_report'])],'invisible':['|',('report_type','IN',['annaul_report_all_classes','annaul_report_single_class']),('officer_type','IN',['defaulter_list_annual','defaulter_student_list','monthly_feestructure_report_all_classes']) ]}"  />
 						<newline/><field name="from_date" placeholder = "From date" nolabel = "1" attrs="{'required':[('officer_type','IN',['monthly_feestructure_report_all_classes'])],'invisible':[('officer_type','NOT IN',['monthly_feestructure_report_all_classes'])]}" />
 						<newline/><field name="to_date" placeholder = "To date" nolabel = "1" attrs="{'required':[('officer_type','IN',['monthly_feestructure_report_all_classes'])],'invisible':[('officer_type','NOT IN',['monthly_feestructure_report_all_classes'])]}" />
-						<newline/><field name="user_id" placeholder = "Group" nolabel = "1" /> 
+						<field name="management" placeholder = "management" nolabel = "1"  invisible="1" />
 
                     </group>
 					<group><field name="helptext" readonly = "1" nolabel = "1" /></group>

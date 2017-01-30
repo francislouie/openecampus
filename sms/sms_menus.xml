@@ -20,9 +20,10 @@
 	<menuitem id="menu_academic_calendar" parent="menu_sms_id" sequence="1" groups = "group_sms_admin,group_sms_principal,group_sms_voice_principal,group_sms_admission_manager,group_sms_officer,group_sms_manager_exams,group_sms_officers_exams,group_sms_fee_manager,group_sms_fee_officer,group_sms_director" action="action_session_classes"/>
 	<menuitem id="menu_academic_calendar_more" name ="More..." parent="menu_sms_id" sequence="2" groups = "group_sms_admin,group_sms_principal,group_sms_voice_principal,group_sms_admission_manager,group_sms_officer,group_sms_manager_exams,group_sms_officers_exams,group_sms_fee_manager,group_sms_fee_officer,group_sms_director" action=""/>	
 
-	<menuitem id="menu_academic_calendar_draft" name = "Calender (Draft)" parent="menu_academic_calendar_more" sequence="1" groups = "group_sms_admin,group_sms_principal,group_sms_voice_principal,group_sms_admission_manager,group_sms_officer,group_sms_manager_exams,group_sms_officers_exams,group_sms_fee_manager,group_sms_fee_officer,group_sms_director" action="action_session_classes_draft"/>
-	<menuitem id="menu_academic_calendar_closed" name = "Calender (Closed)" parent="menu_academic_calendar_more" sequence="2" groups="group_sms_principal,group_sms_fee_officer,group_sms_officer,group_sms_admin,group_sms_admission_manager" action="action_session_classes_complete"/>
-    <menuitem id="administrative_tasks_id" name="Administrative Tasks" parent="menu_academic_calendar_more" sequence="3" groups = "group_sms_admin,group_sms_principal,group_sms_voice_principal,group_sms_admission_manager,group_sms_officer,group_sms_manager_exams,group_sms_officers_exams,group_sms_fee_manager,group_sms_fee_officer,group_sms_director"/>
+	<menuitem id="menu_academic_calendar_draft" name = "Calender (Draft)" parent="menu_academic_calendar_more" sequence="1" groups = "group_sms_admin,group_sms_principal,group_sms_voice_principal,group_sms_admission_manager,group_sms_officer,group_sms_manager_exams,group_sms_officers_exams,group_sms_fee_manager,group_sms_fee_officer,group_sms_director"/>
+	<menuitem id="menu_academic_calendar_closed" name = "Calender (Closed)" parent="menu_academic_calendar_more" sequence="2" groups="group_sms_principal,group_sms_fee_manager,group_sms_fee_officer,group_sms_officer,group_sms_admin,group_sms_admission_manager" action="action_session_classes_complete"/>
+    
+<menuitem id="administrative_tasks_id" name="Administrative Tasks" parent="menu_academic_calendar_more" sequence="3" groups = "group_sms_admin,group_sms_principal,group_sms_voice_principal,group_sms_admission_manager,group_sms_officer,group_sms_manager_exams,group_sms_officers_exams,group_sms_fee_manager,group_sms_fee_officer,group_sms_director"/>
     <menuitem id="menu_sms_student_change_section_wizard" parent="administrative_tasks_id" sequence="" groups = "group_sms_admin,group_sms_principal,group_sms_voice_principal,group_sms_admission_manager,group_sms_officer,group_sms_manager_exams,group_sms_officers_exams,group_sms_fee_manager,group_sms_fee_officer,group_sms_director" action="action_view_sms_student_change_section_wizard"/>
 	<menuitem id="menu_sms_student_subject_assignment_wizard" parent="administrative_tasks_id" sequence="" groups = "group_sms_admin,group_sms_principal,group_sms_voice_principal,group_sms_admission_manager,group_sms_officer,group_sms_manager_exams,group_sms_officers_exams,group_sms_fee_manager,group_sms_fee_officer,group_sms_director" action="action_view_sms_student_subject_assignment_wizard"/>
 	<menuitem id="menu_sms_student_subject_removal_wizard" parent="administrative_tasks_id" sequence="" groups="" action="action_view_sms_student_subject_removal_wizard"/>
@@ -62,9 +63,10 @@
 	
     
     <menuitem name="Default Data" id="default_data_id" parent="menu_configuration_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager"/>
-    <menuitem id="menu_std_cls_reg" parent="menu_sms_id_students" sequence="" groups="" action="action_std_cls_reg"/>
+    <menuitem id="menu_std_cls_reg" parent="menu_sms_id_students" sequence="" groups = "group_sms_admin,group_sms_principal,group_sms_voice_principal,group_sms_admission_manager,group_sms_officer,group_sms_manager_exams,group_sms_officers_exams,group_sms_fee_manager,group_sms_fee_officer,group_sms_director" action="action_std_cls_reg"/>
 	
 	
+
 	<!--Admissions-->
 	<menuitem id="menu_admission_head_id" name="Admissions" parent="" sequence="3" groups="group_sms_principal,group_sms_director,group_sms_admin,group_sms_officer,group_sms_admission_manager"/>
 	<menuitem id="menu_admission_students_and_admissions_id" name="Students And Admissions" parent="menu_admission_head_id" sequence="1" groups="group_sms_officer,group_sms_director,group_sms_principal,group_sms_admin,group_sms_admission_manager"/>
@@ -122,7 +124,3 @@
 
 </data>
 </openerp>
-
-
-
-

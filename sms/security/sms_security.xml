@@ -43,7 +43,7 @@
     <record id="group_sms_fee_officer" model="res.groups">
         <field name="name">Fee Officer</field>
     </record>
-    
+    	
      <record id="group_sms_director" model="res.groups">
         <field name="name">Director</field>
     </record>
