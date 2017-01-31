@@ -13,6 +13,7 @@
 	                    <h1>
 							<field name="student_id" readonly ="1" nolabel = "1" />
 						</h1>
+						<newline/>
 						<group col="4" String = "">
 							 <field name="challan_id"/>
 					    </group>
@@ -25,7 +26,7 @@
 	                    </ol>
                     </group>
                      <footer>
-                        <button string="Receive Fee" name="action_pay_student_fee" type="action" class="oe_highlight"/>
+                        <button string="Receive Fee" name="action_pay_student_fee" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
