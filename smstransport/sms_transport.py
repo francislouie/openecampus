@@ -255,22 +255,13 @@ sms_transport_registrations()
 
 class sms_transport_fee_registration(osv.osv):
     
-    def _set_transport_fee(self, cr, uid, ids, fields,args, context=None):
-        result = {}
-        for f in self.browse(cr, uid, ids, context=context):
-            string =  "Transport Fee - " + str(f.fee_month.session_month_id) + str(f.registeration_id)
-            result[f.id] = string
-        return result
-
     _name="sms.transport.fee.registration"
     _columns = {
-        'name' : fields.function(_set_transport_fee, method=True, store = True, size=256, string='Code',type='char'),
+        'name':fields.many2one('sms.transport.fee.structure','Transport Fee Structure'),
         'parent_id':fields.many2one('sms.transport.registrations','Transport Register'),
-        'fee_month': fields.date('Fee Month'),
+        'fee_month':fields.many2one('sms.session.months','Fee Month'),
         'fee_amount':fields.float('Amount'),
-        'hidden_parent_feestr':fields.integer('Hidden classes Fees id'),
             }
-#    _sql_constraints = [('Fee_Payment_Unique', 'unique (name)', """ Only One Entry Can be Made""")]
     _defaults = {}
     
 sms_transport_fee_registration()
@@ -305,7 +296,7 @@ class sms_transport_fee_payments(osv.osv):
             result[f.id] = string
         return result
     
-    def apply_transport_fee_student(self, cr, uid, std_id,transport_reg_id,month):
+    def apply_transport_fee_student(self, cr, uid, std_id, transport_reg_id, month):
 #    def apply_transport_fee_student(self, cr, uid, std_id,trans_fee_structure): Use this definition if transport fee structure comes into play
         """Method Servers the purpose of applying transport fees on student, in unpaid status.
            Currently called by 
@@ -344,18 +335,17 @@ class sms_transport_fee_payments(osv.osv):
     _name="sms.transport.fee.payments"
     _columns = {
         'name' : fields.function(_set_transport_fee, method=True, store = True, size=256, string='Code',type='char'),
+        'receipt_no': fields.char('Receipt No.',type = 'char'),      
         'registeration_id' :fields.many2one('sms.transport.registrations','Transport Registration'),
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
         'fee_amount':fields.float('Fee Amount'),
+        'fee_discount':fields.float('Discount'),
         'date_fee_charged':fields.date('Date Fee Charged'),
         'date_fee_paid':fields.date('Date Fee Paid'),
         'fee_month':fields.many2one('sms.session.months','Fee Month'),
-        'due_month':fields.many2one('sms.session.months','Payment Month'),
-        'late_fee':fields.float('Late Fee Charges'),
-        'total_fees':fields.float('Total Fee'),
-        'registration_fee':fields.float('Registration Fee'),
-        'state':fields.selection([('Draft', 'Draft'),('Paid', 'Paid'),('Unpaid', 'Unpaid'),('Exemption', 'Exemption')], 'State'),
+        'is_reconcile': fields.boolean('Reconciled'),
+        'state':fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State'),
             }
 #    _sql_constraints = [('Fee_Payment_Unique', 'unique (name)', """ Only One Entry Can be Made""")]
     _defaults = {

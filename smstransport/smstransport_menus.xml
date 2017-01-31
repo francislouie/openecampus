@@ -29,11 +29,6 @@
 	<menuitem name="Transport Registration" id="sms_transport_regis_id" sequence = "8" parent="sms_transport_fee_config_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_registration"/>
 
-	<!-- Menu Removed As no Direct Form is to be given its entries are controlled via process 
-	<menuitem name="Transport Fee Payments" id="sms_transport_fee_payments_id" sequence = "8" parent="sms_transport_fee_config_id"
-	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_fee_payments"/>
-	-->
-
 	<menuitem name="Transport Fee Challan" id="sms_transport_fee_challan_id" sequence = "9" parent="sms_transport_fee_config_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_fee_challan"/>
 

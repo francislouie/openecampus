@@ -297,7 +297,6 @@
 				<field name="fee_month"/>
 				<field name="fee_amount"/>
 				<field name="parent_id"/>
-				<field name="hidden_parent_feestr"/>
 			</tree>
 		</field>
 	</record>
@@ -438,11 +437,12 @@
 						<field name="student_id"/>
 						<field name="registeration_id"/>
 						<field name="fee_month"/>
-						<field name="due_month"/>
+						<field name="receipt_no"/>
+						<field name="date_fee_charged"/>
+						<field name="date_fee_paid"/>
 						<field name="fee_amount"/>
-						<field name="late_fee"/>
-						<field name="total_fees"/>
-						<field name="registration_fee"/>
+						<field name="fee_discount"/>
+						<field name="is_reconcile"/>
 					</group>
 				</sheet>	 	
 			</form>
@@ -458,8 +458,8 @@
 				<field name="student_id"/>
 				<field name="registeration_id"/>
 				<field name="fee_month"/>
-				<field name="fee_amount"/>
-				<field name="total_fees"/>
+				<field name="receipt_no"/>
+				<field name="date_fee_charged"/>
 			</tree>
 		</field>
 	</record>
@@ -473,8 +473,8 @@
 				<field name="student_id"/>
 				<field name="registeration_id"/>
 				<field name="fee_month"/>
-				<field name="fee_amount"/>
-				<field name="total_fees"/>
+				<field name="receipt_no"/>
+				<field name="date_fee_charged"/>
 			</search>
 		</field>
 	</record>
