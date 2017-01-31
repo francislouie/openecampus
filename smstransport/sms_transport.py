@@ -104,10 +104,14 @@ class sms_transport_fee_structure(osv.osv):
         'start_date': fields.date('Start Date'),
         'end_date': fields.date('End Date'),
         'fiscal_year':fields.many2one('account.fiscalyear', 'Fiscal Year'),
+#        'session_id':fields.many2one('sms.session','Session'),
         'monhtly_fee':fields.float('Monthly Fee'),
         'registration_fee':fields.float('Registration Fee'),
             } 
     _defaults = {}
+    _sql_constraints = [
+                ('unique_transport_feestructure', 'unique (vehcile_id)', 'Only One Fee Structure Can be Defined For A Vehcile')
+                    ]
     
 sms_transport_fee_structure()
 
@@ -173,37 +177,24 @@ class sms_transport_registrations(osv.osv):
                                                                 
         return result
 
-    def months_between(self, cr, date1, date2):
-        if date1>date2:
-            date1,date2=date2,date1
-        m1=date1.year*12+date1.month
-        m2=date2.year*12+date2.month
-        months=m2-m1
-        if date1.day>date2.day:
-            months-=1
-        elif date1.day==date2.day:
-            seconds1=date1.hour*3600+date1.minute+date1.second
-            seconds2=date2.hour*3600+date2.minute+date2.second
-            if seconds1>seconds2:
-                months-=1
-        return months
-    
     def load_transport_fee(self, cr, uid, ids, context):
         for record in self.browse(cr, uid, ids):
+            dated = datetime.strptime(record.reg_start_date, '%Y-%m-%d')
             fee_structure = self.pool.get('sms.transport.fee.structure').search(cr,uid,[('vehcile_id','=',record.current_vehcile.id)])
             fee_structure = self.pool.get('sms.transport.fee.structure').browse(cr,uid,fee_structure)
             if not fee_structure:
                 raise osv.except_osv(('Fee structure does not exist'),('Please define transport fee structure first'))
             for rec in fee_structure:
-                print "===",record.reg_start_date
-                print "+++",rec.start_date
-                if record.reg_start_date > rec.start_date:
-                    date1 = datetime.strptime(record.reg_start_date, '%Y-%m-%d')
-                    date2 = datetime.strptime(rec.start_date, '%Y-%m-%d')
-                    months = self.months_between(cr, date1, date2) 
-                    print "----",months
-                    registration_fee = rec.registration_fee            
-            print alpha
+                month_ids = self.pool.get('sms.session.months').search(cr, uid, [('session_year','=',str(dated.year))])
+                month_recs = self.pool.get('sms.session.months').browse(cr, uid, month_ids)
+                for recrd in month_recs:
+                    self.pool.get('sms.transport.fee.registration').create(cr ,uid ,{
+                                                                      'name': rec.id,
+                                                                      'parent_id': record.id,
+                                                                      'fee_month': recrd.id,
+                                                                      'fee_amount': rec.monhtly_fee
+                                                                      }) 
+            self.write(cr,uid,record.id,{'state':'waiting_approval'})
         return True
 
     def onchange_load_student(self, cr, uid, ids, std_reg_no):
