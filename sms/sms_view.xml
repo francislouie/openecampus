@@ -2323,8 +2323,8 @@
 				<group></group>
 			<notebook>
                 <page string= "Paper Dates">
-				 <group string="">
-					<field name="datesheet_lines" nolabel = "1"/>
+				 <group string="">									<!-- op -->
+					<field name="datesheet_lines" nolabel = "1" context="{'academiccalendar': active_id}" />
 				</group>  
 			   </page>
 			   </notebook>
@@ -2374,6 +2374,7 @@
       <field name="arch" type="xml">
         <form string="Papers Dates">
           <field name="name"/>
+<!-- op --> <field name="academiccalendar"   on_change="set_domain(academiccalendar)"   />
 		  <field name="subject"/>
  		  <field name="paper_date"/>
 		  <field name="invigilator"/>	
@@ -2389,7 +2390,7 @@
       <field name="arch" type="xml">
         <tree editable="top" string="Papers Dates" >
           <field name="name" />
-		  <field name="subject" domain="[('state','!=','Closed')]"  />
+		  <field name="subject"   />
  		  <field name="paper_date"/>
 		  <field name="invigilator"/>	
 		  <field name="total_marks"/>	

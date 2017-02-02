@@ -3138,12 +3138,13 @@ class sms_exam_offered(osv.osv):
         return result
     
     def start_exam(self, cr, uid, ids, *args):
+        import datetime
         rec = self.browse(cr,uid,ids)
         print "exam offered id",rec[0].id
         # find active academiccalendars that of this session
         academiccalendar_ids = self.pool.get('sms.academiccalendar').search(cr,uid,[('state','=','Active'),('session_id','=',rec[0].session_year.id)])
         if academiccalendar_ids:
-            self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
+            self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()}) #####
             for calendar in academiccalendar_ids:
                 datesheet_id = self.pool.get('sms.exam.datesheet').create(cr,uid,{
                                                             'academiccalendar':calendar, 
@@ -3206,12 +3207,57 @@ class sms_exam_datesheet(osv.osv):
        academic calenders are registered in this object.appeared as one2many to sms.exam.offered """
     _name= "sms.exam.datesheet"
     _descpription = "Stores exam date sheets"
-    
+
+    def unlink(self, cr, uid, ids, context={}, check=True):
+        print "@@@@@exam datesheet lines@@@@",ids,context
+        
+        
+#<!-- op -->     
+# class sms_exam(osv.osv):
+#     """This ."""
+#         
+#     _name = 'sms.exam'
+#     _columns = {
+#         'name': fields.many2one('sms.exam.datesheet', 'Exam Type'),
+#         'exam_lines' :fields.one2many('sms.exam.lines', 'parent_exam', 'Exams Lines'),         
+#         'entry_date': fields.date("Entry Date",required=True),
+#         'subject_id' :fields.many2one('sms.academiccalendar.subjects', 'Subject', required=True), 
+#     }       
+# sms_exam()
+# class sms_exam_lines(osv.osv):
+#     """This object is used to store student Exam Marks."""
+#         
+#     _name = 'sms.exam.lines'
+#     _columns = {
+#         'name': fields.many2one('sms.exam.datesheet', 'Exam Type', required=True),
+#         'student_subject': fields.many2one('sms.student.subject', 'Student Subject', required=True),
+#         'exam_status': fields.selection([('Present','Present'),('Absent','Absent'),('UFM','Unfair Means'),],'Exam Status', required=True),
+#         'obtained_marks': fields.float('Obtained Marks', required=True),
+#         'total_marks': fields.float('Total Marks', required=True),
+#         'parent_exam' :fields.many2one('sms.exam', 'Parent Exam', readonly=True),
+#     }   
+        check_marks = self.pool.get('sms.exam').search(cr ,uid ,[('id','!=',None)])
+                                                                 #('name','in',ids)]) 
+        print check_marks[0],"check_marks====",check_marks   
+        rec = self.pool.get('sms.exam').browse(cr ,uid ,check_marks)[0]
+        print "rec====",rec
+        for exam in self.pool.get('sms.exam').browse(cr ,uid ,check_marks):
+                print "exam===",exam.name,"===",exam.subject_id  
+                print "exam_lines===",exam.exam_lines 
+        if rec:
+            raise osv.except_osv(('Deletion Denied'),('The exam for this datesheet has already been  entered. '))
+        else:
+            print "delete datesheet"
+        result = super(osv.osv, self).unlink(cr, uid, ids, context=context)
+        return result
+
+
     def create(self, cr, uid, vals, context=None, check=True):
         result = {}
         class_exam_id = super(osv.osv, self).create(cr, uid, vals, context)
         rec = self.browse(cr,uid,class_exam_id)
         subjects = self.pool.get('sms.academiccalendar.subjects').search(cr,uid,[('academic_calendar','=',rec.academiccalendar.id),('state','=','Current')])
+        print rec.academiccalendar.name,"subjects====",subjects
         if subjects:
             for sub in subjects:
                 add_subjects = self.pool.get('sms.exam.datesheet.lines').create(cr,uid,{
@@ -3324,15 +3370,22 @@ class sms_exam_datesheet_lines(osv.osv):
     _descpription = "Stores exam date sheets paper and date"
     _columns = { 
         'name': fields.many2one('sms.exam.datesheet', 'Date Sheet',required=True),
+        #<!-- op -->
+        'academiccalendar':fields.integer('Class',readonly = True),
         'subject': fields.many2one('sms.academiccalendar.subjects', 'Subject',required=True),
         'total_marks': fields.integer('Total Marks'),
         'paper_date': fields.date('Date'),
         'invigilator':fields.many2one('hr.employee', 'Invigilator'),
         'open_for_edit':fields.boolean('Open to Edit',readonly = 1)
     }
+#<!-- op -->
+    def set_domain(self, cr, uid, ids, academiccalendar, context=None):
+        rec = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,academiccalendar)
+        return  {'domain': {'subject': [('academic_calendar', '=', rec.academiccalendar.id)],'name':[('id','=',academiccalendar)]}}  
     
     _defaults = {
-        'total_marks': lambda *a: 100
+        'total_marks': lambda *a: 100,
+        'academiccalendar': lambda self, cr, uid, context: context.get('academiccalendar', False), 
     }
     
     def write(self, cr, uid, ids, vals, context=None):
