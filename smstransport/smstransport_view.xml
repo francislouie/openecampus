@@ -243,7 +243,6 @@
 						<field name="vehcile_id"/>
 						<field name="fiscal_year"/>
 						<field name="start_date"/>
-							<!--<field name="session_id"/>-->
 						<field name="end_date"/>
 						<field name="monhtly_fee"/>
 						<field name="registration_fee"/>
@@ -261,7 +260,6 @@
 				<field name="name"/>
 				<field name="transport_route"/>
 				<field name="start_date"/>
-					<!--<field name="session_id"/>-->
 				<field name="end_date"/>
 				<field name="fiscal_year"/>
 			</tree>
@@ -276,7 +274,6 @@
 				<field name="name"/>
 				<field name="transport_route"/>
 				<field name="fiscal_year"/>
-					<!--<field name="session_id"/>-->
 			</search>
 		</field>
 	</record>
