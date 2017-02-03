@@ -1142,7 +1142,6 @@ class smsfee_receiptbook(osv.osv):
         receipt_date = ''
         for f in rec:
             stdname = self.pool.get('sms.student').browse(cr, uid, f.student_id.id).name
-            clsname = self.pool.get('sms.academiccalendar').browse(cr, uid,f.student_class_id.id).name
             paymethod = f.payment_method
             receipt_date = f.receipt_date
                 
@@ -1386,6 +1385,8 @@ class smsfee_receiptbook(osv.osv):
                     print "donot create challan"
             else:
                 total_paybles = 0
+                if type(student_id) is list:
+                    student_id = student_id[0]
                 session_id = self.pool.get('sms.student').browse(cr, uid, student_id).current_class.acad_session_id.id
                 receipt_id = self.pool.get('smsfee.receiptbook').create(cr ,uid , {'student_id':student_id,
                                                                                   'student_class_id':class_id,
@@ -1442,6 +1443,7 @@ class smsfee_receiptbook(osv.osv):
          'payment_method': 'Cash',
          'student_id':_get_id ,
          'total_paid_amount': 0.0,
+         'receipt_date':lambda *a: time.strftime('%Y-%m-%d'),
     }
 smsfee_receiptbook()
 
@@ -2079,7 +2081,6 @@ class smsfee_return_paid_fee(osv.osv):
         receipt_date = ''
         for f in rec:
             stdname = self.pool.get('sms.student').browse(cr, uid, f.student_id.id).name
-            clsname = self.pool.get('sms.academiccalendar').browse(cr, uid,f.student_class_id.id).name
             paymethod = f.payment_method
             receipt_date = f.receipt_date
                 
