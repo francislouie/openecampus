@@ -111,6 +111,15 @@
             rml="smsfee/report/student_unpaid_fee_challan_view.rml"
             string="Fee Receipts (Unpaid)"
             />   
+
+		<!-- Report for printing challans exisiting in open state -->
+		<report id="print_open_fee_challan_id"
+            model="smsfee.receiptbook"
+            name="smsfee.open.challans"
+            multi="True"
+            rml="smsfee/report/print_open_fee_challans.rml"
+            string="Fee Receipts (Unpaid)"
+            />
 	
    </data>
 </openerp>
