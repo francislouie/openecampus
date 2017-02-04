@@ -86,7 +86,7 @@ class sms_fiscalyear_session(osv.osv):
         return True
     
     def close_this_fiscalyearsession(self, cr, uid, ids, *args):
-        self.write(cr, uid, ids, {'state': 'Previous'})
+        self.write(cr, uid, ids, {'state': 'Closed'})
         return True
     
     def get_month_name(self, cr, uid,month):

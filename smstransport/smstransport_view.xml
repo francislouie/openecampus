@@ -240,7 +240,6 @@
 					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
 					<group name="transport_fee_structure_main" col="4" colspan="2">
 						<field name="transport_route"/>
-						<field name="vehcile_id"/>
 						<field name="fiscal_year"/>
 						<field name="start_date"/>
 						<field name="end_date"/>
@@ -326,9 +325,10 @@
 							<field name="student_id" domain="[('state','=','Admitted')]" attrs="{'required':[('registration_type','=','Student')],'readonly':[('state','IN',['Registered'])]}"/>
 						</group>
 						<newline/>
+						<field name="transport_route" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
 						<group col="4" colspan="2">
+							<field name="current_vehcile" on_change="onchange_vehcile_load_shift(current_vehcile)" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
 							<field name="shift" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
-							<field name="current_vehcile" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
 						</group>
 						<newline/>
 						<group col="4" colspan="2">

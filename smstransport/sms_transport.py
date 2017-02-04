@@ -87,12 +87,13 @@ class sms_transport_vehcile(osv.osv):
 sms_transport_vehcile()
 
 class sms_transport_fee_structure(osv.osv):
+    
     """This object maintains transport vehciles """
 
     def _set_fee_structure_name(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            string =  str(f.transport_route.name) + ' - '+ str(f.vehcile_id.name) +' - ' + str(f.fiscal_year.name)
+            string =  str(f.transport_route.name) + ' - ' + str(f.fiscal_year.name)
             result[f.id] = string
         return result
     
@@ -100,17 +101,15 @@ class sms_transport_fee_structure(osv.osv):
     _columns = {
         'name' : fields.function(_set_fee_structure_name, method=True, store = True, size=256, string='Code',type='char'),
         'transport_route': fields.many2one('sms.transport.route','Transport Route', required=True),
-        'vehcile_id':fields.many2one('sms.transport.vehcile', 'Vechile', required=True, domain="[('transport_route','=',transport_route)]"),
         'start_date': fields.date('Start Date'),
         'end_date': fields.date('End Date'),
         'fiscal_year':fields.many2one('account.fiscalyear', 'Fiscal Year'),
-#        'session_id':fields.many2one('sms.session','Session'),
         'monhtly_fee':fields.float('Monthly Fee'),
         'registration_fee':fields.float('Registration Fee'),
             } 
     _defaults = {}
     _sql_constraints = [
-                ('unique_transport_feestructure', 'unique (vehcile_id)', 'Only One Fee Structure Can be Defined For A Vehcile')
+                ('unique_transport_feestructure', 'unique (transport_route)', 'Only One Fee Structure Can be Defined For A Vehcile')
                     ]
     
 sms_transport_fee_structure()
@@ -179,19 +178,19 @@ class sms_transport_registrations(osv.osv):
 
     def load_transport_fee(self, cr, uid, ids, context):
         for record in self.browse(cr, uid, ids):
-            dated = datetime.strptime(record.reg_start_date, '%Y-%m-%d')
-            fee_structure = self.pool.get('sms.transport.fee.structure').search(cr,uid,[('vehcile_id','=',record.current_vehcile.id)])
-            fee_structure = self.pool.get('sms.transport.fee.structure').browse(cr,uid,fee_structure)
-            if not fee_structure:
+            fee_structure_ids = self.pool.get('sms.transport.fee.structure').search(cr, uid, [('transport_route','=',record.transport_route.id)])
+            fee_structure_obj = self.pool.get('sms.transport.fee.structure').browse(cr, uid, fee_structure_ids)
+            if not fee_structure_obj:
                 raise osv.except_osv(('Fee structure does not exist'),('Please define transport fee structure first'))
-            for rec in fee_structure:
-                month_ids = self.pool.get('sms.session.months').search(cr, uid, [('session_year','=',str(dated.year))])
-                month_recs = self.pool.get('sms.session.months').browse(cr, uid, month_ids)
-                for recrd in month_recs:
+            for rec in fee_structure_obj:
+                fiscal_year_session_id = self.pool.get('sms.fiscalyear.session').search(cr, uid, [('fiscal_year_id','=',rec.fiscal_year.id)])
+                fiscalyear_months_id = self.pool.get('sms.fiscalyearsession.months').search(cr, uid, [('fiscalyear_session_id','=',fiscal_year_session_id)])
+                fiscalyear_months_obj = self.pool.get('sms.fiscalyearsession.months').browse(cr, uid, fiscalyear_months_id)
+                for obj in fiscalyear_months_obj:
                     self.pool.get('sms.transport.fee.registration').create(cr ,uid ,{
                                                                       'name': rec.id,
                                                                       'parent_id': record.id,
-                                                                      'fee_month': recrd.id,
+                                                                      'fee_month': obj.id,
                                                                       'fee_amount': rec.monhtly_fee
                                                                       }) 
             self.write(cr,uid,record.id,{'state':'waiting_approval'})
@@ -206,6 +205,17 @@ class sms_transport_registrations(osv.osv):
             result['student_id'] = student_id
         else:
             result['student_id'] = ''
+        return {'value':result}
+
+    def onchange_vehcile_load_shift(self, cr, uid, ids, vechile_id):
+        result = {}
+        search_shift_sql = """SELECT sms_transport_shift_id FROM smstransport_shift_vehcile_rel WHERE sms_transport_vehcile_id= """ + str(vechile_id) + """"""
+        cr.execute(search_shift_sql)
+        shift_id = cr.fetchone()
+        if shift_id:
+            result['shift'] = shift_id
+        else:
+            result['shift'] = ''
         return {'value':result}
 
     def set_transportfee_amount(self, cr, uid, ids, context={}, arg=None, obj=None):
@@ -230,7 +240,8 @@ class sms_transport_registrations(osv.osv):
         'shift':fields.many2one('sms.transport.shift','Transport Shift', required=True),
         'reg_start_date': fields.date('Start Date'),
         'reg_end_date': fields.date('End Date'),
-        'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile', domain="[('transport_shifts','=',shift)]", required=True),
+        'transport_route': fields.many2one('sms.transport.route','Transport Route', required=True),
+        'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile', domain="[('transport_route','=',transport_route)]", required=True),
         'state':fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn'),('Withdrawn', 'Withdrawn')], 'State'),
         'registered_lines':fields.one2many('sms.transport.registrations.lines','registeration_id','Registered Candidates'),
         'transportfee_ids':fields.one2many('sms.transport.fee.registration','parent_id','Fee'),
@@ -250,7 +261,7 @@ class sms_transport_fee_registration(osv.osv):
     _columns = {
         'name':fields.many2one('sms.transport.fee.structure','Transport Fee Structure'),
         'parent_id':fields.many2one('sms.transport.registrations','Transport Register'),
-        'fee_month':fields.many2one('sms.session.months','Fee Month'),
+        'fee_month':fields.many2one('sms.fiscalyearsession.months','Fee Month'),
         'fee_amount':fields.float('Amount'),
             }
     _defaults = {}
