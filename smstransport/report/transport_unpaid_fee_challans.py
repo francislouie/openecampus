@@ -41,30 +41,8 @@ class transport_unpaid_fee_challans(report_sxw.rml_parse):
         return today 
      
     def get_challans(self, data):
-        
-        #********************************************************************************************
-#         this_form = self.datas['form']
-#         cls_id = self.datas['form']['class_id'][0]
-#         challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=',cls_id),('state','=','fee_calculated')]) 
-#         if challan_ids:
-#             
-#             rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
-#             for challan in rec_challan_ids:
-#                 challan_dict = {'banks':'','challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
-#                 challan_dict['banks'] = self.get_banks(challan.id)
-#                 challan_dict['challan_number'] = self.get_challan_number(challan.id)
-#                 challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
-#                 challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
-#                 challan_dict['total_amount'] = self.get_total_amount(challan.id)
-#                 challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id)
-#                 challan_list.append(challan_dict)
-#             print "get challan===================",challan_list
-        
-        #********************************************************************************************
-        
         challan_list = []
         this_form = self.datas['form']
-        print this_form
         cls_id = self.datas['form']['class_id'][0]
         challan_ids = self.pool.get('sms.transportfee.challan.book').search(self.cr, self.uid,[('student_class_id','=',cls_id),('state','=','fee_calculated')])
         if challan_ids:
@@ -152,8 +130,6 @@ class transport_unpaid_fee_challans(report_sxw.rml_parse):
     def get_total_amount(self, data):
         line_dots = []
         receipt = self.pool.get('sms.transportfee.challan.book').browse(self.cr,self.uid,data)
-#         total_amount_str = str(babel.numbers.format_currency((receipt.total_amount), "" )) + " /="
-        #print receipt,"receipt.total_paybles",receipt.total_paybles 
         total_amount_str = receipt.total_payables
         return total_amount_str
      

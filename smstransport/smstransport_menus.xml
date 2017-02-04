@@ -5,7 +5,7 @@
 	<menuitem name="Transport" id="sms_transport_root_id" sequence="5"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager"/>
 
-	<menuitem name="Configuration" id="sms_transport_configuration_id" sequence = "1" parent="sms_transport_root_id"
+	<menuitem name="Transport Configuration" id="sms_transport_configuration_id" sequence = "6" parent="sms.menu_configuration_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager"/>
 	
 	<menuitem name="Locations" id="sms_transport_location_id" sequence = "2" parent="sms_transport_configuration_id"
@@ -29,13 +29,14 @@
 	<menuitem name="Transport Registration" id="sms_transport_regis_id" sequence = "8" parent="sms_transport_fee_config_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_registration"/>
 
-	<!-- Menu Removed As no Direct Form is to be given its entries are controlled via process 
-	<menuitem name="Transport Fee Payments" id="sms_transport_fee_payments_id" sequence = "8" parent="sms_transport_fee_config_id"
-	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_fee_payments"/>
-	-->
-
 	<menuitem name="Transport Fee Challan" id="sms_transport_fee_challan_id" sequence = "9" parent="sms_transport_fee_config_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_fee_challan"/>
+
+	<menuitem name="Reports" id="sms_transport_reports_id" sequence = "10" parent="sms_transport_root_id"
+	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager"/>
+
+	<menuitem name="Reegistered Students List" id="sms_transport_registered_students_id" sequence = "11" parent="sms_transport_reports_id"
+	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_registered_persons"/>
 
 </data>
 </openerp>

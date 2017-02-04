@@ -1,4 +1,3 @@
-import pooler
 import time
 import mx.DateTime
 from datetime import datetime
