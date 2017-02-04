@@ -344,7 +344,7 @@
 					</notebook>
 					-->
 					<notebook>
-						<field name="transportfee_ids" nolabel="1"/>
+						<field name="transportfee_ids" nolabel="1" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
 						<page string = "Fee Details">
 						<div class="oe_title"><label for="total_fee_applicable"/>
 							<h2><field name="total_fee_applicable" attrs="{'readonly':[('state','IN',['Registered'])]}"/></h2>
@@ -381,6 +381,7 @@
 				<field name="employee_id"/>
 				<field name="student_id"/>
 				<field name="current_vehcile"/>
+				<field name="transport_route"/>
 			</search>
 		</field>
 	</record>

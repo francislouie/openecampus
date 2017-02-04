@@ -128,12 +128,12 @@ class sms_transport_registrations(osv.osv):
         return result
 
     def register_person(self, cr, uid, ids, name):
-        fee_structure = self.pool.get('sms.transport.fee.structure').search(cr,uid,[])
-        fee_structure = self.pool.get('sms.transport.fee.structure').browse(cr,uid,fee_structure)
-        if fee_structure:
-            for rec in fee_structure:
-                registration_fee = rec.registration_fee            
         for record in self.browse(cr, uid, ids):
+            fee_structure = self.pool.get('sms.transport.fee.registration').search(cr,uid,[('parent_id','=',record.id)])
+            fee_structure = self.pool.get('sms.transport.fee.registration').browse(cr,uid,fee_structure)
+            fee_amount = 0
+            for rec in fee_structure:
+                fee_amount = fee_amount + rec.fee_amount            
             # --------- Register Person requesting to avail transport and also make entry in registration lines object. ------------
             result = self.write(cr,uid,record.id,{'state':'Registered'})
             if result:
@@ -166,14 +166,12 @@ class sms_transport_registrations(osv.osv):
                                                                 create(cr,uid,
                                                                 {
                                                                 'registeration_id': record.id,
-                                                                'state': 'Unpaid', 
+                                                                'state': 'fee_calculated', 
                                                                 'student_id':record.student_id.id,
-                                                                'registration_fee':registration_fee
+                                                                'fee_amount':fee_amount
                                                                 })
 #                         current_ac
 #                         self.pool.get('sms.transport.vehcile').write(cr, uid, student_id,{'current_accomodation':True,'vehcile_reg_students_id':record.current_vehcile.id,'transport_reg_id':record.id})
-                                                                
-                                                                
         return result
 
     def load_transport_fee(self, cr, uid, ids, context):
@@ -308,13 +306,11 @@ class sms_transport_fee_payments(osv.osv):
            admin
            """
         fee_already_exists =  self.pool.get('sms.transport.fee.payments').search(cr,uid,[('student_id','=',std_id),('due_month','=',month)])
-        
         if not fee_already_exists:
             fee_structure = self.pool.get('sms.transport.fee.structure').search(cr,uid,[])
             fee_structure = self.pool.get('sms.transport.fee.structure').browse(cr,uid,fee_structure)
             for rec in fee_structure:
                 month_fee =  rec.monhtly_fee
-            
             fee_month = month
             due_month = month
             fee_dict= {
@@ -327,7 +323,6 @@ class sms_transport_fee_payments(osv.osv):
                         'total_fees':0,
                         'state':'Unpaid'
                         }
-            
             create_trans_fee = self.pool.get('sms.transport.fee.payments').create(cr,uid,fee_dict)  
             if create_trans_fee:
                 return True
@@ -345,7 +340,7 @@ class sms_transport_fee_payments(osv.osv):
         'fee_discount':fields.float('Discount'),
         'date_fee_charged':fields.date('Date Fee Charged'),
         'date_fee_paid':fields.date('Date Fee Paid'),
-        'fee_month':fields.many2one('sms.session.months','Fee Month'),
+        'fee_month':fields.many2one('sms.fiscalyearsession.months','Fee Month'),
         'is_reconcile': fields.boolean('Reconciled'),
         'state':fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State'),
             }
