@@ -15,6 +15,8 @@
              'wizard/smsfee_wizard_daily_fee_reports.xml',
              'wizard/smsfee_wizard_std_admfee_receipt_unpaid.xml',
              'wizard/wizard_singlestudent_unpaidfee_receipt.xml',
+             'wizard/wizard_student_fee_collect.xml',
+             'wizard/wizard_singlestudent_fee_receipt_openchallans.xml',
              'smsfee_report.xml',
              'smsfee_view.xml',
              'smsfee_menus.xml',

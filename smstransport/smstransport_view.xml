@@ -287,6 +287,20 @@
 		<field name="search_view_id" ref="view_sms_transport_fee_structure_search"/>
 	</record>
 
+	<!--Transport Fee Registration Time-->
+	<record model="ir.ui.view" id="view_sms_transport_fee_registration_tree">
+		<field name="name">sms.transport.fee.registration.tree</field>
+		<field name="model">sms.transport.fee.registration</field>
+		<field name="arch" type="xml">
+			<tree string="Transport Fee Structure">
+				<field name="name"/>
+				<field name="fee_month"/>
+				<field name="fee_amount"/>
+				<field name="parent_id"/>
+			</tree>
+		</field>
+	</record>
+
 	<!--Transport Registrations-->
 	<record model="ir.ui.view" id="view_sms_transport_registration_form">
 		<field name="name">sms.transport.registrations.form</field>
@@ -295,38 +309,50 @@
 			<form string="Transport Registrations" version="7.0">
 				<header>
 					<field name="state" widget="statusbar"/>
-					<button name="register_person" string="Register" states="Draft" type="object" icon="terp-gtk-jump-to-ltr"/>
-					<button name="%(action_transport_registered_persons)d" string="Registered Students" type="action" icon="gtk-print"/>
+					<button name="load_transport_fee" string="1.Proceed Registration" states="Draft" type="object" class="oe_highlight" groups=""/>
+					<button name="register_person" string="Register" states="waiting_approval" class="oe_highlight" type="object" group=""/>
 				</header>
 				<sheet>
 					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
 					<group name="transport_registration_main">
 						<group col="4" colspan="2">
-							<field name="registration_type"/>
-							<field name="student_reg_no" on_change="onchange_load_student(student_reg_no)"/>
+							<field name="registration_type" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
+							<field name="student_reg_no" on_change="onchange_load_student(student_reg_no)" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
 						</group>
 						<group attrs="{'invisible':[('registration_type','=','Student')]}">
-							<field name="employee_id"/>
+							<field name="employee_id" attrs="{'required':[('registration_type','=','Employee')],'readonly':[('state','IN',['Registered'])]}"/>
 						</group>
 						<group attrs="{'invisible':[('registration_type','=','Employee')]}">
-							<field name="student_id" domain="[('state','=','Admitted')]"/>
+							<field name="student_id" domain="[('state','=','Admitted')]" attrs="{'required':[('registration_type','=','Student')],'readonly':[('state','IN',['Registered'])]}"/>
+						</group>
+						<newline/>
+						<field name="transport_route" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
+						<group col="4" colspan="2">
+							<field name="current_vehcile" on_change="onchange_vehcile_load_shift(current_vehcile)" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
+							<field name="shift" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
 						</group>
 						<newline/>
 						<group col="4" colspan="2">
-							<field name="shift"/>
-							<field name="current_vehcile"/>
-						</group>
-						<newline/>
-						<group col="4" colspan="2">
-							<field name="reg_start_date"/>
-							<field name="reg_end_date"/>
+							<field name="reg_start_date" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
+							<field name="reg_end_date" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
 						</group>
 					</group>
+					<!--
 					<notebook>
 						<page string="Registration Histories">
 							<field name="registered_lines" nolabel="1"/>
 						</page>
 					</notebook>
+					-->
+					<notebook>
+						<field name="transportfee_ids" nolabel="1" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
+						<page string = "Fee Details">
+						<div class="oe_title"><label for="total_fee_applicable"/>
+							<h2><field name="total_fee_applicable" attrs="{'readonly':[('state','IN',['Registered'])]}"/></h2>
+						</div>
+						<field name="transportfee_ids" context = " {'parent_id':active_id}" nolabel="1"/>
+				    	</page>
+				   </notebook>
 				</sheet>	 	
 			</form>
 		</field>
@@ -356,6 +382,7 @@
 				<field name="employee_id"/>
 				<field name="student_id"/>
 				<field name="current_vehcile"/>
+				<field name="transport_route"/>
 			</search>
 		</field>
 	</record>
@@ -412,11 +439,12 @@
 						<field name="student_id"/>
 						<field name="registeration_id"/>
 						<field name="fee_month"/>
-						<field name="due_month"/>
+						<field name="receipt_no"/>
+						<field name="date_fee_charged"/>
+						<field name="date_fee_paid"/>
 						<field name="fee_amount"/>
-						<field name="late_fee"/>
-						<field name="total_fees"/>
-						<field name="registration_fee"/>
+						<field name="fee_discount"/>
+						<field name="is_reconcile"/>
 					</group>
 				</sheet>	 	
 			</form>
@@ -432,8 +460,8 @@
 				<field name="student_id"/>
 				<field name="registeration_id"/>
 				<field name="fee_month"/>
-				<field name="fee_amount"/>
-				<field name="total_fees"/>
+				<field name="receipt_no"/>
+				<field name="date_fee_charged"/>
 			</tree>
 		</field>
 	</record>
@@ -447,8 +475,8 @@
 				<field name="student_id"/>
 				<field name="registeration_id"/>
 				<field name="fee_month"/>
-				<field name="fee_amount"/>
-				<field name="total_fees"/>
+				<field name="receipt_no"/>
+				<field name="date_fee_charged"/>
 			</search>
 		</field>
 	</record>

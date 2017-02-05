@@ -1,4 +1,3 @@
-import pooler
 import time
 import mx.DateTime
 from datetime import datetime
@@ -89,7 +88,10 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                     challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
                     challan_dict['total_amount'] = self.get_total_amount(challan.id)
                     challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id)
-                    challan_dict['amount_after_due_date'] = data['form']['amount_after_due_date']
+                    if self.datas['form']['amount_after_due_date']:
+                        challan_dict['amount_after_due_date'] = challan_dict['total_amount'] + self.datas['form']['amount_after_due_date'] 
+                    else:
+                        challan_dict['amount_after_due_date'] = data['form']['amount_after_due_date']
                     challan_list.append(challan_dict)
         return challan_list  
      
@@ -137,8 +139,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
  
     def get_candidate_info(self, data):
         info_list = []
-        student_id = self.datas['form']['student_id'][0]
-        stdrec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
+        stdrec = self.pool.get('sms.student').browse(self.cr, self.uid, data)
         info_dict = {'name':'','father_name':'','class':'','fee_month':''}
         info_dict['name'] = stdrec.name
         info_dict['father_name'] = stdrec.father_name
@@ -162,10 +163,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
      
     def get_total_amount(self, data):
         receipt = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data)
-        if self.datas['form']['amount_after_due_date']:
-            total_amount_str = receipt.total_paybles + self.datas['form']['amount_after_due_date'] 
-        else:
-            total_amount_str = receipt.total_paybles
+        total_amount_str = receipt.total_paybles
         return total_amount_str
      
     def get_amount_in_words(self,data):
