@@ -582,7 +582,7 @@
                                         </a>
                                     </h4>
                                     <ul>
-                                        <li><field name="phone" /></li>
+                                        <li><field name="father_name" /></li>
                                     </ul>
                                 </div>
                             </div>
@@ -797,7 +797,7 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
 			<field name="domain">[('state','=','Admitted')]</field>
-            <field name="view_mode">tree,form, kanban</field>
+            <field name="view_mode">kanban,tree,form</field>
             <field name="search_view_id" ref="view_student_search"/>
         </record>
 
@@ -2374,7 +2374,6 @@
       <field name="arch" type="xml">
         <form string="Papers Dates">
           <field name="name"/>
-<!-- op --> <field name="academiccalendar"   on_change="set_domain(academiccalendar)"   />
 		  <field name="subject"/>
  		  <field name="paper_date"/>
 		  <field name="invigilator"/>	
@@ -2390,6 +2389,7 @@
       <field name="arch" type="xml">
         <tree editable="top" string="Papers Dates" >
           <field name="name" />
+		  <field name="academiccalendar"   on_change="set_domain(academiccalendar)"   invisible="1"/>
 		  <field name="subject"   />
  		  <field name="paper_date"/>
 		  <field name="invigilator"/>	
