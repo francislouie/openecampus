@@ -237,6 +237,7 @@
 				<header>
 				</header>
 				<sheet>
+				<img src='/smstransport/static/src/img/schoo_bus1.png' class='calendar_img_tuto'/>
 					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
 					<group name="transport_fee_structure_main" col="4" colspan="2">
 						<field name="transport_route"/>

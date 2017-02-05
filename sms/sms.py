@@ -3143,7 +3143,8 @@ class sms_exam_offered(osv.osv):
         # find active academiccalendars that of this session
         academiccalendar_ids = self.pool.get('sms.academiccalendar').search(cr,uid,[('state','=','Active'),('session_id','=',rec[0].session_year.id)])
         if academiccalendar_ids:
-            self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
+            # This line is commented due to date time error self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
+            self.write(cr, uid, ids, {'state':'Active'})
             for calendar in academiccalendar_ids:
                 datesheet_id = self.pool.get('sms.exam.datesheet').create(cr,uid,{
                                                             'academiccalendar':calendar, 
@@ -3178,7 +3179,9 @@ class sms_exam_offered(osv.osv):
                 #4 close all classes in tis exam
                 close_classes_exam = self.pool.get('sms.exam.datesheet').close_exam_class(cr,uid,ds.id)
         #5 close offered exam
-        self.write(cr, uid, ids, {'state':'Closed','start_date':datetime.date.today()})
+        #commented due to date error
+        #self.write(cr, uid, ids, {'state':'Closed','start_date':datetime.date.today()})
+        self.write(cr, uid, ids, {'state':'Closed'})
         return True
     
     def cancel_exam(self, cr, uid, ids, *args):
