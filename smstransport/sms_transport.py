@@ -227,6 +227,17 @@ class sms_transport_registrations(osv.osv):
             amount = cr.fetchone()[0]
         result[f.id] = amount
         return result
+
+    def onchange_load_student(self, cr, uid, ids, std_reg_no):
+        result = {}
+        search_student_sql = """SELECT id FROM sms_student WHERE registration_no like '%""" + str(std_reg_no) + """%'"""
+        cr.execute(search_student_sql)
+        student_id = cr.fetchone()
+        if student_id:
+            result['student_id'] = student_id
+        else:
+            result['student_id'] = ''
+        return {'value':result}
     
     _name="sms.transport.registrations"
     _columns = {
