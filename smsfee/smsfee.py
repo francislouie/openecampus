@@ -1065,12 +1065,8 @@ class smsfee_receiptbook(osv.osv):
     """ A fee receopt book, stores fee payments history of students """
     
     def create(self, cr, uid, vals, context=None, check=True):
-#         record =  self.pool.get('sms.student').browse(cr,uid,vals['student_id'])
-# #         slipno = self._set_slipno(self, cr, uid, None)
-#         for rec in record:
-#             vals['student_class_id'] = rec[0].current_class.id,
-#             vals['fee_structure_id'] = rec[0].fee_type.id
-#             vals['session_id'] =  rec[0].current_class.acad_session_id.id
+        slipno = self._set_slipno(self, cr, uid, None)
+        vals['name'] =  slipno
         result = super(osv.osv, self).create(cr, uid, vals, context)
         
         return result
@@ -1303,16 +1299,9 @@ class smsfee_receiptbook(osv.osv):
 #                        }) 
 #             print "crert::",create
 #          return {}
-    def _set_slipno(self, cr, uid, ids, name, args, context=None):
-        result = {}
-        for f in self.browse(cr, uid, ids, context=context):
-            sql = """SELECT COALESCE(max(id),'1') FROM smsfee_receiptbook WHERE state !='Draft'
-                     """
-            cr.execute(sql)
-            counted = cr.fetchone() 
-            counted = counted[0]
-            result[f.id] = int(counted) + 1
-        return result
+    def _set_slipno(self, cr, uid, ids, name, ):
+        rec =  self.browse(cr, uid, ids)
+        return rec.id
     
     
     def _get_id(self, cr, uid, context={}):
