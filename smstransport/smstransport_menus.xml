@@ -38,5 +38,28 @@
 	<menuitem name="Reegistered Students List" id="sms_transport_registered_students_id" sequence = "11" parent="sms_transport_reports_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_registered_persons"/>
 
+	<!-- SMS Configuration Menus Inheritance -->
+
+	<menuitem id="sms.general_setting_id" name="General" parent="sms.menu_configuration_id" sequence="5" groups="sms.group_sms_admin,sms.group_sms_admission_manager"/>
+
+	<menuitem id="smstransport_sms_config_squeezed_id" name="More" parent="sms.general_setting_id" sequence="5" groups="sms.group_sms_admin,sms.group_sms_admission_manager"/>
+
+    <menuitem id="sms.menu_class_group" parent="sms.general_setting_id" sequence ="2" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="sms.action_cls_grps"/>
+    <menuitem id="sms.menu_action_subject" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="sms.action_subject"/>
+	<menuitem id="sms.menu_action_classes" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="sms.action_classes"/>
+    <menuitem id="sms.menu_action_class_section" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="sms.action_class_section"/>
+	<menuitem id="sms.menu_action_sms_registration_format" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin" action="sms.action_sms_registration_format"/>
+	<menuitem id="sms.menu_action_smsyear" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin" action="sms.action_smsyear"/>
+	<menuitem id="sms.menu_action_smsmonth" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin" action="sms.action_smsmonth"/>
+    <menuitem id="sms.menu_sms_time" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin" action="sms.action_sms_time" />
+	<menuitem id="sms.menu_sms_day" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin" action="sms.action_sms_day" />
+	<menuitem id="sms.menu_sms_timetable_slot" parent="smstransport_sms_config_squeezed_id"  groups="sms.group_sms_admin" action="sms.action_sms_timetable_slot" />
+	<menuitem id="sms.menu_sms_exam_type" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_manager_exams,sms.group_sms_officers_exams" action="sms.action_sms_exam_type" />
+	<menuitem id="sms.menu_sms_exam" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_manager_exams,sms.group_sms_officers_exams" action="sms.action_sms_exam" />
+	<menuitem id="sms.menu_sms_exam_datesheet" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_manager_exams,sms.group_sms_officers_exams" action="sms.action_exam_datesheet"/>
+    <menuitem id="sms.menu_action_sms_relation" parent="smstransport_sms_config_squeezed_id" sequence="3" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="sms.action_sms_relation"/>
+
+
+
 </data>
 </openerp>
