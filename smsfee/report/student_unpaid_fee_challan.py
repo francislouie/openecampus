@@ -10,7 +10,6 @@ import xlwt
 import socket
 from tools import amount_to_text_en
 import babel
-from pygments.lexers.webmisc import DuelLexer
  
 logger = netsvc.Logger()
 result_acc=[]

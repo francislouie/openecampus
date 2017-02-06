@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from datetime import datetime
 from dateutil import parser
 import logging
-from gdata.contentforshopping.data import Year
 
 _logger = logging.getLogger(__name__)
 
