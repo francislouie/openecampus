@@ -1,8 +1,7 @@
 <document filename="test.pdf">
-  	<template pageSize="(878.0,600.0)" title="Test" author="BaharAli" allowSplitting="20">
+  	<template pageSize="(878.0,600.0)" title="Test" author="Ghulam Masood" allowSplitting="20">
 	<pageTemplate id="first">
     <frame id="first" x1="7.0" y1="0.0" width="870.0" height="590.0"/>
-
      <header>
         <pageGraphics>
 
@@ -14,24 +13,39 @@
 			<setFont name="Helvetica-Bold" size="9" />
 			<setFont name="Helvetica" size="9" />
 
-			<drawString x="200" y="580">Date : [[ get_today() ]]</drawString>
-			<drawString x="495" y="580">Date : [[ get_today() ]]</drawString>
-			<drawString x="770" y="580">Date : [[ get_today() ]]</drawString>
+			<drawString x="180" y="580">Due Date : [[ get_due_date() ]]</drawString>
+			<drawString x="475" y="580">Due Date : [[ get_due_date() ]]</drawString>
+			<drawString x="750" y="580">Due Date : [[ get_due_date() ]]</drawString>
+
+			<setFont name="Helvetica-Bold" size="11"/>
+
+           	<drawString x="030" y="70">Officer</drawString>
+			<drawString x="330" y="70">Officer</drawString>
+			<drawString x="630" y="70">Officer</drawString>
+
+           	<drawString x="200" y="70">Cashier</drawString>
+			<drawString x="500" y="70">Cashier</drawString>
+			<drawString x="800" y="70">Cashier</drawString>
+
+			<setFont name="Helvetica" size="9"/>
+
+           	<drawString x="002" y="40">Bank Name: [[ get_banks() ]]</drawString>
+			<drawString x="300" y="40">Bank Name: [[ get_banks() ]]</drawString>
+			<drawString x="600" y="40">Bank Name: [[ get_banks() ]]</drawString>
 
 			<setFont name="Helvetica" size="7"/>
 
-           	<drawString x="115" y="15">Depositor's Signature: _____________________</drawString>
-			<drawString x="410" y="15">Depositor's Signature: _____________________</drawString>
-			<drawString x="700" y="15">Depositor's Signature: _____________________</drawString>
+           	<drawString x="115" y="20">Depositor's Signature: _____________________</drawString>
+			<drawString x="410" y="20">Depositor's Signature: _____________________</drawString>
+			<drawString x="700" y="20">Depositor's Signature: _____________________</drawString>
 
-           	<drawString x="002" y="15">Printed by: [[ get_user_name() ]]</drawString>
-			<drawString x="300" y="15">Printed by: [[ get_user_name() ]]</drawString>
-			<drawString x="600" y="15">Printed by: [[ get_user_name() ]]</drawString>
+           	<drawString x="002" y="20">Printed by: [[ get_user_name() ]]</drawString>
+			<drawString x="300" y="20">Printed by: [[ get_user_name() ]]</drawString>
+			<drawString x="600" y="20">Printed by: [[ get_user_name() ]]</drawString>
 
-			<setFont name="Helvetica" size="9"/>
-           	<drawString x="100" y="5">[[ get_banks() ]]</drawString>
-			<drawString x="398" y="5">[[ get_banks() ]]</drawString>
-			<drawString x="698" y="5">[[ get_banks() ]]</drawString>
+           	<drawString x="102" y="5">Print Date: [[ get_today() ]]</drawString>
+			<drawString x="398" y="5">Print Date: [[ get_today() ]]</drawString>
+			<drawString x="670" y="5">Print Date: [[ get_today() ]]</drawString>
 
            	<lineMode width="0.7" />
            	<lines>1cm 27.7cm 20cm 27.7cm</lines>
@@ -82,6 +96,7 @@
     <paraStyle name="P1" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="10" alignment="CENTER" textColor="#000000"/>
 	<paraStyle name="P2-Bold" fontName="Helvetica-Bold" fontSize="9.0" leading="10" alignment="CENTER" textColor="#000000"/>
+	<paraStyle name="P2-Bold-R" fontName="Helvetica-Bold" fontSize="9.0" leading="10" alignment="RIGHT" textColor="#000000"/>
 	<paraStyle name="P2-Bold-Left" fontName="Helvetica-Bold" fontSize="9.0" leading="10" alignment="LEFT" textColor="#000000"/>
 	<paraStyle name="P2-White" fontName="Helvetica" fontSize="9.0" leading="10" alignment="CENTER" textColor="#FFFFFF"/>
     <paraStyle name="P3" fontName="Helvetica" fontSize="8.0" leading="9" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
@@ -89,6 +104,7 @@
     <paraStyle name="P4-Bold" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P4-Bold-Right" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P5" fontName="Helvetica" fontSize="8.0" leading="9" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P5-Right" fontName="Helvetica" fontSize="8.0" leading="9" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P6" fontName="Helvetica" fontSize="8.0" leading="9" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P7" fontName="Helvetica" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P8" fontName="Helvetica" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
@@ -146,7 +162,7 @@
 			<blockTable colWidths="260" style="Table_2">
       		<tr>
         		<td>
-          		<para style="P2-Bold">For Student/Parents</para>
+          		<para style="P2-Bold">Bank Copy</para>
         		</td>
       		</tr>
 			</blockTable>
@@ -165,22 +181,22 @@
 		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Class:</para></td>
-						<td><para style="P4">[[(r['Class'])]]</para></td>
+						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
-		      		<tr>
-		        		<td><para style="P4-Bold">Group:</para></td>
-						<td><para style="P4">[[(r['semester'])]]</para></td>
-		      		</tr>
+					<tr>
+						<td><para style="P4-Bold">Fee Month:</para></td>
+						<td><para style="P4">[[(r['fee_month'])]]</para></td>
+					</tr>
 		      		</blockTable>
 				</td>
       		</tr>		
 
 			<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+	          		<blockTable colWidths="160.0,100.0" style="Table_1">
 		      		<tr>
-		        		<td><para style="P4-Bold">On Account of:</para></td>
-						<td><para style="P4-Bold">Ruppees</para></td>
+		        		<td><para style="P4-Bold">Particular</para></td>
+						<td><para style="P2-Bold-R">Amount (PKR) </para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -227,6 +243,16 @@
 		      		<tr>
 		        		<td><para style="P4-Bold">Amount in Words: </para></td>
 						<td><para style="P5">[[(record['amount_in_words'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+			<tr>
+        		<td>
+	          		<blockTable colWidths="150.0,110.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Fine After Due Date:</para></td>
+						<td><para style="P5-Right">[[(record['amount_after_due_date'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -265,7 +291,7 @@
 			<blockTable colWidths="260" style="Table_2">
       		<tr>
         		<td>
-          		<para style="P2-Bold">For Accounts Department</para>
+          		<para style="P2-Bold">School Copy</para>
         		</td>
       		</tr>
 			</blockTable>
@@ -284,21 +310,21 @@
 		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Class:</para></td>
-						<td><para style="P4">[[(r['Class'])]]</para></td>
+						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
-		      		<tr>
-		        		<td><para style="P4-Bold">Group:</para></td>
-						<td><para style="P4">[[(r['semester'])]]</para></td>
-		      		</tr>
+					<tr>
+						<td><para style="P4-Bold">Fee Month:</para></td>
+						<td><para style="P4">[[(r['fee_month'])]]</para></td>
+					</tr>
 		      		</blockTable>
 				</td>
       		</tr>	
 			<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+	          		<blockTable colWidths="160.0,100.0" style="Table_1">
 		      		<tr>
-		        		<td><para style="P4-Bold">On Account of:</para></td>
-						<td><para style="P4-Bold">Ruppees</para></td>
+		        		<td><para style="P4-Bold">Particular</para></td>
+						<td><para style="P2-Bold-R">Amount (PKR) </para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -348,6 +374,16 @@
 		      		</blockTable>
 				</td>
       		</tr>
+			<tr>
+        		<td>
+	          		<blockTable colWidths="150.0,110.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Fine After Due Date:</para></td>
+						<td><para style="P5-Right">[[(record['amount_after_due_date'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
       		</blockTable>
         </td>
         <td>
@@ -382,7 +418,7 @@
 			<blockTable colWidths="260" style="Table_2">
       		<tr>
         		<td>
-          		<para style="P2-Bold">For Fee Officer</para>
+          		<para style="P2-Bold">Parents Copy</para>
         		</td>
       		</tr>
 			</blockTable>
@@ -401,21 +437,21 @@
 		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Class:</para></td>
-						<td><para style="P4">[[(r['Class'])]]</para></td>
+						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
-		      		<tr>
-		        		<td><para style="P4-Bold">Group:</para></td>
-						<td><para style="P4">[[(r['semester'])]]</para></td>
-		      		</tr>
+					<tr>
+						<td><para style="P4-Bold">Fee Month:</para></td>
+						<td><para style="P4">[[(r['fee_month'])]]</para></td>
+					</tr>
 		      		</blockTable>
 				</td>
       		</tr>
 			<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0" style="Table_1">
+	          		<blockTable colWidths="160.0,100.0" style="Table_1">
 		      		<tr>
-		        		<td><para style="P4-Bold">On Account of:</para></td>
-						<td><para style="P4-Bold">Ruppees</para></td>
+		        		<td><para style="P4-Bold">Particular</para></td>
+						<td><para style="P2-Bold-R">Amount (PKR) </para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -462,6 +498,16 @@
 		      		<tr>
 		        		<td><para style="P4-Bold">Amount in Words: </para></td>
 						<td><para style="P5">[[(record['amount_in_words'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+			<tr>
+        		<td>
+	          		<blockTable colWidths="150.0,110.0" style="Table_1">
+		      		<tr>
+		        		<td><para style="P4-Bold">Fine After Due Date:</para></td>
+						<td><para style="P5-Right">[[(record['amount_after_due_date'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>

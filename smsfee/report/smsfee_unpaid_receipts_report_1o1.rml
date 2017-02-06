@@ -185,8 +185,8 @@
 						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 					<tr>
-						<td><para style="P4-Bold">Section</para></td>
-						<td><para style="P4">[[(r['section'])]]</para></td>
+						<td><para style="P4-Bold">Fee Month:</para></td>
+						<td><para style="P4">[[(r['fee_month'])]]</para></td>
 					</tr>
 		      		</blockTable>
 				</td>
@@ -252,7 +252,7 @@
         		<td>
 	          		<blockTable colWidths="150.0,110.0" style="Table_1">
 		      		<tr>
-		        		<td><para style="P4-Bold">Amount After Due Date:</para></td>
+		        		<td><para style="P4-Bold">Fine After Due Date:</para></td>
 						<td><para style="P5-Right">[[(record['amount_after_due_date'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
@@ -314,8 +314,8 @@
 						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 					<tr>
-						<td><para style="P4-Bold">Section</para></td>
-						<td><para style="P4">[[(r['section'])]]</para></td>
+						<td><para style="P4-Bold">Fee Month:</para></td>
+						<td><para style="P4">[[(r['fee_month'])]]</para></td>
 					</tr>
 		      		</blockTable>
 				</td>
@@ -379,7 +379,7 @@
         		<td>
 	          		<blockTable colWidths="150.0,110.0" style="Table_1">
 		      		<tr>
-		        		<td><para style="P4-Bold">Amount After Due Date:</para></td>
+		        		<td><para style="P4-Bold">Fine After Due Date:</para></td>
 						<td><para style="P5-Right">[[(record['amount_after_due_date'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
@@ -441,8 +441,8 @@
 						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 					<tr>
-						<td><para style="P4-Bold">Section</para></td>
-						<td><para style="P4">[[(r['section'])]]</para></td>
+						<td><para style="P4-Bold">Fee Month:</para></td>
+						<td><para style="P4">[[(r['fee_month'])]]</para></td>
 					</tr>
 		      		</blockTable>
 				</td>
@@ -507,7 +507,7 @@
         		<td>
 	          		<blockTable colWidths="150.0,110.0" style="Table_1">
 		      		<tr>
-		        		<td><para style="P4-Bold">Amount After Due Date:</para></td>
+		        		<td><para style="P4-Bold">Fine After Due Date:</para></td>
 						<td><para style="P5-Right">[[(record['amount_after_due_date'])]]</para></td>
 		      		</tr>
 		      		</blockTable>

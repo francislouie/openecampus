@@ -215,15 +215,11 @@
 		      <field name="arch" type="xml">
 		      <field name="classes_history" position="after">
 			  	</field>
-				
 				<notebook>
-				
 					<page string = "Fee Details">
-<!--#$$$$$ -->
-					<button name="%(report_student_unpaidfee_receipts_id)d" string="Fee Receipt" 
-					states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-<!--#$$$$$ -->
-					<button name="action_pay_student_fee" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="object" class="oe_highlight" groups=""/>
+					<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+					<button name="%(action_student_fee_collect_id)d" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+					<button name="%(action_singlestudent_fee_openchallan_id)d" string="Print Existing Challan" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 					<group>
 						<group>					
 						<div class="oe_title"><label for="total_paybles"/>
@@ -243,7 +239,6 @@
 		    </record>
 		<!-- sms.Classes Fee-->
 
-        
     <!-- Tree class fee types (new design) apread as one2many to smsfee.classes.fee-->
     <record model="ir.ui.view" id="view_class_types_tree">
             <field name="name">smsfee.classes.fees.lines.tree</field>

@@ -1,42 +1,27 @@
 import time
-import mx.DateTime
 from datetime import datetime
-from report import report_sxw
-import netsvc
-import locale
-from compiler.ast import Print
-from osv import osv, fields
-import xlwt
-import socket
-from tools import amount_to_text_en
-import babel
-from pygments.lexers.webmisc import DuelLexer
- 
-logger = netsvc.Logger()
-result_acc=[]
-     
-class unpaid_fee_challan_parser(report_sxw.rml_parse):
- 
+from openerp.tools import amount_to_text_en
+from openerp.report import report_sxw
+
+class smsfee_report_open_challan(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
- 
-        super(unpaid_fee_challan_parser, self).__init__(cr, uid, name, context)
+        super(smsfee_report_open_challan, self).__init__(cr, uid, name, context)
         self.result_temp=[]
-        self.localcontext.update( {
-            'get_today':self.get_today,
-            'get_challans':self.get_challans,
-            'get_user_name':self.get_user_name,
-            'get_vertical_lines': self.get_vertical_lines,
-            'get_vertical_lines_total': self.get_vertical_lines_total,
-            'get_banks':self.get_banks,
-            'get_challan_number':self.get_challan_number,
-            'get_candidate_info':self.get_candidate_info,
-            'get_on_accounts':self.get_on_accounts,
-            'get_total_amount':self.get_total_amount,
-            'get_amount_in_words':self.get_amount_in_words,
-            'get_due_date':self.get_due_date,
-         })
+        self.localcontext.update({
+                'get_today':self.get_today,
+                'get_challans':self.get_challans,
+                'get_user_name':self.get_user_name,
+                'get_vertical_lines': self.get_vertical_lines,
+                'get_vertical_lines_total': self.get_vertical_lines_total,
+                'get_banks':self.get_banks,
+                'get_challan_number':self.get_challan_number,
+                'get_candidate_info':self.get_candidate_info,
+                'get_on_accounts':self.get_on_accounts,
+                'get_total_amount':self.get_total_amount,
+                'get_amount_in_words':self.get_amount_in_words,
+        })
         self.context = context
-     
+        
     def get_today(self):
         today = time.strftime('%d-%m-%Y')
         return today 
@@ -163,4 +148,4 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return_value=str(amt_en).replace('Cent','Paisa')
         return return_value
      
-report_sxw.report_sxw('report.smsfee_stu_unpaidfee_receipt_name', 'smsfee.classfees.register', 'addons/smsfee/student_unpaid_fee_challan_view.rml',parser = unpaid_fee_challan_parser, header=None)
+report_sxw.report_sxw('report.smsfee.open.challans', 'smsfee.receiptbook', 'addons/smsfee/print_open_fee_challans.rml',parser = smsfee_report_open_challan, header=None)

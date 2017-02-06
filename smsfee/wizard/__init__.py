@@ -3,3 +3,6 @@ import smsfee_wizard_fee_reports
 import smsfee_wizard_classfee_receipt_unpaid
 import smsfee_wizard_daily_fee_report
 import smsfee_wizard_std_admfee_receipt_unpaid
+import wizard_singlestudent_unpaidfee_receipt
+import wizard_student_fee_collect
+import wizard_singlestudent_fee_receipt_openchallans
