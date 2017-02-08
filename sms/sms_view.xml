@@ -2462,6 +2462,7 @@
       <field name="arch" type="xml">
         <form string="Papers Dates">
           <field name="name"/>
+		  <field name="academiccalendar"   on_change="set_domain(academiccalendar)"   invisible="1"/>
 		  <field name="subject"/>
  		  <field name="paper_date"/>
 		  <field name="invigilator"/>	
