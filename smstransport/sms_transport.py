@@ -121,9 +121,9 @@ class sms_transport_registrations(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             if f.registration_type == 'Student':
-                string =  str(f.student_id.name) + ' - ' + str(f.id)  
+                string =  str(f.id) +'-'+ str(f.student_id.name)  
             else:
-                string =  str(f.employee_id.name) + ' - ' + str(f.id)
+                string =  str(f.id) +'-'+ str(f.employee_id.name)
             result[f.id] = string
         return result
 
@@ -230,8 +230,8 @@ class sms_transport_registrations(osv.osv):
     
     _name="sms.transport.registrations"
     _columns = {
-        'name' : fields.function(_set_registration_name, method=True, store = True, size=256, string='Code',type='char'),
-        'registration_type':fields.selection([('Employee', 'Employee'),('Student', 'Student')], 'Registration For'),
+        'name' : fields.function(_set_registration_name, method=True, store = True, size=256, string='Registration',type='char'),
+        'registration_type':fields.selection([('Employee', 'Employee'),('Student', 'Student')], 'Registration For', required=True),
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
         'student_reg_no':fields.char('Search By Reg Number', size=256),
@@ -240,13 +240,13 @@ class sms_transport_registrations(osv.osv):
         'reg_end_date': fields.date('End Date'),
         'transport_route': fields.many2one('sms.transport.route','Transport Route', required=True),
         'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile', domain="[('transport_route','=',transport_route)]", required=True),
-        'state':fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn'),('Withdrawn', 'Withdrawn')], 'State'),
+        'state':fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn')], 'State'),
+        'picture':fields.related('student_id', 'image', type='binary', string='Image'),
         'registered_lines':fields.one2many('sms.transport.registrations.lines','registeration_id','Registered Candidates'),
         'transportfee_ids':fields.one2many('sms.transport.fee.registration','parent_id','Fee'),
         'total_fee_applicable':fields.function(set_transportfee_amount, method=True, string='Total Fee',type='float'),
-        #current dues ff
             }
-    _sql_constraints = [('Unique_registration', 'unique (name)', """Person Can bE Registered Only Once""")]
+    _sql_constraints = [('Unique_registration', 'unique (name)', """Person Can be Registered Only Once """)]
     _defaults = {
                  'state': lambda*a :'Draft',
                  'registration_type': 'Student',                 
