@@ -60,7 +60,6 @@ class smsfee_report_feereports(report_sxw.rml_parse):
     
     def annual_report_allclasses(self, data):                                                         
         result = []
-        print "+++++++++++++++++++++++++++++++++"
         this_form = self.datas['form']
 #         acad_cal = this_form['acad_cal'][0]
         session_id = this_form['session'][0]

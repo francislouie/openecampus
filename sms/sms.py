@@ -7,8 +7,6 @@ from datetime import datetime, timedelta
 from datetime import datetime
 from dateutil import parser
 import logging
-import datetime
-from gdata.contentforshopping.data import Year
 
 _logger = logging.getLogger(__name__)
 
@@ -3346,14 +3344,13 @@ class sms_exam_offered(osv.osv):
         return result
     
     def start_exam(self, cr, uid, ids, *args):
-        import datetime
         rec = self.browse(cr,uid,ids)
         print "exam offered id",rec[0].id
         # find active academiccalendars that of this session
         academiccalendar_ids = self.pool.get('sms.academiccalendar').search(cr,uid,[('state','=','Active'),('session_id','=',rec[0].session_year.id)])
         if academiccalendar_ids:
 
-            self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()}) #####
+            self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
             for calendar in academiccalendar_ids:
                 datesheet_id = self.pool.get('sms.exam.datesheet').create(cr,uid,{
                                                             'academiccalendar':calendar, 
@@ -3361,9 +3358,6 @@ class sms_exam_offered(osv.osv):
                                                             'exam_offered':rec[0].id,
                                                             'start_date':rec[0].start_date,
                                                             'status':'Active'})
-            state = rec[0].state
-            dict={'state':'Active'}  
-            self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_offered','Start exam',state)                
         else:
             raise osv.except_osv(('Cannot Start Exam'),('No Active class found for this exam, You have either all clesses in Draft State,OR you didnot create classes for this session'))
         return True
@@ -3371,8 +3365,6 @@ class sms_exam_offered(osv.osv):
     def close_exam(self, cr, uid, ids, *args):
         
         rec = self.browse(cr,uid,ids)
-        state = rec[0].state
-        #print "close_exam+++++++++++++=",rec[0].state
         #1.find all classes in this exam to close
         
         datesheet_ids = self.pool.get('sms.exam.datesheet').search(cr,uid,[('status','=','Active'),('exam_offered','=',rec[0].id)])
@@ -3399,11 +3391,7 @@ class sms_exam_offered(osv.osv):
         return True
     
     def cancel_exam(self, cr, uid, ids, *args):
-        rec = self.browse(cr,uid,ids)[0]
-        state = rec.state
         self.write(cr, uid, ids, {'state':'Draft','closing_date':datetime.date.today()})
-        dict={'state':'Draft'}
-        self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_offered','Cancel exam',state)
         return True
     
     _columns = { 
@@ -3427,29 +3415,12 @@ class sms_exam_datesheet(osv.osv):
        academic calenders are registered in this object.appeared as one2many to sms.exam.offered """
     _name= "sms.exam.datesheet"
     _descpription = "Stores exam date sheets"
-
-    def unlink(self, cr, uid, ids, context={}, check=True):
-        print "@@@@@exam datesheet lines@@@@",ids,context
-        
-        check_marks = self.pool.get('sms.exam').search(cr ,uid ,[('name','in',ids)]) 
-        rec = self.pool.get('sms.exam').browse(cr ,uid ,check_marks)
-#         for exam in self.pool.get('sms.exam').browse(cr ,uid ,check_marks):
-#                 print "exam===",exam.name,"===",exam.subject_id  
-#                 print "exam_lines===",exam.exam_lines 
-        if rec:
-            raise osv.except_osv(('Deletion Denied'),('The exam for this datesheet has already been  entered. '))
-        else:
-            print "delete datesheet"
-        result = super(osv.osv, self).unlink(cr, uid, ids, context=context)
-        return result
-
-
+    
     def create(self, cr, uid, vals, context=None, check=True):
         result = {}
         class_exam_id = super(osv.osv, self).create(cr, uid, vals, context)
         rec = self.browse(cr,uid,class_exam_id)
         subjects = self.pool.get('sms.academiccalendar.subjects').search(cr,uid,[('academic_calendar','=',rec.academiccalendar.id),('state','=','Current')])
-        print rec.academiccalendar.name,"subjects====",subjects
         if subjects:
             for sub in subjects:
                 add_subjects = self.pool.get('sms.exam.datesheet.lines').create(cr,uid,{
@@ -3557,28 +3528,20 @@ class sms_exam_datesheet_lines(osv.osv):
            it will de-activate entry  on parent exams called when they are closed or canceled"""
         self.write(cr,uid,ds_id,{'open_for_edit':False})
         return result
-
-#<!-- op -->
-    def set_domain(self, cr, uid, ids, academiccalendar, context=None):
-        rec = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,academiccalendar)
-        return  {'domain': {'subject': [('academic_calendar', '=', rec.academiccalendar.id)],'name':[('id','=',academiccalendar)]}}  
-  
+    
     _name= "sms.exam.datesheet.lines"
     _descpription = "Stores exam date sheets paper and date"
     _columns = { 
         'name': fields.many2one('sms.exam.datesheet', 'Date Sheet',required=True),
-        #<!-- op -->
-        'academiccalendar':fields.integer('Class',readonly = True),
         'subject': fields.many2one('sms.academiccalendar.subjects', 'Subject',required=True),
         'total_marks': fields.integer('Total Marks'),
         'paper_date': fields.date('Date'),
         'invigilator':fields.many2one('hr.employee', 'Invigilator'),
         'open_for_edit':fields.boolean('Open to Edit',readonly = 1)
     }
-  
+    
     _defaults = {
-        'total_marks': lambda *a: 100,
-        'academiccalendar': lambda self, cr, uid, context: context.get('academiccalendar', False), 
+        'total_marks': lambda *a: 100
     }
     
     def write(self, cr, uid, ids, vals, context=None):
@@ -5007,7 +4970,7 @@ class project_transactional_log(osv.osv):
 
     def create_transactional_logs(self, cr, uid,vals,obj,operation,pre_val):
         
-        #print "******create_transactional_logs*****",vals,obj,operation,pre_val
+        print "******create_transactional_logs*****",vals,obj,operation,pre_val
         
         """ this method creates transactional logs for project and will be called from write method of project"""
         import datetime
@@ -5015,7 +4978,7 @@ class project_transactional_log(osv.osv):
             post_value = ''
             column_name = ''
             for k,v in vals.iteritems():
-                #print k,"****",v,"pre_val==",pre_val
+                print k,"****",v,"pre_val==",pre_val
                 column_name = k
                 post_value = v
             result = self.pool.get('project.transactional.log').create(cr,uid,{
@@ -5042,7 +5005,7 @@ class project_transactional_log(osv.osv):
                                                                             })            
         return result
 
-    _order = 'id desc'
+
     _name = "project.transactional.log"
     _description = "maintains project logs"
     _columns = {
