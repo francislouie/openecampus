@@ -10,7 +10,7 @@ import xlwt
 import socket
 from tools import amount_to_text_en
 import babel
- 
+
 logger = netsvc.Logger()
 result_acc=[]
      
