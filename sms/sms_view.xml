@@ -17,13 +17,12 @@
 				 <group name ="fiscalyear_session_main" string="Fiscal Year Session" >
                   <group >
                     <field name="name"/>
-                    <field name="start_date" attrs="{'readonly':[('state','=','Active')]}"/>
+                    <field name="start_date"/>
                   </group>
                   <group >
-                    <field name="fiscal_year_id" attrs="{'readonly':[('state','=','Active')]}"/>
-					<field name="end_date" attrs="{'readonly':[('state','=','Active')]}"/>
+                    <field name="fiscal_year_id" on_change="onchange_load_fy_dates(fiscal_year_id)" domain="[('state','=','draft')]" attrs="{'readonly':[('state','=','Active')]}"/>
+					<field name="end_date"/>
                   </group>
-                	<field name="state" readonly="1"/>
 				</group>  
 				<notebook>
                 <page string= "Fiscal Year Months">
