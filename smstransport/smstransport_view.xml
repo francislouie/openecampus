@@ -313,22 +313,25 @@
 					<button name="register_person" string="Register" states="waiting_approval" class="oe_highlight" type="object" group=""/>
 				</header>
 				<sheet>
-				   <group><field name="picture" widget="image" class="oe_left oe_avatar"/></group>
+		            <field name="picture" widget='image' nolabel="1" class="oe_left oe_avatar"/>
 		            <div class="oe_title"><label for="name" class="oe_edit_only"/>
-						<h1><field name="name" placeholder="Student Name" /></h1>
+						<h1>
+							<field name="name" placeholder="Student Name" />
+						</h1>
 					</div>
 					<group name="transport_registration_main">
 						<group col="4" colspan="2">
 							<field name="transport_route" placeholder="Destination"  attrs="{'readonly':[('state','IN',['Registered'])]}"/>
 							<field name="registration_type" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
 							<newline/>
-							<group attrs="{'invisible':[('registration_type','=','Student')]}" col="4" colspan="2">
+							<group attrs="{'invisible':[('registration_type','=','Student')]}" col="4" colspan="4">
 								<field name="employee_id" attrs="{'required':[('registration_type','=','Employee')],'readonly':[('state','IN',['Registered'])]}"/>
 							</group>
 							<newline/>
-							<group col="4" colspan="2" attrs="{'invisible':[('registration_type','=','Employee')]}">
+							<group col="4" colspan="4" attrs="{'invisible':[('registration_type','=','Employee')]}">
 								<field name="student_reg_no" on_change="onchange_load_student(student_reg_no)" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
-								<field name="student_id" nolabel="1" domain="[('state','=','Admitted')]" attrs="{'required':[('registration_type','=','Student')],'readonly':[('state','IN',['Registered'])]}"/>
+								<newline/>
+								<field name="student_id" domain="[('state','=','Admitted'),('transport_availed','=',False)]" attrs="{'required':[('registration_type','=','Student')],'readonly':[('state','IN',['Registered'])]}"/>
 							</group>
 							<newline/>
 							<field name="current_vehcile" on_change="onchange_vehcile_load_shift(current_vehcile)" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
@@ -356,11 +359,11 @@
 		<field name="model">sms.transport.registrations</field>
 		<field name="arch" type="xml">
 			<tree string="Transport Registration">
-				<field name="registration_type"/>
+				<field name="student_id"/>
+				<field name="employee_id"/>
 				<field name="reg_start_date"/>
 				<field name="reg_end_date"/>
-				<field name="employee_id"/>
-				<field name="student_id"/>
+				<field name="registration_type" invisible="1"/>
 				<field name="current_vehcile"/>
 			</tree>
 		</field>

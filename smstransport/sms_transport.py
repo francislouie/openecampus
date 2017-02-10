@@ -2,6 +2,7 @@ from openerp.osv import fields, osv
 from datetime import datetime
 from datetime import timedelta
 import logging
+from lxml import etree
 _logger = logging.getLogger(__name__)
       
 class sms_transport_location(osv.osv):
@@ -200,7 +201,10 @@ class sms_transport_registrations(osv.osv):
         cr.execute(search_student_sql)
         student_id = cr.fetchone()
         if student_id:
-            result['student_id'] = student_id
+            if self.browse(cr, uid, student_id[0]):         
+                raise osv.except_osv(('Record Exists'),('Student is already registered.'))         
+            else:
+                result['student_id'] = student_id
         else:
             result['student_id'] = ''
         return {'value':result}
@@ -227,6 +231,21 @@ class sms_transport_registrations(osv.osv):
             amount = cr.fetchone()[0]
         result[f.id] = amount
         return result
+
+    def fields_view_get(self, cr, uid, view_id=None, view_type=False, context=None, toolbar=False, submenu=False):
+        if context is None:
+            context = {}
+        res = super(sms_transport_registrations,self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=submenu)
+        doc = etree.XML(res['arch'])
+        if view_type == 'tree':
+            if context.get('registration_type', '1') is 'Employee':
+                for node in doc.xpath("//field[@name='employee_id']"):
+                    doc.remove(node)
+            if context.get('registration_type', '1') is 'Student':
+                for node in doc.xpath("//field[@name='student_id']"):
+                    doc.remove(node)
+            res['arch'] = etree.tostring(doc)
+        return res    
     
     _name="sms.transport.registrations"
     _columns = {
@@ -234,7 +253,7 @@ class sms_transport_registrations(osv.osv):
         'registration_type':fields.selection([('Employee', 'Employee'),('Student', 'Student')], 'Registration For', required=True),
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
-        'student_reg_no':fields.char('Search By Reg Number', size=256),
+        'student_reg_no':fields.char('Search Student(Reg No)', size=256),
         'shift':fields.many2one('sms.transport.shift','Transport Shift', required=True),
         'reg_start_date': fields.date('Start Date'),
         'reg_end_date': fields.date('End Date'),
