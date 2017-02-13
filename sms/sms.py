@@ -3350,7 +3350,8 @@ class sms_exam_offered(osv.osv):
         academiccalendar_ids = self.pool.get('sms.academiccalendar').search(cr,uid,[('state','=','Active'),('session_id','=',rec[0].session_year.id)])
         if academiccalendar_ids:
 
-            self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
+            #self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
+            self.write(cr, uid, ids, {'state':'Active'})
             for calendar in academiccalendar_ids:
                 datesheet_id = self.pool.get('sms.exam.datesheet').create(cr,uid,{
                                                             'academiccalendar':calendar, 
@@ -3385,7 +3386,7 @@ class sms_exam_offered(osv.osv):
                 #4 close all classes in tis exam
                 close_classes_exam = self.pool.get('sms.exam.datesheet').close_exam_class(cr,uid,ds.id)
         #5 close offered exam
-        self.write(cr, uid, ids, {'state':'Closed','start_date':datetime.date.today()})
+        self.write(cr, uid, ids, {'state':'Closed','start_date':None})
         dict={'state':'Closed'}  
         self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_offered','Close exam',state)
         return True
@@ -3426,7 +3427,7 @@ class sms_exam_datesheet(osv.osv):
                 add_subjects = self.pool.get('sms.exam.datesheet.lines').create(cr,uid,{
                         'name':class_exam_id,                                                       
                         'subject':sub,
-                        'paper_date':datetime.date.today(), 
+                        'paper_date':'2017-02-04', 
                         'invigilator':uid, 
                         'total_marks':0 })
                                  
