@@ -2,6 +2,7 @@ from openerp.osv import fields, osv
 from datetime import datetime
 from datetime import timedelta
 import logging
+from lxml import etree
 _logger = logging.getLogger(__name__)
       
 class sms_transport_location(osv.osv):
@@ -121,9 +122,9 @@ class sms_transport_registrations(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             if f.registration_type == 'Student':
-                string =  str(f.student_id.name) + ' - ' + str(f.id)  
+                string =  str(f.id) +'-'+ str(f.student_id.name)  
             else:
-                string =  str(f.employee_id.name) + ' - ' + str(f.id)
+                string =  str(f.id) +'-'+ str(f.employee_id.name)
             result[f.id] = string
         return result
 
@@ -200,7 +201,10 @@ class sms_transport_registrations(osv.osv):
         cr.execute(search_student_sql)
         student_id = cr.fetchone()
         if student_id:
-            result['student_id'] = student_id
+            if self.browse(cr, uid, student_id[0]):         
+                raise osv.except_osv(('Record Exists'),('Student is already registered.'))         
+            else:
+                result['student_id'] = student_id
         else:
             result['student_id'] = ''
         return {'value':result}
@@ -227,26 +231,41 @@ class sms_transport_registrations(osv.osv):
             amount = cr.fetchone()[0]
         result[f.id] = amount
         return result
+
+    def fields_view_get(self, cr, uid, view_id=None, view_type=False, context=None, toolbar=False, submenu=False):
+        if context is None:
+            context = {}
+        res = super(sms_transport_registrations,self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=submenu)
+        doc = etree.XML(res['arch'])
+        if view_type == 'tree':
+            if context.get('registration_type', '1') is 'Employee':
+                for node in doc.xpath("//field[@name='employee_id']"):
+                    doc.remove(node)
+            if context.get('registration_type', '1') is 'Student':
+                for node in doc.xpath("//field[@name='student_id']"):
+                    doc.remove(node)
+            res['arch'] = etree.tostring(doc)
+        return res    
     
     _name="sms.transport.registrations"
     _columns = {
-        'name' : fields.function(_set_registration_name, method=True, store = True, size=256, string='Code',type='char'),
-        'registration_type':fields.selection([('Employee', 'Employee'),('Student', 'Student')], 'Registration For'),
+        'name' : fields.function(_set_registration_name, method=True, store = True, size=256, string='Registration',type='char'),
+        'registration_type':fields.selection([('Employee', 'Employee'),('Student', 'Student')], 'Registration For', required=True),
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
-        'student_reg_no':fields.char('Search By Reg Number', size=256),
+        'student_reg_no':fields.char('Search Student(Reg No)', size=256),
         'shift':fields.many2one('sms.transport.shift','Transport Shift', required=True),
         'reg_start_date': fields.date('Start Date'),
         'reg_end_date': fields.date('End Date'),
         'transport_route': fields.many2one('sms.transport.route','Transport Route', required=True),
         'current_vehcile':fields.many2one('sms.transport.vehcile','Vechile', domain="[('transport_route','=',transport_route)]", required=True),
-        'state':fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn'),('Withdrawn', 'Withdrawn')], 'State'),
+        'state':fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn')], 'State'),
+        'picture':fields.related('student_id', 'image', type='binary', string='Image'),
         'registered_lines':fields.one2many('sms.transport.registrations.lines','registeration_id','Registered Candidates'),
         'transportfee_ids':fields.one2many('sms.transport.fee.registration','parent_id','Fee'),
         'total_fee_applicable':fields.function(set_transportfee_amount, method=True, string='Total Fee',type='float'),
-        #current dues ff
             }
-    _sql_constraints = [('Unique_registration', 'unique (name)', """Person Can bE Registered Only Once""")]
+    _sql_constraints = [('Unique_registration', 'unique (name)', """Person Can be Registered Only Once """)]
     _defaults = {
                  'state': lambda*a :'Draft',
                  'registration_type': 'Student',                 

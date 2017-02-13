@@ -61,7 +61,6 @@ class sms_fiscalyear_session(osv.osv):
                 stmonth = int(datetime.strptime(str(m.start_date), '%Y-%m-%d').strftime('%m'))
                 stmonth_year = int(datetime.strptime(str(m.start_date), '%Y-%m-%d').strftime('%Y'))
                 endmonth = datetime.strptime(str(m.end_date), '%Y-%m-%d').strftime('%m')
-    
                 if int(stmonth) < int(endmonth):
                     for stmonth in range(int(stmonth),int(endmonth)+1):
                         stmonth = str(stmonth) +"#"+str(stmonth_year)
@@ -77,11 +76,10 @@ class sms_fiscalyear_session(osv.osv):
                    month_yr = months.split('#')
                    month = month_yr[0]
                    year = month_yr[1]
-                   create = self.pool.get('sms.fiscalyearsession.months').create(cr,uid,{
-                            'fiscalyear_session_id':m.id,
-                            'session_month_id':month,
-                            'session_year':year,                                                    
-                            })
+                   create = self.pool.get('sms.fiscalyearsession.months').create(cr,uid,{'fiscalyear_session_id':m.id,
+                                                                                        'session_month_id':month,
+                                                                                        'session_year':year,                                                    
+                                                                                        })
         return True
     
     def close_this_fiscalyearsession(self, cr, uid, ids, *args):
@@ -129,22 +127,32 @@ class sms_fiscalyear_session(osv.osv):
                 raise osv.except_osv(('Fiscal Year'), ('Fiscal Year End date must be greater than Start date.' ))
             else:
                 year = sdate.split('-')
-                acad_session = obj.fiscal_year_id.name
-                arr = acad_session.split('-')
-                result[obj.id] = year[0]+' -(FY: '+str(arr[0][2:])+'-'+str(arr[1][2:])+')'
+                arr = obj.fiscal_year_id.name.split('-')
+                result[obj.id] = 'FY: ('+str(arr[0])+'-'+str(arr[1][2:])+')'
         return result
+
+    def onchange_load_fy_dates(self, cr, uid, ids, fiscalyear_id):
+        result = {}
+        record = self.pool.get('account.fiscalyear').browse(cr, uid, fiscalyear_id)
+        if record.date_start and record.date_stop:
+            result['start_date'] = record.date_start
+            result['end_date'] = record.date_stop
+        else:
+            raise osv.except_osv(('Missing Dates'), ('Fiscal Year Start and end date is not defined '))
+        return {'value':result}
     
     _name = 'sms.fiscalyear.session'
     _columns = {
         'name':fields.function(set_code, method=True, store = True, size=256, string='Code', type='char'),
-        'start_date': fields.date("Start", required=True),
-        'end_date': fields.date("End", required=True),
-        'fiscal_year_id':fields.many2one('account.fiscalyear', 'Fiscal Year'),
+        'start_date': fields.date('Start'),
+        'end_date': fields.date('End'),
+        'fiscal_year_id':fields.many2one('account.fiscalyear', 'Fiscal Year', required=True),
         'fiscal_year_months':fields.one2many('sms.fiscalyearsession.months','fiscalyear_session_id','Months'),
         'state': fields.selection([('Draft','Draft'),('Active','Active'),('Closed','Closed')], 'State', readonly = True, help='Fiscal Year State'),
     }
+    
     _defaults = {  'state': 'Draft'}
-    _sql_constraints = [('name_unique', 'unique(name, fiscal_year_id)', 'Fiscal Year already exists, Please select a different year.')]
+    _sql_constraints = []
 
 sms_fiscalyear_session()
 
@@ -155,7 +163,6 @@ class sms_fiscalyearsession_months(osv.osv):
     def _get_session_month_from_calendar_month(self, cr, uid, year, month):
         result = []
         my_dict = {'session':'','acad_session':'','session_month':''}
-        #first fine month id from sms_months
         month_id = self.pool.get('sms.month').search(cr,uid,[('code','=',month)])
         if month_id:
             session_months = self.pool.get('sms.fiscalyearsession.months').search(cr,uid,[('session_month_id','=',month_id[0]),('session_year','=',str(year))])   
