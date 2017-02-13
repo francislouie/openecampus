@@ -217,6 +217,7 @@
 			  	</field>
 				<notebook>
 					<page string = "Fee Details">
+					<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
 					<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 					<button name="%(action_student_fee_collect_id)d" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 					<button name="%(action_singlestudent_fee_openchallan_id)d" string="Print Existing Challan" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
