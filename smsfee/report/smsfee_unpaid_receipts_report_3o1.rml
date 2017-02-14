@@ -9,6 +9,17 @@
 			<image x="415" y="560" height="33.0" >[[company.logo]]</image>
 			
 			<setFont name="Helvetica-Bold" size="9" />
+            <drawString x="55" y="585">[[company.name]]</drawString>
+            <setFont name="Helvetica" size="7" />
+            <drawString x="55" y="575">[[company.partner_id.street]]</drawString>
+            <drawString x="55" y="565">[[company.partner_id.phone]]</drawString>
+            
+            <setFont name="Helvetica-Bold" size="9" />
+            <drawString x="460" y="585">[[company.name]]</drawString>
+            <setFont name="Helvetica" size="7" />
+            <drawString x="460" y="575">[[company.partner_id.street]]</drawString>
+            <drawString x="460" y="565">[[company.partner_id.phone]]</drawString>            
+
 			<setFont name="Helvetica" size="9" />
 
 			<drawString x="290" y="580">Due Date : [[ get_due_date() ]]</drawString>
@@ -103,6 +114,12 @@
 </stylesheet>
 <story>
 	<blockTable colWidths="884" style="">
+	<tr>
+		<td><para style="P2-White">.</para></td>
+	</tr>
+	</blockTable>
+
+	<blockTable colWidths="884" style="">
 	<para style="P2">[[repeatIn(get_challans(data),'record')]]</para>
 	<tr>
     <td>
@@ -117,16 +134,7 @@
         		</td>
       		</tr>
 			</blockTable>
-			<blockTable colWidths="380" style="Table_1">
-			<tr><td><para style="P1"></para></td></tr>
-			<tr><td><para style="P1"></para></td></tr>
-			<tr><td><para style="P1"></para></td></tr>
-			<tr>
-        		<td>
-          		<para style="P2">Alfalah Educational Complex- Peshawar</para>
-        		</td>
-      		</tr>
-			</blockTable>
+
 			<blockTable colWidths="380" style="Table_2">
       		<tr>
         		<td>
@@ -232,16 +240,7 @@
         		</td>
       		</tr>
 			</blockTable>
-			<blockTable colWidths="380" style="Table_1">
-			<tr><td><para style="P1"></para></td></tr>
-			<tr><td><para style="P1"></para></td></tr>
-			<tr><td><para style="P1"></para></td></tr>
-			<tr>
-        		<td>
-          		<para style="P2">Alfalah Educational Complex- Peshawar</para>
-        		</td>
-      		</tr>
-			</blockTable>
+
 			<blockTable colWidths="380" style="Table_2">
       		<tr>
         		<td>

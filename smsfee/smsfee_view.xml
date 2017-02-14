@@ -220,7 +220,6 @@
 					<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
 					<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 					<button name="%(action_student_fee_collect_id)d" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-					<button name="%(action_singlestudent_fee_openchallan_id)d" string="Print Existing Challan" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 					<group>
 						<group>					
 						<div class="oe_title"><label for="total_paybles"/>
@@ -633,6 +632,7 @@
 			<header>
 			<button name="load_std_fee" string="1. Show Student Fees" states="Draft" type="object"  class="oe_highlight" />
 			<button name="confirm_fee_received" string="2. Receive Fee" confirm = "Receive Fee with given amount?" states="fee_calculated" type="object"  class="oe_highlight" />
+			<button name="%(action_singlestudent_fee_openchallan_id)d" string="Print Existing Challan" states="fee_calculated" type="action" class="oe_highlight" groups=""/>
 			<button name="%(print_paid_fee_receipt_id)d" string="Print Receipt" states="Paid" type="action" class="oe_highlight" groups=""/>
 			<field name="state" widget="statusbar" statusbar_visible="Draft,fee_calculated,Paid,Request_Adjustment,Adjusted"/>
 			</header>

@@ -148,4 +148,4 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         return_value=str(amt_en).replace('Cent','Paisa')
         return return_value
      
-report_sxw.report_sxw('report.smsfee.open.challans', 'smsfee.receiptbook', 'addons/smsfee/print_open_fee_challans.rml',parser = smsfee_report_open_challan, header=None)
+report_sxw.report_sxw('report.smsfee.open.challans', 'smsfee.receiptbook', 'addons/smsfee/smsfee_unpaid_receipts_report_1o1.rml',parser = smsfee_report_open_challan, header=None)
