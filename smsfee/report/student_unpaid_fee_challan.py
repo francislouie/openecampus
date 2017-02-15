@@ -162,4 +162,4 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return_value=str(amt_en).replace('Cent','Paisa')
         return return_value
      
-report_sxw.report_sxw('report.smsfee_stu_unpaidfee_receipt_name', 'smsfee.classfees.register', 'addons/smsfee/student_unpaid_fee_challan_view.rml',parser = unpaid_fee_challan_parser, header=None)
+report_sxw.report_sxw('report.smsfee_stu_unpaidfee_receipt_name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_unpaid_receipts_report_1o1.rml',parser = unpaid_fee_challan_parser, header=None)
