@@ -1422,6 +1422,7 @@ class smsfee_receiptbook(osv.osv):
         'vouchered_by': fields.many2one('res.users', 'Voucher By',readonly=True),
         'vouchered': fields.boolean('Vouchered', readonly=True),
         'voucher_no': fields.many2one('account.move', 'Voucher No',readonly=True),
+        'late_fee' : fields.float('Late Fee'),
     }
     _sql_constraints = [  
         #('Fee Exisits', 'unique (name)', 'Fee Receipt No Must be Unique!')

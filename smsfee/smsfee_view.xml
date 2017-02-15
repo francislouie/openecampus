@@ -645,10 +645,7 @@
 				<group>
 				<h2> <label for="total_paybles" string="Paybles"/><field name="total_paybles" readonly ="1"/></h2>
 				</group>
-			
 			</group>
-			
-			
 			<group string ="Receive Fee">
 					<group>
 					<field name="student_id" on_change="onchange_student(student_id)" attrs="{'readonly':[('state','IN',['Paid','fee_calculated'])]}" required = "1"/>
@@ -656,13 +653,13 @@
 					<field name="fee_structure"  readonly ="1" />
 					<field name="student_class_id" readonly ="1"   />
 					<field name="receive_whole_amount" attrs="{'readonly':[('state','!=','Draft')]}" />	
+					<field name="late_fee"/>
 					</group>
 		     		<group string ="">
 						<field name="name"  readonly ="1" />
 							<field name="receipt_date" required ="1"  attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 							<field name="payment_method" readonly = "1"  required ="1" />	
 							<field name="session_id" readonly = "1" />	
-							
 							<field name="manual_recpt_no" attrs="{'readonly':[('state','IN',['Paid'])]}" />								
 					</group>
 					</group>
@@ -676,14 +673,14 @@
 							</page>
 							<page string="Accounting Enteries" >
 								<group>
-								<group>
-								<field name="vouchered"/>
-								<field name="vouchered_by"/>
-								</group>							
-								<group>
-								<field name="voucher_date"/>
-								<field name="voucher_no"/>
-								</group>
+									<group>
+										<field name="vouchered"/>
+										<field name="vouchered_by"/>
+									</group>							
+									<group>
+										<field name="voucher_date"/>
+										<field name="voucher_no"/>
+									</group>
 								</group>
 							</page>
 							<!--<page string="Fee Adjustment" attrs="{'invisible':[('state','NOT IN',['Request_Adjustment','Adjusted'])]}" >

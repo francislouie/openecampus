@@ -31,9 +31,9 @@
 
 			<setFont name="Helvetica" size="9" />
 
-			<drawString x="180" y="580">Due Date : [[ get_due_date() ]]</drawString>
-			<drawString x="475" y="580">Due Date : [[ get_due_date() ]]</drawString>
-			<drawString x="750" y="580">Due Date : [[ get_due_date() ]]</drawString>
+			<drawString x="180" y="570">Due Date : [[ get_due_date() ]]</drawString>
+			<drawString x="475" y="570">Due Date : [[ get_due_date() ]]</drawString>
+			<drawString x="750" y="570">Due Date : [[ get_due_date() ]]</drawString>
 
 			<setFont name="Helvetica-Bold" size="11"/>
 
