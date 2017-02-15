@@ -8,7 +8,7 @@ class class_student_advancefee_collect(osv.osv_memory):
         obj = self.browse(cr, uid, ids['active_id'])
         std_id =  obj.id
         return std_id
-    
+
     _name = "class.student_advancefee_collect"
     _description = "Advance Fee Collection From Student"
     _columns = {
@@ -20,34 +20,35 @@ class class_student_advancefee_collect(osv.osv_memory):
                  'student_id':_get_student,
                  }
 
-    def check_classwise_fee_structure(self, cr, uid, thisform):
-        
+    def check_class_student(self, cr, uid, thisform):
         student_id = self.pool.get('sms.student').search(cr, uid, [('id','=',thisform['student_id'][0])])
         student_rec = self.pool.get('sms.student').browse(cr, uid, student_id)
         for rec in student_rec:
-            class_feestruct_id = self.pool.get('smsfee.classes.fees').search(cr, uid, [('academic_cal_id','=',rec.current_class.id),('fee_structure_id','=',rec.fee_type.id)])
-            print "-----",class_feestruct_id
-            class_feestruct_lines_id = self.pool.get('smsfee.classes.fees.lines').search(cr, uid, [('parent_fee_structure_id','=',class_feestruct_id),('fee_type','=',thisform['fee_types'][0])])
-            class_feestruct_lines_obj = self.pool.get('smsfee.classes.fees.lines').browse(cr, uid, class_feestruct_lines_id)
-            print "++++++",class_feestruct_lines_obj
-        print alpha
-        return True
+            class_id = rec.current_class.id
+        return class_id
+
+    def check_feestructure_student(self, cr, uid, thisform):
+        student_id = self.pool.get('sms.student').search(cr, uid, [('id','=',thisform['student_id'][0])])
+        student_rec = self.pool.get('sms.student').browse(cr, uid, student_id)
+        for rec in student_rec:
+            class_id = rec.fee_type.id
+        return class_id
     
     def collect_advancefee_student(self, cr, uid, ids, data):
         thisform = self.read(cr, uid, ids)[0]
-        calling_check1 = self.check_classwise_fee_structure(cr, uid, thisform)
-        report = 'smsfee_print_three_student_per_page'
-        datas = {
-             'ids': [],
-             'active_ids': '',
-             'model': 'smsfee.classfees.fees',
-             'form': self.read(cr, uid, ids)[0],
-             }
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name':report,
-            'datas': datas,
-            }
+        class_id = self.check_class_student(cr, uid, thisform)
+        feestructure_id = self.check_feestructure_student(cr, uid, thisform)
+        classwise_fs_id = self.pool.get('smsfee.classes.fees').search(cr, uid, [('academic_cal_id','=',class_id),('fee_structure_id','=',feestructure_id)])
+        class_feestruct_lines_id = self.pool.get('smsfee.classes.fees.lines').search(cr, uid, [('parent_fee_structure_id','=', classwise_fs_id),('fee_type','in',[thisform['fee_types'][0]])])
+        class_feestruct_lines_obj = self.pool.get('smsfee.classes.fees.lines').browse(cr, uid, class_feestruct_lines_id)
+        for record in class_feestruct_lines_obj:
+            months_ids = self.pool.get('sms.session.months').search(cr, uid, [('id','in', thisform['fee_months'])])
+            months_objs = self.pool.get('sms.session.months').browse(cr, uid, months_ids)
+            for obj in months_objs:
+                collecting_advance_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, thisform['student_id'][0], class_id, record, obj.id)
+                if collecting_advance_fee:
+                    _logger.info("Advance Fee From Student " + str(collecting_advance_fee) + " Made By " + str(uid))
+        return True
     
 class_student_advancefee_collect()
 
