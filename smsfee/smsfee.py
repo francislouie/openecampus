@@ -1327,6 +1327,13 @@ class smsfee_receiptbook(osv.osv):
         result[f.id] = amount
         return result
     
+    def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
+        result = {}
+        records =  self.browse(cr, uid, ids, context)
+        for f in records:
+            self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})  
+        return result
+    
     def check_fee_challans_issued(self, cr, uid, class_id, student_id):
         result = {}
         fee_ids = self.pool.get('smsfee.studentfee').search(cr ,uid ,[('student_id','=',student_id),('state','=','fee_unpaid')])
