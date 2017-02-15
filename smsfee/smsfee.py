@@ -750,7 +750,7 @@ class smsfee_studentfee(osv.osv):
         bal = cr.fetchone()
         return bal[0]
     
-    def insert_student_monthly_non_monthlyfee(self, cr, uid, std_id,acad_cal,fee_type_row,month):
+    def insert_student_monthly_non_monthlyfee(self, cr, uid, std_id, acad_cal, fee_type_row, month):
         """This method will insert student monthly and non monthly fee 
            only when called in loop or without loop (admit student,re-admit student,student promotion and other wizards wlil call it)
            Currently called by 
@@ -760,8 +760,7 @@ class smsfee_studentfee(osv.osv):
            
            admin
            """
-        
-        fee_already_exists =  self.pool.get('smsfee.studentfee').search(cr,uid,[('acad_cal_id','=',acad_cal),('student_id','=',std_id),('fee_type','=',fee_type_row.id),('due_month','=',month)])
+        fee_already_exists =  self.pool.get('smsfee.studentfee').search(cr, uid,[('acad_cal_id', '=', acad_cal), ('student_id', '=', std_id), ('fee_type', '=', fee_type_row.id), ('due_month', '=', month)])
         
         if not fee_already_exists:
             # at this stage is assued that fee month and dues month are same for all cases, due month may change in exceptional cases, i.e when fee of all prevoius
