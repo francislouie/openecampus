@@ -757,6 +757,7 @@ class smsfee_studentfee(osv.osv):
            1) update_monthly_feeregister() class:sms_session_months
            2) called by admission register
            3)called by promotion process
+           4) called by advance fee management
            
            admin
            """
@@ -1064,15 +1065,15 @@ smsfee_fee_adjustment()
 class smsfee_receiptbook(osv.osv):
     """ A fee receopt book, stores fee payments history of students """
     
-    def _set_bill_no(self, cr, uid, ids, name, args, context=None):
+    def _set_bill_no(self, cr, uid, ids, name, args):
         ftyp = None
-        for f in self.browse(cr, uid, ids, context=context):
+        for f in self.browse(cr, uid, ids):
             ftyp = "Fee-"+str(f.id)
         return ftyp
     
     def create(self, cr, uid, vals, context=None, check=True):
-        slipno = self._set_bill_no(self, cr, uid, None)
-        vals['name'] =  slipno
+#         slipno = self._set_bill_no(self, cr, uid, None)
+        vals['name'] =  'slipno'
         result = super(osv.osv, self).create(cr, uid, vals, context)
         
         return result
