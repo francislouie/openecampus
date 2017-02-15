@@ -1064,8 +1064,14 @@ smsfee_fee_adjustment()
 class smsfee_receiptbook(osv.osv):
     """ A fee receopt book, stores fee payments history of students """
     
+    def _set_bill_no(self, cr, uid, ids, name, args, context=None):
+        ftyp = None
+        for f in self.browse(cr, uid, ids, context=context):
+            ftyp = "Fee-"+str(f.id)
+        return ftyp
+    
     def create(self, cr, uid, vals, context=None, check=True):
-        slipno = self._set_slipno(self, cr, uid, None)
+        slipno = self._set_bill_no(self, cr, uid, None)
         vals['name'] =  slipno
         result = super(osv.osv, self).create(cr, uid, vals, context)
         
@@ -1416,6 +1422,8 @@ class smsfee_receiptbook(osv.osv):
         'receive_whole_amount': fields.boolean('Receive Whole Amount'),
         'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
+        'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),
+         'cancel_date': fields.datetime('Cancel Date',readonly=True),
         #fields related to adjustment
         'receipt_book_idd': fields.one2many('smsfee.receiptbook.lines.fee.adjustment', 'receipt_book_idd', 'Fees'),
         'receiptbook_lines_ids': fields.one2many('smsfee.receiptbook.lines', 'receipt_book_id', 'Fees'),
@@ -2179,11 +2187,10 @@ class smsfee_return_paid_fee(osv.osv):
         return 
             
     def _set_slipno(self, cr, uid, ids, name, args, context=None):
-        result = {}
+        ftyp = None
         for f in self.browse(cr, uid, ids, context=context):
-             ftyp = "R-"+str(ids[0])
-             result[f.id] = ftyp
-        return result
+             ftyp = "R-"+str(f.id)
+        return ftyp
     
     def _get_active_session(self, cr, uid, context={}):
         ssn = self.pool.get('sms.session').search(cr, uid, [('state','=','Active')])
