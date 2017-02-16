@@ -27,6 +27,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             'get_vertical_lines': self.get_vertical_lines,
             'get_vertical_lines_total': self.get_vertical_lines_total,
             'get_banks':self.get_banks,
+            'get_banks_2':self.get_banks_2,
             'get_challan_number':self.get_challan_number,
             'get_candidate_info':self.get_candidate_info,
             'get_on_accounts':self.get_on_accounts,
@@ -103,7 +104,14 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         banks_ids = self.pool.get('res.company').search(self.cr,self.uid,[])
         banks_recs = self.pool.get('res.company').browse(self.cr,self.uid,banks_ids)
         for rec in banks_recs:
-            bank = rec.fee_reception_account_bank.name + rec.fee_reception_account_bank.code 
+            bank= str(rec.bank_name1) + ' - ' +str(rec.bank_acctno1)
+        return bank
+
+    def get_banks_2(self):
+        banks_ids = self.pool.get('res.company').search(self.cr,self.uid,[])
+        banks_recs = self.pool.get('res.company').browse(self.cr,self.uid,banks_ids)
+        for rec in banks_recs:
+            bank= str(rec.bank_name2) + ' - ' +str(rec.bank_acctno2)
         return bank
  
     def get_challan_number(self, data):
