@@ -20,8 +20,12 @@
 							<field name="fee_reception_account_cash" attrs="{'required':[('enable_fm','=',True)]}"  colspan ="4" domain="[('type','=','liquidity')]"/>
 							</group>
 							<group>
-							 <field name="student_fee_expense_acc"   attrs="{'required':[('enable_fm','=',True)]}"  domain="[('type','=','other')]"/>
-						     <field name="fee_reception_account_bank" attrs="{'required':[('enable_fm','=',True)]}"   colspan ="4" domain="[('type','=','liquidity')]"/>
+								 <field name="student_fee_expense_acc"   attrs="{'required':[('enable_fm','=',True)]}"  domain="[('type','=','other')]"/>
+							     <field name="fee_reception_account_bank" attrs="{'required':[('enable_fm','=',True)]}"  domain="[('type','=','liquidity')]"/>
+								 <field name="bank_name1"/>
+								 <field name="bank_acctno1"/>
+								 <field name="bank_name2"/>
+								 <field name="bank_acctno2"/>
 							</group>	
 							<group>
 							 <field name="fee_report_type"/>
