@@ -14,6 +14,13 @@
 							<field name="student_id" readonly ="1" nolabel = "1" />
 						</h1>
 						<newline/>
+						<separator string="Fee Type"/>
+						<newline/>
+						<field name="fee_types"  nolabel = "1" />
+						<newline/>
+						<separator string="Fee Months"/>
+						<newline/>
+						<field name="fee_months" nolabel = "1" />
                     </group>
                      <footer>
                         <button string="Okay" name="collect_advancefee_student" type="object" class="oe_highlight"/>
