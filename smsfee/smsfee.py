@@ -19,6 +19,10 @@ class res_company(osv.osv):
     'fee_reception_account_cash': fields.many2one('account.account', 'Fee Cash Account', ondelete="cascade"), 
     'fee_reception_account_bank': fields.many2one('account.account', 'Fee Bank Account', ondelete="cascade"),
     'fee_report_type':fields.selection([('One_on_One','One Student Per Page'),('Two_on_One','Two Students Per Page')],'Fee Report Type'),
+    'bank_name1':fields.char('Bank Name', size=256),
+    'bank_name2':fields.char('Bank Name', size=256),
+    'bank_acctno1':fields.integer('Account Number'),
+    'bank_acctno2':fields.integer('Account Number'),
     }
     _defaults = {
     }
@@ -1438,6 +1442,7 @@ class smsfee_receiptbook(osv.osv):
         'vouchered_by': fields.many2one('res.users', 'Voucher By',readonly=True),
         'vouchered': fields.boolean('Vouchered', readonly=True),
         'voucher_no': fields.many2one('account.move', 'Voucher No',readonly=True),
+        'late_fee' : fields.float('Late Fee'),
     }
     _sql_constraints = [  
         #('Fee Exisits', 'unique (name)', 'Fee Receipt No Must be Unique!')
