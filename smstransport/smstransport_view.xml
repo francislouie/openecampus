@@ -451,6 +451,7 @@
 						<field name="fee_amount"/>
 						<field name="fee_discount"/>
 						<field name="is_reconcile"/>
+						<field name="paid_amount"/>
 					</group>
 				</sheet>	 	
 			</form>
@@ -462,11 +463,10 @@
 		<field name="model">sms.transport.fee.payments</field>
 		<field name="arch" type="xml">
 			<tree string="Transport Fee Payments">
-				<field name="employee_id"/>
-				<field name="student_id"/>
-				<field name="registeration_id"/>
-				<field name="fee_month"/>
-				<field name="receipt_no"/>
+				<field name="name"/>
+				<field name="fee_amount"/>
+				<field name="paid_amount"/>
+				<field name="state"/>
 				<field name="date_fee_charged"/>
 			</tree>
 		</field>
@@ -477,11 +477,11 @@
 		<field name="model">sms.transport.fee.payments</field>
 		<field name="arch" type="xml">
 			<search string="Transport Fee Payments">
-				<field name="employee_id"/>
+				<field name="name"/>
+				<field name="fee_amount"/>
 				<field name="student_id"/>
-				<field name="registeration_id"/>
-				<field name="fee_month"/>
-				<field name="receipt_no"/>
+				<field name="paid_amount"/>
+				<field name="state"/>
 				<field name="date_fee_charged"/>
 			</search>
 		</field>
@@ -562,13 +562,15 @@
 	</record>
 
 	<!--Session months inherited-->
-	<record model = "ir.ui.view" id="sms_session_months_ih_ihrt_trnasport">
-		<field name = "name">sms.session.months.tree.transprt</field>	
-		<field name = "model">sms.session.months</field>
-		<field name = "inherit_id" ref = "smsfee.sms_session+months_ih_ihrt"/>
+	<record model = "ir.ui.view" id="sms_fiscalyearsession_months_inherit_trnasport">
+		<field name = "name">sms.fiscalyearsession.months.tree_transprt</field>	
+		<field name = "model">sms.fiscalyearsession.months</field>
+		<field name = "inherit_id" ref="sms.view_fiscalyearsessionmonths_tree"/>
 		<field name = "arch" type = "xml">
-			<xpath expr = "//button[@name ='update_monthly_feeregister']" position = "replace">
-				<button name="update_monthly_feeregister" string="Update Fee" type="object"
+			<xpath expr = "//field[@name ='fiscalyear_session_id']" position = "after">
+				<field name="state" invisible="1" />
+				<field name="update_log" attrs="{'invisible':[('state','=','To_Update')]}"/>
+				<button name="apply_transport_fee_student" string="Update Fee" type="object"
                                     groups="" 
 									icon="terp-gtk-jump-to-ltr" 
 									attrs="{'readonly':[('state','=','Updated')]}"

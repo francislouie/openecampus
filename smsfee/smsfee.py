@@ -84,7 +84,7 @@ class sms_session_months(osv.osv):
                                        if this_ft.fee_type.subtype == 'Monthly_Fee': 
                                            for this_student in students_ids:
                                                #call method to add this fee to student
-                                               call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student,cur_cls.id,this_ft,f.id)
+                                               call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student, cur_cls.id, this_ft, f.id)
                                                
                     #Update fee register object for this month 
                     # search if this month already exists then leav, otherwise create new record
