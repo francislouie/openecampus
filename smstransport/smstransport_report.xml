@@ -29,5 +29,14 @@
             string="Registered Students"
             />   
 
+		<report
+            id="report_class_unpaidfee_transportreceipts_id"
+            model="sms.transport.fee.payments"
+            name="smstransport_stu_unpaidtransportfee_receipt"
+            multi="True"
+            rml="smstransport/report/smsfee_unpaid_transportreceipts_report_1o1.rml"
+            string="Fee Receipts (Unpaid)"
+            />   
+
    </data>
 </openerp>

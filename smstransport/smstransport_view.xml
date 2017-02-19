@@ -342,7 +342,7 @@
 					</group>
 					<notebook>
 						<field name="transportfee_ids" nolabel="1" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
-						<page string = "Fee Details">
+						<page string = "Registration Fees">
 						<div class="oe_title"><label for="total_fee_applicable"/>
 							<h2><field name="total_fee_applicable" readonly="1"/></h2>
 						</div>
@@ -422,8 +422,13 @@
 				</page>
 			</notebook>
 			<xpath expr="//field[@name='studen_fee_ids']" position="after">
-				<separator string="Transport Payment Details" colspan="4"/> 
-				<field name="transport_fee_payment_ids" nolabel="1" attrs=""/>
+				<newline/>
+				<notebook>
+				<page string ="Transport Fee Details">
+					<button name="%(action_singlestudent_unpaidtransportfee_receipt_id)d" string="Transport Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+					<field name="transport_fee_payment_ids" nolabel="1" attrs=""/>
+				</page>
+				</notebook>
 	        </xpath>
 		</data>
 	</field>
@@ -451,6 +456,7 @@
 						<field name="fee_amount"/>
 						<field name="fee_discount"/>
 						<field name="is_reconcile"/>
+						<field name="paid_amount"/>
 					</group>
 				</sheet>	 	
 			</form>
@@ -462,11 +468,10 @@
 		<field name="model">sms.transport.fee.payments</field>
 		<field name="arch" type="xml">
 			<tree string="Transport Fee Payments">
-				<field name="employee_id"/>
-				<field name="student_id"/>
-				<field name="registeration_id"/>
-				<field name="fee_month"/>
-				<field name="receipt_no"/>
+				<field name="name"/>
+				<field name="fee_amount"/>
+				<field name="paid_amount"/>
+				<field name="state"/>
 				<field name="date_fee_charged"/>
 			</tree>
 		</field>
@@ -477,11 +482,11 @@
 		<field name="model">sms.transport.fee.payments</field>
 		<field name="arch" type="xml">
 			<search string="Transport Fee Payments">
-				<field name="employee_id"/>
+				<field name="name"/>
+				<field name="fee_amount"/>
 				<field name="student_id"/>
-				<field name="registeration_id"/>
-				<field name="fee_month"/>
-				<field name="receipt_no"/>
+				<field name="paid_amount"/>
+				<field name="state"/>
 				<field name="date_fee_charged"/>
 			</search>
 		</field>
@@ -562,13 +567,15 @@
 	</record>
 
 	<!--Session months inherited-->
-	<record model = "ir.ui.view" id="sms_session_months_ih_ihrt_trnasport">
-		<field name = "name">sms.session.months.tree.transprt</field>	
-		<field name = "model">sms.session.months</field>
-		<field name = "inherit_id" ref = "smsfee.sms_session+months_ih_ihrt"/>
+	<record model = "ir.ui.view" id="sms_fiscalyearsession_months_inherit_trnasport">
+		<field name = "name">sms.fiscalyearsession.months.tree_transprt</field>	
+		<field name = "model">sms.fiscalyearsession.months</field>
+		<field name = "inherit_id" ref="sms.view_fiscalyearsessionmonths_tree"/>
 		<field name = "arch" type = "xml">
-			<xpath expr = "//button[@name ='update_monthly_feeregister']" position = "replace">
-				<button name="update_monthly_feeregister" string="Update Fee" type="object"
+			<xpath expr = "//field[@name ='fiscalyear_session_id']" position = "after">
+				<field name="state" invisible="1" />
+				<field name="update_log" attrs="{'invisible':[('state','=','To_Update')]}"/>
+				<button name="apply_transport_fee_student" string="Update Fee" type="object"
                                     groups="" 
 									icon="terp-gtk-jump-to-ltr" 
 									attrs="{'readonly':[('state','=','Updated')]}"

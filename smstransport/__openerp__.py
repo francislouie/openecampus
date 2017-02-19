@@ -11,6 +11,7 @@
              'security/ir.model.access.csv',
              'wizard/smstransport_class_fee_receipt_unpaid.xml',
              'wizard/smstransport_wizard_registerations.xml',
+             'wizard/wizard_singlestudent_unpaidftransportee_receipt.xml',
              'smstransport_view.xml',
              'smstransport_report.xml',
              'smstransport_menus.xml',],
