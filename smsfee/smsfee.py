@@ -29,6 +29,19 @@ class res_company(osv.osv):
 res_company()
 
 
+class sms_fee_challan_no(osv.osv):
+    """this object sore challan no of all challans in receobppk, transport challans etc."""
+    _name = 'sms.fee.challan.no'
+    _columns = {
+    'parent_obj_id': fields.integer('Parent ID'),
+    'parent_object': fields.char('Parent_obj'),
+    'module': fields.char('Module'),
+    'year': fields.char('Year'),
+    }
+    _defaults = {
+    }
+sms_fee_challan_no()
+
 class sms_student_class_promotion(osv.osv):
     """the objects adds fee portion in student promotion process of sms module last update 26-8-2016"""
     _name = 'sms.student.class.promotion'
@@ -1068,17 +1081,30 @@ smsfee_fee_adjustment()
 class smsfee_receiptbook(osv.osv):
     """ A fee receopt book, stores fee payments history of students """
     
-    def _set_bill_no(self, cr, uid, ids, name, args):
-        ftyp = None
-        for f in self.browse(cr, uid, ids):
-            ftyp = "Fee-"+str(f.id)
-        return ftyp
     
+    def _set_bill_no(self, cr, uid, parent_id, parent_object, module):
+        create = self.pool.get('sms.fee.challan.no').create(cr, uid, {
+                   'parent_obj_id': parent_id,
+                   'parent_object':parent_object,
+                   'module': module,
+                   'receipt_book_id':module,
+                   'year':'2017',
+                   }) 
+        return create
+    
+    def _get_bill_no(self, cr, uid, parent_id, parent_object, module):
+        
+        sql =   """SELECT  id  FROM sms_fee_challan_no where parent_obj_id = """+str(parent_id)
+        cr.execute(sql)
+        no = int(cr.fetchone()[0])
+        return  str(no)+"-02"+str(2017)
+        
     def create(self, cr, uid, vals, context=None, check=True):
-#         slipno = self._set_bill_no(self, cr, uid, None)
+         
         vals['name'] =  'slipno'
         result = super(osv.osv, self).create(cr, uid, vals, context)
-        
+        generate_slip_no = self._set_bill_no(cr, uid, result,'smsfee.receiptbook','smsfee')
+        #get_slip_no = self._get_bill_no(cr, uid, result,'smsfee.receiptbook','smsfee')
         return result
   
      

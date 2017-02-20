@@ -122,11 +122,8 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
  
     def get_challan_number(self, data):
         line_dots = []
-#         
-#         challan = self.pool.get('cms.challan').browse(self.cr,self.uid,form['challan_id'])
-#         challan_str = str(challan.challan_no)
-#         return challan_str.split("-")[1] + " (" + challan_str.split("-")[0]+ ")"
-        return '__________'
+        challan = self.pool.get('smsfee.receiptbook')._get_bill_no(self.cr,self.uid,data,'smsfee.receiptbook',None)
+        return challan
  
     def get_candidate_info(self, data):
         info_list = []
