@@ -29,6 +29,19 @@ class res_company(osv.osv):
 res_company()
 
 
+class sms_fee_challan_no(osv.osv):
+    """this object sore challan no of all challans in receobppk, transport challans etc."""
+    _name = 'sms.fee.challan.no'
+    _columns = {
+    'parent_obj_id': fields.integer('Parent ID'),
+    'parent_object': fields.char('Parent_obj'),
+    'module': fields.char('Module'),
+    'year': fields.char('Year'),
+    }
+    _defaults = {
+    }
+sms_fee_challan_no()
+
 class sms_student_class_promotion(osv.osv):
     """the objects adds fee portion in student promotion process of sms module last update 26-8-2016"""
     _name = 'sms.student.class.promotion'
@@ -761,6 +774,7 @@ class smsfee_studentfee(osv.osv):
            1) update_monthly_feeregister() class:sms_session_months
            2) called by admission register
            3)called by promotion process
+           4) called by advance fee management
            
            admin
            """
@@ -1067,11 +1081,30 @@ smsfee_fee_adjustment()
 class smsfee_receiptbook(osv.osv):
     """ A fee receopt book, stores fee payments history of students """
     
-    def create(self, cr, uid, vals, context=None, check=True):
-        slipno = self._set_slipno(self, cr, uid, None)
-        vals['name'] =  slipno
-        result = super(osv.osv, self).create(cr, uid, vals, context)
+    
+    def _set_bill_no(self, cr, uid, parent_id, parent_object, module):
+        create = self.pool.get('sms.fee.challan.no').create(cr, uid, {
+                   'parent_obj_id': parent_id,
+                   'parent_object':parent_object,
+                   'module': module,
+                   'receipt_book_id':module,
+                   'year':'2017',
+                   }) 
+        return create
+    
+    def _get_bill_no(self, cr, uid, parent_id, parent_object, module):
         
+        sql =   """SELECT  id  FROM sms_fee_challan_no where parent_obj_id = """+str(parent_id)
+        cr.execute(sql)
+        no = int(cr.fetchone()[0])
+        return  str(no)+"-02"+str(2017)
+        
+    def create(self, cr, uid, vals, context=None, check=True):
+         
+        vals['name'] =  'slipno'
+        result = super(osv.osv, self).create(cr, uid, vals, context)
+        generate_slip_no = self._set_bill_no(cr, uid, result,'smsfee.receiptbook','smsfee')
+        #get_slip_no = self._get_bill_no(cr, uid, result,'smsfee.receiptbook','smsfee')
         return result
   
      
@@ -1324,6 +1357,13 @@ class smsfee_receiptbook(osv.osv):
         result[f.id] = amount
         return result
     
+    def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
+        result = {}
+        records =  self.browse(cr, uid, ids, context)
+        for f in records:
+            self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})  
+        return result
+    
     def check_fee_challans_issued(self, cr, uid, class_id, student_id):
         result = {}
         fee_ids = self.pool.get('smsfee.studentfee').search(cr ,uid ,[('student_id','=',student_id),('state','=','fee_unpaid')])
@@ -1419,6 +1459,8 @@ class smsfee_receiptbook(osv.osv):
         'receive_whole_amount': fields.boolean('Receive Whole Amount'),
         'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
+        'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),
+         'cancel_date': fields.datetime('Cancel Date',readonly=True),
         #fields related to adjustment
         'receipt_book_idd': fields.one2many('smsfee.receiptbook.lines.fee.adjustment', 'receipt_book_idd', 'Fees'),
         'receiptbook_lines_ids': fields.one2many('smsfee.receiptbook.lines', 'receipt_book_id', 'Fees'),
@@ -2183,11 +2225,10 @@ class smsfee_return_paid_fee(osv.osv):
         return 
             
     def _set_slipno(self, cr, uid, ids, name, args, context=None):
-        result = {}
+        ftyp = None
         for f in self.browse(cr, uid, ids, context=context):
-             ftyp = "R-"+str(ids[0])
-             result[f.id] = ftyp
-        return result
+             ftyp = "R-"+str(f.id)
+        return ftyp
     
     def _get_active_session(self, cr, uid, context={}):
         ssn = self.pool.get('sms.session').search(cr, uid, [('state','=','Active')])
