@@ -1,2 +1,3 @@
 import smstransport_wizard_fee_receipt_unpaid
 import smstransport_wizard_registerations
+import wizard_singlestudent_unpaidtransportfee_receipt

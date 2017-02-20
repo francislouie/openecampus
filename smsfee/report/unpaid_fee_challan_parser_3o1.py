@@ -154,7 +154,20 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         banks_ids = self.pool.get('res.company').search(self.cr,self.uid,[])
         banks_recs = self.pool.get('res.company').browse(self.cr,self.uid,banks_ids)
         for rec in banks_recs:
-            bank = rec.fee_reception_account_bank.name + rec.fee_reception_account_bank.code 
+            if rec.bank_name1 and rec.bank_acctno1:
+                bank= str(rec.bank_name1) + ' - ' +str(rec.bank_acctno1)
+            else:
+                bank = ''        
+        return bank
+
+    def get_banks_2(self):
+        banks_ids = self.pool.get('res.company').search(self.cr,self.uid,[])
+        banks_recs = self.pool.get('res.company').browse(self.cr,self.uid,banks_ids)
+        for rec in banks_recs:
+            if rec.bank_name1 and rec.bank_acctno1:
+                bank= str(rec.bank_name2) + ' - ' +str(rec.bank_acctno2)
+            else:
+                bank = ''
         return bank
  
     def get_challan_number(self, data):
