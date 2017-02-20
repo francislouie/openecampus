@@ -1,6 +1,8 @@
 from openerp.osv import fields, osv
 from openerp import tools
 from openerp import addons
+from calendar import monthrange
+from datetime import date, datetime
 import datetime
 import time
 import xlwt
@@ -1321,7 +1323,7 @@ class smsfee_receiptbook(osv.osv):
                      WHERE receipt_book_id ="""+str(f.id)
             cr.execute(sql)
             amount = float(cr.fetchone()[0])
-        result[f.id] = amount
+            result[f.id] = amount
         return result
     
     def check_fee_challans_issued(self, cr, uid, class_id, student_id):
@@ -2755,14 +2757,15 @@ class smsfee_receive_challan_in_bank(osv.osv):
     def load_challan_details(self, cr, uid, ids, name):
         record = self.browse(cr, uid, ids)
         pooler_receiptbook = self.pool.get('smsfee.receiptbook')
-        for f in record:
-            for acd_cal in f.acd_cal:
+        
+        if record[0].challan_type == 'class_challan':
+            for acd_cal in record[0].acd_cal:
                 for std in acd_cal.acad_cal_students:
                    
                     challan_id = pooler_receiptbook.search(cr ,uid ,[('state','=','fee_calculated'),('student_id','=',std.std_id.id),
                                                                                       ('student_class_id','=',acd_cal.id)])
                     for challan in pooler_receiptbook.browse(cr ,uid ,challan_id):
-                        self.pool.get('smsfee.receive.challan.in.bank.lines').create(cr ,uid ,{'parent_id':f.id,
+                        self.pool.get('smsfee.receive.challan.in.bank.lines').create(cr ,uid ,{'parent_id':record[0].id,
                                                                                                              'challan_no':challan.id,
                                                                                                              #'due_date':,
                                                                                                              'student_name':std.std_id.id,
@@ -2771,6 +2774,24 @@ class smsfee_receive_challan_in_bank(osv.osv):
                                                                                                             # 'received':,
                                                                                                              'challan_produced_by_bank':True,
                                                                                                              })
+        else:
+            year = int(record[0].session_month.session_year)
+            month = int(record[0].session_month.session_month_id.code)
+            
+            begin = date(year, month, 1)
+            end = date(year, month, monthrange(year, month)[1])   
+            challan_id = pooler_receiptbook.search(cr ,uid ,[('state','=','fee_calculated'),
+                                                             ('receipt_date','>=',begin),('receipt_date','<=',end)])
+            for challan in pooler_receiptbook.browse(cr ,uid ,challan_id):
+                print "**create open challans****",self.pool.get('smsfee.receive.challan.in.bank.lines').create(cr ,uid ,{'parent_id':record[0].id,
+                                                                                                     'challan_no':challan.id,
+                                                                                                     #'due_date':,
+                                                                                                     'student_name':challan.student_id.id,
+                                                                                                     'amount':challan.total_paybles,
+                                                                                                     'challan_produced_by_bank':True,
+                                                                                                     })
+        if not challan_id:
+            raise osv.except_osv(('Define Challans'),('No open challans found'))            
         self.write(cr ,uid , ids ,{'state':'Receive'})
         return True
     
@@ -2797,18 +2818,19 @@ class smsfee_receive_challan_in_bank(osv.osv):
             
             pooler_receiptbook.confirm_fee_received(cr ,uid ,[rec.challan_no.id])
         self.write(cr ,uid , ids ,{'state':'Confirm'})
-        
         return True
     
     _name = 'smsfee.receive.challan.in.bank'
     _columns = {
         'acd_cal':fields.many2many('sms.academiccalendar', 'receive_challan_academiccalendar_rel', 'receive_challan_id', 'academiccalendar_id', 'Class'),
         'state':fields.selection([('Draft','Draft'),('Receive','Receive'),('Confirm','Confirm')],'State'),
+        'challan_type':fields.selection([('open_challan','Months'),('class_challan','Class')],'Load On' ,required=True),
+        'session_month':fields.many2one('sms.session.months','Month'),
         'receive_challan_by_bank':fields.one2many('smsfee.receive.challan.in.bank.lines','parent_id','Challan Received By Bank')
     }
     _sql_constraints = []
 
-    _defaults = { 'state':'Draft'   }    
+    _defaults = { 'state':'Draft','challan_type':'class_challan'   }    
 smsfee_receive_challan_in_bank()
 
 class smsfee_receive_challan_in_bank_lines(osv.osv):
