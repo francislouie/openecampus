@@ -1088,8 +1088,11 @@
 			</header>
 			<group string= "Received challan in bank">
 				<group >
-	          	<field name="acd_cal" widget="many2many_tags" attrs="{'readonly':[('state','in',['Confirm','Receive'] )]}"  />
+	          	<field name="acd_cal" widget="many2many_tags" attrs="{'readonly':[('state','in',['Confirm','Receive'] )],'invisible':[('challan_type','=','open_challan')] ,'required':[('challan_type','=','class_challan' )]  }"  />
+				<field name="session_month"  attrs="{'readonly':[('state','in',['Confirm','Receive'] )],'invisible':[('challan_type','=','class_challan')] ,'required':[('challan_type','=','open_challan' )]  }" />
+				<field name="challan_type"  attrs="{'readonly':[('state','in',['Confirm','Receive'] )]}"    />
 	          	<field name="state" readonly="1"/>
+
 	          	</group>
 				<group colspan="6">
 	          	<field name="receive_challan_by_bank" nolabel="1" attrs="{'readonly':[('state','=','Confirm')]}"   />
@@ -1126,9 +1129,9 @@
       <field name="type">tree</field>
       <field name="arch" type="xml">
 	        <tree string="Detail"  editable="top">
-	          <field name="challan_no" />
-	          <field name="due_date"  />
-	          <field name="student_name" />
+	          <field name="challan_no" readonly="1" />
+	          <field name="due_date" readonly="1" />
+	          <field name="student_name" readonly="1" />
 	          <field name="amount"  />
 	          <field name="late_fee" readonly="1" />
 	          <field name="received"  />
