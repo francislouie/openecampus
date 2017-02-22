@@ -735,21 +735,21 @@ sms_student_certificate()
 class sms_student(osv.osv):
     
     """ This object defines students of an institute """
-   #$$$$$$$$$$$ 
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         
-        #******************to maintain log***********************
+        #******************to maintain log**********************************************
         for k,v in vals.iteritems():
-            print k,v
-            sql = """ select """ +str(k)+ """ from sms_student where id ="""+str(ids[0])+ """
-            """
-            cr.execute(sql)
-            pre_val = cr.fetchone()[0]
+            print "key=====", k,"===value======",v
+            if type(v) == "<type 'list'>":
+                sql = """ select """ +str(k)+ """ from sms_student where id ="""+str(ids[0])+ """
+                """
+                pre_val = cr.fetchone()[0]
+            else:
+                pre_val = ''
             self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,vals,'sms.student','write',pre_val)
-        #**********************************************************
+        #*******************************************************************************
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
         return result 
-   #$$$$$$$$$$$ 
     def admisssion_registration(self, cr, uid, ids, context=None):
         ctx = {}
         for f in self.browse(cr,uid,ids):
