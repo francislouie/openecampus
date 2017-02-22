@@ -424,10 +424,10 @@
 			<xpath expr="//field[@name='studen_fee_ids']" position="after">
 				<newline/>
 				<notebook>
-				<page string ="Transport Fee Details">
-					<button name="%(action_singlestudent_unpaidtransportfee_receipt_id)d" string="Transport Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-					<field name="transport_fee_payment_ids" nolabel="1" attrs=""/>
-				</page>
+					<page string ="Transport Fee Details">
+						<button name="%(action_singlestudent_unpaidtransportfee_receipt_id)d" string="Transport Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+						<field name="transport_fee_payment_ids" nolabel="1" attrs=""/>
+					</page>
 				</notebook>
 	        </xpath>
 		</data>
@@ -467,7 +467,7 @@
 		<field name="name">sms.transport.fee.payments.tree</field>
 		<field name="model">sms.transport.fee.payments</field>
 		<field name="arch" type="xml">
-			<tree string="Transport Fee Payments">
+			<tree colors="red:state =='fee_calculated';blue:state=='Adjusted'" string="Transport Fee Payments">
 				<field name="name"/>
 				<field name="fee_amount"/>
 				<field name="paid_amount"/>

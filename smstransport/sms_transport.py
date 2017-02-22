@@ -323,7 +323,7 @@ class sms_transport_fee_payments(osv.osv):
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
         'acad_cal_id': fields.many2one('sms.academiccalendar','Academic Calendar'),
-        'fee_amount':fields.float('Fee Amount'),
+        'fee_amount':fields.float('Fee'),
         'fee_discount':fields.float('Discount'),
         'date_fee_charged':fields.date('Date Fee Charged'),
         'date_fee_paid':fields.date('Date Fee Paid'),
@@ -331,7 +331,7 @@ class sms_transport_fee_payments(osv.osv):
         'fee_month': fields.many2one('sms.session.months','Fee Month'),
         'due_month':fields.many2one('sms.session.months','Due Month'),
         'is_reconcile': fields.boolean('Reconciled'),
-        'state':fields.selection([('Draft', 'Draft'),('fee_calculated', 'Un-Paid'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State'),
+        'state':fields.selection([('Draft', 'Draft'),('fee_calculated', 'Fee Unpaid'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'Fee Status'),
             }
     _defaults = {
                  'state': lambda*a :'Draft',
