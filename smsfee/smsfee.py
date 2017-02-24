@@ -1095,17 +1095,20 @@ class smsfee_receiptbook(osv.osv):
         return create
     
     def _get_bill_no(self, cr, uid, parent_id, parent_object, module):
-        
         sql =   """SELECT  id  FROM sms_fee_challan_no where parent_obj_id = """+str(parent_id)
         cr.execute(sql)
-        no = int(cr.fetchone()[0])
+        res = cr.fetchone()
+        if not res:
+            from random import randint
+            res = [randint(0,9)]
+        no = int(res[0])
         return  str(no)+"-02"+str(2017)
         
     def create(self, cr, uid, vals, context=None, check=True):
          
         vals['name'] =  'slipno'
         result = super(osv.osv, self).create(cr, uid, vals, context)
-        generate_slip_no = self._set_bill_no(cr, uid, result,'smsfee.receiptbook','smsfee')
+        generate_slip_no = self._set_bill_no(cr, uid, result, 'smsfee.receiptbook', 'smsfee')
         #get_slip_no = self._get_bill_no(cr, uid, result,'smsfee.receiptbook','smsfee')
         return result
   

@@ -51,21 +51,19 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         student_id = self.datas['form']['student_id'][0]
         stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
         self.pool.get('smsfee.receiptbook').check_fee_challans_issued(self.cr, self.uid ,stu_rec.current_class.id ,stu_rec.id)
-        
         challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=', stu_rec.current_class.id),
                                                                                     ('student_id','=', stu_rec.id),
                                                                                     ('state','=','fee_calculated')])
         if challan_ids:
             rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
             for challan in rec_challan_ids:
-                challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':'','amount_after_due_date':''}
+                challan_dict = {'challan_number':'','candidate_info':'','on_accounts':''}
                 challan_dict['challan_number'] =  self.get_challan_number(challan.id)
                 challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                 if self.get_on_accounts(challan.id) == []:
                     challan_dict['on_accounts'] =  ' '
                 else:
                     challan_dict['on_accounts'] =  self.get_on_accounts(challan.id)
-                challan_dict['amount_after_due_date'] = data['form']['amount_after_due_date']
                 challan_list.append(challan_dict)
         return challan_list  
      
@@ -120,8 +118,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return bank
  
     def get_challan_number(self, data):
-        line_dots = []
-        challan = self.pool.get('smsfee.receiptbook')._get_bill_no(self.cr,self.uid,data,'smsfee.receiptbook',None)
+        challan = self.pool.get('smsfee.receiptbook')._get_bill_no(self.cr, self.uid, data, 'smsfee.receiptbook', None)
         return challan
  
     def get_candidate_info(self, data):
