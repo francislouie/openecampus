@@ -34,6 +34,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             'get_total_amount':self.get_total_amount,
             'get_amount_in_words':self.get_amount_in_words,
             'get_due_date':self.get_due_date,
+            'get_fine_amount':self.get_fine_amount,
          })
         self.context = context
      
@@ -64,8 +65,6 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                     challan_dict['on_accounts'] =  ' '
                 else:
                     challan_dict['on_accounts'] =  self.get_on_accounts(challan.id)
-                challan_dict['total_amount'] =  self.get_total_amount(challan.id)
-                challan_dict['amount_in_words'] =   self.get_amount_in_words(challan.id)
                 challan_dict['amount_after_due_date'] = data['form']['amount_after_due_date']
                 challan_list.append(challan_dict)
         return challan_list  
@@ -155,22 +154,48 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return result
      
     def get_total_amount(self, data):
-        receipt = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data)
-        if self.datas['form']['amount_after_due_date']:
-            total_amount_str = receipt.total_paybles + self.datas['form']['amount_after_due_date'] 
-        else:
-            total_amount_str = receipt.total_paybles
-        return total_amount_str
+        student_id = self.datas['form']['student_id'][0]
+        stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
+        self.pool.get('smsfee.receiptbook').check_fee_challans_issued(self.cr, self.uid ,stu_rec.current_class.id ,stu_rec.id)
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=', stu_rec.current_class.id),
+                                                                                    ('student_id','=', stu_rec.id),
+                                                                                    ('state','=','fee_calculated')])
+        if challan_ids:
+            rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
+            for receipt in rec_challan_ids:
+                if self.datas['form']['amount_after_due_date']:
+                    total_amount_str = receipt.total_paybles + self.datas['form']['amount_after_due_date'] 
+                else:
+                    total_amount_str = receipt.total_paybles
+            return total_amount_str
      
-    def get_amount_in_words(self,data):
+
+    def get_fine_amount(self, data):
         if self.datas['form']['amount_after_due_date']:
-            amount = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data).total_paybles + self.datas['form']['amount_after_due_date'] 
-        else:   
-            amount = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data).total_paybles        
-        user_id = self.pool.get('res.users').browse(self.cr, self.uid,[self.uid])[0]
-        cur = user_id.company_id.currency_id.name
-        amt_en = amount_to_text_en.amount_to_text(amount,'en',cur);
-        return_value=str(amt_en).replace('Cent','Paisa')
-        return return_value
+            fine_amount_str = str(self.datas['form']['amount_after_due_date']) 
+        else:
+            fine_amount_str = ''
+        return fine_amount_str
+
+    def get_amount_in_words(self, data):
+        student_id = self.datas['form']['student_id'][0]
+        stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
+        self.pool.get('smsfee.receiptbook').check_fee_challans_issued(self.cr, self.uid ,stu_rec.current_class.id ,stu_rec.id)
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=', stu_rec.current_class.id),
+                                                                                    ('student_id','=', stu_rec.id),
+                                                                                    ('state','=','fee_calculated')])
+        fine = self.datas['form']['amount_after_due_date']
+        if challan_ids:
+            rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
+            for receipt in rec_challan_ids:
+                if fine:
+                    amount = receipt.total_paybles + fine 
+                else:   
+                    amount = receipt.total_paybles        
+                user_id = self.pool.get('res.users').browse(self.cr, self.uid, [self.uid])[0]
+                cur = user_id.company_id.currency_id.name
+                amt_en = amount_to_text_en.amount_to_text(amount,'en',cur);
+                return_value = str(amt_en).replace('Cent','Paisa')
+            return return_value
      
 report_sxw.report_sxw('report.smsfee_stu_unpaidfee_receipt_name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_unpaid_receipts_report_1o1.rml',parser = unpaid_fee_challan_parser, header=None)

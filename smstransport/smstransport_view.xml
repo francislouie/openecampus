@@ -241,7 +241,7 @@
 					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
 					<group name="transport_fee_structure_main" col="4" colspan="2">
 						<field name="transport_route"/>
-						<field name="fiscal_year"/>
+						<field name="session_id"/>
 						<field name="start_date"/>
 						<field name="end_date"/>
 						<field name="monhtly_fee"/>
@@ -261,7 +261,7 @@
 				<field name="transport_route"/>
 				<field name="start_date"/>
 				<field name="end_date"/>
-				<field name="fiscal_year"/>
+				<field name="session_id"/>
 			</tree>
 		</field>
 	</record>
@@ -273,7 +273,7 @@
 			<search string="Transport Fee Structure">
 				<field name="name"/>
 				<field name="transport_route"/>
-				<field name="fiscal_year"/>
+				<field name="session_id"/>
 			</search>
 		</field>
 	</record>
@@ -424,10 +424,10 @@
 			<xpath expr="//field[@name='studen_fee_ids']" position="after">
 				<newline/>
 				<notebook>
-				<page string ="Transport Fee Details">
-					<button name="%(action_singlestudent_unpaidtransportfee_receipt_id)d" string="Transport Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-					<field name="transport_fee_payment_ids" nolabel="1" attrs=""/>
-				</page>
+					<page string ="Transport Fee Details">
+						<button name="%(action_singlestudent_unpaidtransportfee_receipt_id)d" string="Transport Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+						<field name="transport_fee_payment_ids" nolabel="1" attrs=""/>
+					</page>
 				</notebook>
 	        </xpath>
 		</data>
@@ -467,7 +467,7 @@
 		<field name="name">sms.transport.fee.payments.tree</field>
 		<field name="model">sms.transport.fee.payments</field>
 		<field name="arch" type="xml">
-			<tree string="Transport Fee Payments">
+			<tree colors="red:state =='fee_calculated';blue:state=='Adjusted'" string="Transport Fee Payments">
 				<field name="name"/>
 				<field name="fee_amount"/>
 				<field name="paid_amount"/>
@@ -567,15 +567,13 @@
 	</record>
 
 	<!--Session months inherited-->
-	<record model = "ir.ui.view" id="sms_fiscalyearsession_months_inherit_trnasport">
-		<field name = "name">sms.fiscalyearsession.months.tree_transprt</field>	
-		<field name = "model">sms.fiscalyearsession.months</field>
-		<field name = "inherit_id" ref="sms.view_fiscalyearsessionmonths_tree"/>
+	<record model = "ir.ui.view" id="sms_session_months_inherit_trnasport">
+		<field name = "name">sms.session.months.tree_transprt</field>	
+		<field name = "model">sms.session.months</field>
+		<field name = "inherit_id" ref = "smsfee.sms_session+months_ih_ihrt"/>
 		<field name = "arch" type = "xml">
-			<xpath expr = "//field[@name ='fiscalyear_session_id']" position = "after">
-				<field name="state" invisible="1" />
-				<field name="update_log" attrs="{'invisible':[('state','=','To_Update')]}"/>
-				<button name="apply_transport_fee_student" string="Update Fee" type="object"
+			<xpath expr = "//button[@name ='update_monthly_feeregister']" position = "replace">
+				<button name="update_monthly_feeregister" string="Update Fee" type="object"
                                     groups="" 
 									icon="terp-gtk-jump-to-ltr" 
 									attrs="{'readonly':[('state','=','Updated')]}"
@@ -584,7 +582,7 @@
 			</xpath>
 		</field>
 	</record>
-	
+
 	<!-- Acadmeic Calendar Inherited View-->
 	<record model="ir.ui.view" id="inherit_view_sms_transport_acad_calendar">
 		<field name="name">sms.academiccalendar.inherit</field>

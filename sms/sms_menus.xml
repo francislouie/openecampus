@@ -9,7 +9,6 @@
     <menuitem id="session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_session"/>
     <menuitem id="academic_session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_academic_session"/>
 	<menuitem id="session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_session"/>
-    <menuitem id="fiscalyearsession_id" parent="menu_quick_setting_id" sequence="4" groups="group_sms_admin,group_sms_admission_manager" action="action_fiscalyearsession"/>	
 
 	<!-- Attendance 
 	<menuitem id="menu_sms_attendance" name="Attendance"  groups="group_sms_admin,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officer" sequence="1"/>
