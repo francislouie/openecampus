@@ -109,17 +109,16 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
      
     def get_vertical_lines_total(self, data):
         line_dots = []
-        challan_idd = []
         challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=',data['form']['class_id'][0]),('state','=','fee_calculated')])
         for iddd in challan_ids:
             challan = self.pool.get('smsfee.receiptbook.lines').search(self.cr, self.uid, [('receipt_book_id','=',iddd)])
-            challan_idd.append(challan)
-        start = len(challan_idd)
+            challan = self.pool.get('smsfee.receiptbook.lines').browse(self.cr, self.uid, challan)
+        start = len(challan)
         if start >=14:
             dict = {'line-style':'|'}
             line_dots.append(dict)
         else:
-            for num in range(start,14):
+            for num in range(start,8):
                 dict = {'line-style':'|'}
                 line_dots.append(dict)
         return line_dots    
@@ -145,8 +144,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return bank
  
     def get_challan_number(self, data):
-        line_dots = []
-        challan = self.pool.get('smsfee.receiptbook')._get_bill_no(self.cr,self.uid,data,'smsfee.receiptbook','smsfee.receiptbook')
+        challan = self.pool.get('smsfee.receiptbook')._get_bill_no(self.cr, self.uid, data,'smsfee.receiptbook', None)
         return challan
  
     def get_candidate_info(self, data):
@@ -189,4 +187,4 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return_value=str(amt_en).replace('Cent','Paisa')
         return return_value
      
-report_sxw.report_sxw('report.smsfee_print_one_student_per_page', 'smsfee.classfees.register', 'addons/smsfee/smsfee_unpaid_receipts_report_1o1.rml',parser = unpaid_fee_challan_parser, header=None)
+report_sxw.report_sxw('report.smsfee_print_one_student_per_page', 'smsfee.classfees.register', 'addons/smsfee/smsfee_unpaid_receipts_report_1o1_classwise.rml',parser = unpaid_fee_challan_parser, header=None)
