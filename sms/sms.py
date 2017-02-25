@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 class res_company(osv.osv):
     """This object is used to add fields in company ."""
     _name = 'res.company'
-    _inherit ='res.company'
+    _inherit ='res.company' 
     _columns = {
     'signature_principal': fields.binary('Principal Signature'), 
     'declaration_student_admission': fields.text('Admission Declaration'),
