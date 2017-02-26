@@ -34,6 +34,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             'get_total_amount':self.get_total_amount,
             'get_amount_in_words':self.get_amount_in_words,
             'get_due_date':self.get_due_date,
+            'get_class_group':self.get_class_group,
          })
         self.context = context
      
@@ -45,6 +46,14 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         if self.datas['form']['due_date']:
             due_date = self.datas['form']['due_date']
         return due_date 
+
+    def get_class_group(self, data):
+        cls_id = self.datas['form']['class_id'][0]
+        class_id = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('id','=',cls_id)])
+        class_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id)
+        for obj in class_obj:
+            group = obj.group_id.name + obj.section_id.name
+        return group  
      
     def get_challans(self, data):
         
@@ -54,7 +63,6 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             tlt_amount = 0
             rec = self.pool.get('student.admission.register').browse(self.cr,self.uid,data['active_ids'] )
             info_dict = {'name':rec.name,'father_name':rec.father_name,'Class':rec.student_class.name,'semester':''}
-            
             fee_res = []
             challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
             for fee in rec.fee_ids  :
@@ -62,19 +70,16 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                 dict = {'head_name':fee_name,'head_amount':fee.amount}
                 fee_res.append(dict)
                 tlt_amount = tlt_amount+fee.amount
-                
             challan_dict['challan_number'] = rec.registration_no
             challan_dict['candidate_info'] =  [info_dict]
             challan_dict['on_accounts'] = fee_res
             challan_dict['total_amount'] = tlt_amount
-            
             #*******************convert the amount in text form****************************
             user_id = self.pool.get('res.users').browse(self.cr, self.uid,[self.uid])[0]
             cur = user_id.company_id.currency_id.name
             amt_en = amount_to_text_en.amount_to_text(tlt_amount,'en',cur);
             return_value=str(amt_en).replace('Cent','Paisa')
             #*******************************************************************************
-            
             challan_dict['amount_in_words'] = return_value
             challan_list.append(challan_dict)                     
         else:
@@ -118,9 +123,9 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             dict = {'line-style':'|'}
             line_dots.append(dict)
         else:
-            for num in range(start,8):
-                dict = {'line-style':'|'}
-                line_dots.append(dict)
+#            for num in range(start,3):
+            dict = {'line-style':'|'}
+            line_dots.append(dict)
         return line_dots    
      
     def get_banks(self):
