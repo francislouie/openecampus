@@ -849,19 +849,17 @@ class smsfee_studentfee(osv.osv):
              result[f.id] = f.late_fee + f.fee_amount
         return result
     
-    def onchange_set_domain(self, cr, uid,ids,fee_type):
-        #********************inprogress still have to do stuff******************************************
-#         rec = self.browse(cr ,uid ,ids)
-#         print "rec==",rec
-#         fee_struct = rec.student_id.fee_type.id  
-#         cls_fee_id = self.pool.get('smsfee.classes.fees').search(cr ,uid ,[('fee_structure_id','=',fee_struct)])
-#         val = [i.id for i in self.pool.get('smsfee.classes.fees').browse(cr ,uid ,cls_fee_id)]
-#         print "val===",val
-#         #cls_fee_lines_id = self.pool.get('smsfee.classes.fees.lines').search(cr ,uid ,[('parent_fee_structure_id','=',cls_fee_id)])
-#         #print fee_struct,"******",cls_fee_id,"******",cls_fee_lines_id
-#         return {'domain': {'fee_type': [('parent_fee_structure_id', 'in', cls_fee_id)]} }   
-        return  
-    
+    def onchange_set_domain(self, cr, uid,ids,student_id,context):
+        
+        rec = self.pool.get('sms.student').browse(cr ,uid ,context['student_id'])
+        cls_fee_id = self.pool.get('smsfee.classes.fees').search(cr ,uid ,[('fee_structure_id','=',rec.fee_type.id ),('academic_cal_id','=',rec.current_class.id)])
+        return {'domain': {'fee_type': [('parent_fee_structure_id', '=', cls_fee_id)]} }
+
+    def onchange_get_amount(self, cr, uid,ids,fee_type):
+        cls_fee = self.pool.get('smsfee.classes.fees.lines')
+        rec = cls_fee.browse(cr ,uid ,fee_type)
+        return {'value':{'fee_amount':rec.amount}}
+
     _name = 'smsfee.studentfee'
     _description = "Stores student fee record"
     _columns = {
@@ -890,12 +888,15 @@ class smsfee_studentfee(osv.osv):
     }
      
     def get_student_class(self, cr, uid,context):
+        print self,"=========",context,"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&",context.get('student_id', False)
         if context:
             acd_cal_stu = self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('std_id','=',context['student_id'])])
             clss_id = self.pool.get('sms.academiccalendar').search(cr ,uid ,[('acad_cal_students','=',acd_cal_stu),('state','=','Active')])
             if clss_id:
                 rec = self.pool.get('sms.academiccalendar').browse(cr ,uid ,clss_id)[0]
-            return rec.id
+                return rec.id
+            else:
+                raise osv.except_osv(('Denied'), ('The status of the selected student class is not active.'))
         
     _defaults = {
         'reconcile': False,
