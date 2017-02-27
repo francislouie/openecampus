@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from datetime import datetime
 from dateutil import parser
 import logging
+import datetime
 
 _logger = logging.getLogger(__name__)
 
@@ -3188,8 +3189,14 @@ class sms_exam_offered(osv.osv):
     
     def cancel_exam(self, cr, uid, ids, *args):
         self.write(cr, uid, ids, {'state':'Draft','closing_date':datetime.date.today()})
+        rec = self.browse(cr,uid,ids)[0]
+        state = rec.state        
+        dict={'state':'Draft'}
+        self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_offered','Cancel exam',state)
         return True
-    
+        
+        
+        
     _columns = { 
         'name':fields.function(set_exam_offered_name, method=True,  string='Exam Offered',type='char', store=True),
         'exam_type': fields.many2one('sms.exam.type', 'Exam Type',required=True),
@@ -4801,7 +4808,7 @@ class project_transactional_log(osv.osv):
                                                                             })            
         return result
 
-
+    _order = 'id desc'
     _name = "project.transactional.log"
     _description = "maintains project logs"
     _columns = {
