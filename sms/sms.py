@@ -3331,11 +3331,19 @@ class sms_exam_datesheet_lines(osv.osv):
            it will de-activate entry  on parent exams called when they are closed or canceled"""
         self.write(cr,uid,ds_id,{'open_for_edit':False})
         return result
-    
+
+    #<!-- op -->
+    def set_domain(self, cr, uid, ids, academiccalendar, context=None):
+        print "onchamge domain"
+        rec = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,academiccalendar)
+        return  {'domain': {'subject': [('academic_calendar', '=', rec.academiccalendar.id)],'name':[('id','=',academiccalendar)]}}  
+        
     _name= "sms.exam.datesheet.lines"
     _descpription = "Stores exam date sheets paper and date"
     _columns = { 
         'name': fields.many2one('sms.exam.datesheet', 'Date Sheet',required=True),
+         #<!-- op -->
+        'academiccalendar':fields.integer('Class',readonly = True),
         'subject': fields.many2one('sms.academiccalendar.subjects', 'Subject',required=True),
         'total_marks': fields.integer('Total Marks'),
         'paper_date': fields.date('Date'),
@@ -3344,7 +3352,8 @@ class sms_exam_datesheet_lines(osv.osv):
     }
     
     _defaults = {
-        'total_marks': lambda *a: 100
+        'total_marks': lambda *a: 100,
+        'academiccalendar': lambda self, cr, uid, context: context.get('academiccalendar', False), 
     }
     
     def write(self, cr, uid, ids, vals, context=None):
