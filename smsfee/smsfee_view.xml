@@ -640,9 +640,9 @@
 			<field name="state" widget="statusbar" statusbar_visible="Draft,fee_calculated,Paid,Request_Adjustment,Adjusted"/>
 			</header>
 			<sheet>
-			<group string ="Fee Bills">
+			<group >
 				<group>
-				<h2><label for="student_id" string=""/><field name="student_id" nolabel ="1" readonly ="1"/><field name="student_class_id" readonly ="1"   /></h2>
+				<h2><field name="student_id" nolabel ="1" readonly ="1"/><field name="student_class_id" readonly ="1"   /></h2>
 				<h4><field name="fee_structure"  readonly ="1" /></h4>
 				</group>
 				
