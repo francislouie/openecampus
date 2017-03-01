@@ -132,7 +132,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         student_id = self.datas['form']['student_id'][0]
         stdrec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
         info_dict = {'name':'','father_name':'','class':'','fee_month':''}
-        info_dict['name'] = stdrec.name +  '(' + stdrec.registration_no + ')'
+        info_dict['name'] = stdrec.name + ' (' + stdrec.registration_no + ')'
         info_dict['father_name'] = stdrec.father_name
         info_dict['class'] = stdrec.current_class.name
         fee_month = self.datas['form']['due_date']
