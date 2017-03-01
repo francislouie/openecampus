@@ -127,7 +127,6 @@ sms_session_months()
 class smsfee_festructure_revision(osv.osv):
     """This object is used to store annual fee structure. For each session there will be a fee Structure
        if 2 fs have same session, previous one will be closed"""
-    
         
     def _set_name(self, cr, uid, ids, name, args, context=None):
         result = {}
@@ -1459,14 +1458,14 @@ class smsfee_receiptbook(osv.osv):
         'student_id': fields.many2one('sms.student','Student',required = True),
         'father_name': fields.char(string = 'Father',size = 100),
         'payment_method':fields.selection([('Cash','Cash'),('Bank','Bank')],'Payment Method'),
-        'total_paybles':fields.function(set_recvbles,string = 'Total.',type = 'float',method = True), 
+        'total_paybles':fields.function(set_recvbles, string='Total', type ='float', method =True), 
         'total_paid_amount':fields.float('Paid Amount',readonly = True),
         'note_at_receive': fields.text('Note'),
         'receive_whole_amount': fields.boolean('Receive Whole Amount'),
         'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
         'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),
-         'cancel_date': fields.datetime('Cancel Date',readonly=True),
+        'cancel_date': fields.datetime('Cancel Date',readonly=True),
         #fields related to adjustment
         'receipt_book_idd': fields.one2many('smsfee.receiptbook.lines.fee.adjustment', 'receipt_book_idd', 'Fees'),
         'receiptbook_lines_ids': fields.one2many('smsfee.receiptbook.lines', 'receipt_book_id', 'Fees'),
@@ -1475,6 +1474,7 @@ class smsfee_receiptbook(osv.osv):
         'vouchered': fields.boolean('Vouchered', readonly=True),
         'voucher_no': fields.many2one('account.move', 'Voucher No',readonly=True),
         'late_fee' : fields.float('Late Fee'),
+        'std_reg_no': fields.related('student_id','registration_no',type='char',relation='sms.student', string='Registration Number', readonly=True),
     }
     _sql_constraints = [  
         #('Fee Exisits', 'unique (name)', 'Fee Receipt No Must be Unique!')

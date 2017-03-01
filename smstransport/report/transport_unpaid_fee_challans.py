@@ -56,7 +56,6 @@ class transport_unpaid_fee_challans(report_sxw.rml_parse):
                 challan_dict['total_amount'] = self.get_total_amount(challan.id)
                 challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id)
                 challan_list.append(challan_dict)
-            print "get challan===================",challan_list
         return challan_list  
      
     def get_user_name(self):

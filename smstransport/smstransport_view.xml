@@ -63,7 +63,8 @@
 				</header>
 				<sheet>
 					<group name="transport_route_main" col="4" colpsan="2">
-						<field name="name"/>
+						<field name="name" readonly="1"/>
+						<field name="route_name"/>
 						<field name="transport_location"/>
 					</group>
 				</sheet>	 	
@@ -88,7 +89,7 @@
 		<field name="model">sms.transport.route</field>
 		<field name="arch" type="xml">
 			<search string="Transport Route">
-				<field name="name" string="Location"/>
+				<field name="name" string="Route"/>
 				<field name="transport_location" string="Transport Location"/>
 			</search>
 		</field>
@@ -242,8 +243,6 @@
 					<group name="transport_fee_structure_main" col="4" colspan="2">
 						<field name="transport_route"/>
 						<field name="session_id"/>
-						<field name="start_date"/>
-						<field name="end_date"/>
 						<field name="monhtly_fee"/>
 						<field name="registration_fee"/>
 					</group>
@@ -259,8 +258,6 @@
 			<tree string="Transport Fee Structure">
 				<field name="name"/>
 				<field name="transport_route"/>
-				<field name="start_date"/>
-				<field name="end_date"/>
 				<field name="session_id"/>
 			</tree>
 		</field>
@@ -271,9 +268,9 @@
 		<field name="model">sms.transport.fee.structure</field>
 		<field name="arch" type="xml">
 			<search string="Transport Fee Structure">
-				<field name="name"/>
-				<field name="transport_route"/>
-				<field name="session_id"/>
+				<field name="name" string="Fee Structure Name"/>
+				<field name="transport_route" string="Route"/>
+				<field name="session_id" string="Session"/>
 			</search>
 		</field>
 	</record>
@@ -314,34 +311,30 @@
 				</header>
 				<sheet>
 		            <field name="picture" widget='image' nolabel="1" class="oe_left oe_avatar"/>
-		            <div class="oe_title"><label for="name" class="oe_edit_only"/>
+		            <div class="oe_title">
 						<h1>
-							<field name="name" placeholder="Student Name" />
+							<field name="name" placeholder="Student Name" nolabel="1"/>
 						</h1>
 					</div>
 					<group name="transport_registration_main">
 						<group col="4" colspan="2">
-							<field name="transport_route" placeholder="Destination"  attrs="{'readonly':[('state','IN',['Registered'])]}"/>
-							<field name="registration_type" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
+							<field name="transport_route" placeholder="Destination"  attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+							<field name="registration_type" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
 							<newline/>
-							<group attrs="{'invisible':[('registration_type','=','Student')]}" col="4" colspan="4">
-								<field name="employee_id" attrs="{'required':[('registration_type','=','Employee')],'readonly':[('state','IN',['Registered'])]}"/>
-							</group>
+							<field name="employee_id" attrs="{'required':[('registration_type','=','Employee')],'readonly':[('state','not in',['Draft'])],'invisible':[('registration_type','=','Student')]}"/>
 							<newline/>
-							<group col="4" colspan="4" attrs="{'invisible':[('registration_type','=','Employee')]}">
-								<field name="student_reg_no" on_change="onchange_load_student(student_reg_no)" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
-								<newline/>
-								<field name="student_id" domain="[('state','=','Admitted'),('transport_availed','=',False)]" attrs="{'required':[('registration_type','=','Student')],'readonly':[('state','IN',['Registered'])]}"/>
-							</group>
+							<field name="student_reg_no" on_change="onchange_load_student(student_reg_no)" attrs="{'readonly':[('state','not in',['Draft'])],'invisible':[('registration_type','=','Employee')]}"/>
 							<newline/>
-							<field name="current_vehcile" on_change="onchange_vehcile_load_shift(current_vehcile)" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
-							<field name="shift" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
-							<field name="reg_start_date" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
-							<field name="reg_end_date" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
+							<field name="student_id" domain="[('state','=','Admitted'),('transport_availed','=',False)]" attrs="{'required':[('registration_type','=','Student')],'readonly':[('state','not in',['Draft'])],'invisible':[('registration_type','=','Employee')]}"/>
+							<newline/>
+							<field name="current_vehcile" on_change="onchange_vehcile_load_shift(current_vehcile)" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+							<field name="shift" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+							<field name="reg_start_date" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+							<field name="reg_end_date" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
 						</group>
 					</group>
 					<notebook>
-						<field name="transportfee_ids" nolabel="1" attrs="{'readonly':[('state','IN',['Registered'])]}"/>
+						<field name="transportfee_ids" nolabel="1" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
 						<page string = "Registration Fees">
 						<div class="oe_title"><label for="total_fee_applicable"/>
 							<h2><field name="total_fee_applicable" readonly="1"/></h2>
@@ -365,6 +358,7 @@
 				<field name="reg_end_date"/>
 				<field name="registration_type" invisible="1"/>
 				<field name="current_vehcile"/>
+				<field name="state"/>
 			</tree>
 		</field>
 	</record>
@@ -374,11 +368,10 @@
 		<field name="model">sms.transport.registrations</field>
 		<field name="arch" type="xml">
 			<search string="Transport Registration">
-				<field name="registration_type"/>
-				<field name="employee_id"/>
-				<field name="student_id"/>
-				<field name="current_vehcile"/>
-				<field name="transport_route"/>
+				<field name="registration_type" string="Registration Type"/>
+				<field name="employee_id" string="Employee"/>
+				<field name="student_id" string="Student"/>
+				<field name="current_vehcile" string="Vehcile"/>
 			</search>
 		</field>
 	</record>
@@ -389,6 +382,15 @@
 		<field name="type">ir.actions.act_window</field>
 		<field name="view_type">form</field>
 		<field name="view_mode">form,tree</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_registration_unregistered">
+		<field name="name">Transport Registration</field>
+		<field name="res_model">sms.transport.registrations</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+        <field name="domain">[('state','in',['Draft','Withdrawn','waiting_approval'])]</field>
 		<field name="search_view_id" ref="view_sms_transport_registration_search"/>
 	</record>
 
@@ -482,12 +484,10 @@
 		<field name="model">sms.transport.fee.payments</field>
 		<field name="arch" type="xml">
 			<search string="Transport Fee Payments">
-				<field name="name"/>
-				<field name="fee_amount"/>
-				<field name="student_id"/>
-				<field name="paid_amount"/>
-				<field name="state"/>
-				<field name="date_fee_charged"/>
+				<field name="name" string="Fee"/>
+				<field name="fee_amount" string="Amount"/>
+				<field name="student_id" string="Student"/>
+				<field name="paid_amount" string="Paid Amount"/>
 			</search>
 		</field>
 	</record>
@@ -550,9 +550,9 @@
 		<field name="model">sms.transportfee.challan.book</field>
 		<field name="arch" type="xml">
 			<search string="Transport Fee Challan">
-				<field name="student_id"/>
-				<field name="total_payables"/>
-				<field name="total_paid"/>
+				<field name="student_id" string="Student"/>
+				<field name="total_payables" string="Total Payables"/>
+				<field name="total_paid" string="Total Paid"/>
 			</search>
 		</field>
 	</record>
@@ -563,6 +563,50 @@
 		<field name="type">ir.actions.act_window</field>
 		<field name="view_type">form</field>
 		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_feechallan_open_id">
+		<field name="name">Open Challans</field>
+		<field name="res_model">sms.transportfee.challan.book</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+        <field name="domain">[('state','=','fee_calculated')]</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_feechallan_paid_id">
+		<field name="name">Paid Challans</field>
+		<field name="res_model">sms.transportfee.challan.book</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+        <field name="domain">[('state','=','Paid')]</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_feechallan_cancel_id">
+		<field name="name">Cancelled Challans</field>
+		<field name="res_model">sms.transportfee.challan.book</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+        <field name="domain">[('state','in',['Cancel'])]</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_feechallan_search_id">
+		<field name="name">Search A Challan</field>
+		<field name="res_model">sms.transportfee.challan.book</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+	    <field name="domain">[('state','in',['Draft','Adjusted','fee_calculated','Cancel','Paid'])]</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
 		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
 	</record>
 

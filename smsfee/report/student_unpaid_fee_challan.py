@@ -50,7 +50,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
     def get_class_group(self, data):
         student_id = self.datas['form']['student_id'][0]
         stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
-        return stu_rec.current_class.group_id.name + stu_rec.current_class.section_id.name
+        return stu_rec.current_class.group_id.name
 
     def get_challans(self, data):
         challan_list = []
@@ -132,7 +132,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         student_id = self.datas['form']['student_id'][0]
         stdrec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
         info_dict = {'name':'','father_name':'','class':'','fee_month':''}
-        info_dict['name'] = stdrec.name
+        info_dict['name'] = stdrec.name + ' (' + stdrec.registration_no + ')'
         info_dict['father_name'] = stdrec.father_name
         info_dict['class'] = stdrec.current_class.name
         fee_month = self.datas['form']['due_date']

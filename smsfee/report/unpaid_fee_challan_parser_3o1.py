@@ -179,7 +179,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         info_list = []
         stdrec = self.pool.get('sms.student').browse(self.cr,self.uid,data)
         info_dict = {'name':'','father_name':'','class':''}
-        info_dict['name'] = stdrec.name
+        info_dict['name'] = stdrec.name + ' (' + stdrec.registration_no + ')'
         info_dict['father_name'] = stdrec.father_name
         info_dict['class'] = stdrec.current_class.name
         info_list.append(info_dict)
