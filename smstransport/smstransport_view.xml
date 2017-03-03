@@ -12,7 +12,7 @@
 					<field name="state" widget="statusbar"/>
 				</header>
 				<sheet>
-					<separator string="Location"/>
+					<separator string="Route"/>
 					<group name="location_form_main">
 						<field name="name"/>
 					</group>
@@ -44,7 +44,7 @@
 	</record>
 
 	<record model="ir.actions.act_window" id="action_transport_location">
-		<field name="name">Transport Location</field>
+		<field name="name">TransportRoute</field>
 		<field name="res_model">sms.transport.location</field>
 		<field name="type">ir.actions.act_window</field>
 		<field name="view_type">form</field>

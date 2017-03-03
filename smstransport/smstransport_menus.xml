@@ -8,16 +8,16 @@
 	<menuitem name="Transport Configuration" id="sms_transport_configuration_id" sequence = "6" parent="sms.menu_configuration_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager"/>
 	
-	<menuitem name="Locations" id="sms_transport_location_id" sequence = "2" parent="sms_transport_configuration_id"
+	<menuitem name="Routes" id="sms_transport_location_id" sequence = "2" parent="sms_transport_configuration_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_location"/>
 
 	<menuitem name="Shifts" id="sms_transport_shift_id" sequence = "4" parent="sms_transport_configuration_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_shift"/>
 
-	<menuitem name="Routes" id="sms_transport_route_id" sequence = "3" parent="sms_transport_configuration_id"
+	<menuitem name="Destinations" id="sms_transport_route_id" sequence = "3" parent="sms_transport_configuration_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_route"/>
 
-	<menuitem name="Vehciles" id="sms_transport_vechiles_id" sequence = "5" parent="sms_transport_configuration_id"
+	<menuitem name="Vehicles" id="sms_transport_vechiles_id" sequence = "5" parent="sms_transport_configuration_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_vehcile"/>
 
 	<menuitem name="Transport" id="sms_transport_fee_config_id" sequence = "6" parent="sms_transport_root_id"
@@ -35,13 +35,13 @@
 	<menuitem name="Registered Students" id="sms_transport_registered_regis_id" sequence = "9" parent="sms_transport_registration_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_registration_registered"/>
 
-	<menuitem name="Transport Fee Challan" id="sms_transport_fee_challan_id" sequence = "10" parent="sms_transport_fee_config_id"
+	<menuitem name="Transport Fee Bills" id="sms_transport_fee_challan_id" sequence = "10" parent="sms_transport_fee_config_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_fee_challan"/>
 
 	<menuitem name="Reports" id="sms_transport_reports_id" sequence = "11" parent="sms_transport_root_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager"/>
 
-	<menuitem name="Reegistered Students List" id="sms_transport_registered_students_id" sequence = "12" parent="sms_transport_reports_id"
+	<menuitem name="Registered Students List" id="sms_transport_registered_students_id" sequence = "12" parent="sms_transport_reports_id"
 	groups="sms.group_sms_admin,sms.group_sms_principal,sms.group_sms_officer,group_sms_transport_manager" action="action_transport_registered_persons"/>
 
 	<menuitem name="Un-registered Students" id="sms_transport_unregistered_regis_id" sequence = "13" parent="sms_transport_registration_id"
