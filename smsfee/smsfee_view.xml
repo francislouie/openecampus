@@ -640,29 +640,25 @@
 			<field name="state" widget="statusbar" statusbar_visible="Draft,fee_calculated,Paid,Request_Adjustment,Adjusted"/>
 			</header>
 			<sheet>
-			<group attrs="{'readonly':[('student_id','=',False)]}">
+			<group >
 				<group>
-				<h2><label for="total_paid_amount" string="Paid Amount"/><field name="total_paid_amount" readonly ="1"/></h2>
+				<h2><field name="student_id" nolabel ="1" readonly ="1"/><field name="student_class_id" readonly ="1"   /></h2>
+				<h4><field name="fee_structure"  readonly ="1" /></h4>
+				</group>
 				
-				</group>
-				<group>
-				<h2> <label for="total_paybles" string="Paybles"/><field name="total_paybles" readonly ="1"/></h2>
-				</group>
 			</group>
-			<group string ="Receive Fee">
+			<group >
 					<group>
-					<field name="student_id" on_change="onchange_student(student_id)" attrs="{'readonly':[('state','IN',['Paid','fee_calculated'])]}" required = "1"/>
 					<field name="father_name" readonly ="1" />
-					<field name="fee_structure"  readonly ="1" />
-					<field name="student_class_id" readonly ="1"   />
+					
+					
 					<field name="receive_whole_amount" attrs="{'readonly':[('state','!=','Draft')]}" />	
 					<field name="late_fee" attrs="{'readonly':[('state','in',['Paid','Cancel','Adjusted'])]}"/>
 					</group>
 		     		<group string ="">
-						<field name="name"  readonly ="1" />
+						
 							<field name="receipt_date" required ="1"  attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 							<field name="payment_method" readonly = "1"  required ="1" />	
-							<field name="session_id" readonly = "1" />	
 							<field name="manual_recpt_no" attrs="{'readonly':[('state','IN',['Paid','Cancel','Adjusted'])]}" />								
 					</group>
 					</group>
@@ -692,8 +688,14 @@
 							<p>Select the fee you want to make adjustment by click <font color ="blue">add an item above</font></p>
 							</page> -->
 					</notebook>
+				<group>
+				<h2> <label for="total_paybles" string="Total Amount"/><field name="total_paybles" readonly ="1"/></h2>
+				
+				<h2><label for="total_paid_amount" string="Paid Amount"/><field name="total_paid_amount" readonly ="1"/></h2>
+				
+				</group>
+				
 					<group string ="">
-							<field name="state"  readonly ="1" />
 							<field name="fee_received_by"  readonly ="1" />
 					</group>
 		</sheet>	 	
