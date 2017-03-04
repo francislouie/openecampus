@@ -62,10 +62,14 @@
 					<field name="state" widget="statusbar"/>
 				</header>
 				<sheet>
+					<separator string="Transport Destinations"/>
 					<group name="transport_route_main" col="4" colpsan="2">
-						<field name="name" readonly="1"/>
-						<field name="route_name"/>
-						<field name="transport_location"/>
+						<field name="name" readonly="1" attrs="{'invisible':[('state','=','UnActive')]}"/>
+						<newline/>
+						<label for="route_name" class="oe_edit_only" string="Destination"/><field name="route_name" nolabel="1"/>
+						<newline/>
+						<label for="transport_location" class="oe_edit_only" string="Route"/><field name="transport_location" nolabel="1"/>
+						<newline/>
 					</group>
 				</sheet>	 	
 			</form>
@@ -77,8 +81,8 @@
 		<field name="model">sms.transport.route</field>
 		<field name="arch" type="xml">
 			<tree string="Transport Route">
-				<field name="name"/>
-				<field name="transport_location"/>
+				<field name="name" string="Destination"/>
+				<field name="transport_location" string="Route"/>
 				<field name="state"/>
 			</tree>
 		</field>
@@ -89,8 +93,8 @@
 		<field name="model">sms.transport.route</field>
 		<field name="arch" type="xml">
 			<search string="Transport Route">
-				<field name="name" string="Route"/>
-				<field name="transport_location" string="Transport Location"/>
+				<field name="name" string="Destination"/>
+				<field name="transport_location" string="Route"/>
 			</search>
 		</field>
 	</record>
@@ -113,7 +117,7 @@
 				<header>
 				</header>
 				<sheet>
-					<separator string="Location"/>
+					<separator string="Shifts"/>
 					<group name="shift_form_main">
 						<field name="name"/>
 						<field name="desc"/>
