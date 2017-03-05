@@ -504,9 +504,13 @@ class sms_transportfee_challan_book(osv.osv):
             'student_class_id': fields.many2one('sms.academiccalendar','Class'),
             'father_name':fields.char('Father Name', size=256),
             'payment_method':fields.char('Payment Method', size=256),
+            'manual_recpt_no': fields.char('Manual Receipt No', size=100),
             'total_payables':fields.integer('Total Payable'),
             'total_paid':fields.integer('Total Paid'),
             'receipt_date': fields.date('Date'),
+            'receive_whole_amount': fields.boolean('Received Whole Amount'),
+            'fee_received_by': fields.many2one('res.users', 'Received By'),
+            'late_fee' : fields.float('Late Fee'),
             'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly=True, help='State'),
             'transport_challan_lines_ids': fields.one2many('sms.transport.fee.challan.lines', 'receipt_book_id', 'Transport Challan'),
     }
@@ -534,6 +538,7 @@ class sms_transport_fee_challan_lines(osv.osv):
             'discount_offered':fields.integer('Discount'),
             'received_amount':fields.integer('Received Amount'),
             'fee_month': fields.many2one('sms.session.months','Fee Month'),
+            'is_reconcile': fields.boolean('Reconciled'),
             'receipt_book_id': fields.many2one('sms.transportfee.challan.book','Transport Challan'),
                 }
     _sql_constraints = [] 
@@ -545,8 +550,8 @@ class sms_session_months(osv.osv):
     """ This object is inherited to Apply Transport Fees on Students """
     def update_monthly_feeregister(self, cr, uid, ids, name):
         """Method Servers the purpose of applying transport fees on student, in unpaid status. Currently called by 
-           1) 
-           2)
+           1) Months in Academic Session 
+           2)  
            3)
            """
         super(sms_session_months, self).update_monthly_feeregister(cr, uid, ids, name)
@@ -560,7 +565,7 @@ class sms_session_months(osv.osv):
                                         AND transport_route = """ +str(student_rec.transport_route.id) + """"""
                 cr.execute(monthly_fee_sql)
                 monthly_fee = cr.fetchone()
-                fee_already_exists =  self.pool.get('sms.transport.fee.payments').search(cr,uid,[('student_id','=',student_rec.student_id.id),('due_month','=',rec.id)])
+                fee_already_exists =  self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',student_rec.student_id.id),('due_month','=',rec.id)])
                 if not fee_already_exists:
                     fee_month = rec.id
                     due_month = rec.id
@@ -579,7 +584,7 @@ class sms_session_months(osv.osv):
                     if create_trans_fee:
                         self.write(cr, uid, rec.id, {'update_log':'Last update on:'+str(date.today()),'state':'Updated'})
                 else:
-                    print 'rec exists'
+                    print 'Transport fee record for student '+ str(student_rec.student_id.id) +' already exists'
             return True
     
     _name = 'sms.session.months'
@@ -598,5 +603,3 @@ class res_company(osv.osv):
                  'three_on_one':fields.boolean('3 on 1'),
                  }
 res_company()              
-
-

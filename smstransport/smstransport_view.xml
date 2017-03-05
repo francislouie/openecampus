@@ -515,21 +515,42 @@
 					<field name="state" widget="statusbar"/>
 				</header>
 				<sheet>
-					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
-					<group name="transport_chalan_main" col="4" colspan="2">
-						<field name="student_id"/>
-						<field name="student_class_id"/>
-						<field name="father_name"/>
-						<field name="payment_method"/>
-						<field name="total_payables"/>
-						<field name="total_paid"/>
-						<field name="receipt_date"/>
+					<group name="transport_chalan_main_one">
+					<h2><field name="student_id" nolabel ="1" readonly ="1"/><field name="student_class_id" readonly ="1"   /></h2>
+					</group>
+					<group name="transport_chalan_main_two" col="4" colspan="2">
+						<group name="transport_chalan_main_two_inner_one">
+							<field name="father_name" readonly="1"/>
+							<field name="receive_whole_amount" attrs="{'readonly':[('state','!=','Draft')]}" />	
+							<field name="late_fee" attrs="{'readonly':[('state','in',['Paid','Cancel','Adjusted'])]}"/>
+						</group>
+			     		<group name="transport_chalan_main_two_inner_two">
+							<field name="receipt_date" required ="1"  attrs="{'readonly':[('state','IN',['Paid'])]}"  />
+							<field name="payment_method" readonly = "1"  required ="1" />	
+							<field name="manual_recpt_no" attrs="{'readonly':[('state','IN',['Paid','Cancel','Adjusted'])]}" />								
+						</group>
 					</group>
 					<notebook>
-						<page string="Challan Entries">
-							<field name="transport_challan_lines_ids" nolabel="1"/>
+						<page string="Fee Received">
+							<field name="transport_challan_lines_ids" nolabel="1">
+								<tree>
+									<field name="name"/>
+									<field name="fee_type"/>
+									<field name="fee_month"/>
+									<field name="fee_amount" string="Payable"/>
+									<field name="received_amount" string="Paid Amount"/>
+									<field name="is_reconcile" string="Reconciled"/>
+								</tree>
+							</field>
 						</page>
 					</notebook>
+					<group name="transport_chalan_main_three">
+						<h2><label for="total_payables" string="Total Amount"/><field name="total_payables" readonly ="1"/></h2>
+						<h2><label for="total_paid" string="Paid Amount"/><field name="total_paid" readonly ="1"/></h2>
+					</group>
+					<group name="transport_chalan_main_four">
+						<field name="fee_received_by" readonly="1"/>
+					</group>
 				</sheet>	 	
 			</form>
 		</field>
