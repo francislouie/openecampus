@@ -43,8 +43,8 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return today 
 
     def get_due_date(self):
-        if self.datas['form']['due_date']:
-            due_date = self.datas['form']['due_date']
+        due_date = self.datas['form']['due_date']
+        due_date = datetime.strptime(due_date, '%Y-%m-%d').strftime('%d/%m/%Y')
         return due_date 
 
     def get_class_group(self, data):
@@ -119,11 +119,11 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         if lines_ids:
             challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr,self.uid, lines_ids)
             start = len(challans)
-            if start >=10:
+            if start >=11:
                 dict = {'line-style':'|'}
                 line_dots.append(dict)
             else:
-                for num in range(start,10):
+                for num in range(start,11):
                     dict = {'line-style':'|'}
                     line_dots.append(dict)
         return line_dots    
@@ -168,16 +168,16 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
  
     def get_on_accounts(self, data):
         result = []
-        lines_ids = self.pool.get('smsfee.receiptbook.lines').search(self.cr,self.uid, [('receipt_book_id','=',data)])
+        lines_ids = self.pool.get('smsfee.receiptbook.lines').search(self.cr, self.uid, [('receipt_book_id','=',data)])
         if lines_ids:
-            challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr,self.uid,lines_ids)
+            challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr, self.uid, lines_ids)
         for challan in challans:
             dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
             result.append(dict) 
         return result
      
     def get_total_amount(self, data):
-        receipt = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data)
+        receipt = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid, data)
         total_amount_str = receipt.total_paybles
         return total_amount_str
      

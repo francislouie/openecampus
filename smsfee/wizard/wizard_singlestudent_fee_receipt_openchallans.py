@@ -4,19 +4,19 @@ _logger = logging.getLogger(__name__)
 
 class class_singlestudent_fee_receipt_openchallans(osv.osv_memory):
     
-    def _get_student(self, cr, uid, ids):
+    def _get_challan(self, cr, uid, ids):
         obj = self.browse(cr, uid, ids['active_id'])
-        std_id =  obj.id
-        return std_id
+        challan_id =  obj.id
+        return challan_id
     
     _name = "class.singlestudent_fee_receipt_openchallans"
     _description = "Single Student's Unpaid Fee Receipt"
     _columns = {
-              'student_id': fields.many2one('sms.student', 'Student', domain="[('state','=','Admitted')]", help="Student"),
+              'challan_id': fields.many2one('smsfee.receiptbook', 'Challan', domain="[('state','=','fee_calculated')]", help="Challan"),
               'due_date': fields.date('Due Date', required=True),
               'amount_after_due_date': fields.integer('Fine After Due Date'),
                }
-    _defaults = {'student_id':_get_student}
+    _defaults = {'challan_id':_get_challan}
     
     def print_singlestudent_fee_report_openchallans(self, cr, uid, ids, data):
         report = 'smsfee.open.challans'

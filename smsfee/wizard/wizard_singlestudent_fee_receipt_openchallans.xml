@@ -10,7 +10,7 @@
             <field name="arch" type="xml">
                 <form string="Student Fee Receipt" version="7.0">
                     <group>
-                    <h1><field name="student_id" readonly ="1" nolabel = "1" /></h1>
+                    <h1><field name="challan_id" readonly="1" nolabel="1"/></h1>
 					<group col="6" String = "" >
 						 <field name="due_date" />
 						 <newline/>

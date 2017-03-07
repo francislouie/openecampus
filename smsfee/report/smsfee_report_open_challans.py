@@ -21,6 +21,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
                 'get_total_amount':self.get_total_amount,
                 'get_amount_in_words':self.get_amount_in_words,
                 'get_class_group':self.get_class_group,
+                'get_due_date':self.get_due_date,
         })
         self.context = context
         
@@ -30,22 +31,20 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
 
     def get_due_date(self):
         due_date = self.datas['form']['due_date']
+        due_date = datetime.strptime(due_date, '%Y-%m-%d').strftime('%d/%m/%Y')
         return due_date 
 
     def get_class_group(self, data):
-        student_id = self.datas['form']['student_id'][0]
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=', self.datas['form']['challan_id'][0])])
+        challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
+        student_id =  challan_rec[0].student_id.id
         stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
         return stu_rec.current_class.group_id.name
      
     def get_challans(self, data):
         challan_list = []
-        student_id = self.datas['form']['student_id'][0]
-        stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
-        self.pool.get('smsfee.receiptbook').check_fee_challans_issued(self.cr, self.uid ,stu_rec.current_class.id ,stu_rec.id)
-        
-        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=', stu_rec.current_class.id),
-                                                                                    ('student_id','=', stu_rec.id),
-                                                                                    ('state','=','fee_calculated')])
+        challan_id = self.datas['form']['challan_id'][0]
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=', challan_id)])
         if challan_ids:
             rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
             for challan in rec_challan_ids:
@@ -80,11 +79,11 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         if lines_ids:
             challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr,self.uid, lines_ids)
             start = len(challans)
-            if start >=10:
+            if start >=11:
                 dict = {'line-style':'|'}
                 line_dots.append(dict)
             else:
-                for num in range(start,10):
+                for num in range(start,11):
                     dict = {'line-style':'|'}
                     line_dots.append(dict)
         return line_dots    
@@ -115,7 +114,9 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
  
     def get_candidate_info(self, data):
         info_list = []
-        student_id = self.datas['form']['student_id'][0]
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=', self.datas['form']['challan_id'][0])])
+        challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
+        student_id =  challan_rec[0].student_id.id
         stdrec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
         info_dict = {'name':'','father_name':'','class':'','fee_month':''}
         info_dict['name'] = stdrec.name

@@ -44,6 +44,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
 
     def get_due_date(self):
         due_date = self.datas['form']['due_date']
+        due_date = datetime.strptime(due_date, '%Y-%m-%d').strftime('%d/%m/%Y')
         return due_date 
      
     def get_class_group(self, data):
@@ -93,11 +94,11 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         if lines_ids:
             challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr,self.uid, lines_ids)
             start = len(challans)
-            if start >=10:
+            if start >=11:
                 dict = {'line-style':'|'}
                 line_dots.append(dict)
             else:
-                for num in range(start,10):
+                for num in range(start,11):
                     dict = {'line-style':'|'}
                     line_dots.append(dict)
         return line_dots    
