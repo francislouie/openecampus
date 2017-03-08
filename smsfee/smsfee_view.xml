@@ -635,12 +635,12 @@
 			<button name="load_std_fee" string="1. Show Student Fees" states="Draft" type="object"  class="oe_highlight" />
 			<button name="confirm_fee_received" string="2. Receive Fee" confirm = "Receive Fee with given amount?" states="fee_calculated" type="object"  class="oe_highlight" />
 			<button name="cancel_fee_bill" string="[X]Cancel This Fee Bill" confirm = "Are you sure Cancel Fee bill?" states="fee_calculated" type="object"  class="oe_highlight" />
-			<button name="%(action_singlestudent_fee_openchallan_id)d" string="Print Existing Challan" states="fee_calculated" type="action" class="oe_highlight" groups=""/>
+			<button name="%(action_singlestudent_fee_openchallan_id)d" string="Print Existing Challan" states="fee_calculated,Cancel" type="action" class="oe_highlight" groups=""/>
 			<button name="%(print_paid_fee_receipt_id)d" string="Print Receipt" states="Paid" type="action" class="oe_highlight" groups=""/>
 			<field name="state" widget="statusbar" statusbar_visible="Draft,fee_calculated,Paid,Request_Adjustment,Adjusted"/>
 			</header>
 			<sheet>
-			<group >
+			<group>
 				<group>
 				<h2><field name="student_id" nolabel ="1" readonly ="1"/><field name="student_class_id" readonly ="1"   /></h2>
 				<h4><field name="fee_structure"  readonly ="1" /></h4>

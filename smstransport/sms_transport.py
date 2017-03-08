@@ -72,18 +72,32 @@ class sms_transport_vehcile(osv.osv):
             string =  str(rec.vehcile_type) + ' - ' + str(rec.vehcile_no)
             result[rec.id] = string
         return result
+
+    def _get_filled_seats(self, cr, uid, ids, fields,args, context=None):
+        result = {}
+        for rec in self.browse(cr, uid, ids, context=context):
+            sql =   """SELECT COUNT(*) FROM sms_transport_registrations WHERE  
+                        state = 'Registered' AND current_vehcile = """ + str(rec.id)
+            cr.execute(sql)
+            filled_seats = cr.fetchone()[0]
+            result[rec.id] = filled_seats
+        return result
+
+    def create(self, cr, uid, vals, context=None, check=True):
+        result = super(osv.osv, self).create(cr, uid, vals, context)
+        return result
     
     _name="sms.transport.vehcile"
     _columns = {
         'name' : fields.function(_get_vehcile_name, method=True, store = True, size=256, string='Code',type='char'),
         'vehcile_type': fields.selection([('Bus', 'Bus'),('Van', 'Van')], 'Vehcile Type'),
         'max_accomodation':fields.integer('Maximum Seats'),
-        'current_accomodation':fields.integer('Filled Seats'),
+        'current_accomodation':fields.function(_get_filled_seats, method=True, string='Filled Seats', type='integer', readonly=True),
         #---------- Ids are inverted in many2many object in sms_transport_route_vehcile_rel table. sms_transport_route_id, contains vehcile ids and sms_transport_vehcile_id, contains route id 
-        'transport_route':fields.many2many('sms.transport.route', 'sms_transport_route_vehcile_rel', 'sms_transport_route_id', 'sms_transport_vehcile_id','Transport Route'),
+        'transport_route':fields.many2many('sms.transport.route', 'sms_transport_route_vehcile_rel', 'sms_transport_route_id', 'sms_transport_vehcile_id','Transport Route', required=True),
         #---------- Ids are inverted in many2many object in hr_driver_vehcile_rel table. hr_driver_id, contains vehcile ids and sms_transport_vehcile_id, contains driver ids 
         'drivers':fields.many2many('hr.employee', 'hr_driver_vehcile_rel', 'hr_driver_id', 'sms_transport_vehcile_id','Vehcile Drivers'),
-        'transport_shifts':fields.many2many('sms.transport.shift', 'smstransport_shift_vehcile_rel', 'sms_transport_vehcile_id',  'sms_transport_shift_id', 'Vehcile Shifts'),
+        'transport_shifts':fields.many2many('sms.transport.shift', 'smstransport_shift_vehcile_rel', 'sms_transport_vehcile_id',  'sms_transport_shift_id', 'Vehcile Shifts', required=True),
         'income_amount':fields.float('Income Amount'),
         'expanse_amount':fields.float('Expanse Amount'),
         'registered_students':fields.one2many('sms.student', 'vehcile_reg_students_id', 'Students', readonly=True),
@@ -144,44 +158,48 @@ class sms_transport_registrations(osv.osv):
                 fee_amount = fee_amount + rec.fee_amount
                 fee_month = rec.fee_month.id
             # --------- Register Person requesting to avail transport and also make entry in registration lines object. ------------
-            result = self.write(cr,uid,record.id,{'state':'Registered'})
-            if result:
-                if record.registration_type == 'Employee':
-                    registration_id = self.pool.get('sms.transport.registrations.lines').create(cr,uid,
-                                                                             {
-                                                                            'registeration_id': record.id,
-                                                                            'state': record.state, 
-                                                                            'current_vehcile':record.current_vehcile.id,
-                                                                            'employee_id':record.employee_id.id,
-                                                                            })
-                    if registration_id:
-                        employee_id = self.pool.get('hr.employee').search(cr,uid,[('id','=',record.employee_id.id)])
-                        self.pool.get('hr.employee').write(cr, uid, employee_id,{'transport_availed':True,
-                                                                               'vehcile_reg_employee_id':record.current_vehcile.id
+            vehcile_seats_check = self.pool.get('sms.transport.vehcile').browse(cr, uid, record.current_vehcile.id)
+            if vehcile_seats_check.current_accomodation == vehcile_seats_check.max_accomodation:
+                raise osv.except_osv(('Seats Filled'),('This Vehcile is full please apply for another'))
+            else:
+                result = self.write(cr,uid,record.id,{'state':'Registered'})
+                if result:
+                    if record.registration_type == 'Employee':
+                        registration_id = self.pool.get('sms.transport.registrations.lines').create(cr,uid,
+                                                                                 {
+                                                                                'registeration_id': record.id,
+                                                                                'state': record.state, 
+                                                                                'current_vehcile':record.current_vehcile.id,
+                                                                                'employee_id':record.employee_id.id,
                                                                                 })
-                        
-                elif record.registration_type == 'Student':
-                    registration_id = self.pool.get('sms.transport.registrations.lines').create(cr,uid,
-                                                                             {
-                                                                            'registeration_id': record.id,
-                                                                            'state': record.state, 
-                                                                            'current_vehcile':record.current_vehcile.id,
-                                                                            'student_id':record.student_id.id,
-                                                                            })
-                    if registration_id:
-                        student_id = self.pool.get('sms.student').search(cr,uid,[('id','=',record.student_id.id)])
-                        self.pool.get('sms.student').write(cr, uid, student_id,{'transport_availed':True,'vehcile_reg_students_id':record.current_vehcile.id,'transport_reg_id':record.id})
-                        self.pool.get('sms.transport.fee.payments').\
-                                                                create(cr,uid,
-                                                                {
-                                                                'registeration_id': record.id,
-                                                                'state': 'fee_calculated', 
-                                                                'student_id':record.student_id.id,
-                                                                'fee_amount':fee_amount,
-                                                                'fee_month':fee_month
-                                                                })
-#                         current_ac
-#                         self.pool.get('sms.transport.vehcile').write(cr, uid, student_id,{'current_accomodation':True,'vehcile_reg_students_id':record.current_vehcile.id,'transport_reg_id':record.id})
+                        if registration_id:
+                            employee_id = self.pool.get('hr.employee').search(cr,uid,[('id','=',record.employee_id.id)])
+                            self.pool.get('hr.employee').write(cr, uid, employee_id,{'transport_availed':True,
+                                                                                   'vehcile_reg_employee_id':record.current_vehcile.id
+                                                                                    })
+                            
+                    elif record.registration_type == 'Student':
+                        registration_id = self.pool.get('sms.transport.registrations.lines').create(cr,uid,
+                                                                                 {
+                                                                                'registeration_id': record.id,
+                                                                                'state': record.state, 
+                                                                                'current_vehcile':record.current_vehcile.id,
+                                                                                'student_id':record.student_id.id,
+                                                                                })
+                        if registration_id:
+                            student_id = self.pool.get('sms.student').search(cr,uid,[('id','=',record.student_id.id)])
+                            self.pool.get('sms.student').write(cr, uid, student_id,{'transport_availed':True,'vehcile_reg_students_id':record.current_vehcile.id,'transport_reg_id':record.id})
+                            self.pool.get('sms.transport.fee.payments').\
+                                                                    create(cr,uid,
+                                                                    {
+                                                                    'registeration_id': record.id,
+                                                                    'state': 'fee_calculated', 
+                                                                    'student_id':record.student_id.id,
+                                                                    'fee_amount':fee_amount,
+                                                                    'fee_month':fee_month
+                                                                    })
+    #                         current_ac
+    #                         self.pool.get('sms.transport.vehcile').write(cr, uid, student_id,{'current_accomodation':True,'vehcile_reg_students_id':record.current_vehcile.id,'transport_reg_id':record.id})
         return result
     
     def load_transport_fee(self, cr, uid, ids, context):
@@ -210,7 +228,10 @@ class sms_transport_registrations(osv.osv):
         cr.execute(search_student_sql)
         student_id = cr.fetchone()
         if student_id:
-            if self.browse(cr, uid, student_id[0]):         
+            check_studentregis_trans_sql = """SELECT id FROM sms_transport_registrations WHERE student_id = """ + str(student_id[0]) + """"""
+            cr.execute(check_studentregis_trans_sql)
+            trans_regis_id = cr.fetchone()
+            if trans_regis_id:         
                 raise osv.except_osv(('Record Exists'),('Student is already registered.'))         
             else:
                 result['student_id'] = student_id
@@ -483,9 +504,13 @@ class sms_transportfee_challan_book(osv.osv):
             'student_class_id': fields.many2one('sms.academiccalendar','Class'),
             'father_name':fields.char('Father Name', size=256),
             'payment_method':fields.char('Payment Method', size=256),
+            'manual_recpt_no': fields.char('Manual Receipt No', size=100),
             'total_payables':fields.integer('Total Payable'),
             'total_paid':fields.integer('Total Paid'),
             'receipt_date': fields.date('Date'),
+            'receive_whole_amount': fields.boolean('Received Whole Amount'),
+            'fee_received_by': fields.many2one('res.users', 'Received By'),
+            'late_fee' : fields.float('Late Fee'),
             'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly=True, help='State'),
             'transport_challan_lines_ids': fields.one2many('sms.transport.fee.challan.lines', 'receipt_book_id', 'Transport Challan'),
     }
@@ -513,6 +538,7 @@ class sms_transport_fee_challan_lines(osv.osv):
             'discount_offered':fields.integer('Discount'),
             'received_amount':fields.integer('Received Amount'),
             'fee_month': fields.many2one('sms.session.months','Fee Month'),
+            'is_reconcile': fields.boolean('Reconciled'),
             'receipt_book_id': fields.many2one('sms.transportfee.challan.book','Transport Challan'),
                 }
     _sql_constraints = [] 
@@ -524,8 +550,8 @@ class sms_session_months(osv.osv):
     """ This object is inherited to Apply Transport Fees on Students """
     def update_monthly_feeregister(self, cr, uid, ids, name):
         """Method Servers the purpose of applying transport fees on student, in unpaid status. Currently called by 
-           1) 
-           2)
+           1) Months in Academic Session 
+           2)  
            3)
            """
         super(sms_session_months, self).update_monthly_feeregister(cr, uid, ids, name)
@@ -539,7 +565,7 @@ class sms_session_months(osv.osv):
                                         AND transport_route = """ +str(student_rec.transport_route.id) + """"""
                 cr.execute(monthly_fee_sql)
                 monthly_fee = cr.fetchone()
-                fee_already_exists =  self.pool.get('sms.transport.fee.payments').search(cr,uid,[('student_id','=',student_rec.student_id.id),('due_month','=',rec.id)])
+                fee_already_exists =  self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',student_rec.student_id.id),('due_month','=',rec.id)])
                 if not fee_already_exists:
                     fee_month = rec.id
                     due_month = rec.id
@@ -558,7 +584,7 @@ class sms_session_months(osv.osv):
                     if create_trans_fee:
                         self.write(cr, uid, rec.id, {'update_log':'Last update on:'+str(date.today()),'state':'Updated'})
                 else:
-                    print 'rec exists'
+                    print 'Transport fee record for student '+ str(student_rec.student_id.id) +' already exists'
             return True
     
     _name = 'sms.session.months'
@@ -577,5 +603,3 @@ class res_company(osv.osv):
                  'three_on_one':fields.boolean('3 on 1'),
                  }
 res_company()              
-
-
