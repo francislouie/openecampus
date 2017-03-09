@@ -431,6 +431,7 @@
 				<newline/>
 				<notebook>
 					<page string ="Transport Fee Details">
+						<button name="%(action_student_transprotfee_collect_id)d" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 						<button name="%(action_singlestudent_unpaidtransportfee_receipt_id)d" string="Transport Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 						<field name="transport_fee_payment_ids" nolabel="1" attrs=""/>
 					</page>
@@ -463,6 +464,8 @@
 						<field name="fee_discount"/>
 						<field name="is_reconcile"/>
 						<field name="paid_amount"/>
+						<field name="late_fee"/>
+						<field name="net_total"/>
 					</group>
 				</sheet>	 	
 			</form>
@@ -513,6 +516,8 @@
 			<form string="Transport Fee Challan" version="7.0">
 				<header>
 					<field name="state" widget="statusbar"/>
+					<button name="load_student_transportfee" string="Show Student Fees" states="Draft" type="object"  class="oe_highlight" />
+					<button name="receive_transportfee" string="Receive Fee" confirm="Receive Fee with given amount?" states="fee_calculated" type="object" class="oe_highlight"/>
 				</header>
 				<sheet>
 					<group name="transport_chalan_main_one">
@@ -533,13 +538,14 @@
 					<notebook>
 						<page string="Fee Received">
 							<field name="transport_challan_lines_ids" nolabel="1">
-								<tree>
-									<field name="name"/>
-									<field name="fee_type"/>
-									<field name="fee_month"/>
-									<field name="fee_amount" string="Payable"/>
-									<field name="received_amount" string="Paid Amount"/>
-									<field name="is_reconcile" string="Reconciled"/>
+								<tree editable="Top">
+									<field name="name" readonly="1"/>
+									<field name="fee_month" readonly="1"/>
+									<field name="total" invisible="1"/>									
+									<field name="fee_amount" string="Payable" readonly="1"/>
+									<field name="received_amount" string="Paid Amount" on_change="onchange_amount(total,received_amount)"/>
+									<field name="discount" on_change="onchange_discount(total,discount)"/>
+									<field name="is_reconcile" string="Reconciled" readonly="1"/>
 								</tree>
 							</field>
 						</page>
