@@ -538,16 +538,23 @@
 					<notebook>
 						<page string="Fee Received">
 							<field name="transport_challan_lines_ids" nolabel="1">
-								<tree editable="Top">
-									<field name="name" readonly="1"/>
-									<field name="fee_month" readonly="1"/>
-									<field name="total" invisible="1"/>									
-									<field name="fee_amount" string="Payable" readonly="1"/>
-									<field name="received_amount" string="Paid Amount" on_change="onchange_amount(total,received_amount)"/>
-									<field name="discount" on_change="onchange_discount(total,discount)"/>
-									<field name="is_reconcile" string="Reconciled" readonly="1"/>
-								</tree>
 							</field>
+						</page>
+						<page string="Note" >
+						<p><h2>Need Any correction?</h2><button name="request_for_adjustment" string="Ask For Fee Adjustment" states="Paid" type="object" class="oe_highlight"/></p>
+						<field name="note_at_receive" nolabel ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
+						</page>
+						<page string="Accounting Enteries" >
+							<group>
+								<group>
+									<field name="vouchered"/>
+									<field name="vouchered_by"/>
+								</group>							
+								<group>
+									<field name="voucher_date"/>
+									<field name="voucher_no"/>
+								</group>
+							</group>
 						</page>
 					</notebook>
 					<group name="transport_chalan_main_three">
@@ -641,6 +648,23 @@
 		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
 	</record>
 
+    <record model="ir.ui.view" id="sms_transport_fee_challanlines_treeview">
+	<field name="name">sms.transport.fee.challan.linestree</field>
+		<field name="model">sms.transport.fee.challan.lines</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+		<tree string="Transport Fee Challan Book lines" editable="top">
+			<field name="name" readonly="1"/>
+			<field name="fee_month" readonly="1"/>
+			<field name="total" invisible="1"/>									
+			<field name="fee_amount" string="Payable" readonly="1"/>
+			<field name="received_amount" string="Paid Amount" on_change="onchange_amount(total, received_amount)"/>
+			<field name="discount" on_change="onchange_discount(total, discount)"/>
+			<field name="is_reconcile" string="Reconciled" readonly="1"/>
+		</tree>
+	</field>
+	</record>
+
 	<!--Session months inherited-->
 	<record model = "ir.ui.view" id="sms_session_months_inherit_trnasport">
 		<field name = "name">sms.session.months.tree_transprt</field>	
@@ -683,8 +707,7 @@
 			<notebook>
 			<page string="Challan Print" position="after">
 				<group col="4" colspan="2">
-					<field name="one_on_one"/>
-					<field name="three_on_one"/>
+					 <field name="fee_report_type"/>
 				</group>
 			</page>
 			</notebook>

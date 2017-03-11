@@ -519,7 +519,12 @@ class sms_transportfee_challan_book(osv.osv):
             'receipt_date': fields.date('Date'),
             'receive_whole_amount': fields.boolean('Received Whole Amount'),
             'fee_received_by': fields.many2one('res.users', 'Received By'),
+            'note_at_receive': fields.text('Note'),
             'late_fee' : fields.float('Late Fee'),
+            'voucher_date': fields.date('Voucher Date',readonly=True),
+            'vouchered_by': fields.many2one('res.users', 'Voucher By',readonly=True),
+            'vouchered': fields.boolean('Vouchered', readonly=True),
+            'voucher_no': fields.many2one('account.move', 'Voucher No',readonly=True),
             'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly=True, help='State'),
             'transport_challan_lines_ids': fields.one2many('sms.transport.fee.challan.lines', 'receipt_book_id', 'Transport Challan'),
     }
@@ -587,7 +592,7 @@ class sms_transportfee_challan_book(osv.osv):
                         'receipt_book_id':ids[0],
                         'student_fee_id':obj.id,
                         'fee_amount': obj.fee_amount,
-                        'total': obj.fee_amount + late_fee,
+                        'total': total_receiveable + late_fee,
                         'paid_amount':paid_fee,
                         'is_reconcile':reconcile,
                         'late_fee':0,
@@ -699,60 +704,66 @@ class sms_transportfee_challan_book(osv.osv):
                     self.pool.get('smsfee.receiptbook.lines').unlink(cr,uid,del_id)
         else:
             raise osv.except_osv(('No Fee Paid'),('Paid amount or Discount should not be 0'))
-#         for np in lines_obj :
-#             if not np.reconcile:
-#                 #Delete those record from lines which are not paid 
-#                 sql = """DELETE FROM smsfee_receiptbook_lines WHERE id = """+str(np.id)+"""AND receipt_book_id="""+str(ids[0])
-#                 cr.execute(sql) 
-#                 cr.commit()  
         return True
 
 sms_transportfee_challan_book()
 
 class sms_transport_fee_challan_lines(osv.osv):
 
+    def create(self, cr, uid, vals, context=None, check=True):
+        result = super(osv.osv, self).create(cr, uid, vals, context)
+        return result
+    
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        result = super(osv.osv, self).write(cr, uid, ids, vals, context)
+        return result
+
+    def unlink(self, cr, uid, ids, context=None):
+        result = super(osv.osv, self).unlink(cr, uid, ids, context)
+        return result 
+
     def onchange_amount(self, cr, uid, ids, total, received_amount):
         vals = {}
         if received_amount > total:
-            vals['paid_amount'] = 0
-            vals['discount'] = 0
-            vals['total'] = total
-            vals['is_reconcile'] = False
+            vals['paid_amount']     = 0
+            vals['discount']        = 0
+            vals['total']           = total
+            vals['is_reconcile']    = False
         elif received_amount == total: 
-            vals['paid_amount'] = received_amount
-            vals['discount'] = 0
-            vals['total'] = total-received_amount
-            vals['is_reconcile'] = True
+            vals['paid_amount']     = received_amount
+            vals['discount']        = 0
+            vals['total']           = total-received_amount
+            vals['is_reconcile']    = True
         elif received_amount < total:
-            vals['paid_amount'] = received_amount
-            vals['discount'] = total - received_amount
-            vals['total'] = total- (received_amount + vals['discount'])
-            vals['is_reconcile'] = True         
-        self.pool.get('sms.transport.fee.challan.lines').write(cr, uid, ids, {
-                       'paid_amount':vals['paid_amount'],
-                       'discount':vals['discount'],
-                       'total':vals['total'],
-                       'is_reconcile':vals['is_reconcile']
+            vals['paid_amount']     = received_amount
+            vals['discount']        = total - received_amount
+            vals['total']           = total - (received_amount + vals['discount'])
+            vals['is_reconcile']    = True
+        self.pool.get('sms.transport.fee.challan.lines').write(cr, uid, ids, 
+                       {'paid_amount'   :vals['paid_amount'],
+                       'discount'       :vals['discount'],
+                       'total'          :vals['total'],
+                       'is_reconcile'   :vals['is_reconcile']
                        })   
         return {'value':vals}
     
     def onchange_discount(self, cr, uid, ids, total, discount):
         vals = {}
         if discount > total:
-            vals['paid_amount'] = 0
-            vals['discount'] = 0
-            vals['total'] = total
-            vals['is_reconcile'] = False
+            vals['paid_amount']     = 0
+            vals['discount']        = 0
+            vals['total']           = total
+            vals['is_reconcile']    = False
         elif discount == total: 
-            vals['paid_amount'] = 0
-            vals['total'] = total- discount
-            vals['is_reconcile'] = True
-            vals['discount'] = discount
+            vals['paid_amount']     = 0
+            vals['total']           = total- discount
+            vals['is_reconcile']    = True
+            vals['discount']        = discount
         elif  discount < total:
-            vals['paid_amount'] = total - discount
-            vals['total'] = total- (discount+vals['paid_amount'])
-            vals['discount'] = discount
-            vals['is_reconcile'] = True         
+            vals['paid_amount']     = total - discount
+            vals['total']           = total - (discount+vals['paid_amount'])
+            vals['discount']        = discount
+            vals['is_reconcile']    = True         
         self.pool.get('sms.transport.fee.challan.lines').write(cr, uid, ids, {
                        'paid_amount':vals['paid_amount'],
                        'discount':vals['discount'],
@@ -783,8 +794,10 @@ class sms_transport_fee_challan_lines(osv.osv):
             'receipt_book_id': fields.many2one('sms.transportfee.challan.book','Transport Challan'),
                 }
     _sql_constraints = [] 
-    _defaults = {}
-    
+    _defaults = {                
+                 'discount':0,
+                 'paid_amount':0,
+                }
 sms_transport_fee_challan_lines()
 
 class sms_session_months(osv.osv):
@@ -840,7 +853,6 @@ class res_company(osv.osv):
     _name = 'res.company'
     _inherit ='res.company'
     _columns = {
-                 'one_on_one':fields.boolean('1 on 1'),
-                 'three_on_one':fields.boolean('3 on 1'),
-                 }
+            'fee_report_type':fields.selection([('One_on_One','One Student Per Page'),('Two_on_One','Two Students Per Page')],'Challan Print Type'),
+                }
 res_company()              
