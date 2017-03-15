@@ -869,7 +869,16 @@ class smsfee_studentfee(osv.osv):
     def onchange_get_amount(self, cr, uid,ids,fee_type):
         cls_fee = self.pool.get('smsfee.classes.fees.lines')
         rec = cls_fee.browse(cr ,uid ,fee_type)
-        return {'value':{'fee_amount':rec.amount}}
+        val = {'fee_amount':rec.amount,'state':'fee_unpaid','date_fee_charged': time.strftime('%Y-%m-%d')}
+        return {'value': val}
+
+    def create(self, cr, uid, vals, context=None, check=True):
+        result = super(osv.osv, self).create(cr, uid, vals, context)
+        if result:
+            rec = self.browse(cr ,uid ,result)
+            if rec.state == False or rec.date_fee_charged == False:
+                self.write(cr ,uid ,result ,{'state':'fee_unpaid','date_fee_charged': time.strftime('%Y-%m-%d')})
+        return result
 
     _name = 'smsfee.studentfee'
     _description = "Stores student fee record"
@@ -2837,7 +2846,8 @@ class smsfee_receive_challan_in_bank(osv.osv):
                                                                                                      })
         if not challan_id:
             raise osv.except_osv(('Define Challans'),('No open challans found'))            
-        self.write(cr ,uid , ids ,{'state':'Receive'})
+        #self.write(cr ,uid , ids ,{'state':'Receive'})
+        self.write(cr ,uid , ids ,{'state':'Verification'})
         return True
     
     def confirm_challan_receive_from_bank(self ,cr ,uid ,ids ,context=None):
@@ -2855,20 +2865,29 @@ class smsfee_receive_challan_in_bank(osv.osv):
             
             #--------------update smsfee.receiptbook.lines--------------------
             receipt_lines_ids = self.pool.get('smsfee.receiptbook.lines').search(cr ,uid , [('receipt_book_id','=',rec.challan_no.id)])
-            self.pool.get('smsfee.receiptbook.lines').write(cr ,uid ,receipt_lines_ids,{
-                                                                                                                         'paid_amount': rec.amount,#+rec.late_fee ,
-                                                                                                                         'discount': 0 ,
-                                                                                                                         'reconcile': True ,
-                                                                                                                         })
+            
+            for i in self.pool.get('smsfee.receiptbook.lines').browse(cr ,uid ,receipt_lines_ids):
+                self.pool.get('smsfee.receiptbook.lines').write(cr ,uid ,i.id,{
+                                                                                             'paid_amount': i.total,#+rec.late_fee ,
+                                                                                             'discount': 0 ,
+                                                                                             'reconcile': True ,
+                                                                                             })
             
             pooler_receiptbook.confirm_fee_received(cr ,uid ,[rec.challan_no.id])
+            
         self.write(cr ,uid , ids ,{'state':'Confirm'})
         return True
+    
+    def send_for_verification(self ,cr ,uid ,ids ,context=None):
+        print "send_for_verification============================="
+        self.write(cr ,uid , ids ,{'state':'Receive'})
+        return True    
+    
     
     _name = 'smsfee.receive.challan.in.bank'
     _columns = {
         'acd_cal':fields.many2many('sms.academiccalendar', 'receive_challan_academiccalendar_rel', 'receive_challan_id', 'academiccalendar_id', 'Class'),
-        'state':fields.selection([('Draft','Draft'),('Receive','Receive'),('Confirm','Confirm')],'State'),
+        'state':fields.selection([('Draft','Draft'),('Receive','Receive'),('Verification','Verification'),('Confirm','Confirm')],'State'),
         'challan_type':fields.selection([('open_challan','Months'),('class_challan','Class')],'Load On' ,required=True),
         'session_month':fields.many2one('sms.session.months','Month'),
         'receive_challan_by_bank':fields.one2many('smsfee.receive.challan.in.bank.lines','parent_id','Challan Received By Bank')

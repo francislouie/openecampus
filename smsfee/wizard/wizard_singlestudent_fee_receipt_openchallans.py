@@ -5,8 +5,9 @@ _logger = logging.getLogger(__name__)
 class class_singlestudent_fee_receipt_openchallans(osv.osv_memory):
     
     def _get_challan(self, cr, uid, ids):
-        obj = self.browse(cr, uid, ids['active_id'])
-        challan_id =  obj.id
+        #obj = self.browse(cr, uid, ids['active_id'])
+        #challan_id =  obj.id
+        challan_id =  None
         return challan_id
     
     _name = "class.singlestudent_fee_receipt_openchallans"

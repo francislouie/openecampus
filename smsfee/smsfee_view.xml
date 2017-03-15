@@ -490,12 +490,13 @@
 -->
 			</group>
 				 <group>
-			<field name="paid_amount" readonly = "1"/>
-			<field name="discount" readonly = "1"/>
-			<field name="net_total" readonly = "1"/>
-			<field name="receipt_no"/>
-			<field name="id" string = "Record#"/>
-		    </group>
+					<field name="fee_month" />
+					<field name="paid_amount" readonly = "1"/>
+					<field name="discount" readonly = "1"/>
+					<field name="net_total" readonly = "1"/>
+					<field name="receipt_no"/>
+					<field name="id" string = "Record#"/>
+			    </group>
 		    </group>
 		    
 		    <group >
@@ -505,9 +506,8 @@
 				<field name="date_fee_paid" readonly = "1"/>
 			</group>
 				 <group>
-			<field name="due_month" readonly = "1"/>
-			<field name="fee_month" readonly = "1"/>
-		    </group>
+					<field name="due_month" readonly = "1"/>
+				</group>
 		    </group>	
 					
 		</sheet>	 	
@@ -1086,7 +1086,10 @@
 	        <header>
 				    <field name="state" widget="statusbar" statusbar_visible="Draft,Receive,Confirm"/>
 					<button name="load_challan_details"  type="object" string="Load Challan Info" states="Draft" class="oe_highlight" groups=""/>
-					<button name="confirm_challan_receive_from_bank"  type="object" string="Confirm" states="Receive" class="oe_highlight" groups=""/>
+
+<button name="send_for_verification"  type="object" string="Verify" states="Verification" class="oe_highlight" groups=""/>
+
+					<button name="confirm_challan_receive_from_bank"  type="object" string="Apply Changes" states="Receive" class="oe_highlight" groups=""/>
 					
 			</header>
 			<group string= "Received challan in bank">

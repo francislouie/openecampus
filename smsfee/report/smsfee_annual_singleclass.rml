@@ -1,8 +1,20 @@
 <?xml version="1.0"?>
 <document filename="test.pdf">
-  <template pageSize="(750.0,950.0)" title="Crossovered Analytic" author="Bahar Ali" allowSplitting="20">
+   <template pageSize="(650.0,750.0)" title="Crossovered Analytic" author="Inovtec" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="28.0" y1="28.0" width="570" height="786"/>
+      <frame id="first" x1="75.0" y1="20.0" width="470" height="600"/>
+
+     <header>
+        <pageGraphics>
+           	<!-- Header -->			
+			<setFont name="Helvetica-Bold" size="19" />
+            <image x="10" y="640" height="100.0" width="100.0">[[company.logo]]</image>
+			<setFont name="Helvetica" size="7"/>
+           	<drawString x="12" y="20">Prepared By: [[ get_user_name(data['form'])]]</drawString>
+           	<drawString x="500" y="20">Date:  [[ get_today(data['form'])]]</drawString>
+        </pageGraphics>
+     </header>
+
     </pageTemplate>
   </template>
   <stylesheet>
@@ -66,25 +78,6 @@
   	<tr><td></td></tr>  
 	</blockTable>
 	
-	<blockTable colWidths="200.0, 450.0" style="Table1">
-  	<tr><td>
-
-  	<blockTable colWidths="100.0,100.0" repeatRows="1" style="Tablemini">
-		<tr>
-		<td><para style="Caption">Grand Total:</para></td>
-		<td><para style="para_heading">[[ r['total'] ]]</para></td>
-		</tr>
-		<tr>
-		<td><para style="Caption">Prepared By:</para></td>
-		<td><para style="Caption">[[ get_user_name(data['form'])]]</para></td>
-		</tr>
-
-	</blockTable>
-	</td>
-	<td></td>
-	</tr> 
-	</blockTable>  
-	
   	<blockTable colWidths="600" style="Table1">
   	<tr><td><para style="para_title"></para></td></tr>
 	<tr><td><para style="para_title"></para></td></tr>
@@ -107,10 +100,6 @@
 		    </blockTable>
 		</td>
 	</tr>
-	<tr><td><para style="Caption">. </para></td></tr>
-	<tr><td><para style="para_heading3">Grand Total: [[ r['gtotal'] ]]/-</para></td></tr>
-	<tr><td><para style="Caption">Prepard By: [[ get_user_name(data['form'])]] </para></td></tr>
-	<tr><td><para style="Caption">Date: [[ get_today(data['form'])]]</para></td></tr>
     </blockTable>
       
     </section>
