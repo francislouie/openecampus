@@ -81,7 +81,7 @@
             model="smsfee.classfees.register"
             name="smsfee_print_one_student_per_page"
             multi="True"
-            rml="smsfee/report/smsfee_unpaid_receipts_report_1o1_classwise.rml"
+            rml="smsfee/report/smsfee_unpaid_receipts_report_1o1.rml"
             string="Fee Receipts (Unpaid)"
             />   
 

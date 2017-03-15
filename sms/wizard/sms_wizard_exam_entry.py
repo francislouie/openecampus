@@ -3,20 +3,28 @@ import datetime
 
 class exam_entry(osv.osv_memory):
 
+    def onchange_set_domain(self, cr, uid, ids, exam_type,academiccalendar_id):
+        existing_subject_id = []
+
+        if (academiccalendar_id != False) and (exam_type != False):
+            exam_dt_rec = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,exam_type)
+            existing_subject_id = [x.subject.id for x in exam_dt_rec.datesheet_lines]
+        
+        return {'domain': {'exam_type':[('academiccalendar','=',academiccalendar_id),('status','=','Active')],
+                           'subject_id':[('id','in',existing_subject_id)]   }
+                }
+        
+        
     _name = "exam.entry"
     _description = "Timetable Entry"
     _columns = {
                 'academiccalendar_id': fields.many2one('sms.academiccalendar','Select Class', domain="[('state','=','Active')]", required=True),
-                'exam_type': fields.many2one('sms.exam.datesheet','Exam Type', required=True, domain="[('academiccalendar','=',academiccalendar_id),('status','=','Active')]"),
+                'exam_type': fields.many2one('sms.exam.datesheet','Exam Type', required=True),
                 'subject_id': fields.many2one('sms.academiccalendar.subjects','Subject', domain="[('academic_calendar','=',academiccalendar_id)]", required=True),
               }
     _defaults = {
            }
     
-    def onchange_academiccalendar(self, cr, uid, ids, context=None):
-        result = {}
-        return 
-
     def exam_entry(self, cr, uid, ids, context=None):
         current_obj = self.browse(cr, uid, ids, context=context)
         

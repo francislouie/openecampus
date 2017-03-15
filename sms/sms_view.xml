@@ -2288,7 +2288,7 @@
 			<notebook>
                 <page string= "Paper Dates">
 				<group string="">									<!-- op -->
-					<field name="datesheet_lines" nolabel = "1" context="{'academiccalendar': active_id}" />
+					<field name="datesheet_lines" nolabel = "1" context="{'name': active_id}" />
 				</group>  
 			   </page>
 			   </notebook>
@@ -2337,8 +2337,7 @@
       <field name="type">form</field>
       <field name="arch" type="xml">
         <form string="Papers Dates">
-          <field name="name"/>
-		  <field name="academiccalendar"   on_change="set_domain(academiccalendar)"   invisible="1"/>
+          <field name="name"  on_change="set_domain(name)" />
 		  <field name="subject"/>
  		  <field name="paper_date"/>
 		  <field name="invigilator"/>	
@@ -2353,8 +2352,7 @@
       <field name="type">tree</field>
       <field name="arch" type="xml">
         <tree editable="top" string="Papers Dates" >
-          <field name="name" />
-		  <field name="academiccalendar"   on_change="set_domain(academiccalendar)"  invisible="1"/>
+          <field name="name" on_change="set_domain(name)" />
 		  <field name="subject" />
  		  <field name="paper_date"/>
 		  <field name="invigilator"/>	
