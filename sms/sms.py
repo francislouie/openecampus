@@ -4855,4 +4855,44 @@ class project_transactional_log(osv.osv):
 
 project_transactional_log()
 
+
+class sms_transfer_in(osv.osv):
+
+    _order = 'id desc'
+    _name = "sms.transfer.in"
+    _description = "maintains info about students tranfer in"
+    _columns = {
+        'branch_name': fields.char('Branch Name',size=300),
+        'address': fields.char('Address'),
+        'phone': fields.char('Phone'),
+        'cell_no': fields.char('Cell No'),
+        'email':fields.char('Email'),
+        'fax':fields.char('Fax'),
+        'institute_head':fields.many2one('res.users','Head Of The Institute'),
+        'printcipal_name':fields.many2one('res.users','Printcipal Name'),
+    }
+    _defaults = {}    
+    _sql_constraints = []
+
+sms_transfer_in()
+
+
+class sms_transfer_in_out(osv.osv):
+
+    _order = 'id desc'
+    _name = "sms.transfer.in.out"
+    _description = "maintains info about students tranfer in out"
+    _columns = {
+        'transfer_mode':fields.selection([('transfer_in','Transfer In'),('transfer_out','Transfer Out')],'Transfer Mode',required = True),
+        'Transfer_no': fields.char('Transfer No'),
+        'student_id': fields.many2one('sms.student','Student Name'),
+        'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type',required = True),
+        'acd_cal': fields.many2one('sms.academiccalendar','Student Class'),
+        'allow_defaulter_student': fields.boolean('Allow Defaulter Student'),
+    }
+    _defaults = {}    
+    _sql_constraints = []
+
+sms_transfer_in_out()
+
     

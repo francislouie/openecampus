@@ -68,6 +68,7 @@
   	<tr><td></td></tr>  
 	</blockTable>
 
+<!--
 	<blockTable colWidths="150.0, 450.0" style="Table1">
   	<tr><td>
 
@@ -85,7 +86,7 @@
 	<td></td>
 	</tr> 
 	</blockTable>
-
+-->
 	<blockTable colWidths="600" style="Table1">
   	<tr><td><para style="Heading">Defaulter List</para></td></tr>
 	<tr><td><para style="Heading">[[get_class_name(data['form'])]]</para></td></tr>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Fee Reports -->
+
+        <record id="view_student_feetype_list" model="ir.ui.view">
+            <field name="name">student.feetype.list.form</field>
+            <field name="model">student.feetype.list</field>
+            <field name="arch" type="xml">
+                <form string="Student Fee Type List" version="7.0" height="250" >
+                    <group>
+						<group col="6" String = "" >
+							 <field name="report_type" />
+							 <field name="session" />
+							 <newline/>
+							 <field name="acd_cal" widget="many2many_tags"/>
+
+<field name="fee_type" widget="many2many_tags" />
+
+					    </group>
+							 
+	                    </group>
+                     
+                     <footer>
+                        <button string="Print" name="print_fee_report_challan" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+           </field>
+          </record>
+
+  <!-- action Fee Reports-->
+
+        <record id="action_student_feetype_list" model="ir.actions.act_window">
+            <field name="name">Student FeeTypes List</field>
+            <field name="res_model">student.feetype.list</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_student_feetype_list"/>
+           <field name="target">new</field>
+        </record>
+</data>
+</openerp>

@@ -20,8 +20,10 @@
 	<menuitem id="menu_fee_revision_id"  parent="menu_fee_seting_head_id" sequence="1" groups="sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager" action="action_annual_fee_revision"/>
 	<menuitem id="menu_paid_unpaid_adjustments"  parent="menu_fee_head_id" sequence="6" groups="sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager" action="action_smsfee_paid_unpaid_adjustments"/>
 
-<!-- #$$$$ -->
+<!-- ********** REcieve Challan Bulk ************* -->
 	<menuitem id="menu_smsfee_receive_challan_in_bank_id" parent="menu_fee_challans_id" sequence="7" groups="sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin" action="action_smsfee_receive_challan_in_bank"/>
+<!-- ****************** Wizard std fee types list ******************** -->
+    <menuitem id="menu_student_feetype_list_wizard" parent="menu_fee_head_id" action="action_student_feetype_list" sequence="" groups="" />
 
 
 </data>

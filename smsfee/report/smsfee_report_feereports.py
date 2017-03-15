@@ -677,7 +677,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                     j = j +1
                 
                 sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
-                    AND acad_cal_id not in """+str(session_months_ids)+"""
+                    AND acad_cal_id not in """+str(tuple(session_months_ids))+"""
                     AND student_id = """+str(stdid)
                 self.cr.execute(sql)
                 others = self.cr.fetchone()[0]
