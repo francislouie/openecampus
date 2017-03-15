@@ -28,6 +28,9 @@
 	<menuitem id="menu_sms_student_subject_assignment_wizard" parent="administrative_tasks_id" sequence="" groups="" action="action_view_sms_student_subject_assignment_wizard"/>
 	<menuitem id="menu_sms_student_subject_removal_wizard" parent="administrative_tasks_id" sequence="" groups="" action="action_view_sms_student_subject_removal_wizard"/>
 	<menuitem id="menu_sms_change_std_class_id" parent="administrative_tasks_id" sequence="" groups="" action="action_sms_student_change_class"/>
+	<!-- Class Subjects -->
+    <menuitem id="class_subject_id"  parent="menu_academic_calendar_more" sequence="4" groups="group_sms_admin" action="action_view_sms_class_subject_list_wizard"/>
+
 
 	<!--Students-->
 	<menuitem id="menu_sms_id_students" name="Students" parent="sms.menu_sms_root" sequence="1" groups="group_sms_principal,group_sms_principal,group_sms_director,group_sms_fee_officer,group_sms_admin,group_sms_officer,group_sms_director,group_sms_admission_manager,group_sms_admin,group_sms_admission_manager,group_sms_officer"/>

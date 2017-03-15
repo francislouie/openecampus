@@ -2,7 +2,20 @@
 <document filename="test.pdf">
   <template pageSize="(750.0,900.0)" title="Test" author="BaharAli" allowSplitting="20">
 	<pageTemplate id="first">
-    	<frame id="first" x1="20.0" y1="28.0" width="670" height="986"/>
+    	<frame id="first" x1="15.0" y1="10.0" width="670" height="766"/>
+
+     <header>
+        <pageGraphics>
+           	<!-- Header -->			
+			<setFont name="Helvetica-Bold" size="19" />
+            <image x="15" y="789" height="100.0" width="100.0">[[company.logo]]</image>
+			<setFont name="Helvetica" size="7"/>
+           	<drawString x="12" y="20">Prepared By: [[ get_user_name(data['form'])]]</drawString>
+           	<drawString x="570" y="20">Date:  [[ get_today(data['form'])]]</drawString>
+        </pageGraphics>
+     </header>
+
+
     </pageTemplate>
   	</template>
   	<stylesheet>
@@ -58,7 +71,7 @@
     <paraStyle name="P8" fontName="Times-Roman" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="ParaWhite" fontName="Helvetica" fontSize="9.0" leading="18" alignment="CENTER"  spaceBefore="0.0" spaceAfter="0.0" textColor="#FFFFFF"/>
     <paraStyle name="Standard" fontName="Times-Roman"/>
-    <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Heading" fontName="Helvetica" fontSize="12.0" leading="17" spaceBefore="12.0" spaceAfter="6.0" alignment="CENTER" />
     <paraStyle name="Text body" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
     <paraStyle name="List" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
     <paraStyle name="Caption" fontName="Times-Roman" fontSize="12.0" leading="15" spaceBefore="6.0" spaceAfter="6.0"/>
@@ -70,23 +83,20 @@
     <paraStyle name="terp_default_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="terp_default_9" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="terp_default_9_italic" fontName="Helvetica-Oblique" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+	<paraStyle name="para_title" fontName="Helvetica" fontSize="12.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+
     <images/>
   </stylesheet>
   <story>
      
     	 <blockTable colWidths="610" repeatRows="2" style="Table1">
-		  	<tr><td><para style="para_title"></para></td></tr>
-			<tr><td><para style="para_title"></para></td></tr>
 			<tr><td><para style="para_title">Fee Collection Report</para></td></tr>
 			<tr><td><para style="para_title">[[ get_class_name(data['form'])]]</para></td></tr>
 			<tr><td><para style="para_title"></para></td></tr>
-		   	<tr><td></td></tr>
-		    <tr><td></td></tr>
-			<tr><td><para style="para_heading3">Grand Total: </para></td></tr>
 	    </blockTable>
 
     <section>
-   	<blockTable colWidths="30.0,95.0,57.0,34.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0,30.0" repeatRows="1" style="Table_maintable">
+   	<blockTable colWidths="30.0,95.0,57.0,44.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0" repeatRows="1" style="Table_maintable">
       <para style="para_1">[[ repeatIn(students_paidfee_report('Form'),'r') ]]</para>
       <tr>
 		<td><para style="para_heading2">[[ r['sno'] ]]</para></td>
