@@ -1430,6 +1430,7 @@ class sms_academiccalendar(osv.osv):
 
     _name = 'sms.academiccalendar'
     _description = "Crates new class in a new session."
+    _order = 'class_id'
     _columns = {
         'name':  fields.function(set_class_name, method=True, store = True ,string='Class',type='char'), 
         'acad_session_id': fields.many2one('sms.academics.session', 'Academic Session',domain="[('state','!=','Closed')]",required=True),
