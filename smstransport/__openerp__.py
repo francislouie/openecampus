@@ -14,7 +14,7 @@
              'wizard/wizard_singlestudent_unpaidftransportee_receipt.xml',
              'smstransport_view.xml',
              'smstransport_report.xml',
-             'smstransport_menus.xml',],
+             ],
     'demo': [],
     'installable': True,
     'application': True,
