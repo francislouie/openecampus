@@ -3157,10 +3157,15 @@ class sms_exam_offered(osv.osv):
                                                             'status':'Active'})
         else:
             raise osv.except_osv(('Cannot Start Exam'),('No Active class found for this exam, You have either all clesses in Draft State,OR you didnot create classes for this session'))
+        
+        #. create log
+        state = rec[0].state 
+        dict={'state':'Active'}
+        self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_offered','Start exam',state)        
+        
         return True
     
     def close_exam(self, cr, uid, ids, *args):
-        
         rec = self.browse(cr,uid,ids)
         #1.find all classes in this exam to close
         
@@ -3182,7 +3187,9 @@ class sms_exam_offered(osv.osv):
                 #4 close all classes in tis exam
                 close_classes_exam = self.pool.get('sms.exam.datesheet').close_exam_class(cr,uid,ds.id)
         #5 close offered exam
+        #6 create log
         self.write(cr, uid, ids, {'state':'Closed','start_date':None})
+        #7. create log
         dict={'state':'Closed'}  
         self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_offered','Close exam',state)
         return True
@@ -3322,6 +3329,13 @@ class sms_exam_datesheet_lines(osv.osv):
         return None
     def unlink(self, cr, uid, ids, context={}, check=True):
         print "@@@@@exam datesheet lines@@@@",ids,context
+        
+        rec = self.browse(cr ,uid ,ids)[0]
+        exam_def_lines = self.pool.get('sms.exam.default.lines').search(cr ,uid ,[('exam_type','=',rec.name.id)])
+        exam_def = self.pool.get('sms.exam.default').search(cr ,uid ,[('exam_lines','in',exam_def_lines),('subject_id','=',rec.subject.id)])
+        if exam_def:
+            raise osv.except_osv(('Deletion Denied'),('The subject that you want to delete have exam entry.'))
+        
         result = super(osv.osv, self).unlink(cr, uid, ids, context=context)
         return result
     
@@ -3333,17 +3347,22 @@ class sms_exam_datesheet_lines(osv.osv):
         return result
 
     #<!-- op -->
-    def set_domain(self, cr, uid, ids, academiccalendar, context=None):
-        print "onchamge domain"
-        rec = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,academiccalendar)
-        return  {'domain': {'subject': [('academic_calendar', '=', rec.academiccalendar.id)],'name':[('id','=',academiccalendar)]}}  
+    def set_domain(self, cr, uid, ids, name, context=None):
+        rec = self.browse(cr ,uid ,ids)
+        
+        parent_rec = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,name)
+        existing_subjs = [x.subject.id for x in parent_rec.datesheet_lines]
+            
+        acd_cal_rec = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,name)
+        return  {'domain': {'subject': [('academic_calendar', '=', acd_cal_rec.academiccalendar.id),('id','not in',existing_subjs)],'name':[('id','=',name)]},
+                 'value':{'name':name}
+                 }  
         
     _name= "sms.exam.datesheet.lines"
     _descpription = "Stores exam date sheets paper and date"
     _columns = { 
         'name': fields.many2one('sms.exam.datesheet', 'Date Sheet',required=True),
          #<!-- op -->
-        'academiccalendar':fields.integer('Class',readonly = True),
         'subject': fields.many2one('sms.academiccalendar.subjects', 'Subject',required=True),
         'total_marks': fields.integer('Total Marks'),
         'paper_date': fields.date('Date'),
@@ -3353,7 +3372,7 @@ class sms_exam_datesheet_lines(osv.osv):
     
     _defaults = {
         'total_marks': lambda *a: 100,
-        'academiccalendar': lambda self, cr, uid, context: context.get('academiccalendar', False), 
+        'name': lambda self, cr, uid, context: context.get('name', False), 
     }
     
     def write(self, cr, uid, ids, vals, context=None):

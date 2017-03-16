@@ -25,6 +25,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             'annual_defaulter_report_singleclass':self.annual_defaulter_report_singleclass,
             'monthly_feestructure_collections_allclasses': self.monthly_feestructure_collections_allclasses,
             'get_grand_total':self.get_grand_total,
+            'cal_grand_total':self.cal_grand_total,
         })
         self.base_amount = 0.00
     
@@ -120,7 +121,23 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         
             #mydict['m1'] = '{0:,d}'.format(int(m1total))
         result.append(mydict_total)
+        print "cal_grand_sum",self.cal_grand_total(result)
         return result
+    
+    
+    def cal_grand_total(self,result):
+        res = []
+        print len(result),"result=============",result 
+        #mydict = {'sno':'SNO','class':'Class','m1':'','m2':'','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','total':'','gtotal':''}
+        mydict = {}
+        grand_sum = len(result)-1
+        for key,val in result[grand_sum].iteritems():
+            print key,"***********",val
+            mydict[key] = val
+        print "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$"
+        print "^^^^^^^^^^^^",mydict
+        res.append(mydict)
+        return 
     
     def annual_report_singleclass(self, data):                                                         
         result = []
