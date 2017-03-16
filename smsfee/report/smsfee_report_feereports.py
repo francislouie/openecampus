@@ -677,7 +677,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                     j = j +1
                 
                 sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
-                    AND acad_cal_id not in """+str(session_months_ids)+"""
+                    AND acad_cal_id not in """+str(tuple(session_months_ids))+"""
                     AND student_id = """+str(stdid)
                 self.cr.execute(sql)
                 others = self.cr.fetchone()[0]
@@ -778,6 +778,10 @@ report_sxw.report_sxw('report.smsfee_defaulter_studnent_list_name', 'smsfee.clas
 
 report_sxw.report_sxw('report.smsfee.dailyfee.report.name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_dailyfee_report.rml',parser = smsfee_report_feereports, header='external')
 report_sxw.report_sxw('report.smsfee.paidfee.receipt.name', 'smsfee.receiptbook', 'addons/smsfee/print_paid_receipt_individual.rml',parser = smsfee_report_feereports, header='external')
+
+report_sxw.report_sxw('report.smsfee.student.fee.type.list', 'smsfee.studentfee',
+                       'addons/smsfee/smsfee_feetypes_list_report.rml',parser = smsfee_report_feereports, header='external')
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 
