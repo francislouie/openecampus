@@ -3270,6 +3270,123 @@
             <field name="search_view_id" ref="view_project_transactional_log_search"/>
         </record>
 <!--END -->
+
+<!-- ************** sms_transfer_in ************* -->
+		<record model="ir.ui.view" id="view_sms_transfer_in_form">
+         <field name="name">sms.transfer.in.form</field>
+         <field name="model">sms.transfer.in</field>
+         <field name="arch" type="xml">
+            <form string="Transfer In" version="7.0">
+				<group>
+                  <group string="Student Transferring In"  col="4" colspan="4">
+			          <field name="branch_name"/>
+			          <field name="address"  />
+					  <field name="phone"/>
+					  <field name="cell_no"/>
+			          <field name="email"/>
+			          <field name="fax"  />
+					  <field name="institute_head"/>
+					  <field name="printcipal_name"/>
+                  </group>
+				</group>  
+			  </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_sms_transfer_in_tree">
+            <field name="name">sms.transfer.in.tree</field>
+            <field name="model">sms.transfer.in</field>
+            <field name="arch" type="xml">
+                <tree string="Transactional Log">
+			          <field name="branch_name"/>
+			          <field name="address"  />
+					  <field name="phone"/>
+					  <field name="cell_no"/>
+			          <field name="email"/>
+			          <field name="fax"  />
+					  <field name="institute_head"/>
+					  <field name="printcipal_name"/>
+                </tree>
+            </field>
+        </record>
+<!--
+        <record id="view_sms_transfer_in_search" model="ir.ui.view">
+            <field name="name">sms.transfer.in.search</field>
+            <field name="model">sms.transfer.in</field>
+            <field name="arch" type="xml">
+                <search string="Search Students Transfer In">
+                    <field name="object_name" string="Transfer In"/>
+                </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_sms_transfer_in">
+            <field name="name">Students Transfer In</field>
+            <field name="res_model">sms.transfer.in</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+            <field name="context">{'search_default_draft': 1}</field>
+            <field name="search_view_id" ref="view_sms_transfer_in_search"/>
+        </record>
+
+ Transactional Log -->
+
+        <record model="ir.actions.act_window" id="action_sms_transfer_in">
+            <field name="name">Students Transfer In</field>
+            <field name="res_model">sms.transfer.in</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+<!-- ************** sms_transfer_in_out ************* -->
+
+		<record model="ir.ui.view" id="view_sms_transfer_in_out_form">
+         <field name="name">sms.transfer.in.out.form</field>
+         <field name="model">sms.transfer.in.out</field>
+         <field name="arch" type="xml">
+            <form string="Transfer In Out" version="7.0">
+				<group>
+                  <group string="Student Transferring In Out"  col="4" colspan="4">
+			          <field name="transfer_mode"/>
+			          <field name="Transfer_no"  />
+					  <field name="transfer_type"/>
+					  <field name="allow_defaulter_student"  />
+					  <field name="acd_cal"/>
+			          <field name="student_id"  attrs="{'invisible':[('transfer_mode','!=','transfer_out')]}" />
+			          
+                  </group>
+				</group>  
+			  </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_sms_transfer_in_out_tree">
+            <field name="name">sms.transfer.in.out.tree</field>
+            <field name="model">sms.transfer.in.out</field>
+            <field name="arch" type="xml">
+                <tree string="Transactional Log">
+			          <field name="transfer_mode"/>
+			          <field name="Transfer_no"  />
+					  <field name="transfer_type"/>
+					  <field name="student_id"/>
+			          <field name="acd_cal"/>
+			          <field name="allow_defaulter_student"  />
+                </tree>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="action_sms_transfer_in_out">
+            <field name="name">Students Transfer In Out</field>
+            <field name="res_model">sms.transfer.in.out</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+
      
 	</data>
 </openerp>

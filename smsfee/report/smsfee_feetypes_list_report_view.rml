@@ -1,8 +1,20 @@
 <?xml version="1.0"?>
 <document filename="test.pdf">
-   <template pageSize="(700.0,920.0)" title="Crossovered Analytic" author="Inovtec" allowSplitting="20">
+   <template pageSize="(750.0,950.0)" title="Crossovered Analytic" author="Inovtec" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="28.0" y1="28.0" width="570" height="786"/>
+      <frame id="first" x1="45.0" y1="20.0" width="570" height="800"/>
+
+     <header>
+        <pageGraphics>
+           	<!-- Header -->			
+			<setFont name="Helvetica-Bold" size="19" />
+            <image x="10" y="840" height="100.0" width="100.0">[[company.logo]]</image>
+			<setFont name="Helvetica" size="7"/>
+           	<drawString x="12" y="20">Prepared By: [[ get_user_name(data['form'])]]</drawString>
+           	<drawString x="600" y="20">Date:  [[ get_today(data['form'])]]</drawString>
+        </pageGraphics>
+     </header>
+
     </pageTemplate>
   </template>
   <stylesheet>
@@ -15,9 +27,17 @@
     <blockAlignment value="LEFT"/>
     <blockValign value="TOP"/>
 	<blockTopPadding length="0.0" start="0,0" stop="-1,-1"/>
-    <blockBottomPadding length="0.0" start="0,0" stop="-1,-1"/>
-   
+    <blockBottomPadding length="0.0" start="0,0" stop="-1,-1"/>   
 	</blockTableStyle>
+
+    <blockTableStyle id="Table11">
+    <blockAlignment value="LEFT"/>
+    <blockValign value="TOP"/>
+	<blockTopPadding length="0.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="0.0" start="0,0" stop="-1,-1"/>   
+	<lineStyle kind="GRID" colorName="#FFFFFF" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+
     
     <blockTableStyle id="Table2">
     <blockAlignment value="LEFT"/>
@@ -26,7 +46,7 @@
     <blockBottomPadding length="2.0" start="0,0" stop="-1,-1"/>
     <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
 	</blockTableStyle>
-
+    
     <blockTableStyle id="Tablemini">
     <blockAlignment value="LEFT"/>
     <blockValign value="TOP"/>
@@ -34,7 +54,7 @@
     <blockBottomPadding length="2.0" start="0,0" stop="-1,-1"/>
     <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
 	</blockTableStyle>
-    
+
     <initialize>
       <paraStyle name="all" alignment="justify"/>
     </initialize>
@@ -64,62 +84,8 @@
   <pto>
   <section>
 
-	<blockTable colWidths="500" style="Table1">
-  	<tr><td></td></tr>  
-	</blockTable>
+<para> [[ get_today(data['form'])]] </para>
 
-<!--
-	<blockTable colWidths="150.0, 450.0" style="Table1">
-  	<tr><td>
-
-  	<blockTable colWidths="100.0,100.0" repeatRows="1" style="Tablemini">
-		<tr>
-		<td><para style="Caption">Grand Total:</para></td>
-		<td><para style="para_heading">[[ r['gtotal'] ]]</para></td>
-		</tr>
-		<tr>
-		<td><para style="Caption">Prepared By:</para></td>
-		<td><para style="Caption">[[ get_user_name(data['form'])]]</para></td>
-		</tr>
-	</blockTable>
-	</td>
-	<td></td>
-	</tr> 
-	</blockTable>
--->
-	<blockTable colWidths="600" style="Table1">
-  	<tr><td><para style="Heading">Defaulter List</para></td></tr>
-	<tr><td><para style="Heading">[[get_class_name(data['form'])]]</para></td></tr>
-   	<tr><td><para style="para_1">[[ repeatIn(annual_defaulter_report_singleclass('Form'),'r') ]]</para>
-		   	<blockTable colWidths="21.0,80.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,42.0,34.0,34.0" repeatRows="1" style="Table2">
-		      <tr>
-				<td><para style="para_heading">[[ r['sno'] ]]</para></td>
-		        <td><para style="para_heading1">[[ r['name'] ]]</para></td>
-		        <td><para style="para_heading">[[ r['m1'] ]]</para></td>
-		        <td><para style="para_heading">[[ r['m2'] ]]</para></td>
-		        <td><para style="para_heading">[[ r['m3'] ]]</para></td>
-		        <td><para style="para_heading">[[ r['m4'] ]]</para></td>
-		        <td><para style="para_heading">[[ r['m5'] ]]</para></td>
-		        <td><para style="para_heading">[[ r['m6'] ]]</para></td>
-				<td><para style="para_heading">[[ r['m7'] ]]</para></td>
-				<td><para style="para_heading">[[ r['m8'] ]]</para></td>
-		        <td><para style="para_heading">[[ r['m9'] ]]</para></td>
-				<td><para style="para_heading">[[ r['m10'] ]]</para></td>
-				<td><para style="para_heading">[[ r['m11'] ]]</para></td>
-				<td><para style="para_heading">[[ r['m12'] ]]</para></td>
-				<td><para style="para_heading">[[ r['session_total'] ]]</para></td>
-				<td><para style="para_heading">[[ r['other'] ]]</para></td>
-		        <td><para style="para_heading">[[ r['total'] ]]</para></td>
-		      </tr>
-		    </blockTable>
-		</td>
-	</tr>
-	<tr><td><para style="white">.</para></td></tr>
-	<tr><td><para style="para_heading3">Grand Total: [[ r['gtotal'] ]]/-</para></td></tr>
-	<tr><td><para style="Caption">Prepared By: [[ get_user_name(data['form'])]]</para></td></tr>
-	<tr><td><para style="Caption">Date:  [[ get_today(data['form'])]]</para></td></tr>
-    </blockTable>
-      
     </section>
     </pto>
   </story>

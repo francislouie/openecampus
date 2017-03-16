@@ -16,23 +16,21 @@ class sms_report_class_subject_list(report_sxw.rml_parse):
     def print_form(self, data):
         result = []
         form = data['form']
-  #      print form['session'][1],"**************",form['session']
- #       print data,"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&",form
         _pooler = self.pool.get('sms.academiccalendar')
-        acd_cal_ids = _pooler.search(self.cr ,self.uid ,[('acad_session_id','=',form['session'][1])])
-#        print "acd_cal=========",acd_cal_ids
+        
+        if form['selection_type'] == 'class_wise':
+            acd_cal_ids = _pooler.search(self.cr ,self.uid ,[('id','in',data['form']['acd_cal'])])
+        else:
+            acd_cal_ids = _pooler.search(self.cr ,self.uid ,[('acad_session_id','=',form['session'][1])])
         
         outer_counter = 1
         for acd_cal in _pooler.browse(self.cr ,self.uid ,acd_cal_ids):
-            print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
-            print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
-            print acd_cal.name,"====std===",len(acd_cal.acad_cal_students)
+#            print acd_cal.name,"====std===",len(acd_cal.acad_cal_students)
             my_dict = {'outer_counter':'','acd_cal':'','tlt_student':'','subject_detail':''}
-            
             my_dict['outer_counter'] = outer_counter
             my_dict['acd_cal'] = acd_cal.name
             my_dict['tlt_student'] = len(acd_cal.acad_cal_students)
-             
+            
             res = []
             s_no = 1
             for subj in acd_cal.assigned_subjects:
@@ -43,10 +41,7 @@ class sms_report_class_subject_list(report_sxw.rml_parse):
                 #print "acd_cal_std_ids==========",acd_cal_std_ids
                 std_sub = self.pool.get('sms.student.subject').search(self.cr ,self.uid ,[('student','in',acd_cal_std_ids),
                                                                                           ('subject','=',subj.id)])
-                print "==============",len(std_sub)
-                
-                
-                
+ #               print "==============",len(std_sub)
                 inner_dict['s_no'] = s_no
                 inner_dict['subj'] = subj.name 
                 inner_dict['mode'] = subj.offered_as

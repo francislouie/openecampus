@@ -18,6 +18,7 @@
              'wizard/wizard_student_fee_collect.xml',
              'wizard/wizard_singlestudent_fee_receipt_openchallans.xml',
              'wizard/wizard_student_advancefee_collect.xml',
+             #'wizard/smsfee_wizard_student_feetype_list_view.xml',
              'smsfee_report.xml',
              'smsfee_view.xml',
              'smsfee_menus.xml',
