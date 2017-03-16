@@ -22,9 +22,9 @@
 
 <!-- ********** REcieve Challan Bulk ************* -->
 	<menuitem id="menu_smsfee_receive_challan_in_bank_id" parent="menu_fee_challans_id" sequence="7" groups="sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin" action="action_smsfee_receive_challan_in_bank"/>
-<!-- ****************** Wizard std fee types list ******************** -->
+<!-- ****************** Wizard std fee types list ******************** 
     <menuitem id="menu_student_feetype_list_wizard" parent="menu_fee_head_id" action="action_student_feetype_list" sequence="" groups="" />
-
+-->
 
 </data>
 </openerp>

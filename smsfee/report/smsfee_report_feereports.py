@@ -779,5 +779,9 @@ report_sxw.report_sxw('report.smsfee_defaulter_studnent_list_name', 'smsfee.clas
 report_sxw.report_sxw('report.smsfee.dailyfee.report.name', 'smsfee.classfees.register', 'addons/smsfee/smsfee_dailyfee_report.rml',parser = smsfee_report_feereports, header='external')
 report_sxw.report_sxw('report.smsfee.paidfee.receipt.name', 'smsfee.receiptbook', 'addons/smsfee/print_paid_receipt_individual.rml',parser = smsfee_report_feereports, header='external')
 
+report_sxw.report_sxw('report.smsfee.student.fee.type.list', 'smsfee.studentfee',
+                       'addons/smsfee/smsfee_feetypes_list_report.rml',parser = smsfee_report_feereports, header='external')
+
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

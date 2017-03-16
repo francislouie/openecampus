@@ -26,7 +26,7 @@ class smsfee_wizard_student_feetype_list(osv.osv_memory):
         else:
             thisform = self.read(cr, uid, ids)[0]
             self.create_unpaid_challans(cr, uid, thisform['class_id'])
-            report = 'smsfee_print_one_student_per_page'        
+            report = 'smsfee.student.fee.type.list'        
             datas = {
                  'ids': [],
                  'active_ids': '',

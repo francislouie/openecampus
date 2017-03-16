@@ -7,4 +7,4 @@ import wizard_singlestudent_unpaidfee_receipt
 import wizard_student_fee_collect
 import wizard_singlestudent_fee_receipt_openchallans
 import wizard_student_advancefee_collect
-import smsfee_wizard_student_feetype_list
+#import smsfee_wizard_student_feetype_list
