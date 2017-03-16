@@ -3109,7 +3109,7 @@
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="action_sms_calander_week">
+        <record model="ir.actions.act_window" id="action_sms_calander_week1">
             <field name="name">Calander Week</field>
             <field name="res_model">sms.calander.week</field>
             <field name="type">ir.actions.act_window</field>

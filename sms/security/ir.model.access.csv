@@ -1,8 +1,6 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
 "1","sms.session","model_sms_session","group_sms_admin",1,1,1,1
-
 "2","sms.class.section","model_sms_class_section","group_sms_admin",1,1,1,1
-
 "3","sms.subject","model_sms_subject","group_sms_admin",1,1,1,1
 "3","sms.subject","model_sms_subject","group_sms_director",1,1,1,1
 "4","sms.classes","model_sms_classes","group_sms_admin",1,1,1,1
@@ -181,7 +179,15 @@
 "178","sms.exam","model_sms_exam","group_sms_director",1,1,1,0
 "179","base.res.partner","model_res_partner","group_sms_director",1,1,1,0
 "180","sms.session","model_sms_session","group_sms_director",1,1,1,1
+"181","sms.calander.week","model_sms_calander_week","group_sms_director",1,1,1,1
+"181","sms.calander.week.lines","model_sms_calander_week_lines","group_sms_director",1,1,1,1
+"182","project.transactional.log","model_project_transactional_log","group_sms_director",1,0,1,0
 
+"183","sms.classes","model_sms_classes","group_sms_director",1,1,1,1
+"184","sms.session","model_sms_session","group_sms_director",1,1,0,0
+"185","sms.group","model_sms_group","group_sms_director",1,1,1,1
+"186","sms.class.section","model_sms_class_section","group_sms_director",1,1,1,1
+"187","sms.subject","model_sms_subject","group_sms_director",1,1,1,1
 
 
 

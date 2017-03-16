@@ -34,7 +34,7 @@
 	<!--Students-->
 	<menuitem id="menu_sms_id_students" name="Students" parent="sms.menu_sms_root" sequence="1" groups="group_sms_principal,group_sms_principal,group_sms_director,group_sms_fee_officer,group_sms_admin,group_sms_officer,group_sms_director,group_sms_admission_manager,group_sms_admin,group_sms_admission_manager,group_sms_officer"/>
 	<menuitem id="menu_action_student" parent="menu_sms_id_students" sequence="" groups="group_sms_admin,group_sms_officer,group_sms_director,group_sms_admission_manager" action="action_student_admitted"/>
-	<menuitem id="menu_action_studentslist" parent="menu_sms_id_students" sequence="3" groups="group_sms_admin,group_sms_officer,group_sms_admission_manager" action="action_studentlist"/>
+	<menuitem id="menu_action_studentslist" parent="menu_sms_id_students" sequence="3" groups="group_sms_director,group_sms_admin,group_sms_officer,group_sms_admission_manager" action="action_studentlist"/>
 	<!--<menuitem id="menu_action_assign_relation" parent="menu_sms_id_students" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_sms_assign_relation"/>-->
 	
 	<!--Timetable-->
@@ -49,9 +49,9 @@
 	<!--Genral Setting-->
 	<menuitem name="General" id="general_setting_id" parent="menu_configuration_id" sequence="4"  groups="group_sms_director,group_sms_admin,group_sms_admission_manager"/>
     <menuitem id="menu_class_group" parent="general_setting_id" sequence ="2" groups="group_sms_admin,group_sms_director,group_sms_admission_manager" action="action_cls_grps"/>
-    <menuitem id="menu_action_subject" parent="general_setting_id" sequence="" groups="group_sms_admin,group_sms_admission_manager" action="action_subject"/>
-	<menuitem id="menu_action_classes" parent="general_setting_id" sequence="" groups="group_sms_admin,group_sms_director,group_sms_admission_manager" action="action_classes"/>
-    <menuitem id="menu_action_class_section" parent="general_setting_id" sequence="" groups="group_sms_director,group_sms_admin,group_sms_admission_manager" action="action_class_section"/>
+    <menuitem id="menu_action_subject" parent="general_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_subject"/>
+	<menuitem id="menu_action_classes" parent="general_setting_id" sequence="4" groups="group_sms_admin,group_sms_director,group_sms_admission_manager" action="action_classes"/>
+    <menuitem id="menu_action_class_section" parent="general_setting_id" sequence="5" groups="group_sms_director,group_sms_admin,group_sms_admission_manager" action="action_class_section"/>
 	<menuitem id="menu_action_sms_registration_format" parent="general_setting_id" sequence="" groups="group_sms_admin" action="action_sms_registration_format"/>
 	<menuitem id="menu_action_smsyear" parent="general_setting_id" sequence="" groups="group_sms_admin" action="action_smsyear"/>
 	<menuitem id="menu_action_smsmonth" parent="general_setting_id" sequence="" groups="group_sms_admin" action="action_smsmonth"/>
@@ -117,12 +117,12 @@
 	<menuitem id="menu_sms_expense_report" parent="hr.menu_hr_configuration" sequence="" groups="group_sms_director,group_sms_admin" action="action_import_hr_attendance_data"/>
 
 <!-- Calander Weeks -->
-	<menuitem id="menu_sms_calander" name="Calander Weeks" parent="menu_sms_root" sequence="3" groups="group_sms_director,group_sms_principal,group_sms_admin,group_sms_officer,group_sms_admission_manager"/>
-	<menuitem id="menu_sms_calander_weeks" parent="menu_sms_calander" sequence="1" groups="group_sms_director,group_sms_principal,group_sms_officer,group_sms_admin,group_sms_admission_manager" action="action_sms_calander_week"/>
-	<menuitem id="menu_sms_weekly_plan" parent="menu_sms_calander" sequence="2" groups="group_sms_principal,group_sms_officer,group_sms_admin,group_sms_admission_manager" action="action_sms_weekly_plan"/>
+	<menuitem id="menu_sms_calander" name="Calendar Weeks" parent="menu_sms_root" sequence="3" groups="group_sms_director,group_sms_principal,group_sms_admin,group_sms_officer,group_sms_admission_manager"/>
+	<menuitem id="menu_sms_calander_weeks" parent="menu_sms_calander" sequence="1" groups="group_sms_director,group_sms_principal,group_sms_officer,group_sms_admin,group_sms_admission_manager" action="action_sms_calander_week1"/>
+	<menuitem id="menu_sms_weekly_plan" parent="menu_sms_calander" sequence="2" groups="group_sms_director,group_sms_principal,group_sms_officer,group_sms_admin,group_sms_admission_manager" action="action_sms_weekly_plan"/>
 
 <!-- Transactional Log -->
-	<menuitem id="menu_project_logs" name="Project Log" parent="menu_sms_root" sequence="4" groups="group_sms_director,group_sms_principal,group_sms_admin,group_sms_officer,group_sms_admission_manager"/>
+	<menuitem id="menu_project_logs" name="Activity Logs" parent="menu_sms_root" sequence="4" groups="group_sms_director,group_sms_principal,group_sms_admin,group_sms_officer,group_sms_admission_manager"/>
 	<menuitem id="menu_project_transactional_log" parent="menu_project_logs" sequence="1" groups="group_sms_director,group_sms_principal,group_sms_officer,group_sms_admin,group_sms_admission_manager" action="action_project_transactional_log"/>
 
 </data>
