@@ -10,7 +10,13 @@
             <field name="arch" type="xml">
                 <form string="Class Subjects" version="7.0">
                     <group col="4">
-						<field name="session"/>
+
+						<field name="selection_type" />
+						<group colspan="4">
+							<field name="session"  attrs="{'invisible':[('selection_type','!=','session_wise')]}"/>
+	
+							<field name="acd_cal" nolabel="1" attrs="{'invisible':[('selection_type','!=','class_wise')]}" width="300" height="250"/>
+						</group>
 					</group>
                     <footer>
                         <button string="Print" name="print_list" type="object"  class="oe_highlight"/>

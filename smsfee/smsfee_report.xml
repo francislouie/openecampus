@@ -121,6 +121,15 @@
             rml="smsfee/report/smsfee_unpaid_receipts_report_1o1.rml"
             string="Fee Receipts (Unpaid)"
             />
-	
+
+		<!-- Report displaying list of students of different fee types
+		<report id="print_feetype_list_id"
+            model="smsfee.studentfee"
+            name="smsfee.student.fee.type.list"
+            multi="True"
+            rml="smsfee/report/smsfee_feetypes_list_report.rml"
+            string="Feetype List"
+            />
+	 -->
    </data>
 </openerp>

@@ -126,5 +126,12 @@
 	<menuitem id="menu_project_logs" name="Project Log" parent="menu_sms_root" sequence="4" groups="group_sms_director,group_sms_principal,group_sms_admin,group_sms_officer,group_sms_admission_manager"/>
 	<menuitem id="menu_project_transactional_log" parent="menu_project_logs" sequence="1" groups="group_sms_director,group_sms_principal,group_sms_officer,group_sms_admin,group_sms_admission_manager" action="action_project_transactional_log"/>
 
+<!-- Stduent Transfer-->
+	<menuitem id="menu_transfer_id" name="Student Tranfers" parent="menu_sms_root" sequence="5" groups="group_sms_director,group_sms_principal,group_sms_admin,group_sms_officer,group_sms_admission_manager"/>
+	<menuitem id="menu_transfer_in_id" parent="menu_transfer_id" sequence="1" action="action_sms_transfer_in" groups="group_sms_director,group_sms_principal,group_sms_officer,group_sms_admin,group_sms_admission_manager" />
+	<menuitem id="menu_transfer_in_out_id" parent="menu_transfer_id" sequence="1" action="action_sms_transfer_in_out" groups="group_sms_director,group_sms_principal,group_sms_officer,group_sms_admin,group_sms_admission_manager" />
+	
+
+
 </data>
 </openerp>

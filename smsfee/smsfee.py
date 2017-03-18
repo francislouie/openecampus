@@ -1454,7 +1454,7 @@ class smsfee_receiptbook(osv.osv):
                         self.pool.get('smsfee.receiptbook.lines').create(cr ,uid,feelinesdict)
         return True 
 
-
+    _order = 'id desc'
     _name = 'smsfee.receiptbook'
     _description = "This object store fee types"
     _columns = {
