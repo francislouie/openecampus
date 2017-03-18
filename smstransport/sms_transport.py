@@ -471,7 +471,6 @@ class sms_transportfee_challan_book(osv.osv):
                                             'total':unpaidfee.fee_amount
                                             }
                             self.pool.get('sms.transport.fee.challan.lines').create(cr ,uid, feelinesdict)
-                    
                 else:
                     print "donot create challan"
             else:
@@ -496,7 +495,7 @@ class sms_transportfee_challan_book(osv.osv):
                                         'late_fee':0,
                                         'total':unpaidfee.fee_amount
                                         }
-                        self.pool.get('sms.transport.fee.challan.lines').create(cr ,uid,feelinesdict)
+                        self.pool.get('sms.transport.fee.challan.lines').create(cr ,uid, feelinesdict)
         return True 
 
     def _get_id(self, cr, uid, context={}):

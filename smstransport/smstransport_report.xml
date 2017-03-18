@@ -34,7 +34,7 @@
             model="sms.transport.fee.payments"
             name="smstransport_stu_unpaidtransportfee_receipt"
             multi="True"
-            rml="smstransport/report/smsfee_unpaid_transportreceipts_report_1o1.rml"
+            rml="smstransport/report/smstransport_print_one_student_per_page.rml"
             string="Fee Receipts (Unpaid)"
             />   
 

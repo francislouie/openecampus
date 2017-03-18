@@ -2,6 +2,7 @@ import pooler
 import time
 import mx.DateTime
 import datetime
+from datetime import datetime
 from report import report_sxw
 import netsvc
 import locale
@@ -18,7 +19,6 @@ result_acc=[]
 class transport_unpaid_fee_challans(report_sxw.rml_parse):
  
     def __init__(self, cr, uid, name, context):
- 
         super(transport_unpaid_fee_challans, self).__init__(cr, uid, name, context)
         self.result_temp=[]
         self.localcontext.update( {
@@ -28,33 +28,53 @@ class transport_unpaid_fee_challans(report_sxw.rml_parse):
             'get_vertical_lines': self.get_vertical_lines,
             'get_vertical_lines_total': self.get_vertical_lines_total,
             'get_banks':self.get_banks,
+            'get_banks_2':self.get_banks_2,
             'get_challan_number':self.get_challan_number,
             'get_candidate_info':self.get_candidate_info,
             'get_on_accounts':self.get_on_accounts,
             'get_total_amount':self.get_total_amount,
             'get_amount_in_words':self.get_amount_in_words,
+            'get_class_group':self.get_class_group,
+            'get_due_date':self.get_due_date,
          })
         self.context = context
      
     def get_today(self):
         today = time.strftime('%d-%m-%Y')
         return today 
+
+    def get_due_date(self):
+        due_date = self.datas['form']['due_date']
+        due_date = datetime.strptime(due_date, '%Y-%m-%d').strftime('%d/%m/%Y')
+        return due_date 
+
+    def get_class_group(self, data):
+        cls_id = self.datas['form']['class_id'][0]
+        class_id = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('id','=',cls_id)])
+        class_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id)
+        for obj in class_obj:
+            group = obj.group_id.name
+        return group  
      
     def get_challans(self, data):
         challan_list = []
-        this_form = self.datas['form']
         cls_id = self.datas['form']['class_id'][0]
         challan_ids = self.pool.get('sms.transportfee.challan.book').search(self.cr, self.uid,[('student_class_id','=',cls_id),('state','=','fee_calculated')])
         if challan_ids:
             rec_challan_ids = self.pool.get('sms.transportfee.challan.book').browse(self.cr, self.uid,challan_ids) 
             for challan in rec_challan_ids:
-                challan_dict = {'banks':'','challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
+                challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':''}
                 challan_dict['banks'] = self.get_banks(challan.id)
                 challan_dict['challan_number'] = self.get_challan_number(challan.id)
                 challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                 challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
+                challan_dict['vertical_lines'] = self.get_vertical_lines_total(challan.id)
                 challan_dict['total_amount'] = self.get_total_amount(challan.id)
                 challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id)
+                if self.datas['form']['amount_after_due_date']:
+                    challan_dict['amount_after_due_date'] = challan_dict['total_amount'] + self.datas['form']['amount_after_due_date'] 
+                else:
+                    challan_dict['amount_after_due_date'] = data['form']['amount_after_due_date']
                 challan_list.append(challan_dict)
         return challan_list  
      
@@ -68,34 +88,44 @@ class transport_unpaid_fee_challans(report_sxw.rml_parse):
             dict = {'line-style':'|'}
             line_dots.append(dict)
         return line_dots
-     
+    
     def get_vertical_lines_total(self, data):
         line_dots = []
-        challan = self.pool.get('sms.transportfee.challan.book').browse(self.cr,self.uid,data)
-#         start = len(challan.receiptbook_lines_ids)
-        start = 5
-        if start >=14:
-            dict = {'line-style':'|'}
-            line_dots.append(dict)
-        else:
-            for num in range(start,14):
+        lines_ids = self.pool.get('sms.transportfee.challan.book').search(self.cr,self.uid, [('receipt_book_id','=',data)])
+        if lines_ids:
+            challans = self.pool.get('sms.transportfee.challan.book').browse(self.cr,self.uid, lines_ids)
+            start = len(challans)
+            if start >=11:
                 dict = {'line-style':'|'}
                 line_dots.append(dict)
+            else:
+                for num in range(start,11):
+                    dict = {'line-style':'|'}
+                    line_dots.append(dict)
         return line_dots    
      
-    def get_banks(self, data):
-        print "get banks",data
-#         banks = []
-#         challan = self.pool.get('cms.challan').browse(self.cr,self.uid,form['challan_id'])
-#         for category in challan.challan_banks:
-#             dict = {'bank_name':category.name.name}
-#             banks.append(dict) 
-#         return banks
-        return '--'
+    def get_banks(self):
+        banks_ids = self.pool.get('res.company').search(self.cr,self.uid,[])
+        banks_recs = self.pool.get('res.company').browse(self.cr,self.uid,banks_ids)
+        for rec in banks_recs:
+            if rec.bank_name1 and rec.bank_acctno1:
+                bank= str(rec.bank_name1) + ' - ' +str(rec.bank_acctno1)
+            else:
+                bank = ''        
+        return bank
+
+    def get_banks_2(self):
+        banks_ids = self.pool.get('res.company').search(self.cr,self.uid,[])
+        banks_recs = self.pool.get('res.company').browse(self.cr,self.uid,banks_ids)
+        for rec in banks_recs:
+            if rec.bank_name1 and rec.bank_acctno1:
+                bank= str(rec.bank_name2) + ' - ' +str(rec.bank_acctno2)
+            else:
+                bank = ''
+        return bank
  
     def get_challan_number(self, data):
         line_dots = []
-#         
 #         challan = self.pool.get('cms.challan').browse(self.cr,self.uid,form['challan_id'])
 #         challan_str = str(challan.challan_no)
 #         return challan_str.split("-")[1] + " (" + challan_str.split("-")[0]+ ")"
@@ -103,37 +133,38 @@ class transport_unpaid_fee_challans(report_sxw.rml_parse):
  
     def get_candidate_info(self, data):
         info_list = []
-        #print "data",data
-        #print "self",self
         stdrec = self.pool.get('sms.student').browse(self.cr,self.uid,data)
-        info_dict = {'name':'','father_name':'','Class':'','semester':''}
-         
-        info_dict['name'] = stdrec.name
+        info_dict = {'name':'','father_name':'','class':'','fee_month':''}
+        info_dict['name'] = stdrec.name + ' (' + stdrec.registration_no + ')'
         info_dict['father_name'] = stdrec.father_name
         info_dict['class'] = stdrec.current_class.name
+        fee_month = self.datas['form']['due_date']
+        due_date = datetime.strptime(fee_month, '%Y-%m-%d')
+        str_date = due_date.strftime('%b %Y')
+        info_dict['fee_month'] = str_date
         info_list.append(info_dict)
-        #print "info_list>>>>>>>>>>>>",info_list
         return info_list
  
     def get_on_accounts(self, data):
         result = []
         lines_ids = self.pool.get('sms.transport.fee.challan.lines').search(self.cr,self.uid, [('receipt_book_id','=',data)])
-        #print "++++++++",     
         if lines_ids:
-             challans = self.pool.get('sms.transport.fee.challan.lines').browse(self.cr,self.uid,lines_ids)
+            challans = self.pool.get('sms.transport.fee.challan.lines').browse(self.cr,self.uid,lines_ids)
         for challan in challans:
-             dict = {'head_name':'Transport Fee','head_amount':challan.fee_amount}
-             result.append(dict) 
+            dict = {'head_name':'Transport Fee','head_amount':challan.fee_amount}
+            result.append(dict) 
         return result
      
     def get_total_amount(self, data):
-        line_dots = []
         receipt = self.pool.get('sms.transportfee.challan.book').browse(self.cr,self.uid,data)
         total_amount_str = receipt.total_payables
         return total_amount_str
      
     def get_amount_in_words(self,data):
-        amount = self.pool.get('sms.transportfee.challan.book').browse(self.cr,self.uid,data).total_payables
+        if self.datas['form']['amount_after_due_date']:
+            amount = self.pool.get('sms.transportfee.challan.book').browse(self.cr,self.uid,data).total_payables + self.datas['form']['amount_after_due_date'] 
+        else:   
+            amount = self.pool.get('sms.transportfee.challan.book').browse(self.cr,self.uid,data).total_payables        
         user_id = self.pool.get('res.users').browse(self.cr, self.uid,[self.uid])[0]
         cur = user_id.company_id.currency_id.name
         amt_en = amount_to_text_en.amount_to_text(amount,'en',cur);
