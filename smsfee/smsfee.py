@@ -1092,7 +1092,6 @@ smsfee_fee_adjustment()
 class smsfee_receiptbook(osv.osv):
     """ A fee receopt book, stores fee payments history of students """
     
-    
     def _set_bill_no(self, cr, uid, parent_id, parent_object, module):
         create = self.pool.get('sms.fee.challan.no').create(cr, uid, {
                    'parent_obj_id': parent_id,
