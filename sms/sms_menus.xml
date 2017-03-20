@@ -73,7 +73,7 @@
 	<menuitem id="menu_admission_students_and_admissions_id" name="Students And Admissions" parent="menu_admission_head_id" sequence="1" groups="group_sms_officer,group_sms_director,group_sms_principal,group_sms_admin,group_sms_admission_manager"/>
 	<menuitem id="menu_admission_withdraw_id" name="Withdraw Process" parent="menu_admission_head_id" sequence="1" groups="group_sms_principal,group_sms_officer,group_sms_director,group_sms_admin,group_sms_admission_manager"/>
 	<menuitem id="menu_certificates_parent_id" name="Certificates" parent="menu_admission_head_id" sequence="1" groups="group_sms_director,group_sms_principal,group_sms_admin,group_sms_admission_manager"/>
-	<menuitem id="menu_admission_form_id" parent="menu_admission_head_id" sequence="1" groups="group_sms_director,group_sms_officer,group_sms_principal" action="action_admin_form"/>
+	<menuitem id="menu_admission_form_id" parent="menu_certificates_parent_id" sequence="1" groups="group_sms_admin,group_sms_director,group_sms_officer,group_sms_principal" action="action_admin_form"/>
 	<!--New Admissions-->
 	<menuitem id="menu_new_admission_header" name ="New Admission" parent="menu_admission_students_and_admissions_id" sequence="2" groups="group_sms_officer,group_sms_director,group_sms_principal,group_sms_admin,group_sms_admission_manager" />
 	<menuitem id="menu_new_admission_draft" parent="menu_new_admission_header" sequence="1" groups="group_sms_officer,group_sms_director,group_sms_principal,group_sms_admin,group_sms_admission_manager" action="action_admission_register_draft" />
