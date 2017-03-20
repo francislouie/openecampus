@@ -3,7 +3,6 @@ from datetime import datetime
 from datetime import date
 import time
 import logging
-from lxml import etree
 
 _logger = logging.getLogger(__name__)
       
@@ -97,8 +96,8 @@ class sms_transport_vehcile(osv.osv):
         #---------- Ids are inverted in many2many object in sms_transport_route_vehcile_rel table. sms_transport_route_id, contains vehcile ids and sms_transport_vehcile_id, contains route id 
         'transport_route':fields.many2many('sms.transport.route', 'sms_transport_route_vehcile_rel', 'sms_transport_route_id', 'sms_transport_vehcile_id','Transport Route', required=True),
         #---------- Ids are inverted in many2many object in hr_driver_vehcile_rel table. hr_driver_id, contains vehcile ids and sms_transport_vehcile_id, contains driver ids 
-        'drivers':fields.many2many('hr.employee', 'hr_driver_vehcile_rel', 'hr_driver_id', 'sms_transport_vehcile_id','Vehcile Drivers'),
-        'transport_shifts':fields.many2many('sms.transport.shift', 'smstransport_shift_vehcile_rel', 'sms_transport_vehcile_id',  'sms_transport_shift_id', 'Vehcile Shifts', required=True),
+        'drivers':fields.many2many('hr.employee', 'hr_driver_vehcile_rel', 'hr_driver_id', 'sms_transport_vehcile_id','Vehcile Drivers'),#groups="sms.group_sms_director,sms.group_sms_admin"),
+        'transport_shifts':fields.many2many('sms.transport.shift', 'smstransport_shift_vehcile_rel', 'sms_transport_vehcile_id',  'sms_transport_shift_id', 'Vehcile Shifts', required=True),#, groups="sms.group_sms_director,sms.group_sms_admin"),
         'income_amount':fields.float('Income Amount'),
         'expanse_amount':fields.float('Expanse Amount'),
         'registered_students':fields.one2many('sms.student', 'vehcile_reg_students_id', 'Students', readonly=True),
@@ -700,7 +699,7 @@ class sms_transportfee_challan_book(osv.osv):
             print "Challan Lines to Be deleted --- ",search_booklines
             if search_booklines:
                 for del_id in search_booklines:
-                    self.pool.get('smsfee.receiptbook.lines').unlink(cr,uid,del_id)
+                    self.pool.get('sms.transport.fee.challan.lines').unlink(cr,uid,del_id)
         else:
             raise osv.except_osv(('No Fee Paid'),('Paid amount or Discount should not be 0'))
         return True

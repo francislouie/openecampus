@@ -11,8 +11,8 @@
         <field name="name">Principal</field>
     </record>
 
-    <record id="group_sms_voice_principal" model="res.groups">
-        <field name="name">Voice Principal</field>
+    <record id="group_sms_vice_principal" model="res.groups">
+        <field name="name">Vice Principal</field>
     </record>
 
     <record id="group_sms_faculty" model="res.groups">
@@ -47,7 +47,5 @@
         <field name="name">Director</field>
     </record>
     
-    
-   
 </data>
 </openerp>
