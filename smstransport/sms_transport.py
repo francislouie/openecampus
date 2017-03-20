@@ -1,8 +1,8 @@
 from openerp.osv import fields, osv
 from datetime import datetime
 from datetime import date
+import time
 import logging
-from lxml import etree
 
 _logger = logging.getLogger(__name__)
       
@@ -96,8 +96,8 @@ class sms_transport_vehcile(osv.osv):
         #---------- Ids are inverted in many2many object in sms_transport_route_vehcile_rel table. sms_transport_route_id, contains vehcile ids and sms_transport_vehcile_id, contains route id 
         'transport_route':fields.many2many('sms.transport.route', 'sms_transport_route_vehcile_rel', 'sms_transport_route_id', 'sms_transport_vehcile_id','Transport Route', required=True),
         #---------- Ids are inverted in many2many object in hr_driver_vehcile_rel table. hr_driver_id, contains vehcile ids and sms_transport_vehcile_id, contains driver ids 
-        'drivers':fields.many2many('hr.employee', 'hr_driver_vehcile_rel', 'hr_driver_id', 'sms_transport_vehcile_id','Vehcile Drivers'),
-        'transport_shifts':fields.many2many('sms.transport.shift', 'smstransport_shift_vehcile_rel', 'sms_transport_vehcile_id',  'sms_transport_shift_id', 'Vehcile Shifts', required=True),
+        'drivers':fields.many2many('hr.employee', 'hr_driver_vehcile_rel', 'hr_driver_id', 'sms_transport_vehcile_id','Vehcile Drivers'),#groups="sms.group_sms_director,sms.group_sms_admin"),
+        'transport_shifts':fields.many2many('sms.transport.shift', 'smstransport_shift_vehcile_rel', 'sms_transport_vehcile_id',  'sms_transport_shift_id', 'Vehcile Shifts', required=True),#, groups="sms.group_sms_director,sms.group_sms_admin"),
         'income_amount':fields.float('Income Amount'),
         'expanse_amount':fields.float('Expanse Amount'),
         'registered_students':fields.one2many('sms.student', 'vehcile_reg_students_id', 'Students', readonly=True),
@@ -367,6 +367,8 @@ class sms_transport_fee_payments(osv.osv):
         'fee_discount':fields.float('Discount'),
         'date_fee_charged':fields.date('Date Fee Charged'),
         'date_fee_paid':fields.date('Date Fee Paid'),
+        'late_fee':fields.float('Late Fee'),
+        'net_total':fields.float('Net Total'),
         'paid_amount':fields.float('Paid Amount'),
         'fee_month': fields.many2one('sms.session.months','Fee Month'),
         'due_month':fields.many2one('sms.session.months','Due Month'),
@@ -468,7 +470,6 @@ class sms_transportfee_challan_book(osv.osv):
                                             'total':unpaidfee.fee_amount
                                             }
                             self.pool.get('sms.transport.fee.challan.lines').create(cr ,uid, feelinesdict)
-                    
                 else:
                     print "donot create challan"
             else:
@@ -493,8 +494,14 @@ class sms_transportfee_challan_book(osv.osv):
                                         'late_fee':0,
                                         'total':unpaidfee.fee_amount
                                         }
-                        self.pool.get('sms.transport.fee.challan.lines').create(cr ,uid,feelinesdict)
+                        self.pool.get('sms.transport.fee.challan.lines').create(cr ,uid, feelinesdict)
         return True 
+
+    def _get_id(self, cr, uid, context={}):
+        if context:
+            if 'student_id' in context:
+                return context['student_id']
+        return None
 
     _name = 'sms.transportfee.challan.book'
     _description = "This object contains the challan issued to transport availers."
@@ -510,16 +517,258 @@ class sms_transportfee_challan_book(osv.osv):
             'receipt_date': fields.date('Date'),
             'receive_whole_amount': fields.boolean('Received Whole Amount'),
             'fee_received_by': fields.many2one('res.users', 'Received By'),
+            'note_at_receive': fields.text('Note'),
             'late_fee' : fields.float('Late Fee'),
+            'voucher_date': fields.date('Voucher Date',readonly=True),
+            'vouchered_by': fields.many2one('res.users', 'Voucher By',readonly=True),
+            'vouchered': fields.boolean('Vouchered', readonly=True),
+            'voucher_no': fields.many2one('account.move', 'Voucher No',readonly=True),
             'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly=True, help='State'),
             'transport_challan_lines_ids': fields.one2many('sms.transport.fee.challan.lines', 'receipt_book_id', 'Transport Challan'),
     }
     _sql_constraints = [] 
     _defaults = {
-    }
+                 'state':'Draft',
+                 'payment_method': 'Cash',
+                 'student_id':_get_id ,
+                 'total_paid': 0.0,
+                 'receipt_date':lambda *a: time.strftime('%Y-%m-%d'),
+                 }
+
+    def unlink_transportlines(self, cr, uid, ids, *args):
+        line_pool = self.pool.get('sms.transport.fee.challan.lines')
+        idss = line_pool.search(cr,uid, [('receipt_book_id','=',ids)])
+        for id in idss:
+            line_pool.unlink(cr, uid, id)
+        return True
+
+    def onchange_student(self, cr, uid, ids, std):
+        result = {}
+        if std:
+            f = self.pool.get('sms.student').browse(cr, uid, std)
+            std_class = self.pool.get('sms.academiccalendar').browse(cr, uid, f.current_class.id)
+            result['student_class_id'] = f.current_class.id
+            result['session_id'] = std_class.acad_session_id.id
+            sql =   """SELECT SUM(fee_amount) FROM sms_transport_fee_payments
+                        WHERE student_id ="""+str(std)+""" AND is_reconcile =False"""
+            cr.execute(sql)
+            amount = cr.fetchone()[0]
+            if amount is None:
+                amount = '0'   
+            result['total_payables'] = amount
+            self.pool.get('sms.transportfee.challan.book').write(cr, uid, ids, result)
+        return {'value':result}
+        
+    def load_student_transportfee(self, cr, uid, ids, context=None):
+        brows = self.browse(cr, uid, ids, context)
+        self.unlink_transportlines(cr, uid, ids[0], None)
+        student = brows[0].student_id.id
+        student_fathername = brows[0].student_id.father_name 
+        self.onchange_student(cr, uid, ids, None)
+        self.write(cr, uid, ids[0], {'student_id':student, 'father_name':student_fathername})    
+        fee_ids = self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',student), ('is_reconcile','=', 0)])
+        if fee_ids:
+            total_receiveable = 0
+            for fees in fee_ids:
+                late_fee = 0
+                reconcile = False
+                obj = self.pool.get('sms.transport.fee.payments').browse(cr, uid, fees)
+                if obj.fee_amount == 0 or obj.fee_amount + late_fee==0:
+                    reconcile = True
+                if brows[0].receive_whole_amount:
+                    paid_fee    = obj.fee_amount+late_fee
+                    reconcile   = True
+                else:
+                    paid_fee = 0
+                    if obj.fee_amount == 0 or obj.fee_amount+late_fee==0:
+                        reconcile = True
+                    else:
+                        reconcile = False
+                total_receiveable = total_receiveable + obj.fee_amount 
+                self.pool.get('sms.transport.fee.challan.lines').create(cr, uid, {
+                        'fee_month': obj.fee_month.id,
+                        'receipt_book_id':ids[0],
+                        'student_fee_id':obj.id,
+                        'fee_amount': obj.fee_amount,
+                        'total': total_receiveable + late_fee,
+                        'paid_amount':paid_fee,
+                        'is_reconcile':reconcile,
+                        'late_fee':0,
+                       }) 
+            self.write(cr, uid, ids[0], {'state':'fee_calculated','total_payables':total_receiveable})
+        return
+    
+    def receive_transportfee(self, cr, uid, ids, context=None):
+        self.onchange_student(cr, uid, ids, None)
+        rec = self.browse(cr, uid, ids, context)
+        paymethod = ''
+        receipt_date = ''
+        for f in rec:
+            stdname = self.pool.get('sms.student').browse(cr, uid, f.student_id.id).name
+            paymethod = f.payment_method
+            receipt_date = f.receipt_date
+            
+        user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+        if user.company_id.enable_fm:
+            
+            fee_income_acc = user.company_id.student_fee_income_acc
+            fee_expense_acc = user.company_id.student_fee_expense_acc
+            fee_journal = user.company_id.fee_journal
+            period_id = self.pool.get('account.move')._get_period(cr, uid, context)
+            if paymethod=='Cash':
+                fee_reception_acc = user.company_id.fee_reception_account_cash
+                if not fee_reception_acc:
+                    raise osv.except_osv(('Cash Account'), ('No Account is defined for Payment method:Cash'))
+            elif paymethod=='Bank':
+                fee_reception_acc = user.company_id.fee_reception_account_bank
+                if not fee_reception_acc:
+                    raise osv.except_osv(('Bank Account'), ('No Account is defined for Payment method:Bank'))
+            
+            if not fee_income_acc:
+                raise osv.except_osv(('Accounts'), ('Please define Fee Income Account'))
+            if not fee_expense_acc:
+                raise osv.except_osv(('Accounts'), ('Please define Fee Expense Account'))
+            if not fee_journal:
+                raise osv.except_osv(('Accounts'), ('Please Define A Fee Journal'))
+            if not period_id:
+                raise osv.except_osv(('Financial Period'), ('Financial Period is not defined in Fiscal Year.'))
+        
+        search_lines_id = self.pool.get('sms.transport.fee.challan.lines').search(cr, uid, [('receipt_book_id','=',ids[0])], context=context)
+        lines_obj = self.pool.get('sms.transport.fee.challan.lines').browse(cr, uid, search_lines_id)
+        generate_receipt = False
+        total_paid_amount = 0 
+        for line in lines_obj:
+            std_fee_id = line.student_fee_id.id
+            late_fee = 0
+            if line.is_reconcile:
+                total_paid_amount = total_paid_amount+ line.received_amount
+                generate_receipt = True
+                self.pool.get('sms.transport.fee.payments').write(cr, uid, std_fee_id, {
+                           'late_fee':late_fee,
+                           'paid_amount':line.received_amount,
+                           'date_fee_paid':date.today(),
+#                           'fee_discount':line.discount,
+                           'net_total':line.total,
+                           'is_reconcile':line.is_reconcile,
+                           'receipt_no':str(ids[0]),
+                           'state':'Paid',
+                           })
+        if generate_receipt:
+            self.write(cr, uid, ids[0],{
+                           'fee_received_by':uid,
+                           'total_paid':total_paid_amount,
+                           'state':'Paid',
+                           })
+            if user.company_id.enable_fm:
+                account_move_dict= {
+                                'ref':'Income:Student Fee:',
+                                'journal_id':fee_journal.id,
+                                'type':'journal_voucher',
+                                'narration':'Pay/'+str(ids[0]) +'--'+ receipt_date}
+                
+                move_id=self.pool.get('account.move').create(cr, uid, account_move_dict, context)
+                account_move_line_dict=[
+                    {
+                         'name': 'Fee Received: '+stdname,
+                         'debit':0.00,
+                         'credit':total_paid_amount,
+                         'account_id':fee_income_acc.id,
+                         'move_id':move_id,
+                         'journal_id':fee_journal.id,
+                         'period_id':period_id
+                     },
+                    {
+                         'name': 'Fee Received: '+stdname,
+                         'debit':total_paid_amount,
+                         'credit':0.00,
+                         'account_id':fee_reception_acc.id,
+                         'move_id':move_id,
+                         'journal_id':fee_journal.id,
+                         'period_id':period_id
+                     }]
+                context.update({'journal_id': fee_journal.id, 'period_id': period_id})
+                for move in account_move_line_dict:
+                    self.pool.get('account.move.line').create(cr, uid, move, context)
+                self.write(cr, uid, ids[0],{
+                       'vouchered':True,
+                       'vouchered_by':uid,
+                       'voucher_date':datetime.date.today(),
+                       'voucher_no':move_id
+                       })
+            search_booklines = self.pool.get('sms.transport.fee.challan.lines').search(cr, uid, [('receipt_book_id','=',ids[0]),('is_reconcile','=',False)], context=context) 
+            print "Challan Lines to Be deleted --- ",search_booklines
+            if search_booklines:
+                for del_id in search_booklines:
+                    self.pool.get('sms.transport.fee.challan.lines').unlink(cr,uid,del_id)
+        else:
+            raise osv.except_osv(('No Fee Paid'),('Paid amount or Discount should not be 0'))
+        return True
+
 sms_transportfee_challan_book()
 
 class sms_transport_fee_challan_lines(osv.osv):
+
+    def create(self, cr, uid, vals, context=None, check=True):
+        result = super(osv.osv, self).create(cr, uid, vals, context)
+        return result
+    
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        result = super(osv.osv, self).write(cr, uid, ids, vals, context)
+        return result
+
+    def unlink(self, cr, uid, ids, context=None):
+        result = super(osv.osv, self).unlink(cr, uid, ids, context)
+        return result 
+
+    def onchange_amount(self, cr, uid, ids, total, received_amount):
+        vals = {}
+        if received_amount > total:
+            vals['paid_amount']     = 0
+            vals['discount']        = 0
+            vals['total']           = total
+            vals['is_reconcile']    = False
+        elif received_amount == total: 
+            vals['paid_amount']     = received_amount
+            vals['discount']        = 0
+            vals['total']           = total-received_amount
+            vals['is_reconcile']    = True
+        elif received_amount < total:
+            vals['paid_amount']     = received_amount
+            vals['discount']        = total - received_amount
+            vals['total']           = total - (received_amount + vals['discount'])
+            vals['is_reconcile']    = True
+        self.pool.get('sms.transport.fee.challan.lines').write(cr, uid, ids, 
+                       {'paid_amount'   :vals['paid_amount'],
+                       'discount'       :vals['discount'],
+                       'total'          :vals['total'],
+                       'is_reconcile'   :vals['is_reconcile']
+                       })   
+        return {'value':vals}
+    
+    def onchange_discount(self, cr, uid, ids, total, discount):
+        vals = {}
+        if discount > total:
+            vals['paid_amount']     = 0
+            vals['discount']        = 0
+            vals['total']           = total
+            vals['is_reconcile']    = False
+        elif discount == total: 
+            vals['paid_amount']     = 0
+            vals['total']           = total- discount
+            vals['is_reconcile']    = True
+            vals['discount']        = discount
+        elif  discount < total:
+            vals['paid_amount']     = total - discount
+            vals['total']           = total - (discount+vals['paid_amount'])
+            vals['discount']        = discount
+            vals['is_reconcile']    = True         
+        self.pool.get('sms.transport.fee.challan.lines').write(cr, uid, ids, {
+                       'paid_amount':vals['paid_amount'],
+                       'discount':vals['discount'],
+                       'total':vals['total'],
+                       'is_reconcile':vals['is_reconcile']
+                       })   
+        return {'value':vals}
     
     def _set_feename(self, cr, uid, ids, fields, args, context=None):
         result = {}
@@ -533,17 +782,20 @@ class sms_transport_fee_challan_lines(osv.osv):
             'student_fee_id':fields.many2one('sms.transport.fee.payments','Fee Name'),
             'fee_type': fields.many2one('sms.transport.fee.structure','Fee Type'),
             'fee_amount':fields.integer('Amount'),
-            'late_fee':fields.integer('late Fee'),
+            'late_fee':fields.integer('Late Fee'),
             'total':fields.integer('Payable'),
-            'discount_offered':fields.integer('Discount'),
+            'paid_amount':fields.integer('Paid Amount'),
+            'discount':fields.float('Discount'),
             'received_amount':fields.integer('Received Amount'),
             'fee_month': fields.many2one('sms.session.months','Fee Month'),
             'is_reconcile': fields.boolean('Reconciled'),
             'receipt_book_id': fields.many2one('sms.transportfee.challan.book','Transport Challan'),
                 }
     _sql_constraints = [] 
-    _defaults = {}
-    
+    _defaults = {                
+                 'discount':0,
+                 'paid_amount':0,
+                }
 sms_transport_fee_challan_lines()
 
 class sms_session_months(osv.osv):
@@ -599,7 +851,6 @@ class res_company(osv.osv):
     _name = 'res.company'
     _inherit ='res.company'
     _columns = {
-                 'one_on_one':fields.boolean('1 on 1'),
-                 'three_on_one':fields.boolean('3 on 1'),
-                 }
+            'fee_report_type':fields.selection([('One_on_One','One Student Per Page'),('Two_on_One','Two Students Per Page')],'Challan Print Type'),
+                }
 res_company()              
