@@ -51,32 +51,13 @@
 
 	<!-- SMS Configuration Menus Inheritance -->
 
-	<menuitem id="sms.general_setting_id" name="General" parent="sms.menu_configuration_id" sequence="5" groups="sms.group_sms_admin,sms.group_sms_admission_manager"/>
-
-	<menuitem id="smstransport_sms_config_squeezed_id" name="More" parent="sms.general_setting_id" sequence="5" groups="sms.group_sms_admin,sms.group_sms_admission_manager"/>
-
-    <menuitem id="sms.menu_class_group" parent="sms.general_setting_id" sequence ="2" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="sms.action_cls_grps"/>
-    <menuitem id="sms.menu_action_subject" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="sms.action_subject"/>
-	<menuitem id="sms.menu_action_classes" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="sms.action_classes"/>
-    <menuitem id="sms.menu_action_class_section" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="sms.action_class_section"/>
-	<menuitem id="sms.menu_action_sms_registration_format" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin" action="sms.action_sms_registration_format"/>
-	<menuitem id="sms.menu_action_smsyear" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin" action="sms.action_smsyear"/>
-	<menuitem id="sms.menu_action_smsmonth" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin" action="sms.action_smsmonth"/>
-    <menuitem id="sms.menu_sms_time" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin" action="sms.action_sms_time" />
-	<menuitem id="sms.menu_sms_day" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_admin" action="sms.action_sms_day" />
-	<menuitem id="sms.menu_sms_timetable_slot" parent="smstransport_sms_config_squeezed_id"  groups="sms.group_sms_admin" action="sms.action_sms_timetable_slot" />
-	<menuitem id="sms.menu_sms_exam_type" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_manager_exams,sms.group_sms_officers_exams" action="sms.action_sms_exam_type" />
-	<menuitem id="sms.menu_sms_exam" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_manager_exams,sms.group_sms_officers_exams" action="sms.action_sms_exam" />
-	<menuitem id="sms.menu_sms_exam_datesheet" parent="smstransport_sms_config_squeezed_id" sequence="" groups="sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_manager_exams,sms.group_sms_officers_exams" action="sms.action_exam_datesheet"/>
-    <menuitem id="sms.menu_action_sms_relation" parent="smstransport_sms_config_squeezed_id" sequence="3" groups="sms.group_sms_admin,sms.group_sms_admission_manager" action="sms.action_sms_relation"/>
 
 	<!-- Transport Challans Settings -->
-	<menuitem id="smsfee.menu_fee_head_id_top" name="Fee Management" parent="" groups=""/>
-	<menuitem name="Transport Challans" id="smstransport_fee_configuration_id" parent="smsfee.menu_fee_head_id_top" sequence="10" groups=""/>
-	<menuitem id="menu_transportfee_open_challans_id" parent="smstransport_fee_configuration_id" sequence="11" groups="" action="action_transport_feechallan_open_id"/>
+	<menuitem name="Transport Challans" id="smstransport_fee_head_id" parent="smsfee.menu_fee_head_id_top" sequence="10" groups=""/>
+	<menuitem id="menu_transportfee_open_challans_id" parent="smstransport_fee_head_id" sequence="11" groups="" action="action_transport_feechallan_open_id"/>
 	<menuitem id="menu_transportfee_paid_challans_id" parent="smstransport_fee_configuration_id" sequence="12" groups="" action="action_transport_feechallan_paid_id"/>
-	<menuitem id="menu_transportfee_cancelled_challans_id" parent="smstransport_fee_configuration_id" sequence="13" groups="" action="action_transport_feechallan_cancel_id"/>
-	<menuitem id="menu_transportfee_searchchallans_id" parent="smstransport_fee_configuration_id" sequence="14" groups="" action="action_transport_feechallan_search_id"/>
+	<menuitem id="menu_transportfee_cancelled_challans_id" parent="smstransport_fee_head_id" sequence="13" groups="" action="action_transport_feechallan_cancel_id"/>
+	<menuitem id="menu_transportfee_searchchallans_id" parent="smstransport_fee_head_id" sequence="14" groups="" action="action_transport_feechallan_search_id"/>
 
 </data>
 </openerp>

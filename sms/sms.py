@@ -1430,6 +1430,7 @@ class sms_academiccalendar(osv.osv):
 
     _name = 'sms.academiccalendar'
     _description = "Crates new class in a new session."
+    _order = 'class_id'
     _columns = {
         'name':  fields.function(set_class_name, method=True, store = True ,string='Class',type='char'), 
         'acad_session_id': fields.many2one('sms.academics.session', 'Academic Session',domain="[('state','!=','Closed')]",required=True),
@@ -3352,6 +3353,9 @@ class sms_exam_datesheet_lines(osv.osv):
         
         parent_rec = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,name)
         existing_subjs = [x.subject.id for x in parent_rec.datesheet_lines]
+            
+        print "existing_subjs============",existing_subjs
+        #raise osv.except_osv((''),('Trks'))
             
         acd_cal_rec = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,name)
         return  {'domain': {'subject': [('academic_calendar', '=', acd_cal_rec.academiccalendar.id),('id','not in',existing_subjs)],'name':[('id','=',name)]},
