@@ -15,7 +15,7 @@
              'wizard/wizard_student_transportfee_collect.xml',
              'smstransport_view.xml',
              'smstransport_report.xml',
-             'smstransport_menus.xml',],
+             ],
     'demo': [],
     'installable': True,
     'application': True,
