@@ -707,7 +707,7 @@
 			<notebook>
 			<page string="Challan Print" position="after">
 				<group col="4" colspan="2">
-					 <field name="fee_report_type"/>
+					 <field name="fee_report_type_trans"/>
 				</group>
 			</page>
 			</notebook>
