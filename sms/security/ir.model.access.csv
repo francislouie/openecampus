@@ -44,6 +44,7 @@
 "46","account.sequence.fiscalyear","account.model_account_sequence_fiscalyear","group_sms_admin",1,1,1,1
 "47","hr.employee","hr.model_hr_employee","group_sms_admin",1,1,1,1
 "48","hr.contract","hr_contract.model_hr_contract","group_sms_admin",1,1,1,1
+
 "49","sms.academiccalendar","model_sms_academiccalendar","group_sms_admission_manager",1,1,1,1
 "50","sms.exam.datesheet","model_sms_exam_datesheet","group_sms_admission_manager",1,0,0,0
 "6000","sms.student","model_sms_student","group_sms_admission_manager",1,1,1,1
@@ -107,13 +108,13 @@
 "105","sms.academics.session","model_sms_academics_session","group_sms_admission_manager",1,0,0,0
 "106","sms.academics.session","model_sms_academics_session","group_sms_manager_exams",1,0,0,0
 "107","sms.academics.session","model_sms_academics_session","group_sms_principal",1,0,0,0
-"108","sms.academics.session","model_sms_academics_session","group_sms_voice_principal",1,0,0,0
+"108","sms.academics.session","model_sms_academics_session","group_sms_vice_principal",1,0,0,0
 "109","sms.academics.session","model_sms_academics_session","group_sms_faculty",1,0,0,0
 "110","sms.academics.session","model_sms_academics_session","group_sms_officers_exams",1,0,0,0
 "111","sms.registration.format","model_sms_registration_format","group_sms_admission_manager",1,0,0,0
 "112","sms.registration.format","model_sms_registration_format","group_sms_manager_exams",1,0,0,0
 "113","sms.registration.format","model_sms_registration_format","group_sms_principal",1,0,0,0
-"114","sms.registration.format","model_sms_registration_format","group_sms_voice_principal",1,0,0,0
+"114","sms.registration.format","model_sms_registration_format","group_sms_vice_principal",1,0,0,0
 "115","sms.registration.format","model_sms_registration_format","group_sms_faculty",1,0,0,0
 "116","sms.registration.format","model_sms_registration_format","group_sms_officers_exams",1,0,0,0
 "117","sms.session","model_sms_session","group_sms_principal",1,0,0,0
@@ -183,13 +184,20 @@
 "181","sms.calander.week.lines","model_sms_calander_week_lines","group_sms_director",1,1,1,1
 "182","project.transactional.log","model_project_transactional_log","group_sms_director",1,0,1,0
 
-"183","sms.classes","model_sms_classes","group_sms_director",1,1,1,1
-"184","sms.session","model_sms_session","group_sms_director",1,1,0,0
-"185","sms.group","model_sms_group","group_sms_director",1,1,1,1
-"186","sms.class.section","model_sms_class_section","group_sms_director",1,1,1,1
-"187","sms.subject","model_sms_subject","group_sms_director",1,1,1,1
+"183","sms.classes","model_sms_classes","group_sms_director",1,1,1,0
+"184","sms.session","model_sms_session","group_sms_director",1,1,1,0
+"185","sms.group","model_sms_group","group_sms_director",1,1,1,0
+"186","sms.class.section","model_sms_class_section","group_sms_director",1,1,1,0
+"187","sms.subject","model_sms_subject","group_sms_director",1,1,1,0
+"188","sms.academics.session","model_sms_academics_session","group_sms_director",1,1,1,0
+"189","sms.academiccalendar.student","model_sms_academiccalendar_student","group_sms_director",1,1,1,0
+"190","sms.academiccalendar.subjects","model_sms_academiccalendar_subjects","group_sms_director",1,1,1,0
+"191","res.users","base.model_res_users","group_sms_director",1,1,1,0
+"193","smsfee.classes.fees","smsfee.model_smsfee_classes_fees","group_sms_director",1,1,1,0
+"194","smsfee.classfees.register","smsfee.model_smsfee_classfees_register","group_sms_director",1,1,1,0
+"195","smsfee.festructure.revision","smsfee.model_smsfee_festructure_revision","group_sms_director",1,1,1,0
 
-
-
-
-
+"193","smsfee.classes.fees","smsfee.model_smsfee_classes_fees","group_sms_admission_manager",1,1,1,0
+"194","smsfee.classfees.register","smsfee.model_smsfee_classfees_register","group_sms_admission_manager",1,1,1,0
+"195","smsfee.festructure.revision","smsfee.model_smsfee_festructure_revision","group_sms_admission_manager",1,1,1,0
+"196","smsfee.classes.fees.lines","smsfee.model_smsfee_classes_fees_lines","group_sms_admission_manager",1,1,1,0
