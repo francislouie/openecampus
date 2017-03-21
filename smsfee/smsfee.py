@@ -1243,7 +1243,7 @@ class smsfee_receiptbook(osv.osv):
         if generate_receipt:
             update_receiptbook = self.write(cr, uid, ids[0],{
                            'fee_received_by':uid,
-                           'total_paid_amount':total_paid_amount,
+                           'total_paid_amount':total_paid_amount +float(f.late_fee) ,
                            'state':'Paid',
                            })
             if user.company_id.enable_fm:
@@ -1351,6 +1351,14 @@ class smsfee_receiptbook(osv.osv):
     def _set_slipno(self, cr, uid, ids, name, ):
         rec =  self.browse(cr, uid, ids)
         return rec.id
+    
+    def send_for_approval(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids[0], {'state':'Waiting_Approval'})
+        return
+    
+    def send_back_for_correction(self, cr, uid, ids, context=None):
+        self.write(cr, uid, ids[0], {'state':'fee_calculated'})
+        return
     
     
     def _get_id(self, cr, uid, context={}):
@@ -1470,8 +1478,10 @@ class smsfee_receiptbook(osv.osv):
         'total_paid_amount':fields.float('Paid Amount',readonly = True),
         'note_at_receive': fields.text('Note'),
         'receive_whole_amount': fields.boolean('Receive Whole Amount'),
-        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
+        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
+         'fee_approved_by': fields.many2one('res.users', 'Approved By'),
+         'approve_date': fields.datetime('Date Approved',readonly=True),
         'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),
         'cancel_date': fields.datetime('Cancel Date',readonly=True),
         #fields related to adjustment
@@ -2123,9 +2133,10 @@ class smsfee_return_paid_fee(osv.osv):
             self.write(cr, uid, ids[0], {'state':'fee_calculated'})
         return
     
+    
     def confirm_fee_received(self, cr, uid, ids, context=None):
         
-        rec = self.browse(cr, uid, ids, context)
+        rec = self.browsle(cr, uid, ids, context)
         paymethod = ''
         receipt_date = ''
         for f in rec:
