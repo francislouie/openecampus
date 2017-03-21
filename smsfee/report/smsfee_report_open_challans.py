@@ -118,8 +118,9 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
         student_id =  challan_rec[0].student_id.id
         stdrec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
-        info_dict = {'name':'','father_name':'','class':'','fee_month':''}
-        info_dict['name'] = stdrec.name
+        info_dict = {'name':'','father_name':'','class':'','fee_month':'','reg_no':''}
+        info_dict['reg_no'] = stdrec.registration_no 
+        info_dict['name'] = stdrec.name 
         info_dict['father_name'] = stdrec.father_name
         info_dict['class'] = stdrec.current_class.name
         fee_month = self.datas['form']['due_date']
@@ -152,10 +153,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         return total_amount_str
      
     def get_amount_in_words(self,data):
-        if self.datas['form']['amount_after_due_date']:
-            amount = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data).total_paybles + self.datas['form']['amount_after_due_date'] 
-        else:   
-            amount = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data).total_paybles        
+        amount = self.pool.get('smsfee.receiptbook').browse(self.cr,self.uid,data).total_paybles        
         user_id = self.pool.get('res.users').browse(self.cr, self.uid,[self.uid])[0]
         cur = user_id.company_id.currency_id.name
         amt_en = amount_to_text_en.amount_to_text(amount,'en',cur);

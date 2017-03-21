@@ -13,4 +13,15 @@
 "12","smsfee.receiptbook.lines","model_smsfee_receiptbook_lines","sms.group_sms_admission_manager",1,1,1,1
 "13","smsfee.classfees.register","model_smsfee_classfees_register","sms.group_sms_admission_manager",1,1,1,0
 
+"14","smsfee.receiptbook","model_smsfee_receiptbook","sms.group_sms_admission_officer",1,1,1,0
+"15","smsfee.receiptbook.lines","model_smsfee_receiptbook_lines","sms.group_sms_admission_officer",1,1,1,1
+"16","smsfee.fee.adjustment","model_smsfee_fee_adjustment","sms.group_sms_admission_officer",1,1,1,0
+"17","smsfee.feetypes","model_smsfee_feetypes","sms.group_sms_admission_officer",1,1,1,0
+"18","res.users","base.model_res_users","sms.group_sms_admission_officer",1,0,0,0
+"19","smsfee.classes.fees","model_smsfee_classes_fees","sms.group_sms_admission_officer",1,0,0,0
+"20","smsfee.classfees.register","model_smsfee_classfees_register","sms.group_sms_admission_officer",1,0,0,0
+
+"21","res.users","base.model_res_users","sms.group_sms_admin",1,1,1,1
+"22","res.bank","base.model_res_bank","sms.group_sms_admin",1,1,1,1
+"23","res.company","base.model_res_company","sms.group_sms_admin",1,1,1,1
 

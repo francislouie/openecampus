@@ -24,7 +24,7 @@
             <drawString x="460" y="565">[[company.partner_id.street]]</drawString>
             <drawString x="460" y="555">[[company.partner_id.phone]]</drawString>            
 
-			<setFont name="Helvetica" size="9" />
+			<setFont name="Helvetica-Bold" size="9" />
 			<drawString x="290" y="533">Due Date : [[ get_due_date() ]]</drawString>
 			<drawString x="690" y="533">Due Date : [[ get_due_date() ]]</drawString>
 
@@ -33,11 +33,17 @@
 			<drawString x="480" y="70">Officer</drawString>
            	<drawString x="250" y="70">Cashier</drawString>
 			<drawString x="680" y="70">Cashier</drawString>
-
+			<!--
            	<drawString x="010" y="40">[[ get_banks() ]]</drawString>
 			<drawString x="415" y="40">[[ get_banks() ]]</drawString>
            	<drawString x="010" y="30">[[ get_banks_2() ]]</drawString>
 			<drawString x="415" y="30">[[ get_banks_2() ]]</drawString>
+			-->
+			<setFont name="Helvetica" size="9"/>
+           	<drawString x="010" y="40">[[ get_banks() ]]</drawString>
+			<drawString x="415" y="40">[[ get_banks() ]]</drawString>
+           	<drawString x="010" y="30">NIB Bank (All Branches)</drawString>
+			<drawString x="415" y="30">NIB Bank (All Branches)</drawString>
 
 			<setFont name="Helvetica" size="7"/>
 
@@ -110,6 +116,7 @@
     <paraStyle name="List" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
     <paraStyle name="Caption" fontName="Times-Roman" fontSize="12.0" leading="15" spaceBefore="6.0" spaceAfter="6.0"/>
     <paraStyle name="Index" fontName="Times-Roman"/>
+    <paraStyle name="P4-Right" fontName="Helvetica" fontSize="9" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="Table Contents" fontName="Times-Roman"/>
     <paraStyle name="terp_header" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="LEFT" spaceBefore="12.0" spaceAfter="6.0"/>
     <paraStyle name="terp_header_Centre" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
@@ -142,7 +149,7 @@
           	<blockTable colWidths="380" style="">
       		<tr>
         		<td>
-          		<para style="P2-Bold-Left">Challan No. [[(record['challan_number_1'])]]</para>
+          		<para style="P2-Left">Challan No. [[(record['challan_number_1'])]]</para>
         		</td>
       		</tr>
 			</blockTable>
@@ -158,7 +165,27 @@
 			<tr>
         		<td>
 	          		<para style="P3">[[repeatIn((record['candidate_info_1']),'r')]]</para>
-					<blockTable colWidths="100.0,280.0" style="Table_1">
+					<blockTable colWidths="80.0,300.0" style="Table_1">
+		      		<tr>
+						<td><para style="P4-Bold">Challan #</para></td>
+						<td>
+			          		<blockTable colWidths="200.0" style="">
+				      		<tr>
+				        		<td>
+									<barCode x="100" y="0" barHeight="15.0" barWidth="1.0" code="MSI">
+										<evalString>
+											"[[(record['challan_number_1'])]]%int
+										</evalString>
+									</barCode>
+								</td>
+				      		</tr>
+				      		</blockTable>
+		        		</td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Reg No:</para></td>
+						<td><para style="P4">[[(r['reg_no'])]]</para></td>
+		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Student:</para></td>
 						<td><para style="P4">[[(r['name'])]]</para></td>
@@ -230,7 +257,7 @@
 	          		<blockTable colWidths="300.0,80.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Payment After Due Date:</para></td>
-						<td><para style="P5-Right">[[(record['amount_after_due_date_1'])]]</para></td>
+						<td><para style="P4-Right">[[(record['amount_after_due_date_1'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -244,22 +271,6 @@
 		      		</tr>
 		      		</blockTable>
 				</td>
-      		</tr>
-      		<tr>
-				<td>
-	          		<blockTable colWidths="80.0,300.0" style="">
-		      		<tr>
-		        		<td><para style="P2-White">.</para></td>
-		        		<td>
-							<barCode x="100" y="0" barHeight="15.0" barWidth="0.1" code="Code128">
-								<evalString>
-									"[[(record['challan_number_1'])]]%int
-								</evalString>
-							</barCode>
-						</td>
-		      		</tr>
-		      		</blockTable>
-        		</td>
       		</tr>
       		</blockTable>
         </td>
@@ -277,7 +288,7 @@
           	<blockTable colWidths="380" style="">
       		<tr>
         		<td>
-          		<para style="P2-Bold-Left">Challan No. [[(record['challan_number_2'])]]</para>
+          		<para style="P2-Left">Challan No. [[(record['challan_number_2'])]]</para>
         		</td>
       		</tr>
 			</blockTable>
@@ -293,7 +304,27 @@
 			<tr>
         		<td>
 	          		<para style="P3">[[repeatIn((record['candidate_info_2']),'r')]]</para>
-					<blockTable colWidths="100.0,280.0" style="Table_1">
+					<blockTable colWidths="80.0,300.0" style="Table_1">
+		      		<tr>
+						<td><para style="P4-Bold">Challan #</para></td>
+						<td>
+			          		<blockTable colWidths="200.0" style="">
+				      		<tr>
+				        		<td>
+									<barCode x="100" y="0" barHeight="15.0" barWidth="1.0" code="MSI">
+										<evalString>
+											"[[(record['challan_number_2'])]]%int
+										</evalString>
+									</barCode>
+								</td>
+				      		</tr>
+				      		</blockTable>
+		        		</td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Reg No:</para></td>
+						<td><para style="P4">[[(r['reg_no'])]]</para></td>
+		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Student:</para></td>
 						<td><para style="P4">[[(r['name'])]]</para></td>
@@ -312,7 +343,7 @@
 					</tr>
 		      		</blockTable>
 				</td>
-      		</tr>	
+      		</tr>		
 			<tr>
         		<td>
 	          		<blockTable colWidths="300.0,80.0" style="Table_1">
@@ -365,7 +396,7 @@
 	          		<blockTable colWidths="300.0,80.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Payment After Due Date:</para></td>
-						<td><para style="P5-Right">[[(record['amount_after_due_date_2'])]]</para></td>
+						<td><para style="P4-Right">[[(record['amount_after_due_date_2'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -379,22 +410,6 @@
 		      		</tr>
 		      		</blockTable>
 				</td>
-      		</tr>
-      		<tr>
-				<td>
-	          		<blockTable colWidths="80.0,300.0" style="">
-		      		<tr>
-		        		<td><para style="P2-White">.</para></td>
-		        		<td>
-							<barCode x="100" y="0" barHeight="15.0" barWidth="0.1" code="Code128">
-								<evalString>
-									"[[(record['challan_number_2'])]]%int
-								</evalString>
-							</barCode>
-						</td>
-		      		</tr>
-		      		</blockTable>
-        		</td>
       		</tr>
       		</blockTable>
         </td>

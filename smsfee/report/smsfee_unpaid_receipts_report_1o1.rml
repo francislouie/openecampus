@@ -54,8 +54,8 @@
 			<drawString x="300" y="45">[[ get_banks() ]]</drawString>
 			<drawString x="600" y="45">[[ get_banks() ]]</drawString>
 
-           	<drawString x="002" y="35">NIB Bank(All Branches) </drawString>
-			<drawString x="300" y="35">NIB Bank(All Branches) </drawString>
+           	<drawString x="002" y="35">NIB Bank(All Branches)</drawString>
+			<drawString x="300" y="35">NIB Bank(All Branches)</drawString>
 			<drawString x="600" y="35">NIB Bank(All Branches)</drawString>
 				
 			<!--
