@@ -2443,7 +2443,6 @@
             </field>
           </record>
 
-
     <record model="ir.ui.view" id="sms_annual_class_promotion_tree">
       <field name="name">Class Promotion</field>
       <field name="model">sms.student.class.promotion</field>
@@ -2457,6 +2456,7 @@
         </tree>
       </field>
     </record>
+
     <record model="ir.actions.act_window" id="action_sms_class_annual_promotion">
       <field name="name">Student Promotion(New)</field>
       <field name="res_model">sms.student.class.promotion</field>
@@ -2464,7 +2464,6 @@
       <field name="view_mode">tree,form</field>
     </record>
     
-      
     <record model="ir.ui.view" id="sms_annual_class_promotionlines_tree">
       <field name="name">Class Promotion</field>
       <field name="model">sms.student.class.promotion.lines</field>
@@ -2481,13 +2480,7 @@
       </field>
     </record>
     
-    
-    
     <!-- END NEWsms.Class.promotion --> 
- 
- 
- 
- 
  
 	<!-- sms.student.promotion -->
     <record model="ir.ui.view" id="sms_student_promotion_form">
@@ -2505,6 +2498,7 @@
         </form>
       </field>
     </record>
+
     <record model="ir.ui.view" id="sms_student_promotion_tree">
       <field name="name">Student Promotion</field>
       <field name="model">sms.student.promotion</field>
@@ -2520,12 +2514,14 @@
         </tree>
       </field>
     </record>
+
     <record model="ir.actions.act_window" id="action_sms_student_promotion">
       <field name="name">Student Promotion</field>
       <field name="res_model">sms.student.promotion</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
     </record>
+
     <!-- sms.student.promotion --> 
 
 	<!-- sms.student.change.section -->

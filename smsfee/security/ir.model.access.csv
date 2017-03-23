@@ -25,3 +25,4 @@
 "22","res.bank","base.model_res_bank","sms.group_sms_admin",1,1,1,1
 "23","res.company","base.model_res_company","sms.group_sms_admin",1,1,1,1
 
+"24","smsfee.fee.adjustment","model_smsfee_fee_adjustment","sms.group_sms_manager_exams",1,1,1,0
