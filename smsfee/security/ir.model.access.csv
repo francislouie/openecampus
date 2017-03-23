@@ -26,3 +26,10 @@
 "23","res.company","base.model_res_company","sms.group_sms_admin",1,1,1,1
 
 "24","smsfee.fee.adjustment","model_smsfee_fee_adjustment","sms.group_sms_manager_exams",1,1,1,0
+
+"25","smsfee.classfees.register","model_smsfee_classfees_register","sms.group_sms_fee_manager",1,1,1,0
+"26","smsfee.feetypes","model_smsfee_feetypes","sms.group_sms_fee_manager",1,1,1,0
+"27","smsfee.studentfee","model_smsfee_studentfee","sms.group_sms_fee_manager",1,1,1,0
+"28","smsfee.receiptbook","model_smsfee_receiptbook","sms.group_sms_fee_manager",1,1,1,0
+"29","smsfee.receiptbook.lines","model_smsfee_receiptbook_lines","sms.group_sms_fee_manager",1,1,1,0
+"30","smsfee.fee.adjustment","model_smsfee_fee_adjustment","sms.group_sms_admission_officer",1,1,1,0
