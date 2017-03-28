@@ -264,10 +264,8 @@
 		      <field name="inherit_id" ref="sms.view_session_classes_form"/>
 		      <field name="type">form</field>
 		      <field name="arch" type="xml">
-		      <field name="helptxt" position="before">
-			  </field>
 			  <header>
-			  <button name="manage_class_fee" string="Fee Structure" icon="gtk-execute" states="Draft,Active" type="object" class="oe_highlight" groups=""/>
+				<button name="manage_class_fee" string="Fee Structure" icon="gtk-execute" states="Draft,Active" type="object" class="oe_highlight" groups=""/>
 				<button name= "%(action_update_fee_register)d" string="Update Fee Register" states="Draft,Active"  icon="gtk-execute" type="action"/>
 				<button name="%(action_fee_receipts)d" string="Print Fee Challans"  states="Draft,Active" type="action" icon="gtk-print"/>
 			  </header>
@@ -284,7 +282,7 @@
 					</group>
 						<notebook>
 						<page string = "Fee Structure">
-						<field name="fee_structures" widget="one2many_list" readonly="1">
+						<field name="fee_structures" widget="one2many_list">
 							<tree string = "Click to see details" delete="false">
 								<field name="name" />
 								<field name="focasted_amount" />
@@ -292,13 +290,11 @@
 								<field name="no_of_students" />
 								<field name="active"/>
 							</tree>
-
 						</field>
 						</page>
 						<page readonly = "1" string = "Fee Register"><field name="fee_register" readonly ="1"/></page>
 						</notebook>
 			    </page>
-			    
 			   </notebook>
 		      </field>
 		    </record>
@@ -357,6 +353,8 @@
 						<field name="focasted_amount"/>
 						<field name="collected_amout"/>
 						<field name="id" string = "#"/>
+						<field name="fee_structure_id"/>
+						<field name="academic_cal_id"/>
 						</group>
 					</group>
 						<field name="fee_type_ids"  nolabel="1"  />
