@@ -242,9 +242,6 @@ class sms_revision_line_feetypes(osv.osv):
     }
 sms_revision_line_feetypes()
 
-
-
-
 class sms_academiccalendar(osv.osv):
     """This object is used to add fields in sms_academiccalendar"""
    
@@ -296,58 +293,54 @@ class sms_academiccalendar(osv.osv):
     def _calculate_class_forecasted_fee(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-             total_forecasted = 0
-             register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',ids)])
-             if register_ids:
-                 rec_register = self.pool.get('smsfee.classfees.register').browse(cr,uid,register_ids)
-                 for register in rec_register:
-                     total_forecasted = total_forecasted + register.month_forcasted_fee 
-                 result[f.id] = total_forecasted
+            total_forecasted = 0
+            register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',ids)])
+            if register_ids:
+                rec_register = self.pool.get('smsfee.classfees.register').browse(cr,uid,register_ids)
+                for register in rec_register:
+                    total_forecasted = total_forecasted + register.month_forcasted_fee 
+                    result[f.id] = total_forecasted
         return result  
     
     def _calculate_class_paid_fee(self, cr, uid, ids, name, args, context=None):
-         #this query will be changed when function for fee reurned is included
+        #this query will be changed when function for fee reurned is included
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-             total_paid = 0
-             register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',ids)])
-             if register_ids:
-                 rec_register = self.pool.get('smsfee.classfees.register').browse(cr,uid,register_ids)
-                 for register in rec_register:
-                     total_paid = total_paid + register.month_fee_received 
-                 result[f.id] = total_paid
+            total_paid = 0
+            register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',ids)])
+            if register_ids:
+                rec_register = self.pool.get('smsfee.classfees.register').browse(cr,uid,register_ids)
+                for register in rec_register:
+                    total_paid = total_paid + register.month_fee_received 
+                    result[f.id] = total_paid
         return result
     
     def _calculate_calculate_recovery(self, cr, uid, ids, name, args, context=None):
-         #this query will be changed when function for fee reurned is included
+        #this query will be changed when function for fee reurned is included
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-             if f.class_forcasted_fee:
-                 recovery = math.ceil((f.class_fee_received*100)/f.class_forcasted_fee)
-             else:
-                 recovery = 0
-             result[f.id] = str(recovery)+"%"
+#             if f.class_forcasted_fee:
+#                 recovery = math.ceil((f.class_fee_received*100)/f.class_forcasted_fee)
+#             else:
+                recovery = 0
+                result[f.id] = str(recovery)+"%"
         return result
     
     _name = 'sms.academiccalendar'
     _inherit ='sms.academiccalendar'
-    
-    
-    
     _columns = {
             'fee_structures':fields.one2many('smsfee.classes.fees','academic_cal_id','Fee Structure'),
             #new class fee object, aobve one will be deleted
           #  'fee_update_till':fields.many2one('sms.session.months','Fee Updated Till'),
             'fee_update_till':fields.many2one('sms.session.months',' Fee Starts From Month'),
             'fee_register':fields.one2many('smsfee.classfees.register','academic_cal_id','Register'),
-            'class_forcasted_fee':fields.function(_calculate_class_forecasted_fee, method=True,  string='Fee Forecasted',type='float'),
-            'class_fee_received':fields.function(_calculate_class_paid_fee, method=True,  string='Fee Received',type='float'),
+            'class_forcasted_fee':fields.function(_calculate_class_forecasted_fee, method=True, multi='sums', string='Fee Forecasted',type='float', store = True),
+            'class_fee_received':fields.function(_calculate_class_paid_fee, method=True, multi='sums', string='Fee Received',type='float', store = True),
             'recovery_ratio':fields.function(_calculate_calculate_recovery, method=True,  string='Recovery(%)',type='char'),
             'annaul_fs_id':fields.many2one('smsfee.festructure.revision','Annual Fee Register'),
     }
        
 sms_academiccalendar()
-
 
 class sms_student(osv.osv):
     """This object is used to add fields in sms.student"""

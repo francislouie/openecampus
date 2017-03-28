@@ -19,6 +19,9 @@
 
 	<menuitem id="menu_fee_paid_challans_id" parent="menu_fee_challans_id" sequence="4" action="action_receiptbook_paid_id"
 	groups="sms.group_sms_director,sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_fee_officer"/>
+
+	<menuitem id="menu_fee_paid_tobeapprovedchallans_id" parent="menu_fee_challans_id" sequence="4" action="action_receiptbook_tobeaproved_id"
+	groups="sms.group_sms_director,sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_fee_officer"/>
 	
 	<menuitem id="menu_fee_cancelled_challans_id" parent="menu_fee_challans_id" sequence="5" groups="sms.group_sms_director,sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_fee_officer"
 	action="action_receiptbook_cancel_id"/>

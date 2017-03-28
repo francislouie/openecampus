@@ -1199,7 +1199,6 @@ class sms_academiccalendar(osv.osv):
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         super(osv.osv, self).write(cr, uid, ids, vals, context)
-        
         for f in self.browse(cr, uid, ids):
             acad_cal_state = f.state
             if f.state == 'Active':
@@ -1227,8 +1226,6 @@ class sms_academiccalendar(osv.osv):
                                                 'name': exm,
                                                 'subject': subject,
                                                 })
-                            
-                            
         return True
     
     def _get_default_group(self, cr, uid, context={}):
@@ -1237,8 +1234,6 @@ class sms_academiccalendar(osv.osv):
             return grp[0]
         else:
             return []
-        
-    
         
     def _get_default_section(self, cr, uid, context={}):
         sec = self.pool.get('sms.class.section').search(cr, uid, [('name','=','Section A')])
@@ -1253,6 +1248,7 @@ class sms_academiccalendar(osv.osv):
             return ssn[0]
         else:
             return []
+        
     def set_class_name(self, cr, uid, ids, name, args, context=None):
             result = {}
             for obj in self.browse(cr, uid, ids, context=context):
@@ -1293,11 +1289,8 @@ class sms_academiccalendar(osv.osv):
             result[f.id] = cnt[0]
         return result   
     
-    
     def change_student_class(self, cr, uid, ids,class_id,new_class_id,new_fs,f_start_month,xx):
         ftlist = []
-                    
-        
         #delete this from receiptbooklines
         cls_fees_ids = self.pool.get('smsfee.studentfee').search(cr,uid,[])
         print "rrrrrrrrrr", cls_fees_ids
@@ -1410,13 +1403,10 @@ class sms_academiccalendar(osv.osv):
                                         
                             else:
                                 raise osv.except_osv(('No Fee Found'),('Please Define a Fee For students promotion'))
-       
-        
         return
 
     def pending_annual_results(self, cr, uid, ids, name, args, context=None):
         """This method will return value >0 if class has been closed and it has some students whose promotion is not decided yet"""
-        
         res = {}
         for f in self.browse(cr, uid, ids, context):
             stdids = self.pool.get('sms.academiccalendar.student').search(cr, uid, [('name','=',f.id),('state','=','Current')])
@@ -1456,7 +1446,6 @@ class sms_academiccalendar(osv.osv):
         'pending_results':fields.function(pending_annual_results, string='Pending Annual Results', type='integer'),
         'exam_ids' :fields.one2many('sms.exam.datesheet', 'academiccalendar', 'Exam', readonly=True),
     } 
-    
     _defaults = {
         'max_stds': 40,
         'state': 'Draft',
@@ -1511,8 +1500,6 @@ class sms_academiccalendar(osv.osv):
                 else:
                      raise osv.except_osv(('Class Does not Exist '), ('No Default Class Exists for .'+f.class_id.name))         
         return True 
-    
-        
     
 #     def load_students_from_excel(self, cr, uid, data, context):
 #         workbook = xlrd.open_workbook('/home/inovtec/Desktop/Students.xls')
@@ -1577,7 +1564,6 @@ class sms_academiccalendar(osv.osv):
 #             row += 1
 #         return {}
 
-    
     def load_timetable(self, cr, uid, ids, context=None):
         academic_object = self.browse(cr, uid, ids, context=context)
         timetable_default_ids = self.pool.get('sms.timetable.default').search(cr, uid, [('name','=', academic_object[0].class_id.id)], context=context)
@@ -1656,7 +1642,6 @@ class sms_academiccalendar(osv.osv):
         break_value = '0'
         is_break = False
         count = 0
-        
         for a in range(0, size):
             if is_break:
                 if break_value == 'a': 
@@ -1783,7 +1768,6 @@ class sms_academiccalendar(osv.osv):
                                                         break_value = 'd'
                                                         is_break = True
                                                         break
-
                                                     
                                                     return sub_list[a] + "," + sub_list[b] + "," + sub_list[c] + "," + sub_list[d]+ "," + sub_list[e]
                                             else:
@@ -1871,7 +1855,6 @@ class sms_academiccalendar(osv.osv):
                                                                         break_value = 'f'
                                                                         is_break = True
                                                                         break
-                                                                    
                                                                     
                                                                     return sub_list[a] + "," + sub_list[b] + "," + sub_list[c] + "," + sub_list[d] + "," + sub_list[e] + "," + sub_list[f]+ "," + sub_list[g]
                                                             else:
@@ -2044,6 +2027,7 @@ class sms_academiccalendar(osv.osv):
     def close_class(self, cr, uid, ids, *args):
         self.write(cr, uid, ids, {'state': 'Complete'})
         return True  
+
     
 class sms_academiccalendar_student(osv.osv):
     """This object registers a student within a class in a session """

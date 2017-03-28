@@ -7,7 +7,8 @@
     'website': 'http://www.inovtec.com.pk',
     'images': [''],
     'depends' : ['base','account','account_accountant','sms'],
-    'data': ['security/smsfee_security.xml',
+    'data': [
+             'security/smsfee_security.xml',
              'security/ir.model.access.csv',
              'wizard/smsfee_wizard_update_fee_register.xml',
              'wizard/smsfee_wizard_fee_reports.xml',

@@ -1103,8 +1103,7 @@
             </field>
         </record>
 
-	
-<!--sms.academiccalendar-->
+		<!--sms.academiccalendar-->
         <record model="ir.ui.view" id="view_session_classes_form">
          <field name="name">session.classes.form</field>
          <field name="model">sms.academiccalendar</field>
@@ -1120,13 +1119,10 @@
 			 <!--
 			 <button name="load_students_from_excel" string="Load Students" states="subjects_loaded" type="object" class="oe_highlight" groups=""/>
 			 -->
-			 
 			<field name="state" widget="statusbar" statusbar_visible="Draft,active,complete"/>
              </header>
 			<sheet>
 			<div><label for="name"/><h1><field name="name"/></h1></div>
-			
-			
 			<group>
 				<group>
 					<field name="acad_session_id" on_change="onchange_academic_session(acad_session_id)" attrs="{'readonly':[('state','IN',['Active','Complete'])]}"  widget="selection"  />
@@ -1135,8 +1131,8 @@
 					<field name="class_teacher" attrs="{'readonly':[('state','IN',['Complete'])]}"/>
 				</group>
 				<group>
-					<field name="section_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}" domain="[('active','=',1)]" />
-					<field name="group_id" />
+					<field name="section_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}" domain="[('active','=',1)]"/>
+					<field name="group_id"/>
 				</group>
 			</group>
 			<notebook>
@@ -1165,31 +1161,29 @@
 		   </page>
 			<page string="Students">
 			<field name="acad_cal_students" widget="one2many_list" readonly="1">
-
-			<tree delete="false">
-								<field name="std_id" />
-								<field name="latest_fee_month" string="Project/Milestone" />
-								<field name="state" string = "Task/Site" />
-								<field name="id" string="File#" />
-							</tree>
+				<tree delete="false">
+					<field name="std_id" />
+					<field name="latest_fee_month" string="Project/Milestone" />
+					<field name="state" string = "Task/Site" />
+					<!--<field name="id" string="File#"/>-->
+				</tree>
 			</field>
 			</page>
-		  <page string="Subjects">
-		 		<field name="assigned_subjects"  attrs="{'readonly':[('state','=','Complete')]}" />
-          </page>	
-          <page string = "Examination">
-			<field name="exam_ids" nolabel="1"/>
-		</page>
-				
-		<page string="Help">
+			  <page string="Subjects">
+		 			<field name="assigned_subjects"  attrs="{'readonly':[('state','=','Complete')]}" />
+	          </page>	
+	    	  <page string = "Examination">
+				<field name="exam_ids" nolabel="1"/>
+			  </page>
+			  <page string="Help">
 		 		<field name="helptxt"/>
-          </page>
-
+	          </page>
 		   </notebook>
 		</sheet>	 	
           </form>
         </field>
         </record>
+
         <record model="ir.ui.view" id="view_session_classes_tree">
             <field name="name">session.classes.tree</field>
             <field name="model">sms.academiccalendar</field>
@@ -1199,7 +1193,7 @@
 						<field name="session_id"/>
 						<field name="cur_strength"/>
 						<field name="state" string ="Status" />	
-						<field name="id" string ="Code" />	
+						<!--<field name="id" string ="Code" />-->	
                 </tree>
             </field>
         </record>
