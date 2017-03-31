@@ -1,14 +1,12 @@
-from osv import osv, fields
-import netsvc
+from openerp.osv import fields, osv
+from openerp import netsvc
 logger = netsvc.Logger()
 from mx import DateTime as datetime
 
-class collabrator(osv.osv):
-    """
-   Servers as bridge among cms and external apps/
-    """
-        
-    _name = 'cms.datagrid'
+class sms_collabrator(osv.osv):
+    
+    """ Servers as bridge among sms and external apps """
+    _name = 'sms.collabrator'
     _columns = {}
     
     def mast_auth(self, cr, uid, ids, id,pwd):
@@ -29,4 +27,5 @@ class collabrator(osv.osv):
         else:
             return 'Invalid Username or Password'
         return result
-collabrator()
+    
+sms_collabrator()
