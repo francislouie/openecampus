@@ -9,7 +9,7 @@ class sms_collabrator(osv.osv):
     _name = 'sms.collabrator'
     _columns = {}
     
-    def mast_auth(self, cr, uid, ids, id,pwd):
+    def mast_auth(self, cr, uid, ids, id, pwd):
         result = []
         user_ids = self.pool.get('sms.student').search(cr,uid,[('','',''),('state','=','Admitted')])
         if user_ids:
