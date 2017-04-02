@@ -104,7 +104,7 @@
 						<page string ="Classes" attrs="{'invisible':[('state','IN',['Draft'])]}" >
 		              	  <separator string="Applied on following classes" colspan="4"/>
 							<p>Tip! You can add more classes, or remove irrelavent classes</p>
-			              <field name="applied_onclasses" nolabel ="1"/>
+			              <field name="applied_onclasses" nolabel ="1" attrs="{'required':[('state','=','Get_Session_Classes')]}"/>
 		          		</page>
 				   </notebook>
 					</sheet>
@@ -155,16 +155,13 @@
 				<form string = "Annual Fee Strucure" version="7.0">
 				<sheet>
 					<group>
-						<group>
-							<field name="name" />
-						</group>
-						</group>
+						<field name="name" />
+					</group>
 					<notebook>
 				  		<page string ="Fees, Amounts">
-			              	  <separator string="Define Your Fee" colspan="4"/>
-				              <field name="fee_types_ids"/>
+		              	  <separator string="Define Your Fee" colspan="4"/>
+			              <field name="fee_types_ids"/>
 			          	</page>
-						
 				   </notebook>
 					</sheet>
 					</form>
@@ -186,9 +183,9 @@
             <field name="name">sms.revision.line.feetypes.tree</field>
             <field name="model">sms.revision.line.feetypes</field>
             <field name="arch" type="xml">
-                <tree editable = "bottom"  string="Define Your Fee , Amount">
-					<field name="name"  />
-					<field name="amount"  />
+                <tree editable = "bottom" string="Define Your Fee Amount">
+					<field name="name"/>
+					<field name="amount"/>
 				 </tree>
             </field>
         </record> 
