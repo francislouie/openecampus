@@ -13,6 +13,7 @@
              'wizard/smstransport_wizard_registerations.xml',
              'wizard/wizard_singlestudent_unpaidftransportee_receipt.xml',
              'wizard/wizard_student_transportfee_collect.xml',
+             'wizard/wizard_student_transportfee_receipt_exist_challans.xml',
              'smstransport_view.xml',
              'smstransport_report.xml',
              'smstransport_menus.xml',

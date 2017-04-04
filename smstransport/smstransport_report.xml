@@ -2,6 +2,7 @@
 <openerp>
     <data>
 		
+		<!-- Report for printing transport challans in bulk from academic calendar Menu -->
 		<report
             id="report_class_transport_one_on_one_id"
             model="sms.transport.fee.payments"
@@ -11,6 +12,7 @@
             string="Transport Fee Receipts (Unpaid)"
             />  
 
+		<!-- Report for printing transport challans in bulk from academic calendar Menu -->
 		<report
             id="report_class_transport_three_on_one_id"
             model="sms.transport.fee.payments"
@@ -20,6 +22,7 @@
             string="Transport Fee Receipts (Unpaid)"
             />  
 
+		<!-- Print students list in transport department from Transport Menu -->
 		<report
             id="report_registered_students_transport_dept"
             model="sms.transport.registrations"
@@ -29,6 +32,7 @@
             string="Registered Students"
             />   
 
+		<!-- Report for printing individual student challan from student fee Details Menu -->
 		<report
             id="report_class_unpaidfee_transportreceipts_id"
             model="sms.transport.fee.payments"
@@ -37,6 +41,15 @@
             rml="smstransport/report/smstransport_print_one_student_per_page.rml"
             string="Fee Receipts (Unpaid)"
             />   
+
+		<!-- Report for printing challans exisiting in open state from transport challan object interface in Fee Management Menu-->
+		<report id="print_open_fee_challan_id"
+            model="sms.transport.fee.payments"
+            name="smstransportfee.open.challans"
+            multi="True"
+            rml="smstransport/report/smstransport_print_one_student_per_page.rml"
+            string="Fee Receipts (Unpaid)"
+            />
 
    </data>
 </openerp>
