@@ -13,7 +13,7 @@ class collabrator(osv.osv):
     
     def mast_auth(self, cr, uid, ids, id,pwd):
         result = []
-        user_ids = self.pool.get('sms.student').search(cr,uid,[('','',''),('state','=','Admitted')])
+        user_ids = self.pool.get('sms.student').search(cr,uid,[('login_id','=',id),('password','=',pwd),('state','=','Admitted')])
         if user_ids:
             obj = self.pool.get('sms.student').browse(cr, uid, user_ids, user_ids)
             my_dict = {

@@ -11,6 +11,7 @@ Manage Employee records as Teacher Round Report etc""",
     'images': ['images/sms.jpeg'],
     'depends' : ['base','account','hr','hr_contract','account_accountant','sale','purchase','hr_expense'],
     'data': [
+             'security/sms_security.xml',
              'security/ir.model.access.csv',
              'wizard/sms_wizard_admit_studen.xml',
              'wizard/sms_wizard_swap_move_timetable_entry.xml',

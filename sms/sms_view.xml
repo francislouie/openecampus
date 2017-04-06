@@ -2931,7 +2931,7 @@
 				   <group><field name="image" widget='image' class="oe_left oe_avatar"/></group>
                    <group string="Admission Register" col="4" colspan="4">
                     	  <field name="name" required="1"   attrs="{'readonly':[('state','=','Confirm')]}" />
-                    	  <field name="registration_no"  required="1" attrs="{'readonly':[('state','=','Confirm')]}" /> 
+                    	  <field name="registration_no" attrs="{'readonly':[('state','=','Confirm')]}" /> 
 				          <field name="father_name"  required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
  				          <field name="student_class" context = "{'class_id':student_class}" required="1" attrs="{'readonly':[('state','!=','Draft')]}" on_change="onchange_set_domain(student_class)"  />
 						  <field name="group" required="1" attrs="{'readonly':[('state','!=','Draft')]}" />

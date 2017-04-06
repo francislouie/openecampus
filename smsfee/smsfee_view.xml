@@ -284,14 +284,8 @@
 					</group>
 						<notebook>
 						<page string = "Fee Structure">
-						<field name="fee_structures" widget="one2many_list" readonly="1">
-							<tree string = "Click to see details" delete="false">
-								<field name="name" />
-								<field name="focasted_amount" />
-								<field name="collected_amout" />
-								<field name="no_of_students" />
-								<field name="active"/>
-							</tree>
+						<field name="fee_structures" >
+							
 
 						</field>
 						</page>
@@ -350,8 +344,10 @@
  			 <sheet>
 					<group string = "Class Fee Structure">
 						<group>
-						<field name="name" required = "1"/>
+						<field name="name"/>
 						<field name="active"/>
+						<field name="fee_structure_id"/>
+						<field name="academic_cal_id"/>
 						</group>
 						<group>
 						<field name="focasted_amount"/>

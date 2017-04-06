@@ -478,7 +478,7 @@ class smsfee_classes_fees(osv.osv):
         'name':fields.function(_set_name, method=True,  string='Class Fee',type='char'),
         'fee_type_ids': fields.one2many('smsfee.classes.fees.lines','parent_fee_structure_id','Fee Type'),
         'active':fields.boolean('Active'),
-        'academic_cal_id': fields.many2one('sms.academiccalendar','Academic Calendar',required = True),      
+        'academic_cal_id': fields.many2one('sms.academiccalendar','Academic Calendar'),      
         'fee_structure_id': fields.many2one('sms.feestructure','Fee Structure',required = True),
         'no_of_students':fields.function(get_fs_std_qty, method=True,  string='Applies on (#Students)',type='integer'),
         'focasted_amount':fields.function(forcasted_amount, method=True,  string='Forcasted',type='float'),
@@ -552,7 +552,7 @@ class smsfee_classes_fees_lines(osv.osv):
     _description = "Stores classes fee"
     _order = "fee_type"
     _columns = {
-        'name':fields.function(_set_name, method=True,  string='Class Fee',type='char'),
+        'name':fields.function(_set_name, method=True,  string='Fee',type='char'),
         'parent_fee_structure_id': fields.many2one('smsfee.classes.fees','Fee Structure'),
         'fee_type': fields.many2one('smsfee.feetypes','Fee Type',required = True),
         'amount':fields.float('Amount'),
@@ -614,7 +614,7 @@ class smsfee_classfees_register(osv.osv):
        """
     _description = "Stores classes fee updation"
     _columns = {
-        'name':fields.function(_set_name, method=True,  string='Class Fee',type='char'),
+        'name':fields.function(_set_name, method=True,  string='Fee',type='char'),
         'academic_cal_id': fields.many2one('sms.academiccalendar','Academic Calendar',readonly = True),      
         'month': fields.many2one('sms.session.months','Month',readonly = True),
         'month_forcasted_fee':fields.function(_set_forcasted_fee, method=True,  string='Forcasted',type='float'),
