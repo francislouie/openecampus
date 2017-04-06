@@ -146,56 +146,62 @@ class smsfee_festructure_revision(osv.osv):
             result = self.write(cr, uid, f.id, {'state':'Get_Session_Classes'})
         return result
     
-    def start_annual_fee_structure(self, cr, uid, ids,name):
-        
+    def start_annual_fee_structure(self, cr, uid, ids, name):
         for f in self.browse(cr, uid, ids):
             classes_list = f.applied_onclasses
-            #1: Seach all fee structures in this annual revisions
-            anfs_fs_ids = self.pool.get('sms.revision.line.feestructure').search(cr,uid,[('parent_annaul_fs_id','=',f.id)])
-            if anfs_fs_ids:
-                rec_anfs_fs = self.pool.get('sms.revision.line.feestructure').browse(cr,uid,anfs_fs_ids)
-                
-                for this_fs in rec_anfs_fs:
-                    for this_class in classes_list:
-                        #check if this fee structure for this class is already exists
-                        class_fees_id = self.pool.get('smsfee.classes.fees').search(cr,uid,[('fee_structure_id','=',this_fs.name.id),('academic_cal_id','=',this_class.id)])
+            #1: -------------------- Search all fee structures in this annual revisions ------------------
+#            print "number of classes selected -----",len(classes_list)
+            for this_class in classes_list:                    
+                #------------------- Checking fee details class by class  -----------------
+                revisionline_feestructure_ids = self.pool.get('sms.revision.line.feestructure').search(cr,uid,[('parent_annaul_fs_id','=',f.id)])
+                if revisionline_feestructure_ids:
+                    revisionline_feestructure_objs = self.pool.get('sms.revision.line.feestructure').browse(cr,uid, revisionline_feestructure_ids)
+                    for this_fs in revisionline_feestructure_objs:
+                        #--------------------- Searching for every fee structure defined ------------------
+                        class_fees_id = self.pool.get('smsfee.classes.fees').search(cr, uid, [('fee_structure_id','=', this_fs.name.id),('academic_cal_id','=', this_class.id)])
                         if class_fees_id:
-                            #Great, this fee structure already exists in selected class
-                            # now loop on revisionlines feetypes and search each fee type in classes fees lines, if exists update with new amount
-                            anfs_ftypes_ids = self.pool.get('sms.revision.line.feetypes').search(cr,uid,[('revisionline_fs_id','=',this_fs.id)])
-                            if anfs_ftypes_ids:
-                                rec_anfs_ftypes = self.pool.get('sms.revision.line.feetypes').browse(cr,uid,anfs_ftypes_ids)
+                            #--------------------- Great, this fee structure already exists in selected class -------------------
+                            #--------------------- Loop on revision.lines.fee.types, and search each fee type in classes fees lines, if exists update with new amount ----------------------
+                            revision_feetype_ids = self.pool.get('sms.revision.line.feetypes').search(cr,uid,[('revisionline_fs_id','=',this_fs.id)])
+                            if revision_feetype_ids:
+                                rec_anfs_ftypes = self.pool.get('sms.revision.line.feetypes').browse(cr, uid, revision_feetype_ids)
+                                fee_types = []
                                 for this_ft in rec_anfs_ftypes:
-                                    # call method to search classes_fee_lines for checking if feetype exist then upload 
-                                    # with new amount other wise create new ft in fee lines
-                                    print "before call:class_fees_id[0]:",class_fees_id[0]
-                                    print "fee str id:",this_ft.amount
-                                    explore_ftypes = self.pool.get('smsfee.classes.fees').update_if_exists_or_create_ft(self, cr, uid, class_fees_id[0], this_ft.name.id,this_ft.amount)
+                                    print "-----",this_ft.name.id
+                                    feetype_dict = {'feetype_id':'', 'amount':''}
+                                    # ---------------------- With new amount other wise create new fee type in fee lines -----------------
+                                    feetype_dict['feetype_id'] = int(this_ft.name.id)
+                                    feetype_dict['amount'] = this_ft.amount
+                                    fee_types.append(feetype_dict)
+                                
+                                self.pool.get('smsfee.classes.fees').update_if_exists_or_create_ft(cr, uid, this_class.id, this_fs.name.id, fee_types)
+                                    #--------------------- Call method to search classes_fee_lines for checking if fee type exist then update --------------------- 
+                                    #--------------------- With new amount other wise create new fee type in fee lines -------------------------------------------------
+#                                     print "updating fee structure --------",class_fees_id[0], "----->>>>",this_fs.id, "========",this_ft.name.id, "=======",this_ft.amount
+#                                     self.pool.get('smsfee.classes.fees').update_if_exists_or_create_ft(cr, uid, class_fees_id[0], this_fs.name.id, this_ft.name.id, this_ft.amount)
                         else:
-                            # fee strcuture doesenot exists in smsfee.classes.fees
-                            # create this fs in classes fees
-                            # and its children in feeslines
-                            #1: Call method to create fs 
-                            print "before call:::::"
-                            print "fs id:",this_fs.name.id
-                            print "class_id:", this_class.id
-                            new_fs = False
+                            #------------  Fee structure does not exists in smsfee.classes.fees, create this fee structure in classes fees and its children in feeslines ----------------------
+                            #------------ 1: Call method to create fee structure ------------------------
 #                             new_fs = self.pool.get('smsfee.classes.fees').create_new_fs_in_classes_fees(self, cr, uid, this_fs.name.id, this_class.id)
-                            if new_fs:
                                 #create its children by calling the method update_if_exists_or_create_ft
                                 #loop on this revision line fstruecure nad get its its chldren i.e feetypes
                                 #when revisionlnes ft are get, loop on this and call update_if_exists_or_create_ft        
                                 # call method to search classes_fee_lines for checking if feetype exist then upload
-                                anfs_ftypes_ids = self.pool.get('sms.revision.line.feetypes').search(cr,uid,[('parent_annaul_fs_id','=',this_fs.id)])
-                                if anfs_ftypes_ids:
-                                    rec_anfs_ftypes = self.pool.get('sms.revision.line.feetypes').browse(cr,uid,anfs_fs_ids)
-                                    for this_ft in rec_anfs_ftypes:
-                                        # with new amount other wise create new ft in fee lnes
-                                        new_ftypes = self.update_if_exists_or_create_ft(self, cr, uid, this_fs.name.id, this_ft.name.id,this_ft.amount)
-        return 
-    
+                            revisionline_feetypes_ids = self.pool.get('sms.revision.line.feetypes').search(cr, uid, [('revisionline_fs_id','=', this_fs.id)])
+                            if revisionline_feetypes_ids:
+                                rec_anfs_ftypes = self.pool.get('sms.revision.line.feetypes').browse(cr, uid, revisionline_feetypes_ids)
+                                fee_types = []
+                                for this_ft in rec_anfs_ftypes:
+                                    feetype_dict = {'feetype_id':'', 'amount':''}                                
+                                    feetype_dict['feetype_id'] = this_ft.name.id
+                                    feetype_dict['amount'] = this_ft.amount
+                                    fee_types.append(feetype_dict) 
+                                # ---------------------- With new amount other wise create new fee type in fee lines -----------------
+                                self.pool.get('smsfee.classes.fees').update_if_exists_or_create_ft(cr, uid, this_class.id, this_fs.name.id, fee_types)
+            self.write(cr, uid, f.id, {'state':'Active','effective_from':datetime.datetime.now()})                                    
+        return True
+        
     def close_annual_fee_structure(self, cr, uid, ids, name, args, context=None):
-        print "starting method is called"
         for f in self.browse(cr, uid, ids, context=context):
             result = self.write(cr, uid, f.id, {'state':'Closed','effective_till':datetime.datetime.now()})
         return result
@@ -205,10 +211,10 @@ class smsfee_festructure_revision(osv.osv):
     'name':fields.function(_set_name, method=True,  string='Class Fee',type='char'),
     'session_id':fields.many2one('sms.session', 'Session'),
     'fee_str_ids':fields.one2many('sms.revision.line.feestructure','parent_annaul_fs_id','Fee Structure'),
-    'applied_onclasses':fields.many2many('sms.academiccalendar','sms_academiccalendar_sms_fee_revision','academiccalendar_id','fee_revision_id','Applied On Classes'),
+    'applied_onclasses':fields.many2many('sms.academiccalendar','sms_academiccalendar_sms_fee_revision','academiccalendar_id','fee_revision_id','Applied On Classes', domain="[('state','=','Active')]"),
     'effective_from':fields.datetime('Effective From'),
     'effective_till':fields.datetime('Effective till'),
-    'state':fields.selection([('Draft','Draft'),('Get_Session_Classes','Pick Classes'),('Active','Active'),('Closed','Closed')],'Status',readonly=True),
+    'state':fields.selection([('Draft','Draft'),('Get_Session_Classes','Pick Classes'),('Active','Active'),('Closed','Closed')],'Status', readonly=True),
     }
     _defaults = {'state':'Draft'}
 smsfee_festructure_revision()
@@ -220,7 +226,7 @@ class sms_revision_line_feestructure(osv.osv):
     _name = 'sms.revision.line.feestructure'
     _columns = {
     'name': fields.many2one('sms.feestructure','Fee Structure'),      
-    'parent_annaul_fs_id': fields.many2one('smsfee.festructure.revision', 'Annaul Fee Register', ondelete="cascade"),
+    'parent_annaul_fs_id': fields.many2one('smsfee.festructure.revision', 'Annual Fee Register', ondelete="cascade"),
     'fee_types_ids': fields.one2many('sms.revision.line.feetypes','revisionline_fs_id','Fee Type'),
     }
     _sql_constraints = [('Class_fsunique', 'unique (name,annaul_fs_id)', """ Fee Structure is already Defined Remove Duplication..""")]
@@ -242,15 +248,13 @@ class sms_revision_line_feetypes(osv.osv):
     }
 sms_revision_line_feetypes()
 
-
-
-
 class sms_academiccalendar(osv.osv):
     """This object is used to add fields in sms_academiccalendar"""
  
     def _calculate_class_forecasted_fee(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
+<<<<<<< HEAD
              total_forecasted = 0
              register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',f.id)])
              if register_ids:
@@ -258,12 +262,22 @@ class sms_academiccalendar(osv.osv):
                  for register in rec_register:
                      total_forecasted = total_forecasted + register.month_forcasted_fee 
                  result[f.id] = total_forecasted
+=======
+            total_forecasted = 0
+            register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',ids)])
+            if register_ids:
+                rec_register = self.pool.get('smsfee.classfees.register').browse(cr,uid,register_ids)
+                for register in rec_register:
+                    total_forecasted = total_forecasted + register.month_forcasted_fee 
+                    result[f.id] = total_forecasted
+>>>>>>> bce7a52c7094398ac443dda979939a25b6419547
         return result  
     
     def _calculate_class_paid_fee(self, cr, uid, ids, name, args, context=None):
-         #this query will be changed when function for fee reurned is included
+        #this query will be changed when function for fee reurned is included
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
+<<<<<<< HEAD
              total_paid = 0
              register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',f.id)])
              if register_ids:
@@ -271,38 +285,42 @@ class sms_academiccalendar(osv.osv):
                  for register in rec_register:
                      total_paid = total_paid + register.month_fee_received 
                  result[f.id] = total_paid
+=======
+            total_paid = 0
+            register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',ids)])
+            if register_ids:
+                rec_register = self.pool.get('smsfee.classfees.register').browse(cr,uid,register_ids)
+                for register in rec_register:
+                    total_paid = total_paid + register.month_fee_received 
+                    result[f.id] = total_paid
+>>>>>>> bce7a52c7094398ac443dda979939a25b6419547
         return result
     
     def _calculate_calculate_recovery(self, cr, uid, ids, name, args, context=None):
-         #this query will be changed when function for fee reurned is included
+        #this query will be changed when function for fee reurned is included
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-             if f.class_forcasted_fee:
-                 recovery = math.ceil((f.class_fee_received*100)/f.class_forcasted_fee)
-             else:
-                 recovery = 0
-             result[f.id] = str(recovery)+"%"
+#             if f.class_forcasted_fee:
+#                 recovery = math.ceil((f.class_fee_received*100)/f.class_forcasted_fee)
+#             else:
+                recovery = 0
+                result[f.id] = str(recovery)+"%"
         return result
     
     _name = 'sms.academiccalendar'
     _inherit ='sms.academiccalendar'
-    
-    
-    
     _columns = {
             'fee_structures':fields.one2many('smsfee.classes.fees','academic_cal_id','Fee Structure'),
             #new class fee object, aobve one will be deleted
           #  'fee_update_till':fields.many2one('sms.session.months','Fee Updated Till'),
             'fee_update_till':fields.many2one('sms.session.months',' Fee Starts From Month'),
             'fee_register':fields.one2many('smsfee.classfees.register','academic_cal_id','Register'),
-            'class_forcasted_fee':fields.function(_calculate_class_forecasted_fee, method=True,  string='Fee Forecasted',type='float'),
-            'class_fee_received':fields.function(_calculate_class_paid_fee, method=True,  string='Fee Received',type='float'),
+            'class_forcasted_fee':fields.function(_calculate_class_forecasted_fee, method=True, multi='sums', string='Fee Forecasted',type='float', store = True),
+            'class_fee_received':fields.function(_calculate_class_paid_fee, method=True, multi='sums', string='Fee Received',type='float', store = True),
             'recovery_ratio':fields.function(_calculate_calculate_recovery, method=True,  string='Recovery(%)',type='char'),
             'annaul_fs_id':fields.many2one('smsfee.festructure.revision','Annual Fee Register'),
     }
-       
 sms_academiccalendar()
-
 
 class sms_student(osv.osv):
     """This object is used to add fields in sms.student"""
@@ -372,13 +390,11 @@ class sms_student(osv.osv):
     }
 sms_student()
 
-
 class smsfee_classes_fees(osv.osv):
     
     """ all Fee Structures for an academic calendar
         new object (smsfee_classes_fees_structure) is associated with academic calendar
         this object is updated according to new fee strucrure and classes"""
-    
     
     def get_company(self, cr, uid, ids, context=None):
         cpm_id = self.pool.get('res.users').browse(cr,uid,uid).company_id.id
@@ -397,35 +413,78 @@ class smsfee_classes_fees(osv.osv):
     def _set_name(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-                 result[f.id] = str(f.fee_structure_id.name)
+            result[f.id] = str(f.fee_structure_id.name)
         return result
     
-    def update_if_exists_or_create_ft(self, cr, uid,ids, parent_fs, fee_type,amount):
-        print "in create new ft:parent fs:",parent_fs
-        print "ft:",fee_type
-        print "amount",amount
-        #this method search for a particular fee type(smsfee.feetype.id) in smsfee_classes_fees_lines
-        # if record found, update it with new amount other wise create new ft, under classes_fees_id as parent
-        #search of feetypes in classes_fees_lines begins here
-        cls_fees_line_id = self.pool.get('smsfee.classes.fees.lines').search(cr,uid,[('parent_fee_structure_id','=',parent_fs),('fee_type','=',fee_type)])
-        if cls_fees_line_id:
-            #so fee type also exists, dont worry, update it with new values of revision fs lines feetypes
-            # 2linds of changes, one is to change only amount , while fee type remains the same
-            #2nd change is change fee type id, it needs more discussion, leave it to future
-            update_fee_line_ft = self.pool.get('smsfee.classes.fees.lines').write(cr, uid, cls_fees_line_id[0], {'amount':amount})
-        else:
-            # this fee type doesnot exists in feelines object
-            #seems this fee types is newly added to fee revision object
-            # now add this fee type to actual smsfee.classes.fee.lines
-            new_ft = self.pool.get('smsfee.classes.fees.lines').create(cr,uid,{
-                    'parent_fee_structure_id': parent_fs,#obtained from searching classes fees
-                    'fee_type': fee_type,#obtained from revision fetypes object. new ft is added, 
-                    'amount':fee_type,#obtained from revision fetypes object.
-                                                                        
-                    })
-            #
+    def update_if_exists_or_create_ft(self, cr, uid, academiccalendar_id, fee_structure_id, fee_types):
+        #------------ Creating fee structure for class -------------------
+        if type(fee_types[0]['feetype_id']) is not list:
+            fee_types[0]['feetype_id'] = [fee_types[0]['feetype_id']]
         
-        return #result
+        cls_fees_id = self.pool.get('smsfee.classes.fees').search(cr, uid, [('academic_cal_id','=', academiccalendar_id), ('fee_structure_id','=', fee_structure_id)])
+        if cls_fees_id:
+                #--------------- This method search for a particular fee type(smsfee.feetype.id) in smsfee_classes_fees_lines -------------
+                #--------------- If record is found, updates it with new amount other wise create new fee structure, under classes_fees_id as parent -----------
+            cls_fees_line_id = self.pool.get('smsfee.classes.fees.lines').search(cr,uid,[('parent_fee_structure_id','=',cls_fees_id[0]),('fee_type','in', fee_types[0]['feetype_id'])])
+            #---------------- Fee type also exists, don't worry, update it with new values of revision fee structure lines fee types ---------------------
+            #---------------- 2 kinds of changes, one is to change only amount , while fee type remains the same change is change fee type id, it needs more discussion, leave it to future ------------------
+            if cls_fees_line_id:
+                cls_fees_line_obj = self.pool.get('smsfee.classes.fees.lines').browse(cr, uid, cls_fees_line_id)
+                for feetype in fee_types:
+                    for child_rec in cls_fees_line_obj: 
+                        if feetype['feetype_id'] == [child_rec.fee_type.id]:
+                            self.pool.get('smsfee.classes.fees.lines').write(cr, uid, cls_fees_line_id, {
+                                                                                                 'amount': feetype['amount']
+                                                                                                 })
+                        elif feetype['feetype_id'] != [child_rec.fee_type.id]:
+                            cls_fee_lines_id = self.pool.get('smsfee.classes.fees.lines').search(cr,uid,[('parent_fee_structure_id','=',cls_fees_id[0]),('fee_type','=', feetype['feetype_id'])])
+                            if not cls_fee_lines_id:
+                                if type(feetype['feetype_id']) is list:
+                                    feetype_id = feetype['feetype_id'][0]
+                                else:
+                                    feetype_id = feetype['feetype_id']
+                                self.pool.get('smsfee.classes.fees.lines').create(cr,uid,{
+                                                                                    'parent_fee_structure_id': cls_fees_id[0], #obtained from searching classes fees
+                                                                                    'fee_type': feetype['feetype_id'], #obtained from revision feetypes object. new ft is added, 
+                                                                                    'amount': feetype['amount'], #obtained from revision fee types object.
+                                                                                    })
+                            return True
+            else:
+                for feetype in fee_types:
+                    if type(feetype['feetype_id']) is list:
+                        feetype_id = feetype['feetype_id'][0]
+                    else:
+                        feetype_id = feetype['feetype_id']
+                    self.pool.get('smsfee.classes.fees.lines').create(cr,uid,{
+                                                                        'parent_fee_structure_id': cls_fees_id[0], #obtained from searching classes fees
+                                                                        'fee_type': feetype_id, #obtained from revision feetypes object. new ft is added, 
+                                                                        'amount': feetype['amount'], #obtained from revision fee types object.
+                                                                        })
+            return True
+        else:
+            
+            print 'no fee found creating new fee'
+            # this fee type does not exists in fee lines object
+            # seems this fee types is newly added to fee revision object
+            # now add this fee type to actual smsfee.classes.fee.lines
+            parent_record_id = self.pool.get('smsfee.classes.fees').\
+                                                                    create(cr, uid, {'academic_cal_id':academiccalendar_id,
+                                                                                     'fee_structure_id':fee_structure_id,
+                                                                                     'active':True})
+            if parent_record_id:
+                
+                
+                for feetype in fee_types:
+                    if type(feetype['feetype_id']) is list:
+                        feetype_id = feetype['feetype_id'][0]
+                    else:
+                        feetype_id = feetype['feetype_id']
+                    self.pool.get('smsfee.classes.fees.lines').create(cr, uid, 
+                                                                       {'parent_fee_structure_id': parent_record_id, #obtained from searching classes fees
+                                                                        'fee_type': feetype_id, #obtained from revision fetypes object. new ft is added, 
+                                                                        'amount': feetype['amount'], #obtained from revision fetypes object.
+                                                                        })
+        return True
 
     def forcasted_amount(self, cr, uid, ids, name, args, context=None):
         result = {}
@@ -484,7 +543,7 @@ class smsfee_classes_fees(osv.osv):
         'focasted_amount':fields.function(forcasted_amount, method=True,  string='Forcasted',type='float'),
         'collected_amout':fields.function(collected_amout, method=True,  string='Collection',type='float'),
     }
-    _sql_constraints = [('Class_fee_unique', 'unique (academic_cal_id,fee_structure_id,fee_type_id)', """ Class Fee is already Defined Remove Duplication..""")]
+    _sql_constraints = [('Class_fee_unique', 'unique (academic_cal_id, fee_structure_id, fee_type_id)', """ Class Fee is already Defined Remove Duplication..""")]
 smsfee_classes_fees()
 
 

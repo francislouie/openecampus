@@ -32,7 +32,7 @@ class class_fee_receipts_unpaid_2(osv.osv_memory):
         challan_type = self.pool.get('res.company').search(cr, uid, [])
         challan_type = self.pool.get('res.company').browse(cr, uid, challan_type)
         for obj in challan_type:
-            if obj.fee_report_type == 'One_on_One':
+            if obj.fee_report_type_trans == 'One_on_One':
                 return 'print_one_on_one'
             else:
                 return 'print_three_on_one'

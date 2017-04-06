@@ -372,6 +372,7 @@
 		<field name="model">sms.transport.registrations</field>
 		<field name="arch" type="xml">
 			<search string="Transport Registration">
+				<field name="transport_route" string="Destination"/>
 				<field name="registration_type" string="Registration Type"/>
 				<field name="employee_id" string="Employee"/>
 				<field name="student_id" string="Student"/>
@@ -397,7 +398,7 @@
         <field name="domain">[('state','in',['Draft','Withdrawn','waiting_approval'])]</field>
 		<field name="search_view_id" ref="view_sms_transport_registration_search"/>
 	</record>
-
+	
 	<record model="ir.actions.act_window" id="action_transport_registration_registered">
 		<field name="name">Transport Registration</field>
 		<field name="res_model">sms.transport.registrations</field>
@@ -407,7 +408,7 @@
         <field name="domain">[('state','=','Registered')]</field>
 		<field name="search_view_id" ref="view_sms_transport_registration_search"/>
 	</record>
-	
+
 	<!-- Sms Student Inherit -->
 	<record model="ir.ui.view" id="inherit_view_sms_student_transport_form">
 	<field name="name">sms.student.inherit.trnasport</field>
@@ -518,6 +519,8 @@
 					<field name="state" widget="statusbar"/>
 					<button name="load_student_transportfee" string="Show Student Fees" states="Draft" type="object"  class="oe_highlight" />
 					<button name="receive_transportfee" string="Receive Fee" confirm="Receive Fee with given amount?" states="fee_calculated" type="object" class="oe_highlight"/>
+					<button name="cancel_fee_bill" string="[X]Cancel This Fee Bill" confirm = "Are you sure Cancel Fee bill?" states="Draft,fee_calculated" type="object" class="button_close_statement" />
+					<button name="%(action_transportfee_existing_challans_id)d" string="Print" states="fee_calculated,Cancel" type="action" class="oe_link" groups=""/>
 				</header>
 				<sheet>
 					<group name="transport_chalan_main_one">
@@ -562,7 +565,8 @@
 						<h2><label for="total_paid" string="Paid Amount"/><field name="total_paid" readonly ="1"/></h2>
 					</group>
 					<group name="transport_chalan_main_four">
-						<field name="fee_received_by" readonly="1"/>
+						<field name="fee_received_by"/>
+						<field name="challan_cancel_by"/>
 					</group>
 				</sheet>	 	
 			</form>
@@ -707,7 +711,7 @@
 			<notebook>
 			<page string="Challan Print" position="after">
 				<group col="4" colspan="2">
-					 <field name="fee_report_type"/>
+					 <field name="fee_report_type_trans"/>
 				</group>
 			</page>
 			</notebook>

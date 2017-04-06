@@ -312,7 +312,7 @@ class sms_transport_registrations_lines(osv.osv):
         'student_id':fields.many2one('sms.student','Student'),
         'date_of_reg': fields.date('Registration Date'),
         'date_of_withdrawl': fields.date('With Drawn Date'),
-        'state':fields.selection([('Draft', 'Draft'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn'),('Withdrawn', 'Withdrawn')], 'State'),
+        'state':fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Registered', 'Registered'),('Withdrawn', 'Withdrawn'),('Withdrawn', 'Withdrawn')], 'State'),
             } 
     _defaults = {
                  'state': lambda*a :'Draft',                 
@@ -503,6 +503,13 @@ class sms_transportfee_challan_book(osv.osv):
                 return context['student_id']
         return None
 
+    def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
+        result = {}
+        records =  self.browse(cr, uid, ids, context)
+        for f in records:
+            self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})  
+        return result
+
     _name = 'sms.transportfee.challan.book'
     _description = "This object contains the challan issued to transport availers."
     _columns = {
@@ -516,7 +523,8 @@ class sms_transportfee_challan_book(osv.osv):
             'total_paid':fields.integer('Total Paid'),
             'receipt_date': fields.date('Date'),
             'receive_whole_amount': fields.boolean('Received Whole Amount'),
-            'fee_received_by': fields.many2one('res.users', 'Received By'),
+            'fee_received_by': fields.many2one('res.users', 'Received By',readonly=True),
+            'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),            
             'note_at_receive': fields.text('Note'),
             'late_fee' : fields.float('Late Fee'),
             'voucher_date': fields.date('Voucher Date',readonly=True),
@@ -851,6 +859,6 @@ class res_company(osv.osv):
     _name = 'res.company'
     _inherit ='res.company'
     _columns = {
-            'fee_report_type':fields.selection([('One_on_One','One Student Per Page'),('Two_on_One','Two Students Per Page')],'Challan Print Type'),
+            'fee_report_type_trans':fields.selection([('One_on_One','One Student Per Page'),('Two_on_One','Two Students Per Page')],'Challan Print Type'),
                 }
 res_company()              
