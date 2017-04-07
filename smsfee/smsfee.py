@@ -250,52 +250,7 @@ sms_revision_line_feetypes()
 
 class sms_academiccalendar(osv.osv):
     """This object is used to add fields in sms_academiccalendar"""
-   
-#     def manage_class_fee(self, cr, uid, ids, context=None):
-#         fee_obj = self.pool.get('smsfee.classes.fees')
-#         fee_line_obj = self.pool.get('smsfee.classes.fees.lines')
-#         #get all fee structures to add with class
-#         all_fee_structure_ids = self.pool.get('sms.feestructure').search(cr,uid,[])
-#         #get all fee types to add with newly created class fs later on
-#         all_fee_types_ids = self.pool.get('smsfee.feetypes').search(cr,uid,[])
-#        
-#         for f in self.browse(cr, uid, ids):
-#             acad_cal_id = f.id
-#                         
-#             for fee_str in all_fee_structure_ids:
-#                 fees_str_id =fee_str[0]
-#                 #stpe1: First search if fee structure already exists
-#                 fs_exists = fee_obj.check_feestructure_exists_in_class(cr, uid,acad_cal_id, fees_str_id)
-#                 
-#                 if not fs_exists:
-#                     # step2: create an entry in smsfee.classesfees object
-#                     class_fee_str_id = fee_obj.add_new_feestructure_classes_fees(cr, uid,acad_cal_id, fees_str_id)
-#                   
-#                     if class_fee_str_id:
-#                         
-#                         if all_fee_types_ids:
-#                             for fee_type in all_fee_types_ids:
-#                                  amount = 0
-#                                  #sarch previous class fee
-#                                  ft_already_exists = fee_line_obj.check_feetype_exists_in_class(cr, uid, class_fee_str_id,fee_type[0])
-#     
-#                                  if not ft_already_exists:
-#                                      # create new fee type in classes fee lines ad child of newly created fee structure
-#                                      ft_created = fee_line_obj.add_new_feetype_classfee_lines(cr, uid, class_fee_str_id,fee_type[0])
-#                     
-#                 else:
-#                     #it means fee structure already existed, now when fee structure already exists
-#                     # check all fee types if not exists with this fs, then add one
-#                     for fee_type in all_fee_types_ids:
-#                         # check classes fees with old few structure id and all feetypes,  
-#                         ft_already_exists = fee_line_obj.check_feetype_exists_in_class(cr, uid, fs_exists[0],fee_type[0])
-#                         if not ft_already_exists:
-#                             # create new fee type in fees lines as child of old fee strucutre
-#                             ft_created = fee_line_obj.add_new_feetype_classfee_lines(cr, uid, fs_exists[0],fee_type[0])         
-#                     else:
-#                         raise osv.except_osv(('Please Define fee Types'),('Fee Types & Fee Structure both are needed for lass Fee Management'))
-#         return                
-   
+ 
     def _calculate_class_forecasted_fee(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -562,7 +517,7 @@ class smsfee_classes_fees(osv.osv):
         'name':fields.function(_set_name, method=True,  string='Class Fee',type='char'),
         'fee_type_ids': fields.one2many('smsfee.classes.fees.lines','parent_fee_structure_id','Fee Type'),
         'active':fields.boolean('Active'),
-        'academic_cal_id': fields.many2one('sms.academiccalendar','Academic Calendar',required = True),      
+        'academic_cal_id': fields.many2one('sms.academiccalendar','Academic Calendar'),      
         'fee_structure_id': fields.many2one('sms.feestructure','Fee Structure',required = True),
         'no_of_students':fields.function(get_fs_std_qty, method=True,  string='Applies on (#Students)',type='integer'),
         'focasted_amount':fields.function(forcasted_amount, method=True,  string='Forcasted',type='float'),
@@ -636,7 +591,7 @@ class smsfee_classes_fees_lines(osv.osv):
     _description = "Stores classes fee"
     _order = "fee_type"
     _columns = {
-        'name':fields.function(_set_name, method=True,  string='Class Fee',type='char'),
+        'name':fields.function(_set_name, method=True,  string='Fee',type='char'),
         'parent_fee_structure_id': fields.many2one('smsfee.classes.fees','Fee Structure'),
         'fee_type': fields.many2one('smsfee.feetypes','Fee Type',required = True),
         'amount':fields.float('Amount'),
@@ -698,7 +653,7 @@ class smsfee_classfees_register(osv.osv):
        """
     _description = "Stores classes fee updation"
     _columns = {
-        'name':fields.function(_set_name, method=True,  string='Class Fee',type='char'),
+        'name':fields.function(_set_name, method=True,  string='Fee',type='char'),
         'academic_cal_id': fields.many2one('sms.academiccalendar','Academic Calendar',readonly = True),      
         'month': fields.many2one('sms.session.months','Month',readonly = True),
         'month_forcasted_fee':fields.function(_set_forcasted_fee, method=True,  string='Forcasted',type='float'),
