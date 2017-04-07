@@ -18,7 +18,6 @@ class sms_collabrator(osv.osv):
     def mast_auth(self, cr, uid, login, pwd):
         result = []
         student_id = self.pool.get('sms.student').search(cr,uid,[('login_id','=',login),('state','=','Admitted')])
-        return student_id
         if student_id:
             obj = self.pool.get('sms.student').browse(cr, uid, student_id)
             my_dict = {
