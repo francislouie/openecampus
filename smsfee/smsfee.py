@@ -254,15 +254,6 @@ class sms_academiccalendar(osv.osv):
     def _calculate_class_forecasted_fee(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-<<<<<<< HEAD
-             total_forecasted = 0
-             register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',f.id)])
-             if register_ids:
-                 rec_register = self.pool.get('smsfee.classfees.register').browse(cr,uid,register_ids)
-                 for register in rec_register:
-                     total_forecasted = total_forecasted + register.month_forcasted_fee 
-                 result[f.id] = total_forecasted
-=======
             total_forecasted = 0
             register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',ids)])
             if register_ids:
@@ -270,22 +261,12 @@ class sms_academiccalendar(osv.osv):
                 for register in rec_register:
                     total_forecasted = total_forecasted + register.month_forcasted_fee 
                     result[f.id] = total_forecasted
->>>>>>> bce7a52c7094398ac443dda979939a25b6419547
         return result  
     
     def _calculate_class_paid_fee(self, cr, uid, ids, name, args, context=None):
         #this query will be changed when function for fee reurned is included
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-<<<<<<< HEAD
-             total_paid = 0
-             register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',f.id)])
-             if register_ids:
-                 rec_register = self.pool.get('smsfee.classfees.register').browse(cr,uid,register_ids)
-                 for register in rec_register:
-                     total_paid = total_paid + register.month_fee_received 
-                 result[f.id] = total_paid
-=======
             total_paid = 0
             register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',ids)])
             if register_ids:
@@ -293,7 +274,6 @@ class sms_academiccalendar(osv.osv):
                 for register in rec_register:
                     total_paid = total_paid + register.month_fee_received 
                     result[f.id] = total_paid
->>>>>>> bce7a52c7094398ac443dda979939a25b6419547
         return result
     
     def _calculate_calculate_recovery(self, cr, uid, ids, name, args, context=None):
