@@ -1,7 +1,13 @@
 from openerp.osv import fields, osv
-from openerp import netsvc
-logger = netsvc.Logger()
-from mx import DateTime as datetime
+from openerp import tools
+from openerp import addons
+import xlwt
+import xlrd
+from datetime import datetime, timedelta
+from datetime import datetime
+from dateutil import parser
+import logging
+import datetime
 
 class sms_collabrator(osv.osv):
     
@@ -9,9 +15,10 @@ class sms_collabrator(osv.osv):
     _name = 'sms.collabrator'
     _columns = {}
            
-    def mast_auth(self, cr, uid, ids, login, pwd):
+    def mast_auth(self, cr, uid, login, pwd):
         result = []
         student_id = self.pool.get('sms.student').search(cr,uid,[('login_id','=',login),('state','=','Admitted')])
+        return student_id
         if student_id:
             obj = self.pool.get('sms.student').browse(cr, uid, student_id)
             my_dict = {
