@@ -33,8 +33,8 @@ class sms_collabrator(osv.osv):
                     }
 #            objjj = self.pool.get('sms.collabrator').getstudent_personal_info(cr, uid, student_id)
 #            print "------",objjj
-            objjj = self.pool.get('sms.collabrator').getstudent_subjects(cr, uid, student_id)
-            print "------", objjj
+#            objjj = self.pool.get('sms.collabrator').getstudent_subjects(cr, uid, student_id)
+#            print "------", objjj
             result.append(my_dict)
         else:
             my_dict = {
