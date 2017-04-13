@@ -327,7 +327,7 @@
             </field>
         </record>
 
-        <record id="view_classes_search" model="ir.ui.view">
+        <record id="view_classes_search_configuration" model="ir.ui.view">
             <field name="name">classes.search</field>
             <field name="model">sms.classes</field>
             <field name="arch" type="xml">
