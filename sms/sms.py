@@ -2263,6 +2263,7 @@ class sms_student_subject(osv.osv):
     
     
     def _set_subj_name(self, cr, uid, ids, name, args, context=None):
+        """set subjects name """
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             result[f.id] = str(f.subject.name)  

@@ -41,6 +41,7 @@ class sms_collabrator(osv.osv):
         return result
     
     def getstudent_personal_info(self, cr, uid, student_id):
+        """ will be used by web profile method"""
         result = []
         student_id = self.pool.get('sms.student').search(cr,uid,[('id','=', student_id), ('state','=','Admitted')])
         if student_id:
