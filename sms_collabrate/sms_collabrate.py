@@ -17,7 +17,7 @@ class sms_collabrator(osv.osv):
            
     def mast_auth(self, cr, uid, login, pwd):
         result = []
-        student_id = self.pool.get('sms.student').search(cr,uid,[('login_id','=',login), ('state','=','Admitted')])
+        student_id = self.pool.get('sms.student').search(cr,uid,[('login_id','=',login),('password','=',pwd), ('state','=','Admitted')])
         if student_id:
             obj = self.pool.get('sms.student').browse(cr, uid, student_id)
             my_dict = {
@@ -31,10 +31,6 @@ class sms_collabrator(osv.osv):
                         'state':obj[0].state,
                         'login_status':1
                     }
-#            objjj = self.pool.get('sms.collabrator').getstudent_personal_info(cr, uid, student_id)
-#            print "------",objjj
-#            objjj = self.pool.get('sms.collabrator').getstudent_subjects(cr, uid, student_id)
-#            print "------", objjj
             result.append(my_dict)
         else:
             my_dict = {
@@ -45,6 +41,7 @@ class sms_collabrator(osv.osv):
         return result
     
     def getstudent_personal_info(self, cr, uid, student_id):
+        """ will be used by web profile method"""
         result = []
         student_id = self.pool.get('sms.student').search(cr,uid,[('id','=', student_id), ('state','=','Admitted')])
         if student_id:
@@ -69,18 +66,13 @@ class sms_collabrator(osv.osv):
                         'city':obj[0].cur_city,
                         'login_status':1
                     }
-            result.append(my_dict)
-        else:
-            my_dict = {
-                        'state':'Invalid Credentials',
-                        'login_status':0
-                    }
+        
             result.append(my_dict)
         return result
     
     def getstudent_subjects(self, cr, uid, student_id):
         result = []
-        student_subj_id = self.pool.get('sms.student.subject').search(cr,uid,[('student_id','=', student_id)])
+        student_subj_id = self.pool.get('sms.student.subject').search(cr,uid,[('student_id','=', student_id),('subject_status','=','Current')])
         if student_subj_id:
             for subject in self.pool.get('sms.student.subject').browse(cr, uid, student_subj_id):
                 if subject.reference_practical_of:
@@ -90,15 +82,10 @@ class sms_collabrator(osv.osv):
                 my_dict = {
                             'subject_name':subject.subject.name,
                             'subject_status':subject.subject_status,
-                            'reference_practical_of':practical,
-                            'login_status':1
+                            'subject_id':subject.id
                         }
                 result.append(my_dict)
-            else:
-                my_dict = {
-                            'login_status':0
-                        }
-                result.append(my_dict)
+            
         return result
     
 sms_collabrator()

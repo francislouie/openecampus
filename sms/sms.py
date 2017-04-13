@@ -119,7 +119,6 @@ class sms_session(osv.osv):
         result = {}
         year_id = super(osv.osv, self).create(cr, uid, vals, context)
         print year_id
-        print alphabetacharlie
         for f in self.browse(cr, uid, [year_id], context=context):
             #load session months
             self.pool.get('sms.session').load_session_months(cr,uid,year_id)
@@ -128,103 +127,7 @@ class sms_session(osv.osv):
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
        
 
-       #         #tmp code sotring ids in old structure
-            #step 1 read from file and save in temp table
-#         workbook = xlrd.open_workbook('/home/inovtec/Documents/fs2_aec_new.xls')
-#         worksheet = workbook.sheet_by_name('Sheet1')
-#          
-#           
-#         rows = 1135
-#         row = 1
-#          
-#         while row <= rows:
-#             print "executing record no ",row
-#             classes_fees_dict = {
-#                                         'fs_id':worksheet.cell_value(row,3),
-#                                         'ft_id': worksheet.cell_value(row,1),
-#                                         'class_id':worksheet.cell_value(row,5),
-#                                         'class_name':worksheet.cell_value(row,4),
-#                                         'fs_name': worksheet.cell_value(row,2),
-#                                         'ft_name':worksheet.cell_value(row,0),
-#                                         'old_classesfees_id':worksheet.cell_value(row,7),
-#                                         'amount': worksheet.cell_value(row,6),
-#                                     }
-#             print "dic_parent",classes_fees_dict
-#             row = row + 1
-#              
-#             query =  "INSERT INTO temp_aec_classe_fees (fs_id, ft_id, class_id,class_name,fs_name,ft_name,old_classesfees_id,amount) VALUES (%s,%s,%s,%s, %s, %s,%s,%s);"
-#             data = (int(worksheet.cell_value(row,3)), int(worksheet.cell_value(row,1)), int(worksheet.cell_value(row,5)),
-#                     worksheet.cell_value(row,4),worksheet.cell_value(row,2),worksheet.cell_value(row,0),
-#                     int(worksheet.cell_value(row,7)), int(worksheet.cell_value(row,6)))
-#             print "q ",query
-#             print "data",data 
-#             cr.execute(query, data)
-#             cr.commit()     
-#          
-#              
-             
-            
-         #step 2, read from temp table and insert into classes.fees
-         #execute this when step is done and code of step1 is commented
-#         sql = """ select fs_id,class_id,class_name from temp_aec_classe_fees """
-#         cr.execute(sql)
-#         rows = cr.fetchall()
-#         ft_id = None
-#         fs_id = None
-#         class_id = None
-#         for i in rows:
-#                
-#           if i[0] != fs_id:
-#               fs_id = i[0]
-#               print "class name",i[2]
-#               classes_fees_dict = {
-#                                     'active':True,
-#                                     'academic_cal_id': i[1],
-#                                     'fee_structure_id':i[0],
-#                                 }
-#               print "dic_parent",classes_fees_dict
-#               parent_clsfee_id = self.pool.get('smsfee.classes.fees').create(cr,uid,classes_fees_dict)
-#               if parent_clsfee_id:
-#                   query =  """update temp_aec_classe_fees set new_parent_fees_id = """+str(parent_clsfee_id)+"""where fs_id="""+str(i[0])+""" and class_id ="""+str(i[1])
-#                   cr.execute(query)
-#                   cr.commit()  
           
-          #######################################################################################################################################3
-          # Step 3
-#         sql = """ select ft_id,amount,new_parent_fees_id,old_classesfees_id from temp_aec_classe_fees """
-#         cr.execute(sql)
-#         rows = cr.fetchall()  
-#         k = 1
-#         for j in rows:
-#             print "record no:",k
-#             feelines_dict = {
-#                     'parent_fee_structure_id': j[2],#obtained from searching classes fees
-#                     'fee_type': j[0],#obtained from revision fetypes object. new ft is added, 
-#                     'amount':j[1],#obtained from revision fetypes object.
-#                                                                          
-#                     }
-#             print "fee lines dictionary ",feelines_dict
-#             k = k +1
-#             new_ft = self.pool.get('smsfee.classes.fees.lines').create(cr,uid,feelines_dict) 
-#             if new_ft:
-#                    query =  """update temp_aec_classe_fees set new_child_feelines_id = """+str(new_ft)+"""where old_classesfees_id="""+str(j[3])
-#                    cr.execute(query)
-#                    cr.commit() 
-       #################################################################################################################################
-       # step 4 update fee_ids in studentfees
-        sql = """ select old_classesfees_id,new_child_feelines_id from temp_aec_classe_fees """
-        cr.execute(sql)
-        rows = cr.fetchall()  
-        l = 1
-        for m in rows:
-            print "record no:",l
-             
-            l = l +1
-         
-            query =  """update smsfee_studentfee set fee_type = """+str(m[1])+"""where oldfeeid="""+str(m[0])
-            cr.execute(query)
-            cr.commit()
-        
         if 'session_admissions_closed' in vals:
             acad_cal_ids = self.pool.get('sms.academiccalendar').search(cr, uid, [('session_id','=', ids)])
             if  acad_cal_ids:
@@ -2360,6 +2263,7 @@ class sms_student_subject(osv.osv):
     
     
     def _set_subj_name(self, cr, uid, ids, name, args, context=None):
+        """set subjects name """
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             result[f.id] = str(f.subject.name)  
