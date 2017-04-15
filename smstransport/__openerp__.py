@@ -14,6 +14,7 @@
              'wizard/wizard_singlestudent_unpaidftransportee_receipt.xml',
              'wizard/wizard_student_transportfee_collect.xml',
              'wizard/wizard_student_transportfee_receipt_exist_challans.xml',
+             'wizard/sms_datamigration_warsak_campus.xml',
              'smstransport_view.xml',
              'smstransport_report.xml',
              'smstransport_menus.xml',
