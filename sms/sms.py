@@ -4577,8 +4577,6 @@ class student_admission_register(osv.osv):
         'permanent_city': fields.char(string = "City", size=32), 
         'permanent_country': fields.many2one('res.country', 'Country'), 
         'domocile': fields.char(string = "Domicile", size=32),
-        
-        
     } 
     _sql_constraints = [('Student_Admission', 'unique (name,student_class,state)', """ Student Admission for this class already exists.""")]
     _defaults = {  'state': lambda*a :'Draft','cur_country': _set_default_country, 'gender':_get_default_gender,}
