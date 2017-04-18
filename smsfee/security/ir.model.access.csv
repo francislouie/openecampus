@@ -93,3 +93,5 @@
 "77","smsfee.classfees.register","model_smsfee_classfees_register","sms.group_sms_principal",1,0,0,0
 "78","smsfee.festructure.revision","model_smsfee_festructure_revision","sms.group_sms_principal",1,0,0,0
 "79","smsfee.classes.fees.lines","model_smsfee_classes_fees_lines","sms.group_sms_principal",1,0,0,0
+
+"80","sms.fee.challan.no","model_sms_fee_challan_no","sms.group_sms_director",1,1,1,0
