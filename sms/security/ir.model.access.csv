@@ -189,14 +189,6 @@
 "189","sms.academiccalendar.student","model_sms_academiccalendar_student","group_sms_director",1,1,1,0
 "190","sms.academiccalendar.subjects","model_sms_academiccalendar_subjects","group_sms_director",1,1,1,0
 "191","res.users","base.model_res_users","group_sms_director",1,1,1,0
-"193","smsfee.classes.fees","smsfee.model_smsfee_classes_fees","group_sms_director",1,1,1,0
-"194","smsfee.classfees.register","smsfee.model_smsfee_classfees_register","group_sms_director",1,1,1,0
-"195","smsfee.festructure.revision","smsfee.model_smsfee_festructure_revision","group_sms_director",1,1,1,0
-
-"193","smsfee.classes.fees","smsfee.model_smsfee_classes_fees","group_sms_admission_manager",1,1,1,0
-"194","smsfee.classfees.register","smsfee.model_smsfee_classfees_register","group_sms_admission_manager",1,1,1,0
-"195","smsfee.festructure.revision","smsfee.model_smsfee_festructure_revision","group_sms_admission_manager",1,1,1,0
-"196","smsfee.classes.fees.lines","smsfee.model_smsfee_classes_fees_lines","group_sms_admission_manager",1,1,1,0
 
 "197","sms.academiccalendar","model_sms_academiccalendar","group_sms_admission_officer",1,1,1,0
 "198","sms.exam.datesheet","model_sms_exam_datesheet","group_sms_admission_officer",1,0,0,0
@@ -235,10 +227,6 @@
 "230","sms.academiccalendar","model_sms_academiccalendar","group_sms_admission_officer",1,1,1,1
 "231","sms.academics.session","model_sms_academics_session","group_sms_admission_officer",1,0,0,0
 "232","sms.registration.format","model_sms_registration_format","group_sms_admission_officer",1,0,0,0
-"233","smsfee.classes.fees","smsfee.model_smsfee_classes_fees","group_sms_admission_officer",1,1,1,0
-"234","smsfee.classfees.register","smsfee.model_smsfee_classfees_register","group_sms_admission_officer",1,1,1,0
-"235","smsfee.festructure.revision","smsfee.model_smsfee_festructure_revision","group_sms_admission_officer",1,1,1,0
-"236","smsfee.classes.fees.lines","smsfee.model_smsfee_classes_fees_lines","group_sms_admission_officer",1,1,1,0
 "237","sms.change.student.class","model_sms_change_student_class","group_sms_admission_officer",1,1,1,0
 "238","sms.student.certificate","model_sms_student_certificate","group_sms_admission_officer",1,1,1,0
 
@@ -273,10 +261,6 @@
 "267","sms.academiccalendar","model_sms_academiccalendar","group_sms_manager_exams",1,1,1,1
 "268","sms.academics.session","model_sms_academics_session","group_sms_manager_exams",1,0,0,0
 "269","sms.registration.format","model_sms_registration_format","group_sms_manager_exams",1,0,0,0
-"270","smsfee.classes.fees","smsfee.model_smsfee_classes_fees","group_sms_manager_exams",1,1,1,0
-"271","smsfee.classfees.register","smsfee.model_smsfee_classfees_register","group_sms_manager_exams",1,1,1,0
-"272","smsfee.festructure.revision","smsfee.model_smsfee_festructure_revision","group_sms_manager_exams",1,1,1,0
-"273","smsfee.classes.fees.lines","smsfee.model_smsfee_classes_fees_lines","group_sms_manager_exams",1,1,1,0
 "274","sms.change.student.class","model_sms_change_student_class","group_sms_manager_exams",1,1,1,0
 "275","sms.student.certificate","model_sms_student_certificate","group_sms_manager_exams",1,1,1,0
 "276","sms.exam.type","model_sms_exam_type","group_sms_manager_exams",1,1,1,0
@@ -317,10 +301,6 @@
 "310","sms.academiccalendar","model_sms_academiccalendar","group_sms_officers_exams",1,0,0,0
 "311","sms.academics.session","model_sms_academics_session","group_sms_officers_exams",1,0,0,0
 "312","sms.registration.format","model_sms_registration_format","group_sms_officers_exams",1,0,0,0
-"313","smsfee.classes.fees","smsfee.model_smsfee_classes_fees","group_sms_officers_exams",1,0,0,0
-"314","smsfee.classfees.register","smsfee.model_smsfee_classfees_register","group_sms_officers_exams",1,0,0,0
-"315","smsfee.festructure.revision","smsfee.model_smsfee_festructure_revision","group_sms_officers_exams",1,0,0,0
-"316","smsfee.classes.fees.lines","smsfee.model_smsfee_classes_fees_lines","group_sms_officers_exams",1,0,0,0
 "317","sms.change.student.class","model_sms_change_student_class","group_sms_officers_exams",1,0,0,0
 "318","sms.student.certificate","model_sms_student_certificate","group_sms_officers_exams",1,0,0,0
 "319","sms.exam.type","model_sms_exam_type","group_sms_officers_exams",1,0,0,0
@@ -362,10 +342,6 @@
 "354","sms.academiccalendar","model_sms_academiccalendar","group_sms_fee_manager",1,0,0,0
 "355","sms.academics.session","model_sms_academics_session","group_sms_fee_manager",1,0,0,0
 "356","sms.registration.format","model_sms_registration_format","group_sms_fee_manager",1,0,0,0
-"357","smsfee.classes.fees","smsfee.model_smsfee_classes_fees","group_sms_fee_manager",1,0,0,0
-"358","smsfee.classfees.register","smsfee.model_smsfee_classfees_register","group_sms_fee_manager",1,0,0,0
-"359","smsfee.festructure.revision","smsfee.model_smsfee_festructure_revision","group_sms_fee_manager",1,0,0,0
-"360","smsfee.classes.fees.lines","smsfee.model_smsfee_classes_fees_lines","group_sms_fee_manager",1,0,0,0
 "361","sms.change.student.class","model_sms_change_student_class","group_sms_fee_manager",1,0,0,0
 "362","sms.student.certificate","model_sms_student_certificate","group_sms_fee_manager",1,0,0,0
 "363","sms.exam.type","model_sms_exam_type","group_sms_fee_manager",1,0,0,0
@@ -407,10 +383,6 @@
 "398","sms.academiccalendar","model_sms_academiccalendar","group_sms_fee_officer",1,0,0,0
 "399","sms.academics.session","model_sms_academics_session","group_sms_fee_officer",1,0,0,0
 "400","sms.registration.format","model_sms_registration_format","group_sms_fee_officer",1,0,0,0
-"401","smsfee.classes.fees","smsfee.model_smsfee_classes_fees","group_sms_fee_officer",1,0,0,0
-"402","smsfee.classfees.register","smsfee.model_smsfee_classfees_register","group_sms_fee_officer",1,0,0,0
-"403","smsfee.festructure.revision","smsfee.model_smsfee_festructure_revision","group_sms_fee_officer",1,0,0,0
-"404","smsfee.classes.fees.lines","smsfee.model_smsfee_classes_fees_lines","group_sms_fee_officer",1,0,0,0
 "405","sms.change.student.class","model_sms_change_student_class","group_sms_fee_officer",1,0,0,0
 "406","sms.student.certificate","model_sms_student_certificate","group_sms_fee_officer",1,0,0,0
 "407","sms.exam.type","model_sms_exam_type","group_sms_fee_officer",1,0,0,0
@@ -460,10 +432,6 @@
 "449","sms.academiccalendar","model_sms_academiccalendar","group_sms_principal",1,0,0,0
 "450","sms.academics.session","model_sms_academics_session","group_sms_principal",1,0,0,0
 "451","sms.registration.format","model_sms_registration_format","group_sms_principal",1,0,0,0
-"452","smsfee.classes.fees","smsfee.model_smsfee_classes_fees","group_sms_principal",1,0,0,0
-"453","smsfee.classfees.register","smsfee.model_smsfee_classfees_register","group_sms_principal",1,0,0,0
-"454","smsfee.festructure.revision","smsfee.model_smsfee_festructure_revision","group_sms_principal",1,0,0,0
-"455","smsfee.classes.fees.lines","smsfee.model_smsfee_classes_fees_lines","group_sms_principal",1,0,0,0
 "456","sms.change.student.class","model_sms_change_student_class","group_sms_principal",1,0,0,0
 "457","sms.student.certificate","model_sms_student_certificate","group_sms_principal",1,0,0,0
 "458","sms.exam.type","model_sms_exam_type","group_sms_principal",1,0,0,0

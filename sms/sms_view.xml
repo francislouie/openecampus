@@ -2942,16 +2942,11 @@
          <field name="arch" type="xml">
             <form string="" version="7.0">
 				<header>
-					
 					<button name="load_fee_subjects" string="1.Proceed With Admission" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="cancel_admisssion_registration" string="Go Back" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<button name="admit_student" string="2. Confirm This Admission" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Confirm" readonly="1"  />
 					<button name="admit_student" string="2. Confirm This Admission" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-
-
-
-
 				</header>
 				<group>
 				   <group><field name="image" widget='image' class="oe_left oe_avatar"/></group>

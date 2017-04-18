@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<!-- Fee Reports -->
+
+        <record id="view_data_migration_id" model="ir.ui.view">
+            <field name="name">class.data_migration_form</field>
+            <field name="model">class.data_migration</field>
+            <field name="arch" type="xml">
+                <form string="Student Admission" version="7.0">
+                    <group>
+                    <h1><field name="class_id"/></h1>
+                    </group>
+                     <footer>
+                        <button string="Print" name="import_student_data" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+           </field>
+          </record>
+
+		<!-- action Fee Reports-->
+
+        <record id="action_data_migration" model="ir.actions.act_window">
+            <field name="name">Migrate Students Data</field>
+            <field name="res_model">class.data_migration</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_data_migration_id"/>
+           <field name="target">new</field>
+        </record>
+
+</data>
+</openerp>

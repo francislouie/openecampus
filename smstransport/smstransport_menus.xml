@@ -58,5 +58,9 @@
 	<menuitem name="Registered Students List" id="sms_transport_registered_students_id" sequence = "8" parent="sms_transport_reports_id"
 	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_registered_persons"/>
 
+	<menuitem name="Import Data" id="sms_transport_datamigration_id" sequence = "9" parent="sms_transport_reports_id"
+	groups="sms.group_sms_admin,sms.group_sms_director" action="action_data_migration"/>
+
+
 </data>
 </openerp>
