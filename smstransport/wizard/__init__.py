@@ -3,3 +3,4 @@ import smstransport_wizard_registerations
 import wizard_singlestudent_unpaidtransportfee_receipt
 import wizard_student_transportfee_collect
 import wizard_student_transportfee_receipt_exist_challans
+import sms_datamigration_warsak_campus

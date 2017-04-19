@@ -650,10 +650,6 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 mydict = {'sno':'SNO','name':'Name','m1':'--','m2':'--','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','session_total':'0','other':'--','total':'--','gtotal':''}
                 stdid = std.std_id.id
            
-#                stdid = std.std_id.id
-#                stdrec = self.pool.get('sms.student').browse(self.cr, self.uid,stdid)
-#                print "stdnamedddd:", stdrec.name
-
                 mydict['name'] = std.std_id.name
                 mtotal = 0
                 others = 0
@@ -677,7 +673,8 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                     j = j +1
                 
                 sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
-                    AND acad_cal_id not in """+str(tuple(session_months_ids))+"""
+                    AND due_month not in """+str(tuple(session_months_ids))+"""
+                     AND acad_cal_id != """+str(class_id)+"""
                     AND student_id = """+str(stdid)
                 self.cr.execute(sql)
                 others = self.cr.fetchone()[0]

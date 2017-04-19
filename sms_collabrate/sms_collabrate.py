@@ -70,22 +70,34 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
     
-    def getstudent_subjects(self, cr, uid, student_id):
+    def getstudent_subjects(self, cr, uid, student_id,aca_cal_id):
         result = []
-        student_subj_id = self.pool.get('sms.student.subject').search(cr,uid,[('student_id','=', student_id),('subject_status','=','Current')])
-        if student_subj_id:
-            for subject in self.pool.get('sms.student.subject').browse(cr, uid, student_subj_id):
-                if subject.reference_practical_of:
-                    practical = subject.reference_practical_of.name
-                else:
-                    practical = None
+        acad_cal_std_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=', aca_cal_id),('std_id','=', student_id),('subject_status','in',['Current','Promoted'])])
+        if acad_cal_std_id:
+            student_subj_id = self.pool.get('sms.student.subject').search(cr,uid,[('student','=', acad_cal_std_id),('subject_status','in',['Current','Pass'])])
+            if student_subj_id:
+                for subject in self.pool.get('sms.student.subject').browse(cr, uid, student_subj_id):
+                    
+                    my_dict = {
+                                'subject_name':subject.subject.name,
+                                'subject_status':subject.subject_status,
+                                'subject_id':subject.id,
+                                'return_status':1,
+                                'return_desc':'Success'
+                            }
+                    result.append(my_dict)
+            else:
                 my_dict = {
-                            'subject_name':subject.subject.name,
-                            'subject_status':subject.subject_status,
-                            'subject_id':subject.id
-                        }
+                                'return_status':0,
+                                'return_desc':'No Subjects Found'
+                            }
                 result.append(my_dict)
-            
+        else:
+            my_dict = {
+                                'return_status':0,
+                                'return_desc':'No Active Class Found'
+                            }
+            result.append(my_dict)
         return result
     
 sms_collabrator()
