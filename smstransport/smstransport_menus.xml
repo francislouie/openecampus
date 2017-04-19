@@ -25,13 +25,16 @@
 	<menuitem id="menu_transportfee_open_challans_id" parent="smstransport_fee_head_id" sequence="11" 
 	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_open_id"/>
 
-	<menuitem id="menu_transportfee_paid_challans_id" parent="smstransport_fee_head_id" sequence="12" 
+	<menuitem id="menu_transportfee_waaitingapproval_challans_id" parent="smstransport_fee_head_id" sequence="13" 
+	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_watitingapproval_id"/>
+	
+	<menuitem id="menu_transportfee_paid_challans_id" parent="smstransport_fee_head_id" sequence="14" 
 	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_paid_id"/>
 
-	<menuitem id="menu_transportfee_cancelled_challans_id" parent="smstransport_fee_head_id" sequence="13" 
+	<menuitem id="menu_transportfee_cancelled_challans_id" parent="smstransport_fee_head_id" sequence="15" 
 	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_cancel_id"/>
 
-	<menuitem id="menu_transportfee_searchchallans_id" parent="smstransport_fee_head_id" sequence="14" 
+	<menuitem id="menu_transportfee_searchchallans_id" parent="smstransport_fee_head_id" sequence="16" 
 	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_search_id"/>
 
 	<menuitem name="Fee Settings" id="sms_transport_fee_config_id" sequence = "5" parent="sms_transport_root_id"

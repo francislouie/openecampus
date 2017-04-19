@@ -509,6 +509,13 @@ class sms_transportfee_challan_book(osv.osv):
         for f in records:
             self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})  
         return result
+    
+    def recive_fee_send_2approve(self, cr, uid, ids, context={}, arg=None, obj=None):
+        result = {}
+        records =  self.browse(cr, uid, ids, context)
+        for f in records:
+            self.write(cr, uid, f.id, {'state':'waiting_approval','challan_cancel_by':uid})  
+        return result
 
     _name = 'sms.transportfee.challan.book'
     _description = "This object contains the challan issued to transport availers."
@@ -531,7 +538,7 @@ class sms_transportfee_challan_book(osv.osv):
             'vouchered_by': fields.many2one('res.users', 'Voucher By',readonly=True),
             'vouchered': fields.boolean('Vouchered', readonly=True),
             'voucher_no': fields.many2one('account.move', 'Voucher No',readonly=True),
-            'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly=True, help='State'),
+            'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('fee_calculated', 'Open'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly=True, help='State'),
             'transport_challan_lines_ids': fields.one2many('sms.transport.fee.challan.lines', 'receipt_book_id', 'Transport Challan'),
     }
     _sql_constraints = [] 

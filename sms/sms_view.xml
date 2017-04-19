@@ -642,6 +642,7 @@
 								<field name="cell_no" required ="1"/>
 								<field name="fax_no"/>
 								<field name="email" />
+								<field name="nationality" />
 			                  </group>
 							   <group string="Permanent Address">
 								<field name="permanent_address" />
@@ -2982,6 +2983,7 @@
 								<field name="cell_no" required ="1"/>
 								<field name="fax_no"/>
 								<field name="email" />
+								<field name="nationality" />
 		                  	</group>
 						   <group string="Permanent Address">
 								<field name="permanent_address" />

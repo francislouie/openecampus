@@ -15,13 +15,11 @@ class sms_student_list(osv.osv_memory):
               'list_type': fields.selection([('class_list','1.Class List'),('contact_list','2.Contact list'),('check_admissions','3.Check Admissions Statistics'),('biodata','4. Student Biodata'),('security_cards','5. Students Security Cards')], 'List Type', required = True),
               'start_date': fields.date('Start Date'),
               'student_ids':fields.many2many('sms.student','sms_student_cards_rel','student_id','card_id','Students'),
-              'end_date':fields.date('End Ddate'),
+              'end_date':fields.date('End Date'),
               'card_display_message':fields.char('Display Text'),
               'export_to_excel':fields.boolean('Save As MS Excel File')
              }
     _defaults = { 'list_type': 'check_admissions',
-                 'start_date': '2007-06-07',
-                 'end_date': '2016-06-09'
            }
 
     def print_list(self, cr, uid, ids, data):
