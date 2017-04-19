@@ -2,6 +2,10 @@
 import time
 import datetime
 from datetime import date
+import logging
+
+_logger = logging.getLogger(__name__)
+
 
 from openerp.report import report_sxw
 
@@ -81,38 +85,42 @@ class sms_report_studentslist(report_sxw.rml_parse):
     
     def get_admission_statistics(self, data):                                                         
         result = []
+        fslist = []
         s_no = 0
         this_form = self.datas['form']
         fee_st =tuple(self.pool.get('sms.feestructure').search(self.cr, self.uid,[]))
-#        acad_cal =tuple(self.pool.get('sms.academiccalendar').search(self.cr, self.uid,[('state', '!=','Draft' )]))
+        _logger.info("_______ %r out of_________", (fee_st))
         
-        sql = """SELECT id FROM sms_academiccalendar
-            WHERE (
-            ('""" + str(this_form['start_date']) + "' <=  date_started and '""" + this_form['end_date'] + """' >= date_started ) 
-            OR ('""" + str(this_form['start_date']) + "' >=  date_started and '""" + this_form['end_date'] + """' <= date_closed ) 
-            OR ('""" + str(this_form['start_date']) + "' <=  date_closed and '""" + this_form['end_date'] + """' >= date_closed )
-            ) 
-            AND sms_academiccalendar.state !=  'Draft'
-            """ 
+        i = 1
+        my_dict = {'s_no':'#','acad_cal':'Class','state':'State','fs1':'','fs2':'','fs3':'','fs4':'','fs5':''}
+        for fs in fee_st:
+            recfee_st  = self.pool.get('sms.feestructure').browse(self.cr, self.uid,fs)
+            my_dict['fs'+str(i)] = recfee_st.name
+            fslist.append(recfee_st.id)
+            i = i +1
+        result.append(my_dict)  
+        
+        sql = """SELECT id ,name ,state from sms_academiccalendar order by name"""
         self.cr.execute(sql)
         acad_cal = self.cr.fetchall()
-       
+        j = 1
         for cls in acad_cal:
-            s_no +=1
-            obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,cls[0])
-            my_dict = {'s_no':'','acad_cal':'','state':'','full_fee':'','merit_100':'','merit_50':'','fps_adm':'','fps_50':''}            
-            my_dict['s_no'] = s_no
-            my_dict['acad_cal'] = obj.name
-            my_dict['state'] = obj.state
             
-            for fs in fee_st:
+            obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,cls[0])
+            my_dict = {'s_no':'','acad_cal':'','state':'','fs1':'','fs2':'','fs3':'','fs4':'','fs5':''}            
+            my_dict['s_no'] = j
+            my_dict['acad_cal'] = cls[1]
+            my_dict['state'] = cls[2]
+            j +=1
+            k = 1
+            for fs in fslist:
                 
                 fee_structure = self.pool.get('sms.feestructure').browse(self.cr, self.uid,fs).name
                 
-                sql = """SELECT count(sms_academiccalendar_student.id) FROM sms_student
+                sql = """SELECT count(sms_student.id) FROM sms_student
                     inner join sms_academiccalendar_student on 
                     sms_student.id = sms_academiccalendar_student.std_id
-                    WHERE sms_academiccalendar_student.name = """ + str(obj.id) + """ 
+                    WHERE sms_student.current_class = """ + str(cls[0]) + """ 
                     AND sms_student.fee_type = """ + str(fs) + """
                     AND sms_student.state in ('Admitted','admission_cancel','drop_out','slc') 
                     AND sms_student.admitted_on >= '""" + this_form['start_date'] + """'
@@ -120,21 +128,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
                 self.cr.execute(sql)
                 row = self.cr.fetchone()
                 
-                if fee_structure == 'Full Fee':
-                    my_dict['full_fee'] =  row[0]
-                        
-                elif fee_structure == 'Merit Schorlarship(100%)':
-                    my_dict['merit_100'] = row[0]
-                        
-                elif fee_structure == 'Merit Scholarship(50%)' :
-                    my_dict['merit_50'] =  row[0]
-                    
-                elif fee_structure == 'FPS ADMISSION FREE ' :
-                    my_dict['fps_adm'] =  row[0]
-                    
-                elif fee_structure == 'FPS 50%' :
-                    my_dict['fps_50'] = row[0]
-                    
+                my_dict['fs'+str(k)] =  row[0]
+                k = k +1        
             result.append(my_dict)
         return result
     
@@ -187,7 +182,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
             if rec.permanent_city:
                 permanent_city = rec.permanent_city
             else:
-                current_city = "--"
+                permanent_city = "--"
             if rec.permanent_address:
                 permanent_address = rec.permanent_address
             else:

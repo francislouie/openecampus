@@ -791,6 +791,7 @@ class sms_student(osv.osv):
         'cur_address': fields.char(string = "Street", size=32),
         'cur_city': fields.char(string = "City", size=32), 
         'cur_country': fields.many2one('res.country', 'Country'),
+        'nationality':fields.many2one('res.country','Nationality'),
         'permanent_address': fields.char(string = "Street", size=32),
         'permanent_city': fields.char(string = "City", size=32), 
         'permanent_country': fields.many2one('res.country', 'Country'), 
@@ -4323,6 +4324,7 @@ class student_admission_register(osv.osv):
                                                                     'fee_type':  f.fee_structure.id,
                                                                     'admitted_on': datetime.date.today(),
                                                                     'admitted_by': uid,
+                                                                    'nationality':f.nationality.id,
                                                                     'state':'Admitted' })
           
           
@@ -4558,6 +4560,7 @@ class student_admission_register(osv.osv):
         'group' : fields.many2one('sms.group' ,'Group'),
         'subject_ids' : fields.one2many('admission.register.subjects','parent_id','Student Subjects'),
         'form_no' : fields.integer('Form No'),
+        'nationality':fields.many2one('res.country','Nationality'),
         'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Confirm', 'Confirm')], 'State', readonly = True),
         #*********************personal info************************************88
         'gender': fields.selection([('Male', 'Male'),('Female', 'Female')], 'Gender'),

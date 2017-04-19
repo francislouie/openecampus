@@ -276,8 +276,8 @@
 		      <field name="type">form</field>
 		      <field name="arch" type="xml">
 			  <header>
-				<!--<button name="manage_class_fee" string="Fee Structure" icon="gtk-execute" states="Draft,Active" type="object" class="oe_highlight" groups=""/>
-				<button name= "%(action_update_fee_register)d" string="Update Fee Register" states="Draft,Active"  icon="gtk-execute" type="action"/>-->
+				<!--<button name="manage_class_fee" string="Fee Structure" icon="gtk-execute" states="Draft,Active" type="object" class="oe_highlight" groups=""/>-->
+				<button name= "%(action_update_fee_register)d" string="Defaulter list" states="Draft,Active"  icon="gtk-execute" type="action"/>
 				<button name="%(action_fee_receipts)d" string="Print Fee Challans"  states="Draft,Active" type="action" icon="gtk-print"/>
 			  </header>
 				<notebook>

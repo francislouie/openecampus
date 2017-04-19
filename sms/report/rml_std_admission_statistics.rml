@@ -68,36 +68,21 @@
   
   </stylesheet>
   <story>
-  <pto>
 
-    <blockTable rowHeights="33.0"  colWidths="50.0,100.0,70.0,50.0,90.0,90.0,70.0,40.0" style="innermost_tables">
-       <tr>
-       <td><para style="para_1">S.No</para></td>
-       <td><para style="para_1">Class</para></td>
-       <td><para style="para_1">State</para></td>
-       <td><para style="para_1">Full Fee</para></td>
-       <td><para style="para_1">Merit Schorlarship(100%)</para></td>
-       <td><para style="para_1">Merit Schorlarship(50%)</para></td>
-       <td><para style="para_1">FPS ADMISSION FREE</para></td>
-       <td><para style="para_1">FPS 50%</para></td>
-       </tr>
-       </blockTable>                
-		
-	 <section>
+    <section>
 		<blockTable  rowHeights="33.0" colWidths="50.0,100.0,70.0,50.0,90.0,90.0,70.0,40.0" style="Table21">
 		<tr>
 		<para style="P1">[[repeatIn(get_admission_statistics(data['form']),'s')]]</para> 
 		<td><para style="para_1">[[(s['s_no'])]]</para></td>
    	   	<td><para style="para_1">[[(s['acad_cal'])]]</para></td>
        	<td><para style="para_1">[[(s['state'])]]</para></td>
-       	<td><para style="para_1">[[(s['full_fee'])]]</para></td>
-       	<td><para style="para_1">[[(s['merit_100'])]]</para></td>
-       	<td><para style="para_1">[[(s['merit_50'])]]</para></td>
-       	<td><para style="para_1">[[(s['fps_adm'])]]</para></td>
-       	<td><para style="para_1">[[(s['fps_50'])]]</para></td>
+       	<td><para style="para_1">[[(s['fs1'])]]</para></td>
+       	<td><para style="para_1">[[(s['fs2'])]]</para></td>
+       	<td><para style="para_1">[[(s['fs3'])]]</para></td>
+       	<td><para style="para_1">[[(s['fs4'])]]</para></td>
+       	<td><para style="para_1">[[(s['fs5'])]]</para></td>
 		</tr>
 		</blockTable>
 	</section>
-</pto>
   </story>
 </document>
