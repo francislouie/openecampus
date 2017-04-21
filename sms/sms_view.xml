@@ -2946,12 +2946,15 @@
 					<button name="load_fee_subjects" string="1.Proceed With Admission" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="cancel_admisssion_registration" string="Go Back" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<button name="admit_student" string="2. Confirm This Admission" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
+					<button name="%(action_admit_student)d" string="Help" states="Draft,waiting_approval" type="action" class="oe_highlight" groups=""/>
 					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Confirm" readonly="1"  />
-					<button name="admit_student" string="2. Confirm This Admission" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
+					
 				</header>
+				<sheet>
+				<img src='/sms/static/src/img/sms_new_admission.png' width="50" height="50" class="oe_kanban_image oe_kanban_avatar_smallbox"/><h2>New Admission</h2>
 				<group>
-				   <group><field name="image" widget='image' class="oe_left oe_avatar"/></group>
-                   <group string="Admission Register" col="4" colspan="4">
+				   <group><field name="image" widget='image' width="225" height="225" nolabel = "1" class="oe_left oe_avatar"/></group>
+                   <group col="4" colspan="4">
                     	  <field name="name" required="1"   attrs="{'readonly':[('state','=','Confirm')]}" />
                     	  <field name="registration_no" attrs="{'readonly':[('state','=','Confirm')]}" /> 
 				          <field name="father_name"  required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
@@ -2959,6 +2962,7 @@
 						  <field name="group" required="1" attrs="{'readonly':[('state','!=','Draft')]}" />
 						  <field name="fee_structure"  required="1" attrs="{'readonly':[('state','!=','Draft')]}" />
 						  <field name="form_no" readonly="1" attrs="{'invisible':[('state','=','Draft')]}" />
+						 
                    </group>
 				   <newline/>
 					
@@ -2997,20 +3001,10 @@
 					  		<field name="subject_ids" colspan="6"  />
 						</page>
 						
-						<page string="Instructions"  attrs="{'invisible':[('state','not in',['waiting_approval','Draft'] )]}" >
-						<p>
-						<h2>New Admission</h2>
-						<ol>
-						<button name="%(report_admission_form_filled_id)d" string="Admission Form" states="Draft,waiting_approval,Confirm" type="action" class="oe_highlight" groups=""/>
-						<li>Select Student class of admission</li>
-						<li>Studenet monthly and other fee are charged according to Fee Structure selected for student</li>
-						<li>Check applicable fees</li>
-						<li>Verify subjects in which students will be registered</li>
-						</ol>
-						</p>
-						</page>
+						
 					</notebook>
 			    </group>  
+				</sheet>
 			  </form>
             </field>
         </record>

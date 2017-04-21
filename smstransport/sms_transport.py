@@ -131,7 +131,7 @@ class sms_transport_fee_structure(osv.osv):
             } 
     _defaults = {}
     _sql_constraints = [
-                ('unique_transport_feestructure', 'unique (transport_route)', 'Only One Fee Structure Can be Defined For A Vehcile')
+                ('unique_transport_feestructure', 'unique (transport_route,session_id)', 'Only One Fee Structure Can be Defined within a session')
                     ]
     
 sms_transport_fee_structure()
@@ -822,37 +822,39 @@ class sms_session_months(osv.osv):
            3)
            """
         super(sms_session_months, self).update_monthly_feeregister(cr, uid, ids, name)
-        for rec in self.browse(cr, uid, ids):
-            student_ids = self.pool.get('sms.transport.registrations').search(cr, uid, [('state','=','Registered')])
-            student_recs = self.pool.get('sms.transport.registrations').browse(cr, uid, student_ids)
-            
-            for student_rec in student_recs:
-                monthly_fee_sql = """SELECT monhtly_fee FROM sms_transport_fee_structure WHERE 
-                                        session_id = """ + str(rec.session_id.id) + """
-                                        AND transport_route = """ +str(student_rec.transport_route.id) + """"""
-                cr.execute(monthly_fee_sql)
-                monthly_fee = cr.fetchone()
-                fee_already_exists =  self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',student_rec.student_id.id),('due_month','=',rec.id)])
-                if not fee_already_exists:
-                    fee_month = rec.id
-                    due_month = rec.id
-                    fee_dict= {
-                        'student_id': student_rec.student_id.id,
-                        'registeration_id': student_rec.id,
-                        'fee_amount': monthly_fee[0],
-                        'due_month': due_month,
-                        'fee_month': fee_month,
-                        'late_fee':0,
-                        'total_fees':0,
-                        'date_fee_charged':date.today(),
-                        'state':'fee_calculated'
-                        }
-                    create_trans_fee = self.pool.get('sms.transport.fee.payments').create(cr,uid,fee_dict)  
-                    if create_trans_fee:
-                        self.write(cr, uid, rec.id, {'update_log':'Last update on:'+str(date.today()),'state':'Updated'})
-                else:
-                    print 'Transport fee record for student '+ str(student_rec.student_id.id) +' already exists'
-            return True
+#         for rec in self.browse(cr, uid, ids):
+#             student_ids = self.pool.get('sms.transport.registrations').search(cr, uid, [('state','=','Registered')])
+#             student_recs = self.pool.get('sms.transport.registrations').browse(cr, uid, student_ids)
+#             
+#             for student_rec in student_recs:
+#                 monthly_fee_sql = """SELECT monhtly_fee FROM sms_transport_fee_structure WHERE 
+#                                         session_id = """ + str(rec.session_id.id) + """
+#                                         AND transport_route = """ +str(student_rec.transport_route.id) + """"""
+#                 cr.execute(monthly_fee_sql)
+#                 monthly_fee = cr.fetchone()
+#                 if not monthly_fee:
+#                     raise osv.except_osv(('Fee Structure not found'),('Please Define a Transport Fee Structure for '+str(student_rec.transport_route.name)+" For Session: "+str(rec.session_id.name)))
+#                 fee_already_exists =  self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',student_rec.student_id.id),('due_month','=',rec.id)])
+#                 if not fee_already_exists:
+#                     fee_month = rec.id
+#                     due_month = rec.id
+#                     fee_dict= {
+#                         'student_id': student_rec.student_id.id,
+#                         'registeration_id': student_rec.id,
+#                         'fee_amount': monthly_fee[0],
+#                         'due_month': due_month,
+#                         'fee_month': fee_month,
+#                         'late_fee':0,
+#                         'total_fees':0,
+#                         'date_fee_charged':date.today(),
+#                         'state':'fee_calculated'
+#                         }
+#                     create_trans_fee = self.pool.get('sms.transport.fee.payments').create(cr,uid,fee_dict)  
+#                     if create_trans_fee:
+#                         self.write(cr, uid, rec.id, {'update_log':'Last update on:'+str(date.today()),'state':'Updated'})
+#                 else:
+#                     print 'Transport fee record for student '+ str(student_rec.student_id.id) +' already exists'
+        return True
     
     _name = 'sms.session.months'
     _description = "Stores months of a session"
