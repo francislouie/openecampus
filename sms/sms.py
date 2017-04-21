@@ -4486,20 +4486,24 @@ class student_admission_register(osv.osv):
         vals = {}
         group = ''
         
-        sql = """SELECT sms_acad_cal_group_rel.group_id from sms_acad_cal_group_rel
-                  INNER JOIN sms_academiccalendar ON sms_academiccalendar.id = sms_acad_cal_group_rel.acad_cal_id
-                  WHERE sms_acad_cal_group_rel.acad_cal_id="""+str(student_class)
-                  
-        cr.execute(sql)
-        grops = cr.fetchall()
-        if grops:
-        
-            for grp in grops:
-                acad_cal_id_group.append(grp)
-        
-        rec_acad_cal = self.pool.get('sms.academiccalendar').browse(cr,uid,student_class)
-
-        vals['group'] = acad_cal_id_group[0]
+        if student_class:
+            sql = """SELECT sms_acad_cal_group_rel.group_id from sms_acad_cal_group_rel
+                      INNER JOIN sms_academiccalendar ON sms_academiccalendar.id = sms_acad_cal_group_rel.acad_cal_id
+                      WHERE sms_acad_cal_group_rel.acad_cal_id="""+str(student_class)
+                      
+            cr.execute(sql)
+            grops = cr.fetchall()
+            if grops:
+            
+                for grp in grops:
+                    acad_cal_id_group.append(grp)
+            
+            rec_acad_cal = self.pool.get('sms.academiccalendar').browse(cr,uid,student_class)
+    
+            if acad_cal_id_group:
+                vals['group'] = acad_cal_id_group[0]
+            else:
+                vals['group'] = None
         
         return {'domain': {'group':[('id','in',acad_cal_id_group ) ]},'value': vals}
                     
