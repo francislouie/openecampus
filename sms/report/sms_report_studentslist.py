@@ -1,12 +1,8 @@
-
 import time
 import datetime
 from datetime import date
 import logging
-
 _logger = logging.getLogger(__name__)
-
-
 from openerp.report import report_sxw
 
 class sms_report_studentslist(report_sxw.rml_parse):
@@ -27,7 +23,6 @@ class sms_report_studentslist(report_sxw.rml_parse):
     def report_title(self, data):  
         start_date = self.pool.get('sms.session').set_date_format(self.cr, self.uid,self.datas['form']['start_date'])
         end_date = self.pool.get('sms.session').set_date_format(self.cr, self.uid,self.datas['form']['end_date'])
-               
         string = "Students Admissions \n " +str(start_date) + "-TO -"+str(end_date)
         return string
     
@@ -35,8 +30,6 @@ class sms_report_studentslist(report_sxw.rml_parse):
         return self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,form['acad_cal'][0] ).name
     
     def get_student_contacts(self, data):                                                         
-        
-         
         result = []
         this_form = self.datas['form']
         acad_cal = this_form['acad_cal'][0]
@@ -46,7 +39,6 @@ class sms_report_studentslist(report_sxw.rml_parse):
                           AND state not in('admission_cancel','drop_out','deleted','slc') ORDER BY name"""
         self.cr.execute(students)
         rows = self.cr.fetchall() 
-        
         i = 1
         for row in rows:
             mydict = {'sno':'','admsn_no':'','student':'','father':'','Cellno':'--','phone':'--',}
@@ -61,8 +53,6 @@ class sms_report_studentslist(report_sxw.rml_parse):
             i = i + 1
             result.append(mydict)
         return result
-  
-  #############################################################################################################
   
     def print_students_class_list(self,form):                                                         
         result = []
@@ -90,7 +80,6 @@ class sms_report_studentslist(report_sxw.rml_parse):
         this_form = self.datas['form']
         fee_st =tuple(self.pool.get('sms.feestructure').search(self.cr, self.uid,[]))
         _logger.info("_______ %r out of_________", (fee_st))
-        
         i = 1
         my_dict = {'s_no':'#','acad_cal':'Class','state':'State','fs1':'','fs2':'','fs3':'','fs4':'','fs5':''}
         for fs in fee_st:
@@ -98,14 +87,14 @@ class sms_report_studentslist(report_sxw.rml_parse):
             my_dict['fs'+str(i)] = recfee_st.name
             fslist.append(recfee_st.id)
             i = i +1
+            
         result.append(my_dict)  
-        
         sql = """SELECT id ,name ,state from sms_academiccalendar order by name"""
         self.cr.execute(sql)
         acad_cal = self.cr.fetchall()
         j = 1
+        
         for cls in acad_cal:
-            
             obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,cls[0])
             my_dict = {'s_no':'','acad_cal':'','state':'','fs1':'','fs2':'','fs3':'','fs4':'','fs5':''}            
             my_dict['s_no'] = j
@@ -113,8 +102,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
             my_dict['state'] = cls[2]
             j +=1
             k = 1
+            
             for fs in fslist:
-                
                 fee_structure = self.pool.get('sms.feestructure').browse(self.cr, self.uid,fs).name
                 
                 sql = """SELECT count(sms_student.id) FROM sms_student
@@ -125,23 +114,19 @@ class sms_report_studentslist(report_sxw.rml_parse):
                     AND sms_student.state in ('Admitted','admission_cancel','drop_out','slc') 
                     AND sms_student.admitted_on >= '""" + this_form['start_date'] + """'
                     AND sms_student.admitted_on <='""" + this_form['end_date'] + """'"""
+                    
                 self.cr.execute(sql)
                 row = self.cr.fetchone()
-                
                 my_dict['fs'+str(k)] =  row[0]
                 k = k +1        
             result.append(my_dict)
         return result
     
     def get_student_biodata(self,form):
-        
-        
-       
         res = []
         s_no = 0        
         _ids = self.pool.get('sms.academiccalendar.student').search(self.cr ,self.uid ,[('name','=',form['acad_cal'][0])])
         std_t = tuple(_ids)
-        
         sql = """SELECT std_id FROM sms_academiccalendar_student
             WHERE id IN """+str(std_t)+""" """
         self.cr.execute(sql)
@@ -149,10 +134,11 @@ class sms_report_studentslist(report_sxw.rml_parse):
 
         for row in info:
             rec = self.pool.get('sms.student').browse(self.cr ,self.uid ,row[0])
+            
             my_dict = {'s_no':'','name':'','registration_no':'','gender':'','birthday':'','blood_grp':'','father_name':'',
                    'phone':'','email':'','cur_address':'','permanent_address':'','domocile':'','admitted_on':'','image':''}
-            
             s_no +=1
+            
             my_dict['s_no'] = s_no
             my_dict['name'] = rec.name 
             my_dict['registration_no'] = rec.registration_no 
@@ -160,7 +146,6 @@ class sms_report_studentslist(report_sxw.rml_parse):
             my_dict['birthday'] = rec.birthday 
             my_dict['blood_grp'] = rec.blood_grp
             my_dict['father_name'] = rec.father_name
-            
             my_dict['phone'] = rec.phone
             my_dict['cell'] = rec.cell_no
             my_dict['fax'] = rec.fax_no
@@ -178,7 +163,9 @@ class sms_report_studentslist(report_sxw.rml_parse):
                 current_country = rec.cur_country.name
             else:
                 current_country = "--"
+                
             my_dict['cur_address'] = str(current_address)+","+str(current_city)+","+str(current_country)
+            
             if rec.permanent_city:
                 permanent_city = rec.permanent_city
             else:
@@ -206,12 +193,12 @@ class sms_report_studentslist(report_sxw.rml_parse):
                 prem_country = rec.permanent_country.name
             else:
                 prem_country = "--"
+                
             my_dict['permanent_address'] = str(prem_address)+","+str(perm_city)+","+str(prem_country)
             my_dict['domocile'] = rec.domocile
             my_dict['admitted_on'] = rec.admitted_on
             my_dict['image'] = rec.image
             res.append(my_dict)
-            
         return res
         
     def print_student_se_passes(self,form):
@@ -220,7 +207,6 @@ class sms_report_studentslist(report_sxw.rml_parse):
     #         user = self.pool.get('res.users').browse(self.cr, self.uid, self.uid)
     #         dummy_pic  = user.company_id.pic
     #        
-                 
             ids_entry_regis = self.pool.get('sms.student').search(self.cr,self.uid,[('state','=','Admitted'),('id','in',students)])
             if ids_entry_regis:
                 rec_entryregis = self.pool.get('sms.student').browse(self.cr,self.uid,ids_entry_regis)
@@ -255,13 +241,11 @@ class sms_report_studentslist(report_sxw.rml_parse):
                         result.append(my_dict)
                         my_dict = {'id1': '','name1':'','father_name1':'','valid_upto1':'','pic1':'','dummy_pic1':'','program1':'','group1':'','candidate1':'',
                                   'id2': '','name2':'','father_name2':'','valid_upto2':'','pic2':'','dummy_pic2':'','program2':'','group2':'','candidate2':''}
+                        
             if i%2 == 1:
                 result.append(my_dict)
-                
             return result
 
-   
-      
 report_sxw.report_sxw('report.sms.studentslist.name', 'sms.student', 'addons/sms/rml_studentslist.rml',parser = sms_report_studentslist, header='external')
 report_sxw.report_sxw('report.sms.class.list.name', 'sms.student', 'addons/sms/rml_student_class_list.rml',parser = sms_report_studentslist, header='external')
 report_sxw.report_sxw('report.sms.std_admission_statistics.name', 'sms.student', 'addons/sms/rml_std_admission_statistics.rml',parser = sms_report_studentslist, header='external')
@@ -269,4 +253,3 @@ report_sxw.report_sxw('report.sms.students.biodata', 'sms.student', 'addons/sms/
 report_sxw.report_sxw('report.sms_students_securuty_cards_name', 'sms.student', 'addons/sms/report/rml_student_remp_sec_cards.rml',parser=sms_report_studentslist, header=False)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
-

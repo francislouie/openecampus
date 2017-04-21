@@ -9,7 +9,6 @@
             <field name="model">admit.student</field>
             <field name="arch" type="xml">
                 <form string="Help" version="7.0">
-                   
                     <h2>New Admission</h2>
 						<ol>
 						<li>Select Student class of admission</li>
@@ -20,8 +19,6 @@
 						<button name="%(report_admission_form_filled_id)d" string="Admission Form" />
                     <footer>
                         <button string="Close" special="cancel" class="oe_highlight"/>
-                        
-                        
                     </footer>
                </form>
             </field>
@@ -37,5 +34,6 @@
            <field name="view_id" ref="view_admit_student"/>
            <field name="target">new</field>
         </record>
+        
 </data>
 </openerp>
