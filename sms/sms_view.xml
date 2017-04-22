@@ -599,8 +599,8 @@
             <form string="Student" version="7.0">
 			<header>
 			<button name="%(action_admit_student)d" string="Admit" states="Draft" type="action" class="oe_highlight" groups=""/>
-<!--			<button name="action_admit_student" string="Admit(Beta)" states="Draft" type="action" class="oe_highlight" groups=""/>
--->
+			<button name="action_admit_student" string="Admit(Beta)" states="Draft" type="action" class="oe_highlight" groups=""/>
+			
 			<button name="%(action_readmit_student)d" string="Re-admit" states="admission_cancel,drop_out,slc" type="action" class="oe_highlight" groups=""/>
 			<button name="%(action_assign_class_to_student)d" string="Assign Class" type="action" class="oe_highlight" groups="" attrs="{'invisible':[('current_state','!=','Failed')]}"/>
 <!--
@@ -2946,7 +2946,7 @@
 					<button name="load_fee_subjects" string="1.Proceed With Admission" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="cancel_admisssion_registration" string="Go Back" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<button name="admit_student" string="2. Confirm This Admission" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-					<button name="%(action_admit_student)d" string="Help" states="Draft,waiting_approval" type="action" class="oe_highlight" groups=""/>
+					<!--<button name="%(action_admit_student)d" string="Help" states="Draft,waiting_approval" type="action" class="oe_highlight" groups=""/>-->
 					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Confirm" readonly="1"  />
 					
 				</header>

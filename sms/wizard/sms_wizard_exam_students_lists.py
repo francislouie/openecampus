@@ -16,7 +16,6 @@ class sms_student_exam_lists(osv.osv_memory):
             'order_by': 'sms_student.name',
            }
     
-     
     def onchange_academiccalendar(self, cr, uid, ids, context=None):
         result = {}
         result['subject_id'] = None
@@ -25,9 +24,7 @@ class sms_student_exam_lists(osv.osv_memory):
     
     def print_list(self, cr, uid, ids, context=None):
         current_obj = self.browse(cr, uid, ids, context=context)
-        
         for obj in current_obj:
-           
             if obj.list_type == 'Signature_Sheet':
                 report = 'sms.student.signature.list.name'
             elif obj.list_type == 'Award_List':

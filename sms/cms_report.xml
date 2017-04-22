@@ -2,7 +2,6 @@
 <openerp>
     <data>
 	 
-
         <report
             id="report_class_timetable"
             model="sms.timetable"
@@ -30,8 +29,7 @@
 
 		 <!--Filled Admission Form-->
 		
-		<report
-            id="report_admission_form_filled_id"
+		<report id="report_admission_form_filled_id"
             model="student.admission.register"
             name="sms.admissionformfilled.name"
             multi="True"
@@ -39,8 +37,7 @@
             string="Admission Form"/>
 
 		 <!--Withdtaw Register-->
-		<report
-            id="report_withdraw_register_id"
+		<report id="report_withdraw_register_id"
             model="sms.student"
             name="sms.withdraw.register.name"
             multi="True"
@@ -48,8 +45,7 @@
             string="Withdraw register"/>
 
 		 <!--print students list-->
-		<report
-            id="report_studentslist_id"
+		<report id="report_studentslist_id"
             model="sms.student"
             name="sms.studentslist.name"
             multi="True"
@@ -64,8 +60,7 @@
             string="Student Class Lis"/>
 
  		<!--print students admission statistics list-->
-		<report
-            id="report_student_admission_statisitics_id"
+		<report id="report_student_admission_statisitics_id"
             model="sms.student"
             name="sms.std_admission_statistics.name"
             multi="True"
@@ -73,8 +68,7 @@
             string="Admission details"/>
 
  		<!--print students biodata-->
-		<report
-            id="report_student_biodata_id"
+		<report id="report_student_biodata_id"
             model="sms.student"
             name="sms.students.biodata"
             multi="True"
@@ -83,8 +77,7 @@
             
            
        <!--print students security cards-->
-		<report
-            id="report_student_temp-securitycards_id"
+		<report id="report_student_temp-securitycards_id"
             model="sms.student"
             name="sms_students_securuty_cards_name"
             multi="True"
@@ -92,8 +85,7 @@
             string="Security cards"/>
 
 		<!--Print Students Signature List-->
-		<report
-            id="report_student_signature_list"
+		<report id="report_student_signature_list"
             model="sms.student"
             name="sms.student.signature.list.name"
             multi="True"
@@ -101,8 +93,7 @@
             string="Students Signature List"/>
 
 		<!--Print Students Award List-->
-		<report
-            id="report_student_award_list"
+		<report id="report_student_award_list"
             model="sms.student"
             name="sms.student.award.list.name"
             multi="True"
@@ -110,8 +101,7 @@
             string="Students Award List"/>
 
 		<!--Print Students Result List-->
-		<report
-            id="report_student_result_list"
+		<report id="report_student_result_list"
             model="sms.student"
             name="sms.student.result.list.name"
             multi="True"
@@ -119,8 +109,7 @@
             string="Students Result List"/>
 
 		<!--Print Students Result Sheet-->
-		<report
-            id="report_student_result_sheet"
+		<report id="report_student_result_sheet"
             model="sms.student"
             name="sms.student.result.sheet.name"
             multi="True"
@@ -128,8 +117,7 @@
             string="Students Result Sheet"/>
 
 		<!-- Print Students DMC -->
-		<report
-            id="report_student_dmc"
+		<report id="report_student_dmc"
             model="sms.student"
             name="sms.student.dmc.name"
             multi="True"
@@ -137,8 +125,7 @@
             string="Print DMCs"/>
 
 		<!-- Print Students DMC Multiple-->
-		<report
-            id="report_student_dmc_multiple"
+		<report id="report_student_dmc_multiple"
             model="sms.student"
             name="sms_dmc_format2_name"
             multi="True"
@@ -146,8 +133,7 @@
             string="Student DMC"/>
             
 		<!--Print Students Date Sheet-->
-		<report
-            id="report_student_date_sheet"
+		<report id="report_student_date_sheet"
             model="sms.student"
             name="sms.student.date.sheet.name"
             multi="True"
