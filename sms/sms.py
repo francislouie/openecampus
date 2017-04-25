@@ -684,9 +684,6 @@ class sms_student(osv.osv):
         print "action_admit_student"
         return None 
     
-
-    
-    
     def unlink(self, cr, uid, ids, context={}, check=True):
         for rec in self.browse(cr, uid, ids, context):
             if rec.state == 'Draft':
@@ -4299,9 +4296,7 @@ class student_admission_register(osv.osv):
 
     def admit_student(self ,cr ,uid ,ids ,context):
         for f in self.browse(cr,uid,ids):
-            
             #step1
-     
             student_id = self.pool.get('sms.student').create(cr,uid,{
                                                                     'name':f.name,
                                                                     'father_name':f.father_name,
@@ -4597,7 +4592,7 @@ class admission_register_subjects(osv.osv):
         'name' : fields.many2one('sms.academiccalendar.subjects','Subjects'),
         'parent_id' : fields.many2one('student.admission.register','Admission Register'),
     }
-    _defaults = {    }    
+    _defaults = {}    
     _sql_constraints = [('subject_ex-tinsts', 'unique (name,parent_id)', """ Subject is already inculded,renove duplicated subject and then continue""")]
 admission_register_subjects()
 

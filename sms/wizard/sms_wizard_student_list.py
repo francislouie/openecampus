@@ -1,20 +1,14 @@
 from openerp.osv import fields, osv
-import datetime
-import xlwt
-import socket
-import fcntl
-import struct
-from struct import pack, unpack
 
 class sms_student_list(osv.osv_memory):
 
     _name = "sms.studentlist"
-    _description = "will print student list"
+    _description = "Used to Print Students List in Multiple Formats"
     _columns = {
-              'acad_cal':fields.many2one('sms.academiccalendar','Academic Calendar',domain = [('state','=','Active')] ),
+              'acad_cal':fields.many2one('sms.academiccalendar','Academic Calendar', domain = [('state','=','Active')] ),
               'list_type': fields.selection([('class_list','1.Class List'),('contact_list','2.Contact list'),('check_admissions','3.Check Admissions Statistics'),('biodata','4. Student Biodata'),('security_cards','5. Students Security Cards')], 'List Type', required = True),
               'start_date': fields.date('Start Date'),
-              'student_ids':fields.many2many('sms.student','sms_student_cards_rel','student_id','card_id','Students'),
+              'student_ids':fields.many2many('sms.student','sms_student_cards_rel', 'student_id', 'card_id', 'Students'),
               'end_date':fields.date('End Date'),
               'card_display_message':fields.char('Display Text'),
               'export_to_excel':fields.boolean('Save As MS Excel File')
@@ -23,26 +17,23 @@ class sms_student_list(osv.osv_memory):
            }
 
     def print_list(self, cr, uid, ids, data):
-        result = []
         thisform = self.browse(cr, uid, ids)[0]
         listtype = thisform['list_type']
         if listtype == 'check_admissions':
             report = 'sms.std_admission_statistics.name'
-        
         elif listtype == 'class_list':
             report = 'sms.class.list.name'
         elif listtype == 'security_cards':
             report = 'sms_students_securuty_cards_name'
-            
-            
         elif listtype == 'biodata':
             report = 'sms.students.biodata'
         else:
             student_cal_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',thisform['acad_cal'].id)])
             if not student_cal_ids:
                 raise osv.except_osv(('Student Not Found'),('No Student exists in selected class.'))
-            student_rows =  self.pool.get('sms.academiccalendar.student').browse(cr,uid,student_cal_ids)
+            self.pool.get('sms.academiccalendar.student').browse(cr,uid,student_cal_ids)
             report = 'sms.studentslist.name'
+            
         datas = {
              'ids': [],
              'active_ids': '',
