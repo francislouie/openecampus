@@ -10,10 +10,12 @@
             <field name="arch" type="xml">
                 <form string="Student Admission" version="7.0">
                     <group>
-                    <h1><field name="class_id"/></h1>
+                    <field name="class_id"/>
+					<newline/>
+                    <field name="group_id"/>
                     </group>
                      <footer>
-                        <button string="Print" name="import_student_data" type="object" class="oe_highlight"/>
+                        <button string="Import" name="import_student_data" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
