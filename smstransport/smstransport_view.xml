@@ -725,7 +725,7 @@
 				<group col="4" colspan="2">
 					 <field name="fee_report_type_trans"/>
 				</group>
-         		<separator string="Field for Transport Challan Printing(Header)" colspan="4"/>
+         		<separator string="Field for Transport Challan Printing(Header)" colspan="4"/>company_cfieldeight
 				<group>
 					 <field name="company_cfieldone_trans"/>
 					 <field name="company_cfieldtwo_trans"/>
