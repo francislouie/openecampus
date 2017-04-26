@@ -639,22 +639,19 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             students_cls_ids = []
             for sname in students_list:
                 students_cls_ids.append(sname[0]) #student_list contains tuples
-            students_obj = self.pool.get('sms.academiccalendar.student').browse(self.cr, self.uid,students_cls_ids)
-            
-            
+            students_obj = self.pool.get('sms.academiccalendar.student').browse(self.cr, self.uid, students_cls_ids)
             i = 1
             grand_total = 0
             #             for sname in students_list:
             mydict_total = {'sno':'Total','class':'-','m1':0,'m2':0,'m3':0,'m4':0,'m5':0,'m6':0,'m7':0,'m8':0,'m9':0,'m10':0,'m11':0,'m12':0,'session_total':0,'other':0,'total':0}
             for std in students_obj:
                 mydict = {'sno':'SNO','name':'Name','m1':'--','m2':'--','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','session_total':'0','other':'--','total':'--','gtotal':''}
-                stdid = std.std_id.id
-           
-                mydict['name'] = std.std_id.name
+                stdid = std.std_id.id 
+                mydict['name'] = std.std_id.name + '- (' + str(std.std_id.registration_no) + ')' 
+                
                 mtotal = 0
                 others = 0
                 stotal = 0
-                
                 j = 1
                 for month in session_months_ids:
                     sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
@@ -695,7 +692,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 mydict['gtotal'] = '{0:,d}'.format(grand_total)#the variable grand_total hold the value and '{0:,d}'.format(variable) converts it to cureency format
             result.append(mydict_total)         
             return result
-
+        
 #-----------------------------------------------------------------------------------------------------------------------------
     def monthly_feestructure_collections_allclasses(self, data):                                                         
         result = []
