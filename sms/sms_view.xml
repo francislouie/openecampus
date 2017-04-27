@@ -48,6 +48,7 @@
 					<field name="started_by" readonly ="1"/>
 					<field name="date_closed" readonly ="1"/>
 					<field name="closed_by" readonly ="1"/>
+					<field name="id" string = "Sequence" readonly ="1"/>
                 </tree>
             </field>
         </record>
@@ -141,6 +142,7 @@
 						<field name="start_date"/>
                     	<field name="end_date"/>
                     	<field name="state"/>
+						<field name="id" string = "Code" readonly ="1"/>
                 </tree>
             </field>
         </record>
@@ -1230,7 +1232,7 @@
 						<field name="session_id"/>
 						<field name="cur_strength"/>
 						<field name="state" string ="Status" />	
-						<!--<field name="id" string ="Code" />-->	
+						<field name="id" string = "Code" readonly ="1"/>
                 </tree>
             </field>
         </record>

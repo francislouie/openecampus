@@ -125,10 +125,10 @@ class transport_unpaid_fee_challans(report_sxw.rml_parse):
  
     def get_challan_number(self, data):
         line_dots = []
-#         challan = self.pool.get('cms.challan').browse(self.cr,self.uid,form['challan_id'])
-#         challan_str = str(challan.challan_no)
-#         return challan_str.split("-")[1] + " (" + challan_str.split("-")[0]+ ")"
-        return '123345'
+        challan = self.pool.get('sms.transportfee.challan.book').browse(self.cr,self.uid,data)
+#          challan_str = str(challan.challan_no)
+#          return challan_str.split("-")[1] + " (" + challan_str.split("-")[0]+ ")"
+        return challan.id
  
     def get_candidate_info(self, data):
         info_list = []
@@ -151,7 +151,7 @@ class transport_unpaid_fee_challans(report_sxw.rml_parse):
         if lines_ids:
             challans = self.pool.get('sms.transport.fee.challan.lines').browse(self.cr,self.uid,lines_ids)
         for challan in challans:
-            dict = {'head_name':'Transport Fee','head_amount':challan.fee_amount}
+            dict = {'head_name':challan.name,'head_amount':challan.fee_amount}
             result.append(dict) 
         return result
      

@@ -362,11 +362,9 @@ class sms_session_months(osv.osv):
             session_months = self.pool.get('sms.session.months').search(cr,uid,[('session_month_id','=',month_id[0]),('session_year','=',str(year))])   
             if session_months:
                 rec_months = self.pool.get('sms.session.months').browse(cr,uid,session_months[0]) 
-                print "rec_months.session_id.id",rec_months.session_id
-                print "rec_months.session_id.id",rec_months.session_id
         
                 my_dict['session'] = rec_months.session_id.id
-                my_dict['session_month'] = rec_months.session_id.id
+                my_dict['session_month'] = rec_months.id
                 result.append(my_dict)
                 return result
             else:
@@ -600,25 +598,25 @@ class sms_group(osv.osv):
 #         cr.execute(del_fee1)
 #         cr.commit()
         
-        reg_ids = self.pool.get('sms.transport.registrations').search(cr, uid, [])
-        if reg_ids:
-            rec1 = self.pool.get('sms.transport.registrations').browse(cr,uid,reg_ids)
-            for reg in rec1:
-                reg_fees_ids = self.pool.get('sms.transport.fee.registration').search(cr, uid, [('parent_id','=',reg.id)])
-                if reg_fees_ids:
-                    rec2 = self.pool.get('sms.transport.fee.registration').browse(cr,uid,reg_fees_ids)
-                    for reg_fee in rec2:
-                        exists = self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',reg.student_id.id),('fee_month','=',reg_fee.fee_month.id)])
-                        if not exists:
-                            self.pool.get('sms.transport.fee.payments').create(cr, uid, {
-                                            'registeration_id': reg.id,
-                                            'student_id':reg.student_id.id,
-                                            'acad_cal_id': reg.student_id.current_class.id,
-                                            'fee_amount':reg_fee.fee_amount,
-                                            'fee_month':reg_fee.fee_month.id,
-                                            'due_month':reg_fee.fee_month.id,
-                                            'state':'fee_calculated'#this will be later on changed to fee unpaid
-                                           })
+#         reg_ids = self.pool.get('sms.transport.registrations').search(cr, uid, [])
+#         if reg_ids:
+#             rec1 = self.pool.get('sms.transport.registrations').browse(cr,uid,reg_ids)
+#             for reg in rec1:
+#                 reg_fees_ids = self.pool.get('sms.transport.fee.registration').search(cr, uid, [('parent_id','=',reg.id)])
+#                 if reg_fees_ids:
+#                     rec2 = self.pool.get('sms.transport.fee.registration').browse(cr,uid,reg_fees_ids)
+#                     for reg_fee in rec2:
+#                         exists = self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',reg.student_id.id),('fee_month','=',reg_fee.fee_month.id)])
+#                         if not exists:
+#                             self.pool.get('sms.transport.fee.payments').create(cr, uid, {
+#                                             'registeration_id': reg.id,
+#                                             'student_id':reg.student_id.id,
+#                                             'acad_cal_id': reg.student_id.current_class.id,
+#                                             'fee_amount':reg_fee.fee_amount,
+#                                             'fee_month':reg_fee.fee_month.id,
+#                                             'due_month':reg_fee.fee_month.id,
+#                                             'state':'fee_calculated'#this will be later on changed to fee unpaid
+#                                            })
         
         super(osv.osv, self).write(cr, uid, ids, vals, context)
         
@@ -3377,9 +3375,10 @@ class sms_student_class_promotion(osv.osv):
                                     year = int(datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%Y'))
                                     mmonth = datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%m')
                                     print "month from today >>>>>>>>>>>>>>>>>>>>",mmonth
-                                    smonth = self.pool.get('sms.session.months')._get_session_month_from_calendar_month(cr,uid,year,10)
-                                    print "got session month from caliedanr:",smonth[0]['session_month']
-                                    add_non_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line,101)
+                                    smonth = self.pool.get('sms.session.months')._get_session_month_from_calendar_month(cr,uid,year,mmonth)[0]['session_month']
+                                    #raise osv.except_osv((smonth), ('No Accsdffg defined for Payment method:Bank'))
+
+                                    add_non_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line,smonth)
 #                                                                                              insert_student_monthly_non_monthlyfee(self, cr, uid, std_id,acad_cal,fee_type_row,month):
                                total = total + line.amount
                                
@@ -3426,7 +3425,7 @@ class sms_student_class_promotion(osv.osv):
                            'parent_promotion_id':obj.id,
                            'message_string':'Click Next',
                            'store_fee_ids':'Total Calculation',
-                           'decision':'Pending',
+                           'decision':'Promote',
                            'sno':i
                            } 
                    
@@ -3932,7 +3931,7 @@ class sms_student_promotion(osv.osv):
         return {} 
        
     _defaults = {
-        'decision' : 'Pending',
+        'decision' : 'Promote', 
     }
 
 #########################################################
