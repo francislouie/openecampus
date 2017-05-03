@@ -2434,6 +2434,7 @@
 					<button string="Next (Calculate Fee)" states = "Student_Loaded" name="calculate_fee_before_confirming_promotion" type="object" class="oe_highlight"/>
 					<button string="Back" icon="terp-dialog-close" states = "Student_Loaded,Student_Loaded" name="set_to_draft" type="object" class="oe_highlight"/>
 					<button string="Finish(Confirm Promote Students)" icon="terp-go-today" states = "Fee_Calculation" name="confirm_promotion" type="object" class="oe_highlight"/>
+					<button string="Roleback This Promotion" icon="terp-go-today" states = "Promoted" name="roleback_promotion" confirm =" Are You sure you want to Roleback?. This action will dismiss effect of promotion you made." type="object" class="oe_highlight"/>
 					</header><sheet>
                     
 					<group col="4" string = "Class Annual Promotion">
@@ -2948,7 +2949,7 @@
 					<button name="load_fee_subjects" string="1.Proceed With Admission" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="cancel_admisssion_registration" string="Go Back" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<button name="admit_student" string="2. Confirm This Admission" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-					<!--<button name="%(action_admit_student)d" string="Help" states="Draft,waiting_approval" type="action" class="oe_highlight" groups=""/>-->
+					<button name="%(action_admit_student)d" string="Help" states="Draft,waiting_approval" type="action" class="oe_highlight" groups=""/>
 					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Confirm" readonly="1"  />
 					
 				</header>
