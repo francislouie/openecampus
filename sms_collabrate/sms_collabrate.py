@@ -100,4 +100,37 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
     
+    def stdfee_history(self, cr, uid, student_id,aca_cal_id,std_id):
+        result = []
+        fees_ids = self.pool.get('smsfee.studentfee').search(cr,uid,[('acad_cal_id','=', aca_cal_id),('student_id','=', student_id),('state','in',['fee_unpaid','fee_paid'])])
+        if fees_ids:
+            for this_fee in self.pool.get('smsfee.studentfee').browse(cr, uid, fees_ids):
+                
+                my_dict = {
+                            'id':this_fee.id,
+                            'name':this_fee.name,
+                            'date_fee_charged':this_fee.date_fee_charged,
+                            'date_fee_paid':this_fee.date_fee_paid,
+                            'fee_amount':this_fee.subject.id,
+                            'discount':this_fee.paid_amount,
+                            'paid_amount':this_fee.paid_amount,
+                             'state':this_fee.state,
+                              'return_status':1,
+                                'return_desc':'Success'
+                        }
+                result.append(my_dict)
+            else:
+                my_dict = {
+                                'return_status':0,
+                                'return_desc':'No Fee Record Found'
+                            }
+                result.append(my_dict)
+        else:
+            my_dict = {
+                                'return_status':0,
+                                'return_desc':'No Active Class Found'
+                            }
+            result.append(my_dict)
+        return result
+    
 sms_collabrator()

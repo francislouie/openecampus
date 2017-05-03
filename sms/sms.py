@@ -3376,7 +3376,6 @@ class sms_student_class_promotion(osv.osv):
                                     mmonth = datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%m')
                                     print "month from today >>>>>>>>>>>>>>>>>>>>",mmonth
                                     smonth = self.pool.get('sms.session.months')._get_session_month_from_calendar_month(cr,uid,year,mmonth)[0]['session_month']
-                                    raise osv.except_osv((smonth), ('No Accsdffg defined for Payment method:Bank'))
 
                                     add_non_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line,smonth)
 #                                                                                              insert_student_monthly_non_monthlyfee(self, cr, uid, std_id,acad_cal,fee_type_row,month):
