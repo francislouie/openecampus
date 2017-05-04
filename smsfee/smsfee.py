@@ -35,6 +35,7 @@ class res_company(osv.osv):
     'company_cfieldsix':fields.char('Field Six', size=256),
     'company_cfieldseven':fields.char('Field Seven', size=256),
     'company_cfieldeight':fields.char('Field Eight', size=256),
+    'order_of_report':fields.selection([('by_name','By Name'),('by_registration_no','By Reg No')],'Order Of Report')
     }
     _defaults = {
     }
@@ -66,6 +67,20 @@ class sms_student_class_promotion(osv.osv):
     }
 sms_student_class_promotion()
 
+#******************change studnet class*******************************************************
+
+class sms_change_student_class_new(osv.osv):
+    """the objects adds fee portion in order to change student cls form sms module"""
+    _name = 'sms.change.student.class.new'
+    _inherit ='sms.change.student.class.new'
+    _columns = {
+         'applicable_fees': fields.many2many('smsfee.feetypes', 'sms_change_class_fee_rel', 'change_class_id', 'feetype_id', 'Applicable Fee', required=True),
+    }
+    _defaults = {
+    }
+sms_change_student_class_new()
+
+#******************change studnet class*******************************************************
 
 
 #session monnths inherited
@@ -784,8 +799,9 @@ class smsfee_studentfee(osv.osv):
            
            admin
            """
+           
+           
         fee_already_exists =  self.pool.get('smsfee.studentfee').search(cr, uid,[('acad_cal_id', '=', acad_cal), ('student_id', '=', std_id), ('fee_type', '=', fee_type_row.id), ('due_month', '=', month)])
-        
         if not fee_already_exists:
             # at this stage is assued that fee month and dues month are same for all cases, due month may change in exceptional cases, i.e when fee of all prevoius
             #month is registered in current month against a student, this case due month for all fees will be current month to avoid fine,
@@ -806,7 +822,7 @@ class smsfee_studentfee(osv.osv):
                          'state':'fee_unpaid'
                         }
             
-            crate_fee = self.pool.get('smsfee.studentfee').create(cr,uid,fee_dcit)  
+            crate_fee = self.pool.get('smsfee.studentfee').create(cr,uid,fee_dcit) 
             if crate_fee:
                 return True
             else:
@@ -1186,8 +1202,14 @@ class smsfee_receiptbook(osv.osv):
         return
     
     def confirm_fee_received(self, cr, uid, ids, context=None):
+        #
         self.onchange_student(cr, uid, ids, None)
         rec = self.browse(cr, uid, ids, context)
+        if rec[0].student_class_id.name == None:
+            self.write(cr ,uid ,ids ,{'student_class_id':rec[0].student_id.current_class.id,
+                                      'father_name':rec[0].student_id.father_name,
+                                      'fee_structure':rec[0].student_id.fee_type.name
+                                      })
         paymethod = ''
         receipt_date = ''
         for f in rec:

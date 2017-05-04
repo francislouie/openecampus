@@ -12,7 +12,13 @@
 					<notebook>
 			  		<page string ="Fee Management">
 		              	  <separator string="Fee Accounts Configuration" colspan="4"/>
-			              <field name="enable_fm"/>
+
+						  <field name="enable_fm"/>
+
+							<group>
+							 <field name="order_of_report"/>
+							</group>
+
 						  <group>
 						  	<group>
 							<field name="fee_journal" colspan ="4" attrs="{'required':[('enable_fm','=',True)]}" domain="[('type','=','cash')]"/>
@@ -59,6 +65,19 @@
 	      <field name="arch" type="xml">
 					<xpath expr="//field[@name='promot_to_class']" position="after">
 					<field name="applicable_fees"  widget="many2many_tags" attrs="{'readonly':[('state','!=','Draft')]}" />
+                </xpath>
+	      </field>
+	    </record>
+
+	    <!--Change Student class object inherited-->
+		<record model="ir.ui.view" id="sms_student_change_new_section_form2_inhrt">
+	      <field name="name">changestudent.inhrted</field>
+	      <field name="model">sms.change.student.class.new</field>
+	      <field name="inherit_id" ref="sms.sms_student_change_new_section_form"/>
+	      <field name="type">form</field>
+	      <field name="arch" type="xml">
+					<xpath expr="//field[@name='new_class']" position="after">
+					<field name="applicable_fees"  widget="many2many_tags"  attrs="{'readonly':[('state','!=','Draft')]}" />
                 </xpath>
 	      </field>
 	    </record>

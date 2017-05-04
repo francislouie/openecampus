@@ -2,7 +2,7 @@
 <document filename="test.pdf">
    <template pageSize="(700.0,920.0)" title="Crossovered Analytic" author="Inovtec" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="28.0" y1="28.0" width="570" height="786"/>
+      <frame id="first" x1="28.0" y1="28.0" width="620" height="786"/>
     </pageTemplate>
   </template>
   <stylesheet>
@@ -91,9 +91,12 @@
   	<tr><td><para style="Heading">Defaulter List</para></td></tr>
 	<tr><td><para style="Heading">[[get_class_name(data['form'])]]</para></td></tr>
    	<tr><td><para style="para_1">[[ repeatIn(annual_defaulter_report_singleclass('Form'),'r') ]]</para>
-		   	<blockTable colWidths="21.0,80.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,42.0,34.0,34.0" repeatRows="1" style="Table2">
+		   	<blockTable colWidths="21.0,50.0,80.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,34.0,42.0,34.0,34.0" repeatRows="1" style="Table2">
 		      <tr>
 				<td><para style="para_heading">[[ r['sno'] ]]</para></td>
+				
+				<td><para style="para_heading">[[ r['registration_no'] ]]</para></td>
+				
 		        <td><para style="para_heading1">[[ r['name'] ]]</para></td>
 		        <td><para style="para_heading">[[ r['m1'] ]]</para></td>
 		        <td><para style="para_heading">[[ r['m2'] ]]</para></td>

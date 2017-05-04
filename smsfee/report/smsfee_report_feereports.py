@@ -336,6 +336,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             for student in students_rec:
                 mydict = {'sno':'SNO','reg_no':'Reg No.','student':'Student','father':'Father','ft1':'','ft2':'','ft3':'','ft4':'','ft5':'','ft6':'','ft7':'','ft8':'','ft9':'','ft10':'','ft11':'','ft12':'','other':'','total':'TOTAL','gtotal':''}
                 mydict['student'] = student.name
+                mydict['reg_no'] = student.registration_no
                 mydict['father'] = student.father_name
                 mydict['sno'] = i
                 j = 1
@@ -386,13 +387,19 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             cls_id = this_form['class_id'][0]
             students_cad_id = self.pool.get('sms.student').search(self.cr, self.uid,[('current_class', '=', cls_id)], order='name')
             students_acad_rec = self.pool.get('sms.student').browse(self.cr, self.uid,students_cad_id)
-        
-
+            
+            order_by = self.pool.get('res.company').browse(self.cr,self.uid,self.uid).order_of_report
+            print "order_by==============",order_by
+            order = 'registration_no'
+            if order_by == 'by_name':
+                order = 'name'
+                
             i = 1    
             for student in students_acad_rec:
-                mydict = {'sno':'SNO','student':'Student','father':'Father','fee_amount':'--','remarks':'Remarks','total':'TOTAL'}
+                mydict = {'sno':'SNO','student':'Student','registration_no':'','father':'Father','fee_amount':'--','remarks':'Remarks','total':'TOTAL'}
                 mydict['father'] = student.father_name
                 mydict['sno'] = i
+                mydict['registration_no'] = student.registration_no
                 paybles = 0
                 fee_amount = float(0)
                 rec = float(0)
@@ -554,7 +561,11 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 mydict['r_no'] = 'No:\t'+str(rec.name)
                 mydict['received_by'] = self.pool.get('res.users').browse(self.cr, self.uid,rec.fee_received_by.id).name
                 mydict['father'] = 'Father:\t'+str(students_rec.father_name)
-                mydict['class'] = class_rec.name
+                
+                if class_rec.id == False:
+                    mydict['class'] = students_rec.current_class.name
+                else:
+                    mydict['class'] = class_rec.name
                 mydict['dated'] = 'Date:\t'+str(dated)
                     
                 lines_ids = self.pool.get('smsfee.receiptbook.lines').search(self.cr, self.uid,[('receipt_book_id', '=', self.ids[0]),('reconcile', '=', True)])
@@ -565,12 +576,11 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 for lines in lines_ids:
                     print "fees: ", lines
                     lines_rec = self.pool.get('smsfee.receiptbook.lines').browse(self.cr, self.uid,lines)
-                    ft = self.pool.get('smsfee.classes.fees').browse(self.cr,self.uid, lines_rec.fee_type.id)
+                    ft = self.pool.get('smsfee.classes.fees.lines').browse(self.cr,self.uid, lines_rec.fee_type.id)
                     fm_id = lines_rec.fee_month.id
                     print fm_id 
                     if fm_id:
                         fm = self.pool.get('sms.session.months').browse(self.cr,self.uid,fm_id)
-                        print "fee_month:",fm.name
                         ft_name = str(ft.name)+"("+str(fm.name)+")"
                     else:
                         ft_name = ft.name 
@@ -607,7 +617,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 result.append(mydict)
                 return result
  #------------------------------------------------------------------------------------------------------------------------------------------
-    def annual_defaulter_report_singleclass(self, data):                                                         
+    def annual_defaulter_report_singleclass(self, data):  
             result = []
             this_form = self.datas['form']
     #         acad_cal = this_form['acad_cal'][0]
@@ -619,7 +629,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             session_months_ids = self.pool.get('sms.session.months').search(self.cr, self.uid,[('session_id', '=', session_id)])
             session_months_ids.sort()
             months = self.pool.get('sms.session.months').browse(self.cr, self.uid,session_months_ids)
-            mydict = {'sno':'SNO','name':'Name','m1':'--','m2':'--','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','session_total':'Session Total','other':'Others','total':'Total'}
+            mydict = {'sno':'SNO','registration_no':'Reg No.','name':'Name','m1':'--','m2':'--','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','session_total':'Session Total','other':'Others','total':'Total'}
             c = 1
             for mm in months:
                 arr = mm.name.split('-')
@@ -647,10 +657,11 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             #             for sname in students_list:
             mydict_total = {'sno':'Total','class':'-','m1':0,'m2':0,'m3':0,'m4':0,'m5':0,'m6':0,'m7':0,'m8':0,'m9':0,'m10':0,'m11':0,'m12':0,'session_total':0,'other':0,'total':0}
             for std in students_obj:
-                mydict = {'sno':'SNO','name':'Name','m1':'--','m2':'--','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','session_total':'0','other':'--','total':'--','gtotal':''}
+                mydict = {'sno':'SNO','registration_no':'Registration No','name':'Name','m1':'--','m2':'--','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','session_total':'0','other':'--','total':'--','gtotal':''}
                 stdid = std.std_id.id
            
                 mydict['name'] = std.std_id.name
+                mydict['registration_no'] = std.std_id.registration_no
                 mtotal = 0
                 others = 0
                 stotal = 0
