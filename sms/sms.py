@@ -596,6 +596,30 @@ class sms_group(osv.osv):
     """This object defines groups of a class e.g Science, Arts etc."""
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        #         del_fee1 = """DELETE FROM smsfee_receiptbook_lines WHERE student_fee_id ="""+str(rec)
+#         cr.execute(del_fee1)
+#         cr.commit()
+        
+        reg_ids = self.pool.get('sms.transport.registrations').search(cr, uid, [])
+        if reg_ids:
+            rec1 = self.pool.get('sms.transport.registrations').browse(cr,uid,reg_ids)
+            for reg in rec1:
+                reg_fees_ids = self.pool.get('sms.transport.fee.registration').search(cr, uid, [('parent_id','=',reg.id)])
+                if reg_fees_ids:
+                    rec2 = self.pool.get('sms.transport.fee.registration').browse(cr,uid,reg_fees_ids)
+                    for reg_fee in rec2:
+                        exists = self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',reg.student_id.id),('fee_month','=',reg_fee.fee_month.id)])
+                        if not exists:
+                            self.pool.get('sms.transport.fee.payments').create(cr, uid, {
+                                            'registeration_id': reg.id,
+                                            'student_id':reg.student_id.id,
+                                            'acad_cal_id': reg.student_id.current_class.id,
+                                            'fee_amount':reg_fee.fee_amount,
+                                            'fee_month':reg_fee.fee_month.id,
+                                            'due_month':reg_fee.fee_month.id,
+                                            'state':'fee_calculated'#this will be later on changed to fee unpaid
+                                           })
+        
         super(osv.osv, self).write(cr, uid, ids, vals, context)
         
        
@@ -4582,6 +4606,7 @@ class student_admission_register(osv.osv):
         'permanent_city': fields.char(string = "City", size=32), 
         'permanent_country': fields.many2one('res.country', 'Country'), 
         'domocile': fields.char(string = "Domicile", size=32),
+        'is_migrated':fields.boolean(string="Migrated"),
     } 
     _sql_constraints = [('Student_Admission', 'unique (name,student_class,state)', """ Student Admission for this class already exists.""")]
     _defaults = {  'state': lambda*a :'Draft','cur_country': _set_default_country, 'gender':_get_default_gender,}

@@ -649,9 +649,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             students_cls_ids = []
             for sname in students_list:
                 students_cls_ids.append(sname[0]) #student_list contains tuples
-            students_obj = self.pool.get('sms.academiccalendar.student').browse(self.cr, self.uid,students_cls_ids)
-            
-            
+            students_obj = self.pool.get('sms.academiccalendar.student').browse(self.cr, self.uid, students_cls_ids)
             i = 1
             grand_total = 0
             #             for sname in students_list:
@@ -665,7 +663,6 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 mtotal = 0
                 others = 0
                 stotal = 0
-                
                 j = 1
                 for month in session_months_ids:
                     sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
@@ -706,7 +703,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 mydict['gtotal'] = '{0:,d}'.format(grand_total)#the variable grand_total hold the value and '{0:,d}'.format(variable) converts it to cureency format
             result.append(mydict_total)         
             return result
-
+        
 #-----------------------------------------------------------------------------------------------------------------------------
     def monthly_feestructure_collections_allclasses(self, data):                                                         
         result = []
