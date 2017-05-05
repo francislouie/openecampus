@@ -429,6 +429,7 @@
  			 <sheet>
 						<group string ="Fee Type">
 						<group>
+							<field name="seqs_no" />
 							<field name="name" />
 							<field name="description" />
 							<field name="subtype"/>
@@ -444,6 +445,7 @@
             <field name="model">smsfee.feetypes</field>
             <field name="arch" type="xml">
                 <tree string="Fee Types">
+							<field name="seqs_no" />
 							<field name="name" />
 							<field name="description" />
 							<field name="subtype" />
@@ -470,7 +472,6 @@
             <field name="context">{'search_default_draft': 1}</field>
             <field name="search_studentfee_id" ref="view_feetype_search"/>
         </record>
-
 
 	<!-- sms.studentfee-->
 

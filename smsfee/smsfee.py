@@ -710,10 +710,21 @@ class smsfee_feetypes(osv.osv):
 #          
 #             return new_feetype
     
-    
+
+    def _set_fee_sequence(self, cr, uid, ids, fields,args, context=None):
+        result = {}
+        sql=""" SELECT COALESCE(count(id),'0') from smsfee_feetypes
+        """
+        cr.execute(sql)
+        tlt_rec = cr.fetchone()[0]
+        result[ids[0]] = int(tlt_rec+1)
+        return result
+
+    _order = 'seqs_no'
     _name = 'smsfee.feetypes'
     _description = "This object store fee types"
     _columns = {
+        'seqs_no':fields.function(_set_fee_sequence, method=True,  string='Fee Sequence',type='integer',store=True),
         'name': fields.char(string = 'Fee Type',size = 100,required = True),
         'fs_id':fields.many2one('sms.feestructure'),      
         'description': fields.char(string = 'Description',size = 100),
