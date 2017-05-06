@@ -4929,7 +4929,7 @@ class sms_change_student_class_new(osv.osv):
             print "::::::acd_cal stu:::::::::::::::::",existing_acad_cal_std_id
             print f,f.name.state,"============",f.name.name,f.name.fee_type.name,f.new_class.name,"**********",f.current_class.name
             if existing_acad_cal_std_id: #class_changed
-                self.pool.get('sms.academiccalendar.student').write(cr, uid, [existing_acad_cal_std_id[0]], {'state':'Promoted',})
+                self.pool.get('sms.academiccalendar.student').write(cr, uid, [existing_acad_cal_std_id[0]], {'state':'class_changed',}) 
                 std_cal_id = self.pool.get('sms.academiccalendar.student').create(cr,uid,{
                                                                                         'name':f.new_class.id,
                                                                                         'date_enrolled':datetime.date.today(),
@@ -4954,7 +4954,7 @@ class sms_change_student_class_new(osv.osv):
                         # change status of old subjects to PASS
                         old_subjects = self.pool.get('sms.student.subject').search(cr,uid,[('student_id','=',f.name.id),('student','=',existing_acad_cal_std_id)])
                         for os in old_subjects:
-                            self.pool.get('sms.student.subject').write(cr,uid,os,{'subject_status':'Pass'})
+                            self.pool.get('sms.student.subject').write(cr,uid,os,{'subject_status':'Suspended'})
 #                         # add fees to student at the time of promotion, get all ids from promotion lines
                         print "Before calling get_fee_at_promotion at step 2: when adding actual fee to student  ",   
                         print "record ids:",ids
