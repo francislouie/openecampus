@@ -7,31 +7,28 @@
         <pageGraphics>
 
            	<!-- Header -->			
-			<setFont name="Helvetica-Bold" size="9" />
-			<drawString x="112" y="585">[[get_class_group(data)]]</drawString>
-			<drawString x="420" y="585">[[get_class_group(data)]]</drawString>
-			<drawString x="720" y="585">[[get_class_group(data)]]</drawString>
+			
 
 			<image x="002" y="545" height="50.0" width="50.0">[[company.logo]]</image>
 			<image x="300" y="545" height="50.0" width="50.0">[[company.logo]]</image>
 			<image x="590" y="545" height="50.0" width="50.0">[[company.logo]]</image>
 			
 			<setFont name="Helvetica-Bold" size="7"/>
-            <drawString x="50" y="575">[[company.name]] Khyber Campus</drawString>
+            <drawString x="50" y="575">A/C 10146-16105317</drawString>
             <setFont name="Helvetica" size="7" />
-            <drawString x="50" y="565">[[company.partner_id.street]]</drawString>
+            <drawString x="50" y="565">Zia Ullah Khan , Sajjad Ali</drawString>
             <drawString x="50" y="555">[[company.partner_id.phone]]</drawString>
 
 			<setFont name="Helvetica-Bold" size="7"/>
-            <drawString x="348" y="575">[[company.name]] Khyber Campus</drawString>
+            <drawString x="348" y="575">A/C 10146-16105317</drawString>
             <setFont name="Helvetica" size="7" />
-            <drawString x="348" y="565">[[company.partner_id.street]]</drawString>
+            <drawString x="348" y="565">Zia Ullah Khan , Sajjad Ali</drawString>
             <drawString x="348" y="555">[[company.partner_id.phone]]</drawString>            
 
 			<setFont name="Helvetica-Bold" size="7"/>
-            <drawString x="638" y="575">[[company.name]] Khyber Campus</drawString>
+            <drawString x="638" y="575">A/C 10146-16105317</drawString>
             <setFont name="Helvetica" size="7" />
-            <drawString x="638" y="565">[[company.partner_id.street]]</drawString>
+            <drawString x="638" y="565">Zia Ullah Khan , Sajjad Ali</drawString>
             <drawString x="638" y="555">[[company.partner_id.phone]]</drawString>            
 
 			<setFont name="Helvetica-Bold" size="9" />
@@ -343,7 +340,7 @@
 			<blockTable colWidths="260" style="Table_2">
       		<tr>
         		<td>
-          		<para style="P2-Bold">School Copy</para>
+          		<para style="P2-Bold">Driver Copy</para>
         		</td>
       		</tr>
 			</blockTable>

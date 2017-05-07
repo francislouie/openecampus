@@ -266,12 +266,12 @@ class sms_academiccalendar(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             total_forecasted = 0
-            register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',ids)])
+            register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',f.id)])
             if register_ids:
                 rec_register = self.pool.get('smsfee.classfees.register').browse(cr,uid,register_ids)
                 for register in rec_register:
                     total_forecasted = total_forecasted + register.month_forcasted_fee 
-                    result[f.id] = total_forecasted
+                    result[f.id] = float(total_forecasted)
         return result  
     
     def _calculate_class_paid_fee(self, cr, uid, ids, name, args, context=None):
@@ -279,12 +279,12 @@ class sms_academiccalendar(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             total_paid = 0
-            register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',ids)])
+            register_ids = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',f.id)])
             if register_ids:
                 rec_register = self.pool.get('smsfee.classfees.register').browse(cr,uid,register_ids)
                 for register in rec_register:
                     total_paid = total_paid + register.month_fee_received 
-                    result[f.id] = total_paid
+                    result[f.id] = float(total_paid)
         return result
     
     def _calculate_calculate_recovery(self, cr, uid, ids, name, args, context=None):
@@ -306,8 +306,8 @@ class sms_academiccalendar(osv.osv):
           #  'fee_update_till':fields.many2one('sms.session.months','Fee Updated Till'),
             'fee_update_till':fields.many2one('sms.session.months',' Fee Starts From Month'),
             'fee_register':fields.one2many('smsfee.classfees.register','academic_cal_id','Register'),
-            'class_forcasted_fee':fields.function(_calculate_class_forecasted_fee, method=True, multi='sums', string='Fee Forecasted',type='float', store = True),
-            'class_fee_received':fields.function(_calculate_class_paid_fee, method=True, multi='sums', string='Fee Received',type='float', store = True),
+            'class_forcasted_fee':fields.float('a'),
+            'class_fee_received':fields.float('a'),
             'recovery_ratio':fields.function(_calculate_calculate_recovery, method=True,  string='Recovery(%)',type='char'),
             'annaul_fs_id':fields.many2one('smsfee.festructure.revision','Annual Fee Register'),
     }
@@ -757,9 +757,9 @@ class smsfee_studentfee(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             if f.fee_type.fee_type.subtype == 'Monthly_Fee':
-                month_name = f.fee_month.name.split('-')[0]
-                year = f.fee_month.name.split('-')[1]
-                string =  str(f.fee_type.name)+ " ("+str(month_name[:3].upper())+","+str(year)+")"
+                month_name = f.fee_month.name
+                year = f.fee_month.name
+                string =  str(f.fee_type.name)+ " ("+str(month_name)+")"
             else:
                 string = f.fee_type.name
             result[f.id] = string

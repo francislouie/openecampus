@@ -362,11 +362,9 @@ class sms_session_months(osv.osv):
             session_months = self.pool.get('sms.session.months').search(cr,uid,[('session_month_id','=',month_id[0]),('session_year','=',str(year))])   
             if session_months:
                 rec_months = self.pool.get('sms.session.months').browse(cr,uid,session_months[0]) 
-                print "rec_months.session_id.id",rec_months.session_id
-                print "rec_months.session_id.id",rec_months.session_id
         
                 my_dict['session'] = rec_months.session_id.id
-                my_dict['session_month'] = rec_months.session_id.id
+                my_dict['session_month'] = rec_months.id
                 result.append(my_dict)
                 return result
             else:
@@ -600,25 +598,25 @@ class sms_group(osv.osv):
 #         cr.execute(del_fee1)
 #         cr.commit()
         
-        reg_ids = self.pool.get('sms.transport.registrations').search(cr, uid, [])
-        if reg_ids:
-            rec1 = self.pool.get('sms.transport.registrations').browse(cr,uid,reg_ids)
-            for reg in rec1:
-                reg_fees_ids = self.pool.get('sms.transport.fee.registration').search(cr, uid, [('parent_id','=',reg.id)])
-                if reg_fees_ids:
-                    rec2 = self.pool.get('sms.transport.fee.registration').browse(cr,uid,reg_fees_ids)
-                    for reg_fee in rec2:
-                        exists = self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',reg.student_id.id),('fee_month','=',reg_fee.fee_month.id)])
-                        if not exists:
-                            self.pool.get('sms.transport.fee.payments').create(cr, uid, {
-                                            'registeration_id': reg.id,
-                                            'student_id':reg.student_id.id,
-                                            'acad_cal_id': reg.student_id.current_class.id,
-                                            'fee_amount':reg_fee.fee_amount,
-                                            'fee_month':reg_fee.fee_month.id,
-                                            'due_month':reg_fee.fee_month.id,
-                                            'state':'fee_calculated'#this will be later on changed to fee unpaid
-                                           })
+#         reg_ids = self.pool.get('sms.transport.registrations').search(cr, uid, [])
+#         if reg_ids:
+#             rec1 = self.pool.get('sms.transport.registrations').browse(cr,uid,reg_ids)
+#             for reg in rec1:
+#                 reg_fees_ids = self.pool.get('sms.transport.fee.registration').search(cr, uid, [('parent_id','=',reg.id)])
+#                 if reg_fees_ids:
+#                     rec2 = self.pool.get('sms.transport.fee.registration').browse(cr,uid,reg_fees_ids)
+#                     for reg_fee in rec2:
+#                         exists = self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',reg.student_id.id),('fee_month','=',reg_fee.fee_month.id)])
+#                         if not exists:
+#                             self.pool.get('sms.transport.fee.payments').create(cr, uid, {
+#                                             'registeration_id': reg.id,
+#                                             'student_id':reg.student_id.id,
+#                                             'acad_cal_id': reg.student_id.current_class.id,
+#                                             'fee_amount':reg_fee.fee_amount,
+#                                             'fee_month':reg_fee.fee_month.id,
+#                                             'due_month':reg_fee.fee_month.id,
+#                                             'state':'fee_calculated'#this will be later on changed to fee unpaid
+#                                            })
         
         super(osv.osv, self).write(cr, uid, ids, vals, context)
         
@@ -1123,7 +1121,7 @@ class sms_academiccalendar(osv.osv):
     """This object combines sms.session,sms.classes,sms.classes section to form a new class in a new session with unique class section no."""
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-        super(osv.osv, self).write(cr, uid, ids, vals, context)
+        super(osv.osv, self).write(cr, uid, ids, vals)
         for f in self.browse(cr, uid, ids):
             acad_cal_state = f.state
             if f.state == 'Active':
@@ -3377,9 +3375,9 @@ class sms_student_class_promotion(osv.osv):
                                     year = int(datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%Y'))
                                     mmonth = datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%m')
                                     print "month from today >>>>>>>>>>>>>>>>>>>>",mmonth
-                                    smonth = self.pool.get('sms.session.months')._get_session_month_from_calendar_month(cr,uid,year,10)
-                                    print "got session month from caliedanr:",smonth[0]['session_month']
-                                    add_non_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line,101)
+                                    smonth = self.pool.get('sms.session.months')._get_session_month_from_calendar_month(cr,uid,year,mmonth)[0]['session_month']
+
+                                    add_non_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line,smonth)
 #                                                                                              insert_student_monthly_non_monthlyfee(self, cr, uid, std_id,acad_cal,fee_type_row,month):
                                total = total + line.amount
                                
@@ -3426,7 +3424,7 @@ class sms_student_class_promotion(osv.osv):
                            'parent_promotion_id':obj.id,
                            'message_string':'Click Next',
                            'store_fee_ids':'Total Calculation',
-                           'decision':'Pending',
+                           'decision':'Promote',
                            'sno':i
                            } 
                    
@@ -3506,6 +3504,49 @@ class sms_student_class_promotion(osv.osv):
                                     self.write(cr, uid, f.id ,{'state':'Promoted'})
            return
    
+    def roleback_promotion(self, cr, uid, ids, name):
+        result = {}
+        for f in self.browse(cr, uid, ids):
+            line_id = self.pool.get('sms.student.class.promotion.lines').search(cr,uid,[('parent_promotion_id','=',f.id)])
+            if line_id:
+                rec_line = self.pool.get('sms.student.class.promotion.lines').browse(cr,uid,line_id)
+               
+                for student in rec_line:
+                    existing_acad_cal_std_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','=',student.name.id),('name','=',f.existing_class.id)])
+                    #1: Delete student fee first
+                    if existing_acad_cal_std_id:
+                       
+                        sql1 = """delete from smsfee_studentfee where acad_cal_id= """+str(f.promot_to_class.id)+"""and student_id = """+str(student.name.id)
+                        cr.execute(sql1)
+                        delfee = cr.commit() 
+                        if delfee:
+                           
+                            std_cls_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','=',student.name.id),('name','=',f.promot_to_class.id),('state','=','Current')])
+                            if std_cls_id:
+                                sql2 = """delete from sms_student_subject where student= """+str(std_cls_id[0])+"""
+                                    and student_id =  """+str(student.name.id)
+                                cr.execute(sql2)
+                                delsub = cr.commit() 
+                                if delsub:
+                                    sql3 = """delete from sms_academiccalendar_student where id= """+str(std_cls_id[0])
+                                    cr.execute(sql3)
+                                    delcls = cr.commit() 
+                                    # Search old class and make it current again
+                                    std_oldcls_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','=',student.name.id),('name','=',f.existing_class.id),('state','!=','Current')])
+                                    if std_oldcls_id:
+                                        std_cls_id = self.pool.get('sms.academiccalendar.student').write(cr,uid,std_oldcls_id[0],{'state':'Current'})
+                                        #Now search old subjects and make them current
+                                   
+                                        std_subs = self.pool.get('sms.student.subject').search(cr,uid,[('student','=',std_cls_id[0]),('student_id','=',student.name.id)])
+                                
+                                    for sub in std_subs:
+                                        add_subs = self.pool.get('sms.student.subject').write(cr,uid,sub,{'subject_status': 'Current'})
+                                
+                                    update_student = self.pool.get('sms.student').write(cr, uid, student.name.id, {'current_class':f.existing_class.id})
+                                    self.write(cr, uid, f.id ,{'state':'Roleback'})
+        return
+
+    
     def set_to_draft(self, cr, uid, ids, name):
        for obj in self.browse(cr, uid, ids):
            child_ids=self.pool.get('sms.student.class.promotion.lines').search(cr, uid, [('parent_promotion_id','=',ids)])
@@ -3539,7 +3580,7 @@ class sms_student_class_promotion(osv.osv):
         'dated': fields.datetime('Date',readonly=True),
         'promotion_by':fields.many2one('res.users', 'Promotion By',readonly=True),
         'promotion_line_ids':fields.one2many('sms.student.class.promotion.lines','parent_promotion_id','Parent ID'),
-        'state': fields.selection([('Draft', 'Draft'),('Student_Loaded', 'Student Loaded'),('Fee_Calculation', 'Fee Calculation'),('Promoted', 'Promoted'),('Cancelled', 'Cancelled')], 'State', readonly = True),
+        'state': fields.selection([('Draft', 'Draft'),('Student_Loaded', 'Student Loaded'),('Fee_Calculation', 'Fee Calculation'),('Promoted', 'Promoted'),('Cancelled', 'Cancelled'),('Roleback', 'Roleback')], 'State', readonly = True),
     }
     
     _defaults = {
@@ -3932,7 +3973,7 @@ class sms_student_promotion(osv.osv):
         return {} 
        
     _defaults = {
-        'decision' : 'Pending',
+        'decision' : 'Promote', 
     }
 
 #########################################################
