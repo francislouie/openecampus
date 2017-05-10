@@ -133,4 +133,48 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
     
+    def return_student_subjects_marks(self, cr, uid, std_subject_id ,exam_type_id):
+        result = []
+        _pool = self.pool.get('sms.exam.lines')
+        exam_ids = _pool.search(cr ,uid , [('student_subject','=',std_subject_id),('name','=',exam_type_id)]) 
+        if exam_ids:
+            for i in _pool.browse(cr ,uid ,exam_ids):
+                my_dict = {
+                        'sub_name':i.student_subject.subject.subject_id.name,
+                        'total_marks':i.total_marks,
+                        'obtain_marks':i.obtained_marks,
+                        'return_status':1,
+                        'return_desc':'Success'
+                        }
+            result.append(my_dict)
+        else:
+            my_dict = {
+                    'return_status':0,
+                    'return_desc':'No Marks Found'
+                    }
+            result.append(my_dict)
+        return result
+
+    def student_transport_status(self ,cr ,uid ,std_id):
+        result = []
+        transport_id = self.pool.get('sms.transport.registrations').search(cr ,uid ,[('student_id','=',std_id)])
+        if transport_id:
+            for std in self.pool.get('sms.transport.registrations').browse(cr ,uid , transport_id):
+                my_dict = {
+                        'status':std.state,
+                        'vechicle':std.current_vehcile.name,
+                        'destination':std.transport_route.name,
+                        'return_status':1,
+                        'return_desc':'Success'                           
+                        }
+            result.append(my_dict)
+        else:
+            my_dict = {
+                    'return_status':0,
+                    'return_desc':'No Student Transport Found'
+                    }
+            result.append(my_dict)
+        return result
+    
+    
 sms_collabrator()
