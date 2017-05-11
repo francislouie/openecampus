@@ -132,5 +132,30 @@ class sms_collabrator(osv.osv):
                             }
             result.append(my_dict)
         return result
+
+    def stdfee_pending_challans(self, cr, uid, student_id):
+        result = []
+        std_id = self.pool.get('sms.student').search(cr ,uid ,[('name','=','Aiman')])
+        pending_challans_id = self.pool.get('smsfee.receiptbook').search(cr ,uid ,[ ('student_id','=',std_id),('state','=','fee_calculated') ])
+        if pending_challans_id:
+            for challan in self.pool.get('smsfee.receiptbook').browse(cr ,uid ,pending_challans_id):
+                bill_no = self.pool.get('smsfee.receiptbook')._get_bill_no(cr, uid, challan.id, 'smsfee.receiptbook', 'smsfee') 
+                my_dict = {
+                            'challan_id' : challan.id,
+                            'date' : challan.receipt_date,
+                            'challan_no' : bill_no,
+                            'due_date': '',
+                            'amount' : challan.total_paybles,
+                            'return_status' : 1,
+                            'return_desc':'Success'
+                        }
+                result.append(my_dict)
+        else:
+            my_dict = {
+                            'return_status':0,
+                            'return_desc':'No Subjects Found'
+                        }
+            result.append(my_dict)
+        return result
     
 sms_collabrator()
