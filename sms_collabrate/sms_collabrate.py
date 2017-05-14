@@ -133,27 +133,35 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
     
-    def return_student_subjects_marks(self, cr, uid, std_subject_id ,exam_type_id):
-        result = []
-        _pool = self.pool.get('sms.exam.lines')
-        exam_ids = _pool.search(cr ,uid , [('student_subject','=',std_subject_id),('name','=',exam_type_id)]) 
-        if exam_ids:
-            for i in _pool.browse(cr ,uid ,exam_ids):
+    def return_student_subjects_marks(self, cr, uid, acd_cal,acd_cal_stu_id):
+        
+        result = []            
+        for x in self.pool.get('sms.academiccalendar.student').browse(cr ,uid ,acd_cal_stu_id):
+            std_sub_ids = [i.id for i in x.std_reg_lineID]
+            
+        exm_datesheet_idss = self.pool.get('sms.exam.datesheet').search(cr ,uid ,[('academiccalendar','=',acd_cal)])
+        for exm_datesheet in exm_datesheet_idss:
+            exam_lines_id = self.pool.get('sms.exam.lines').search(cr ,uid ,[('name','=',exm_datesheet),('student_subject','in',std_sub_ids)])
+            if exam_lines_id:
+                my_dict = {'exam_type':'','subjects_marks':'','return_status':1,'return_desc':'Success'}
+                my_dict['exam_type'] = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,exm_datesheet).name
+                res = []
+                for exam in self.pool.get('sms.exam.lines').browse(cr ,uid ,exam_lines_id):
+                    inner_dict = {'subject_name':'','obtain_marks':'','total_marks':''} 
+                    inner_dict['subject_name'] = exam.student_subject.name
+                    inner_dict['obtain_marks'] = exam.obtained_marks
+                    inner_dict['total_marks'] = exam.total_marks
+                    res.append(inner_dict)
+                    my_dict['subjects_marks'] = res
+                    
+                result.append(my_dict)
+            else:
                 my_dict = {
-                        'sub_name':i.student_subject.subject.subject_id.name,
-                        'total_marks':i.total_marks,
-                        'obtain_marks':i.obtained_marks,
-                        'return_status':1,
-                        'return_desc':'Success'
+                        'return_status':0,
+                        'return_desc':'No Exam Found'
                         }
-            result.append(my_dict)
-        else:
-            my_dict = {
-                    'return_status':0,
-                    'return_desc':'No Marks Found'
-                    }
-            result.append(my_dict)
-        return result
+        
+        return result  
 
     def student_transport_status(self ,cr ,uid ,std_id):
         result = []

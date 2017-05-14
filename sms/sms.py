@@ -4757,8 +4757,10 @@ sms_weekly_plan()
 
 class project_transactional_log(osv.osv):
 
+
+
     def create_transactional_logs(self, cr, uid,vals,obj,operation,pre_val):
-        
+
         print "******create_transactional_logs*****",vals,obj,operation,pre_val
         
         """ this method creates transactional logs for project and will be called from write method of project"""
