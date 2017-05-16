@@ -61,9 +61,12 @@
 	<tr><td><para style="para_title"></para></td></tr>
   </blockTable>
 	
-	<blockTable colWidths="35.0,100.0,100.0,60.0,160.0" repeatRows="1" style="Table2">
+	<blockTable colWidths="35.0,80.0,100.0,100.0,60.0,160.0" repeatRows="1" style="Table2">
 	  	<tr><para style="para_1"></para>
 		<td><para style="para_heading2">#</para></td>
+		
+		<td><para style="para_heading2">Registration No</para></td>
+		
 	    <td><para style="para_heading2">Student</para></td>
 	    <td><para style="para_heading2">Father</para></td>
 	    <td><para style="para_heading">Amount</para></td>
@@ -71,6 +74,9 @@
 	  </tr>
 		<tr><para style="para_1">[[ repeatIn(defaulter_student_list('Form'),'r') ]]</para>
 		<td><para style="para_heading2">[[ r['sno'] ]]</para></td>
+		
+		<td><para style="para_heading2">[[ r['registration_no'] ]]</para></td>
+		
 	    <td><para style="para_heading2">[[ r['student'] ]]</para></td>
 	    <td><para style="para_heading2">[[ r['father'] ]]</para></td>
 	    <td><para style="para_heading">[[ r['fee_amount'] ]]</para></td>

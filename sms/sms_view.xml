@@ -584,7 +584,8 @@
                                         </a>
                                     </h4>
                                     <ul>
-                                        <li><field name="phone" /></li>
+                                        <li><field name="father_name" /></li>
+										<li><field name="registration_no" /></li>
                                     </ul>
                                 </div>
                             </div>
@@ -1243,7 +1244,6 @@
             <field name="arch" type="xml">
                 <search string="Search Session Classes">
                     <field name="class_id" string="Class"/>
-					<field name="session_id" string="Session"/>
 					<field name="section_id" string="Section"/>
                 </search>
             </field>
@@ -3407,6 +3407,72 @@
 
 
 
+<!-- Change student class -->
+    
+     <record model="ir.ui.view" id="sms_student_change_new_section_form">
+      <field name="name">Student Change Section(New)</field>
+      <field name="model">sms.change.student.class.new</field>
+      <field name="type">form</field>
+      <field name="arch" type="xml">
+        <form string="Student Change Class" version="7.0">
+          
+			<header>
+				<button string="Next (Calculate Fee)" states="Draft" name="calculate_fee_before_confirming_promotion" type="object" class="oe_highlight"/>
+				<button string="Back" icon="terp-dialog-close" states="compute_fee" name="set_to_draft" type="object" class="oe_highlight"/>
+				<button string="Finish(Confirm Change Student Class)" icon="terp-go-today" states = "compute_fee" name="confirm_promotion" type="object" class="oe_highlight"/>
+				<field name="state" widget="statusbar" statusbar_visible="Draft,compute_fee,Class_changed"/>
+             </header>
+
+			<group>
+	          <group>
+		          <field name="name" on_change="onchange_student(name)" attrs="{'readonly':[('state','!=','Draft')]}" />
+		          <field name="current_class" on_change="onchange_acad_cal(current_class)"/>
+		          <field name="fee_str" />
+				  <field name="changed_by"/>
+				  <field name="state"/>
+				  <newline/>
+				  <field name="message_string" readonly = "1" colspan="4"/>
+	         </group>
+	         <group>
+				<field name="father_name"/>
+				<field name="new_class" attrs="{'readonly':[('state','!=','Draft')]}" />
+				<field name="date_changed"/>
+			  
+			</group>
+		</group>
+
+        </form>
+      </field>
+    </record>
+    
+    
+    <record model="ir.ui.view" id="sms_change_std__new_cls_tree">
+      <field name="name">Change Students Class(New)</field>
+      <field name="model">sms.change.student.class.new</field>
+      <field name="type">tree</field>
+      <field name="arch" type="xml">
+        <tree string="Change Student Class">
+		  <field name="name"/>
+          <field name="father_name"/>
+<!--
+		  <field name="fee_str" readonly = "1"/>
+-->		  	
+        </tree>
+      </field>
+    </record>
+  
+  <record model="ir.actions.act_window" id="action_sms_student_change_class_new">
+      <field name="name">Change Student Class(New)</field>
+      <field name="res_model">sms.change.student.class.new</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+ 
+<menuitem id="menu_sms_change_std_class_new_id" parent="menu_sms_exam_results_id" sequence="" groups="" action="action_sms_student_change_class_new"/>
+
+
+
+<!-- ********************************  -->
      
 	</data>
 </openerp>
