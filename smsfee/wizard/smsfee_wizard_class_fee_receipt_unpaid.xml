@@ -15,6 +15,7 @@
 						 <field name="due_date" />
 						 <newline/>
 						 <field name="amount_after_due_date"/>
+						 <field name="category"/>
 				    </group>
 						 
                     </group>

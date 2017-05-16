@@ -3,7 +3,7 @@ import logging
 _logger = logging.getLogger(__name__)
 
 class class_singlestudent_unpaidtransportfee_receipt(osv.osv_memory):
-    
+    """ this wizard and its xml will be delted after merging challans syaytems in one wizard"""
     def _get_student(self, cr, uid, ids):
         obj = self.browse(cr, uid, ids['active_id'])
         std_id =  obj.id
@@ -12,6 +12,7 @@ class class_singlestudent_unpaidtransportfee_receipt(osv.osv_memory):
     _name = "class.singlestudent_unpaidtransportfee_receipt"
     _description = "Single Student's Unpaid Fee Receipt"
     _columns = {
+               
               'student_id': fields.many2one('sms.student', 'Student', domain="[('state','=','Admitted')]", help="Student"),
               'due_date': fields.date('Due Date', required=True),
               'amount_after_due_date': fields.integer('Fine After Due Date'),
@@ -22,7 +23,8 @@ class class_singlestudent_unpaidtransportfee_receipt(osv.osv_memory):
         _logger.warning("Creating Transport Challan's For Students ................")
         student_id = self.pool.get('sms.student').search(cr,uid,[('id','=',student_id[0])])
         class_id = self.pool.get('sms.student').browse(cr,uid,student_id)[0].current_class.id
-        self.pool.get('sms.transportfee.challan.book').check_transportfee_challans_issued(cr, uid, class_id, student_id)
+#         self.pool.get('sms.transportfee.challan.book').check_transportfee_challans_issued(cr, uid, class_id, student_id)
+        self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id, student_id[0],'Transport')
         return True
 
     def print_singlestudent_unpaidfee_report(self, cr, uid, ids, data):

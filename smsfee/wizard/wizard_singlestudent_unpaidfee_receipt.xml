@@ -11,14 +11,16 @@
                 <form string="Student Fee Receipt" version="7.0">
                     <group>
                     <h1><field name="student_id" readonly ="1" nolabel = "1" /></h1>
-					<group col="6" String = "" >
+					<group col="6">
 						 <field name="due_date" />
 						 <newline/>
 						 <field name="amount_after_due_date"/>
+						  <newline/><field name="category" />
 				    </group>
                     </group>
                     <group>
                     <ol>
+                    <li><p>From here you can print Academics and Transport Fee bills separately, just select Fee bill category from above selections box</p></li>
                     <li><p>You can print Fee challan for an individual student from student Form.</p></li>
                     <li><p>To Cancel a challan, goto <strong>Open Challans</strong> under <strong>Fee Management</strong> menu.</p></li>
                     <li><p><font color = "red">Generating New Fee Challan will cancel all previous unpaid challans</font></p></li>

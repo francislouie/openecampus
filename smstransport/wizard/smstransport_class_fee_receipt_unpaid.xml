@@ -9,7 +9,7 @@
             <field name="model">class.fee.receipts.unpaid.2</field>
             <field name="arch" type="xml">
                 <form string="Student Admission" version="7.0">
-                    <group>
+                    <group string = "Transport Fee Bills">
                     <h1><field name="class_id" readonly ="1" nolabel = "1" /></h1>
 					<group col="6" String = "" >
 						 <field name="due_date" />

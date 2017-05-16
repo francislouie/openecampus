@@ -26,6 +26,7 @@ class class_fee_receipts_unpaid_2(osv.osv_memory):
             recstudent = self.pool.get('sms.academiccalendar.student').browse(cr, uid, class_student_ids)
             for student in recstudent:
                 self.pool.get('sms.transportfee.challan.book').check_transportfee_challans_issued(cr, uid ,class_id[0] , student.std_id.id)
+                #self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id[0], student.std_id.id,'Transport')
         return True
 
     def check_challan_print_type(self, cr, uid, thisform):

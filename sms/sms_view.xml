@@ -769,7 +769,7 @@
             <field name="model">sms.student</field>
             <field name="arch" type="xml">
                 <tree colors="blue:state == 'Draft'" string="All Student">
-                        <field name="registration_no" />
+						<field name="registration_no" />
                         <field name="name" required="1"/>
 						<field name="father_name" required="1"/>
 						<field name="current_class"/>

@@ -16,16 +16,18 @@ class class_fee_receipts_unpaid(osv.osv_memory):
               "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
               'due_date': fields.date('Due Date', required=True),
               'amount_after_due_date': fields.integer('Payment After Due Date'),
+               'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category'),
                }
     _defaults = {'class_id':_get_class}
     
-    def create_unpaid_challans(self, cr, uid, class_id):
+    def create_unpaid_challans(self, cr, uid, class_id,category):
+        # create unpaid challans for category academic
         _logger.warning("Deprecated, usle c............................................................................")
         student_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',class_id[0]),('state','=','Current')])
         if student_ids:
             recstudent = self.pool.get('sms.academiccalendar.student').browse(cr,uid,student_ids)
             for student in recstudent:
-                self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id[0], student.std_id.id)
+                self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id[0], student.std_id.id,category)
         return True
 
     def check_challan_print_type(self, cr, uid, thisform):
@@ -44,9 +46,25 @@ class class_fee_receipts_unpaid(osv.osv_memory):
         thisform = self.read(cr, uid, ids)[0]
         checking_challan = self.check_challan_print_type(cr, uid, thisform)
         if checking_challan == 'print_three_on_one':
-            thisform = self.read(cr, uid, ids)[0]
-            self.create_unpaid_challans(cr, uid, thisform['class_id'])
-            report = 'smsfee_print_three_student_per_page'
+            if thisform['category'] == 'Academics':
+                report = 'smsfee_print_three_student_per_page'
+                thisform = self.read(cr, uid, ids)[0]
+                self.create_unpaid_challans(cr, uid, thisform['class_id'],'Academics')
+            elif thisform['category'] == 'Transport':  
+                report = 'smstransport_print_three_student_per_page'
+                thisform = self.read(cr, uid, ids)[0]
+                self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')  
+        
+        elif checking_challan == 'print_one_on_one':
+            if thisform['category'] == 'Academics':
+                report = 'smsfee_print_one_student_per_page'
+                thisform = self.read(cr, uid, ids)[0]
+                self.create_unpaid_challans(cr, uid, thisform['class_id'],'Academics')
+            elif thisform['category'] == 'Transport':  
+                report = 'smstransport_print_one_student_per_page'
+                thisform = self.read(cr, uid, ids)[0]
+                self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')  
+            
             datas = {
                  'ids': [],
                  'active_ids': '',
