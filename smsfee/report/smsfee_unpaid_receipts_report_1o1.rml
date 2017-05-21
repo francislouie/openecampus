@@ -77,6 +77,10 @@
            	<drawString x="002" y="5">Print Date: [[ get_today() ]]</drawString>
 			<drawString x="300" y="5">Print Date: [[ get_today() ]]</drawString>
 			<drawString x="600" y="5">Print Date: [[ get_today() ]]</drawString>
+			<setFont name="Helvetica" size="6"/>
+			<drawString x="80" y="4">Powered By:CYME Softwares,0346-9333776</drawString>
+			<drawString x="380" y="4">Powered By:CYME Softwares,0346-9333776</drawString>
+			<drawString x="680" y="4">Powered By:CYME Softwares,0346-9333776</drawString>
 
            	<lineMode width="0.7" />
            	<lines>1cm 27.7cm 20cm 27.7cm</lines>
@@ -310,6 +314,7 @@
 		        		<td><para style="P4-Bold">Amount in Words: </para></td>
 						<td><para style="P5">[[(record['amount_in_words'])]]</para></td>
 		      		</tr>
+					
 		      		</blockTable>
 				</td>
       		</tr>
@@ -323,6 +328,7 @@
           		<para style="P2">[[(s['line-style'])]]</para>
         		</td>
       		</tr>
+			
       		</blockTable>
         </td>
         <td>

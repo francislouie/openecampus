@@ -596,44 +596,44 @@ class sms_group(osv.osv):
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         super(osv.osv, self).write(cr, uid, ids, vals, context)
         
-#         sql = """SELECT smsfee_classes_fees_lines.id from smsfee_classes_fees_lines
-#                                     inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-#                                     where smsfee_feetypes.category =  'Transport'"""
-#         cr.execute(sql)
-#         feetypid = cr.fetchone()[0]
-#         if not feetypid:
-#             raise osv.except_osv(('Transport Fee Not Found'),('Transport fee is not defined in any class, Goto fee management of any class and add transport under any fee structure.'))
-#              
-#          
-#         reg_ids = self.pool.get('sms.transport.fee.payments').search(cr, uid, [])
-#         if reg_ids:
-#             rec1 = self.pool.get('sms.transport.fee.payments').browse(cr,uid,reg_ids)
-#             i = 1
-#             for reg in rec1:
-#                 i = i + 1
-#                 exists = self.pool.get('smsfee.studentfee').search(cr, uid, [('student_id','=',reg.student_id.id),('fee_type','=',feetypid),('fee_month','=',reg.fee_month.id)])
-#                 if exists:
-#                     if reg.state  =='fee_calculated':
-#                         state = 'fee_unpaid'
-#                         paid_amount = 0
-#                         fee_amount = reg.fee_amount
-#                     elif reg.state == 'Paid':
-#                         paid_amount = reg.paid_amount
-#                         fee_amount = reg.fee_amount
-#                         state = 'fee_paid'
-#                     elif reg.state == 'Draft':
-#                         state ='fee_exemption'
-#                         paid_amount = reg.paid_amount
-#                         fee_amount = reg.fee_amount
-#                     else:
-#                         state = reg.state
-#                         paid_amount = reg.paid_amount
-#                         fee_amount = reg.fee_amount
-#                     self.pool.get('smsfee.studentfee').write(cr, uid,exists[0], {
-#                                     'fee_amount':fee_amount,
-#                                     'paid_amount':paid_amount,
-#                                     'state': state
-#                                    })
+        sql = """SELECT smsfee_classes_fees_lines.id from smsfee_classes_fees_lines
+                                    inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                                    where smsfee_feetypes.category =  'Transport'"""
+        cr.execute(sql)
+        feetypid = cr.fetchone()[0]
+        if not feetypid:
+            raise osv.except_osv(('Transport Fee Not Found'),('Transport fee is not defined in any class, Goto fee management of any class and add transport under any fee structure.'))
+              
+          
+        reg_ids = self.pool.get('sms.transport.fee.payments').search(cr, uid, [])
+        if reg_ids:
+            rec1 = self.pool.get('sms.transport.fee.payments').browse(cr,uid,reg_ids)
+            i = 1
+            for reg in rec1:
+                i = i + 1
+                exists = self.pool.get('smsfee.studentfee').search(cr, uid, [('student_id','=',reg.student_id.id),('fee_type','=',feetypid),('fee_month','=',reg.fee_month.id)])
+                if exists:
+                    if reg.state  =='fee_calculated':
+                        state = 'fee_unpaid'
+                        paid_amount = 0
+                        fee_amount = reg.fee_amount
+                    elif reg.state == 'Paid':
+                        paid_amount = reg.paid_amount
+                        fee_amount = reg.fee_amount
+                        state = 'fee_paid'
+                    elif reg.state == 'Draft':
+                        state ='fee_exemption'
+                        paid_amount = reg.paid_amount
+                        fee_amount = reg.fee_amount
+                    else:
+                        state = reg.state
+                        paid_amount = reg.paid_amount
+                        fee_amount = reg.fee_amount
+                    self.pool.get('smsfee.studentfee').write(cr, uid,exists[0], {
+                                    'fee_amount':fee_amount,
+                                    'paid_amount':paid_amount,
+                                    'state': state
+                                   })
         
         
         
@@ -3514,11 +3514,6 @@ class sms_student_class_promotion(osv.osv):
                                     for os in old_subjects:
                                         self.pool.get('sms.student.subject').write(cr,uid,os,{'subject_status':'Pass'})
                                     # add fees to student at the time of promotion, get all ids from promotion lines
-                                    print "Before calling get_fee_at_promotion at step 2: when adding actual fee to student  ",   
-                                    print "record ids:",ids
-                                    print "student id:",student.id
-                                    print "student fs ",student.fee_structure.id
-                                    print "newclass ",f.promot_to_class.id
                                     
                                     apply_fee = self.get_fee_at_promotion(cr,uid,ids,student.name.id,student.fee_structure.id,f.promot_to_class.id,'set_receivables')
                                     self.write(cr, uid, f.id ,{'state':'Promoted'})
@@ -3532,38 +3527,40 @@ class sms_student_class_promotion(osv.osv):
                 rec_line = self.pool.get('sms.student.class.promotion.lines').browse(cr,uid,line_id)
                
                 for student in rec_line:
-                    existing_acad_cal_std_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','=',student.name.id),('name','=',f.existing_class.id)])
+                    existing_acad_cal_std_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','=',student.name.id),('name','=',f.promot_to_class.id)])
                     #1: Delete student fee first
+                    #raise osv.except_osv((existing_acad_cal_std_id), ('No Account is defined for Payment method:Cash'))
                     if existing_acad_cal_std_id:
                        
                         sql1 = """delete from smsfee_studentfee where acad_cal_id= """+str(f.promot_to_class.id)+"""and student_id = """+str(student.name.id)
                         cr.execute(sql1)
                         delfee = cr.commit() 
-                        if delfee:
                            
-                            std_cls_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','=',student.name.id),('name','=',f.promot_to_class.id),('state','=','Current')])
-                            if std_cls_id:
-                                sql2 = """delete from sms_student_subject where student= """+str(std_cls_id[0])+"""
-                                    and student_id =  """+str(student.name.id)
-                                cr.execute(sql2)
-                                delsub = cr.commit() 
-                                if delsub:
-                                    sql3 = """delete from sms_academiccalendar_student where id= """+str(std_cls_id[0])
-                                    cr.execute(sql3)
-                                    delcls = cr.commit() 
-                                    # Search old class and make it current again
-                                    std_oldcls_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','=',student.name.id),('name','=',f.existing_class.id),('state','!=','Current')])
-                                    if std_oldcls_id:
-                                        std_cls_id = self.pool.get('sms.academiccalendar.student').write(cr,uid,std_oldcls_id[0],{'state':'Current'})
-                                        #Now search old subjects and make them current
+                        std_cls_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','=',student.name.id),('name','=',f.promot_to_class.id),('state','=','Current')])
+                        if std_cls_id:
+                            sql2 = """delete from sms_student_subject where student= """+str(std_cls_id[0])+"""
+                                and student_id =  """+str(student.name.id)
+                            cr.execute(sql2)
+                            delsub = cr.commit() 
+                            #delete classes after subjects deletion
+                            sql3 = """delete from sms_academiccalendar_student where id= """+str(std_cls_id[0])
+                            cr.execute(sql3)
+                            delcls = cr.commit() 
+                            # Search old class and make it current again
+                            std_oldcls_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','=',student.name.id),('name','=',f.existing_class.id),('state','!=','Current')])
+                           
+                            if std_oldcls_id:
+                                std_cls_id = self.pool.get('sms.academiccalendar.student').write(cr,uid,std_oldcls_id[0],{'state':'Current'})
+                                #Now search old subjects and make them current
                                    
-                                        std_subs = self.pool.get('sms.student.subject').search(cr,uid,[('student','=',std_cls_id[0]),('student_id','=',student.name.id)])
+                                std_subs = self.pool.get('sms.student.subject').search(cr,uid,[('student','=',std_oldcls_id[0]),('student_id','=',student.name.id)]) 
                                 
-                                    for sub in std_subs:
-                                        add_subs = self.pool.get('sms.student.subject').write(cr,uid,sub,{'subject_status': 'Current'})
                                 
-                                    update_student = self.pool.get('sms.student').write(cr, uid, student.name.id, {'current_class':f.existing_class.id})
-                                    self.write(cr, uid, f.id ,{'state':'Roleback'})
+                                for sub in std_subs:
+                                    add_subs = self.pool.get('sms.student.subject').write(cr,uid,sub,{'subject_status': 'Current'})
+                            
+                                update_student = self.pool.get('sms.student').write(cr, uid, student.name.id, {'current_class':f.existing_class.id})
+                                self.write(cr, uid, f.id ,{'state':'Roleback'})
         return
 
     

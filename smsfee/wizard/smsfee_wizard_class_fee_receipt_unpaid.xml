@@ -10,25 +10,22 @@
             <field name="arch" type="xml">
                 <form string="Student Admission" version="7.0">
                     <group>
-                    <h1><field name="class_id" readonly ="1" nolabel = "1" /></h1>
-					<group col="6" String = "" >
-						 <field name="due_date" />
-						 <newline/>
-						 <field name="amount_after_due_date"/>
-						 <field name="category"/>
+                    <h1><field name="class_id"  colspan="4" col="6"  readonly ="1" nolabel = "1" /></h1>
+                    </group>
+					<group colspan="4" col="6" String = "" >
+						 <field name="due_date" colspan="4" />
+						 <newline/><field name="amount_after_due_date" colspan="4" />
+						 <newline/><field  colspan="4"  name="category"/>
 				    </group>
 						 
-                    </group>
-                    <group>
                     
                     <ol>
-                    <li><p>You can print Fee challan for an individual student from student Form.</p></li>
-                    <li><p>To Cancel a challan, goto <strong>Open Challans</strong> under <strong>Fee Management</strong> menu.</p></li>
-                    <li><p><font color = "red">Generating New Fee Challan will cancel all previous unpaid challans</font></p></li>
+                    <li><p>You can print Fee Bill for an individual student from student Form.</p></li>
+                    <li><p>To Cancel a Fee Bill, goto <strong>Open Fee Bill</strong> under <strong>Fee Management</strong> menu.</p></li>
+                    <li><p><font color = "red">Generating New Fee Bill will cancel all previous unpaid Bills</font></p></li>
                     
                     </ol>
                    
-                    </group>
                      
                      <footer>
                         <button string="Print" name="print_fee_report_challan" type="object" class="oe_highlight"/>
@@ -42,7 +39,7 @@
   <!-- action Fee Reports-->
 
         <record id="action_fee_receipts" model="ir.actions.act_window">
-            <field name="name">Generate and Print Fee challans for this class</field>
+            <field name="name">Print Fee Bills For This Class</field>
             <field name="res_model">class.fee.receipts.unpaid</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>

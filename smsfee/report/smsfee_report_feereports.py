@@ -259,7 +259,9 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 sql = """SELECT sum(smsfee_studentfee.paid_amount) FROM smsfee_studentfee
                      INNER JOIN smsfee_classes_fees_lines
                      ON smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type  
-                     WHERE smsfee_classes_fees_lines.fee_type = """+str(ft[0])+"""
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                        where smsfee_feetypes.category =  'Academics'
+                     and smsfee_classes_fees_lines.fee_type = """+str(ft[0])+"""
                      AND smsfee_studentfee.state = 'fee_paid'
                      AND smsfee_studentfee.acad_cal_id = """+str(cls.id)+"""
                      AND smsfee_studentfee.paid_amount>0
@@ -405,8 +407,12 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 rec = float(0)
                 all_monthly_paid = True
                 sql = """SELECT sum(fee_amount) from smsfee_studentfee
-                         WHERE  smsfee_studentfee.student_id = """+str(student.id)+"""
-                         AND state = 'fee_unpaid'
+                        inner join smsfee_classes_fees_lines 
+                        on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                        where smsfee_feetypes.category =  'Academics'
+                        and  smsfee_studentfee.student_id = """+str(student.id)+"""
+                        AND state = 'fee_unpaid'
                          """
                 self.cr.execute(sql)
                 rec = self.cr.fetchone()     
@@ -665,10 +671,16 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 stotal = 0
                 j = 1
                 for month in session_months_ids:
-                    sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
+                    sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where smsfee_feetypes.category =  'Academics'
+                    
+                         and state = 'fee_unpaid'
                         AND acad_cal_id = """+str(class_id)+"""
                         AND student_id = """+str(stdid)+"""
-                        AND due_month = """+str(month) 
+                        AND due_month = """+str(month)  
                         
                     self.cr.execute(sql)
                     amount = self.cr.fetchone()[0]
@@ -680,7 +692,12 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                         mydict_total['session_total'] = '{0:,d}'.format(int((str(mydict_total['session_total'])).replace(",", "")) + int(amount)) #this is actually annual grand total of all classes for all months 
                     j = j +1
                 
-                sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
+                sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee
+                        inner join smsfee_classes_fees_lines 
+                        on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                        where smsfee_feetypes.category =  'Academics'
+                     and state = 'fee_unpaid'
                     AND due_month not in """+str(tuple(session_months_ids))+"""
                      AND acad_cal_id != """+str(class_id)+"""
                     AND student_id = """+str(stdid)
