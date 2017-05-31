@@ -4776,7 +4776,7 @@ class project_transactional_log(osv.osv):
 
     def create_transactional_logs(self, cr, uid,vals,obj,operation,pre_val):
         
-        print "******create_transactional_logs*****",vals,obj,operation,pre_val
+        print "******create_transactional_logs*****"#,vals,obj,operation,pre_val
         
         """ this method creates transactional logs for project and will be called from write method of project"""
         import datetime
@@ -4784,7 +4784,7 @@ class project_transactional_log(osv.osv):
             post_value = ''
             column_name = ''
             for k,v in vals.iteritems():
-                print k,"****",v,"pre_val==",pre_val
+#                 print k,"****",v,"pre_val==",pre_val
                 column_name = k
                 post_value = v
             result = self.pool.get('project.transactional.log').create(cr,uid,{
@@ -4854,18 +4854,45 @@ sms_transfer_in()
 
 class sms_transfer_in_out(osv.osv):
 
-    _order = 'id desc'
+    def create(self, cr, uid, vals, context=None, check=True):
+        #-----------------create number according to transfer mode-------------------------------------
+        sql = """Select COALESCE(count(*),'0') from sms_transfer_in_out
+                Where transfer_mode = '"""+str(vals['transfer_mode'])+"""'
+              """ 
+        cr.execute(sql)
+        transfer_no = cr.fetchone()[0] + 1
+        vals['Transfer_no'] = 'OUT -'+str(transfer_no)
+        if vals['transfer_mode'] == 'transfer_in':
+            vals['Transfer_no'] = 'IN -'+str(transfer_no)
+        #-------------------------------------------------------------------------------
+        result = super(osv.osv, self).create(cr, uid, vals, context)
+        return result
+
+    def onchange_student(self, cr, uid, ids, student_id):
+        result = {}
+        acad_cal = self.pool.get('sms.student').browse(cr,uid,student_id).current_class.id
+        result['acd_cal'] = acad_cal
+        return {'value': result} 
+
+    _order = 'id desc' 
     _name = "sms.transfer.in.out"
     _description = "maintains info about students tranfer in out"
     _columns = {
         'transfer_mode':fields.selection([('transfer_in','Transfer In'),('transfer_out','Transfer Out')],'Transfer Mode',required = True),
-        'Transfer_no': fields.char('Transfer No'),
-        'student_id': fields.many2one('sms.student','Student Name'),
+        'Transfer_no': fields.char('Transfer No' ,readonly = True),
+        
+        
+        'student_id': fields.many2one('sms.student','Student Name'  ),
+        'acd_cal': fields.many2one('sms.academiccalendar','Student Class' ),
+        
+        
         'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type',required = True),
-        'acd_cal': fields.many2one('sms.academiccalendar','Student Class'),
         'allow_defaulter_student': fields.boolean('Allow Defaulter Student'),
+        'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'State',readonly = True),
+        'transfer_out_reason': fields.text('Reason Of Transfer'),
+              
     }
-    _defaults = {}    
+    _defaults = {'state':'Draft',}      
     _sql_constraints = []
 
 sms_transfer_in_out()
