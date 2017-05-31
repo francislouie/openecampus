@@ -12,7 +12,7 @@ class fee_reports(osv.osv_memory):
     _description = "admits student in a selected class"
     _columns = {
               "session": fields.many2one('sms.session', 'Session', help="Select A session , you can also print reprts from previous session."),
-              "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('session_id','=',session),('fee_defined','=',1)]", help="Select A class to load its subjects."),
+              "class_id": fields.many2many('sms.academiccalendar','academiccalendar_class_fee','self_id','academiccalendar_id','Class',domain="[('session_id','=',session),('fee_defined','=',1)]"),
               'report_type': fields.selection([('annaul_report_all_classes','1:\tAnnual Fee Collection Report (All Classes)'),
                                                ('annaul_report_single_class','2:\tAnnual Fee Collection Report (Single Class)'),
                                                ('monthly_report_all_classes','3:\tMonthly Fee Collection Report (All Classes)'),

@@ -252,7 +252,7 @@
 				<notebook>
 					<page string = "Fees Payments">
 						<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
-							<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Print Fee Bills" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+							<!--<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Print Fee Bills" states="Admitted,admission_cancel,drop_out,deceased,passout,slc,Withdraw" type="action" class="oe_highlight" groups=""/>-->
 							<button name="%(action_student_fee_collect_id)d" string="Receive a Fee Bill" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 							
 						<notebook>
@@ -268,7 +268,7 @@
 								</group>
 							</group>
 							<group readonly ="1">		    	 		
-							<field name="studen_fee_ids"  nolabel="1" attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}" />
+							<field name="studen_fee_ids"   nolabel="1" attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"   />
 							</group>
 						</page>
 						<page string = "Fee Bills">
