@@ -13,9 +13,11 @@ class withdraw_student(osv.osv_memory):
     _description = "withdraws student from the school"
     _columns = {
               'student': fields.many2one('sms.student', 'Student', help="Student to be Withdrawlled", readonly = True),
-              'withdraw_type': fields.selection([('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),('slc','School leaving Certificate')],'Withdraw Type', required = True),
+              'withdraw_type': fields.selection([('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),
+                                                 ('slc','School leaving Certificate')],'Withdraw Type', required = True),
               'reason_withdraw': fields.text('Reason', required = True),
-              'helptext':fields.text('Help Text')
+              'helptext':fields.text('Help Text'),
+              'transfer': fields.boolean('Transfer'),
              }
     _defaults = {
         'student':_get_student,
@@ -25,9 +27,16 @@ class withdraw_student(osv.osv_memory):
     def withdraw_student(self, cr, uid, ids, data):
         result = []
         
-        stdobj = self.pool.get('sms.student').browse(cr, uid, data['active_id'] )
+        rec = self.browse(cr ,uid ,ids)[0]
+        if rec.transfer == True:
+            #*************True in case its call fro transfer out purpose and from object sms.transfer.in.out*************
+            std_id = rec.student.id
+        else:
+            #*************called from object called sms.student**********************************************************
+            std_id = data['active_id']
+            
+        stdobj = self.pool.get('sms.student').browse(cr, uid ,std_id )
         acad_cal_id = stdobj.current_class.id
-        print "acad cal id:",acad_cal_id
         cal_obj = self.pool.get('sms.academiccalendar').browse(cr,uid,acad_cal_id)
         std_id =  stdobj.id
         
