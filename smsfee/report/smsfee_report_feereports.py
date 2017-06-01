@@ -259,7 +259,9 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 sql = """SELECT sum(smsfee_studentfee.paid_amount) FROM smsfee_studentfee
                      INNER JOIN smsfee_classes_fees_lines
                      ON smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type  
-                     WHERE smsfee_classes_fees_lines.fee_type = """+str(ft[0])+"""
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                        where smsfee_feetypes.category =  'Academics'
+                     and smsfee_classes_fees_lines.fee_type = """+str(ft[0])+"""
                      AND smsfee_studentfee.state = 'fee_paid'
                      AND smsfee_studentfee.acad_cal_id = """+str(cls.id)+"""
                      AND smsfee_studentfee.paid_amount>0
@@ -405,8 +407,12 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 rec = float(0)
                 all_monthly_paid = True
                 sql = """SELECT sum(fee_amount) from smsfee_studentfee
-                         WHERE  smsfee_studentfee.student_id = """+str(student.id)+"""
-                         AND state = 'fee_unpaid'
+                        inner join smsfee_classes_fees_lines 
+                        on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                        where smsfee_feetypes.category =  'Academics'
+                        and  smsfee_studentfee.student_id = """+str(student.id)+"""
+                        AND state = 'fee_unpaid'
                          """
                 self.cr.execute(sql)
                 rec = self.cr.fetchone()     
@@ -622,86 +628,98 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             this_form = self.datas['form']
     #         acad_cal = this_form['acad_cal'][0]
             session_id = this_form['session'][0]
-            class_id = this_form['class_id'][0]
+            class_ids= this_form['class_id']
             reporttype = this_form['report_type']
     #         students = self.pool.get('sms.academiccalendar.student').search(self.cr, self.uid,[('name', '=', acad_cal),('state', '=','Current')])
     #       
             session_months_ids = self.pool.get('sms.session.months').search(self.cr, self.uid,[('session_id', '=', session_id)])
             session_months_ids.sort()
             months = self.pool.get('sms.session.months').browse(self.cr, self.uid,session_months_ids)
-            mydict = {'sno':'SNO','registration_no':'Reg No.','name':'Name','m1':'--','m2':'--','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','session_total':'Session Total','other':'Others','total':'Total'}
-            c = 1
-            for mm in months:
-                arr = mm.name.split('-')
-                mydict['m'+str(c)] = arr[0][:3]+"\n"+arr[1]
-                c = c + 1
-            result.append(mydict) 
-            
-            sql = """select sms_academiccalendar_student.id from sms_student
-                     inner join sms_academiccalendar_student on
-                     sms_student.id = sms_academiccalendar_student.std_id
-                     WHERE sms_academiccalendar_student.name = """ + str(class_id) +"""
-                     ORDER by sms_student.name"""
-                     #sql takes ids from sms_academiccalendar_student on the basis of class_id and orders it by name field of sms_student which has inner join with sms_academiccalendar_student on foreign key std_id
-            self.cr.execute(sql)
-            students_list = self.cr.fetchall()
-
-            students_cls_ids = []
-            for sname in students_list:
-                students_cls_ids.append(sname[0]) #student_list contains tuples
-            students_obj = self.pool.get('sms.academiccalendar.student').browse(self.cr, self.uid, students_cls_ids)
-            i = 1
-            grand_total = 0
-            #             for sname in students_list:
-            mydict_total = {'sno':'Total','class':'-','m1':0,'m2':0,'m3':0,'m4':0,'m5':0,'m6':0,'m7':0,'m8':0,'m9':0,'m10':0,'m11':0,'m12':0,'session_total':0,'other':0,'total':0}
-            for std in students_obj:
-                mydict = {'sno':'SNO','registration_no':'Registration No','name':'Name','m1':'--','m2':'--','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','session_total':'0','other':'--','total':'--','gtotal':''}
-                stdid = std.std_id.id
-           
-                mydict['name'] = std.std_id.name
-                mydict['registration_no'] = std.std_id.registration_no
-                mtotal = 0
-                others = 0
-                stotal = 0
-                j = 1
-                for month in session_months_ids:
-                    sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
-                        AND acad_cal_id = """+str(class_id)+"""
-                        AND student_id = """+str(stdid)+"""
-                        AND due_month = """+str(month) 
-                        
-                    self.cr.execute(sql)
-                    amount = self.cr.fetchone()[0]
-                    mtotal = mtotal + int(amount)
-                    if mtotal> 0:
-                        mydict['m'+str(j)] = '{0:,d}'.format(amount) #the variable amount hold the value and '{0:,d}'.format(variable) converts it to currency format
-                        mydict_total['m'+str(j)] = '{0:,d}'.format(int((str(mydict_total['m'+str(j)])).replace(",", "")) + int(amount))
-                        mydict['session_total'] = '{0:,d}'.format(mtotal)#the variable mtotal hold the value and '{0:,d}'.format(variable) converts it to currency format
-                        mydict_total['session_total'] = '{0:,d}'.format(int((str(mydict_total['session_total'])).replace(",", "")) + int(amount)) #this is actually annual grand total of all classes for all months 
-                    j = j +1
+            for class_id in class_ids:
+                mydict = {'sno':'SNO','registration_no':'Reg No.','name':'Name','m1':'--','m2':'--','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','session_total':'Session Total','other':'Others','total':'Total'}
+                c = 1
+                for mm in months:
+                    arr = mm.name.split('-')
+                    mydict['m'+str(c)] = arr[0][:3]+"\n"+arr[1]
+                    c = c + 1
+                result.append(mydict) 
                 
-                sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee WHERE state = 'fee_unpaid'
-                    AND due_month not in """+str(tuple(session_months_ids))+"""
-                     AND acad_cal_id != """+str(class_id)+"""
-                    AND student_id = """+str(stdid)
+                sql = """select sms_academiccalendar_student.id from sms_student
+                         inner join sms_academiccalendar_student on
+                         sms_student.id = sms_academiccalendar_student.std_id
+                         WHERE sms_academiccalendar_student.name = """ + str(class_id) +"""
+                         ORDER by sms_student.name"""
+                         #sql takes ids from sms_academiccalendar_student on the basis of class_id and orders it by name field of sms_student which has inner join with sms_academiccalendar_student on foreign key std_id
                 self.cr.execute(sql)
-                others = self.cr.fetchone()[0]
-                if others is None:
-                    others = "-"
-                    stotal = mtotal + 0
-                else:
-                    mydict['other'] = '{0:,d}'.format(others)#the variable others hold the value and '{0:,d}'.format(variable) converts it to currency format                            
-                    mydict_total['other'] = '{0:,d}'.format(int((str(mydict_total['other'])).replace(",", "")) + int(others)) #this is actually annual grand total of all classes for all months
-                    stotal = others + mtotal
-                mydict['total'] = '{0:,d}'.format(stotal)#the variable stotal hold the value and '{0:,d}'.format(variable) converts it to currency format
-                mydict_total['total'] = '{0:,d}'.format(int((str(mydict_total['total'])).replace(",", "")) + int(stotal)) #this is actually annual grand total of all classes for all months
-                grand_total = grand_total + stotal
-                mydict['sno'] = i
-           
-                i = i +1    
-                result.append(mydict)
-                mydict['gtotal'] = '{0:,d}'.format(grand_total)#the variable grand_total hold the value and '{0:,d}'.format(variable) converts it to cureency format
-            result.append(mydict_total)         
+                students_list = self.cr.fetchall()
+    
+                students_cls_ids = []
+                for sname in students_list:
+                    students_cls_ids.append(sname[0]) #student_list contains tuples
+                students_obj = self.pool.get('sms.academiccalendar.student').browse(self.cr, self.uid, students_cls_ids)
+                i = 1
+                grand_total = 0
+                #             for sname in students_list:
+                mydict_total = {'sno':'Total','class':'-','m1':0,'m2':0,'m3':0,'m4':0,'m5':0,'m6':0,'m7':0,'m8':0,'m9':0,'m10':0,'m11':0,'m12':0,'m12':0,'session_total':0,'other':0,'total':0}
+                for std in students_obj:
+                    mydict = {'sno':'SNO','registration_no':'Registration No','name':'Name','m1':'--','m2':'--','m3':'--','m4':'--','m5':'','m6':'','m7':'--','m8':'--','m9':'','m10':'','m11':'--','m12':'--','m13':'','session_total':'0','other':'--','total':'--','gtotal':''}
+                    stdid = std.std_id.id
+               
+                    mydict['name'] = std.std_id.name
+                    mydict['registration_no'] = std.std_id.registration_no
+                    mtotal = 0
+                    others = 0
+                    stotal = 0
+                    j = 1
+                    for month in session_months_ids:
+                        sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee
+                                inner join smsfee_classes_fees_lines 
+                                on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                                inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                                where smsfee_feetypes.category =  'Academics'
+                        
+                             and state = 'fee_unpaid'
+                            AND acad_cal_id = """+str(class_id)+"""
+                            AND student_id = """+str(stdid)+"""
+                            AND due_month = """+str(month)  
+                            
+                        self.cr.execute(sql)
+                        amount = self.cr.fetchone()[0]
+                        mtotal = mtotal + int(amount)
+                        if mtotal> 0:
+                            mydict['m'+str(j)] = '{0:,d}'.format(amount) #the variable amount hold the value and '{0:,d}'.format(variable) converts it to currency format
+                            mydict_total['m'+str(j)] =  int(amount)
+                            mydict['session_total'] = '{0:,d}'.format(mtotal)#the variable mtotal hold the value and '{0:,d}'.format(variable) converts it to currency format
+                            mydict_total['session_total'] = '{0:,d}'.format(int((str(mydict_total['session_total'])).replace(",", "")) + int(amount)) #this is actually annual grand total of all classes for all months 
+                        j = j +1
+                    
+                    sql = """SELECT COALESCE(sum(fee_amount),'0') FROM smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where smsfee_feetypes.category =  'Academics'
+                         and state = 'fee_unpaid'
+                        AND due_month not in """+str(tuple(session_months_ids))+"""
+                         AND acad_cal_id != """+str(class_id)+"""
+                        AND student_id = """+str(stdid)
+                    self.cr.execute(sql)
+                    others = self.cr.fetchone()[0]
+                    if others is None:
+                        others = "-"
+                        stotal = mtotal + 0
+                    else:
+                        mydict['other'] = '{0:,d}'.format(others)#the variable others hold the value and '{0:,d}'.format(variable) converts it to currency format                            
+                        mydict_total['other'] = '{0:,d}'.format(int((str(mydict_total['other'])).replace(",", "")) + int(others)) #this is actually annual grand total of all classes for all months
+                        stotal = others + mtotal
+                    mydict['total'] = '{0:,d}'.format(stotal)#the variable stotal hold the value and '{0:,d}'.format(variable) converts it to currency format
+                    mydict_total['total'] = '{0:,d}'.format(int((str(mydict_total['total'])).replace(",", "")) + int(stotal)) #this is actually annual grand total of all classes for all months
+                    grand_total = grand_total + stotal
+                    mydict['sno'] = i
+               
+                    i = i +1    
+                    result.append(mydict)
+                    mydict['gtotal'] = '{0:,d}'.format(grand_total)#the variable grand_total hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                result.append(mydict_total)         
             return result
         
 #-----------------------------------------------------------------------------------------------------------------------------

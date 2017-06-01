@@ -55,11 +55,13 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
     def get_challans(self, data):
         challan_list = []
         student_id = self.datas['form']['student_id'][0]
+        category = self.datas['form']['category']
         stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
-        self.pool.get('smsfee.receiptbook').check_fee_challans_issued(self.cr, self.uid ,stu_rec.current_class.id ,stu_rec.id)
+        #self.pool.get('smsfee.receiptbook').check_fee_challans_issued(self.cr, self.uid ,stu_rec.current_class.id ,stu_rec.id)
         challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=', stu_rec.current_class.id),
                                                                                     ('student_id','=', stu_rec.id),
-                                                                                    ('state','=','fee_calculated')])
+                                                                                    ('state','=','fee_calculated'),
+                                                                                    ('challan_cat','=',category)])
         if challan_ids:
             rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
             for challan in rec_challan_ids:
@@ -124,7 +126,9 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return bank
  
     def get_challan_number(self, data):
-        challan = self.pool.get('smsfee.receiptbook')._get_bill_no(self.cr, self.uid, data, 'smsfee.receiptbook', None)
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=', data)])
+        challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
+        challan =  challan_rec[0].counter
         return challan
  
     def get_candidate_info(self, data):

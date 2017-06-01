@@ -167,7 +167,8 @@
 				<header>
 				</header>
 				<sheet>
-					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
+					 <separator string="Transport Vehicle" colspan="4"/>
+					<label for="name" class="oe_edit_only" string="Name"/><h2><field name="name" nolabel="1"/></h2>
 					<group name="transport_vehcile_inner_1" col="4" colspan="2"> 
 						<field name="vehcile_type"/>
 						<field name="max_accomodation"/>
@@ -177,6 +178,19 @@
 						<field name="vehcile_no"/>
 					</group>
 					<notebook>
+						<page readonly = "1" string = "Collections Register">
+						<h3><p>Monthly Collections Register</p></h3>
+						<field name="fee_register" widget="one2many_list" readonly ="1">
+							<tree string = "Click to see details" delete="false">
+								<field name="name" />
+								<field name="month" />
+								<field name="month_forcasted_fee" />
+								<field name="month_fee_received" />
+								
+							</tree>
+						
+						</field>
+						</page>
 						<page string="Transport Route">
 							<field name="transport_route" nolabel="1" colspan="4"/>
 						</page>
@@ -685,15 +699,16 @@
 	<record model = "ir.ui.view" id="sms_session_months_inherit_trnasport">
 		<field name = "name">sms.session.months.tree_transprt</field>	
 		<field name = "model">sms.session.months</field>
-		<field name = "inherit_id" ref = "smsfee.sms_session+months_ih_ihrt"/>
+		<field name = "inherit_id" ref = "smsfee.sms_session_months_ih_ihrt"/>
 		<field name = "arch" type = "xml">
-			<xpath expr = "//button[@name ='update_monthly_feeregister']" position = "replace">
-				<button name="update_monthly_feeregister" string="Update Fee" type="object"
+			<xpath expr = "//button[@name ='update_monthly_feeregister']" position = "after">
+				<button name="update_monthly_feeregister_transport" string="Update Transport Fee" type="object"
                                     groups="" 
-									icon="terp-gtk-jump-to-ltr" 
-									attrs="{'readonly':[('state','=','Updated')]}"
-									confirm = "Are you sure update register with selected month?"
+									icon="terp-go-today" 
+									
+									confirm = "Update Transport register for selected month?"
                                     />
+                <field name="transport_update_log" />
 			</xpath>
 		</field>
 	</record>

@@ -1,6 +1,6 @@
 from openerp.osv import fields, osv
-from datetime import datetime
-from datetime import date
+from datetime import date, datetime
+import datetime
 import time
 import logging
 
@@ -102,6 +102,7 @@ class sms_transport_vehcile(osv.osv):
         'expanse_amount':fields.float('Expanse Amount'),
         'registered_students':fields.one2many('sms.student', 'vehcile_reg_students_id', 'Students', readonly=True),
         'registered_staff':fields.one2many('hr.employee', 'vehcile_reg_employee_id', 'Employees', readonly=True),
+         'fee_register':fields.one2many('smsfee.transportfee.register','vehicle_id','Register'),
         'vehcile_no':fields.integer('Vehicle Number'), 
             } 
     _defaults = {
@@ -150,6 +151,7 @@ class sms_transport_registrations(osv.osv):
         return result
 
     def register_person(self, cr, uid, ids, name):
+        #this mehod permanaly registers a student along with his fee
         for record in self.browse(cr, uid, ids):
             fee_structure = self.pool.get('sms.transport.fee.registration').search(cr,uid,[('parent_id','=',record.id)])
             fee_structure = self.pool.get('sms.transport.fee.registration').browse(cr,uid,fee_structure)
@@ -186,18 +188,34 @@ class sms_transport_registrations(osv.osv):
                                                                                 'current_vehcile':record.current_vehcile.id,
                                                                                 'student_id':record.student_id.id,
                                                                                 })
+                        # add student fee in smsfee student fee , its fee category will be transport
+                        #insert_student_monthly_non_monthlyfee(self, cr, uid, std_id, acad_cal, fee_type_row, month):
                         if registration_id:
                             student_id = self.pool.get('sms.student').search(cr,uid,[('id','=',record.student_id.id)])
                             self.pool.get('sms.student').write(cr, uid, student_id,{'transport_availed':True,'vehcile_reg_students_id':record.current_vehcile.id,'transport_reg_id':record.id})
-                            self.pool.get('sms.transport.fee.payments').\
-                                                                    create(cr,uid,
-                                                                    {
-                                                                    'registeration_id': record.id,
-                                                                    'state': 'fee_calculated', 
-                                                                    'student_id':record.student_id.id,
-                                                                    'fee_amount':fee_amount,
-                                                                    'fee_month':fee_month
-                                                                    })
+                            #search Transport Registration fee object , coolect all fees and enter them in studentfee object of smsfee
+                            # currently at the time of admission it collectes all month of a session and display them in list
+                            # later on when, dta migration is completed, it will pick only months for which fee register is updated
+                            fee_ids =  self.pool.get('sms.transport.fee.registration').search(cr,uid,[('parent_id','=',record.id)])
+                            if fee_ids:
+                                feesrec = self.pool.get('sms.transport.fee.registration').browse(cr,uid,fee_ids)
+                                for trfee in feesrec:
+                                    fee_dcit= {
+                                                'student_id': record.student_id.id,
+                                                'acad_cal_id': record.student_id.current_class.id,
+                                                'fee_type': trfee.name.id,
+                                                'date_fee_charged':datetime.date.today(),
+                                                'due_month': trfee.fee_month.id,
+                                                'fee_month': trfee.fee_month.id,
+                                                'paid_amount':0,
+                                                'fee_amount': trfee.fee_amount,  
+                                                'late_fee':0,  
+                                                'total_amount':trfee.fee_amount + 0, 
+                                                'reconcile':False,
+                                                 'state':'fee_unpaid'
+                                                }
+            
+                                    crate_fee = self.pool.get('smsfee.studentfee').create(cr,uid,fee_dcit)  
     #                         current_ac
     #                         self.pool.get('sms.transport.vehcile').write(cr, uid, student_id,{'current_accomodation':True,'vehcile_reg_students_id':record.current_vehcile.id,'transport_reg_id':record.id})
         return result
@@ -209,12 +227,23 @@ class sms_transport_registrations(osv.osv):
             if not fee_structure_obj:
                 raise osv.except_osv(('Fee structure does not exist'),('Please define transport fee structure first'))
             else:
+                #search for fee_type tansport in classes fee lines
+                #this is temp slon, this will be replaced when studentfee is directly linked with feetypes
+                fee_types_ids = self.pool.get('smsfee.classes.fees.lines').search(cr,uid,[('parent_fee_structure_id','=',record.id)])
+                sql = """SELECT smsfee_classes_fees_lines.id from smsfee_classes_fees_lines
+                                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                                        where smsfee_feetypes.category =  'Transport'"""
+                cr.execute(sql)
+                feetypid = cr.fetchone()
+                if not feetypid:
+                    raise osv.except_osv(('Transport Fee Not Found'),('Transport fee is not defined in any class, Goto fee management of any class and add transport under any fee structure.'))
+                
                 for rec in fee_structure_obj:
                     fiscalyear_months_id = self.pool.get('sms.session.months').search(cr, uid, [('session_id','=',rec.session_id.id)])
                     fiscalyear_months_obj = self.pool.get('sms.session.months').browse(cr, uid, fiscalyear_months_id)
                     for obj in fiscalyear_months_obj:
                         self.pool.get('sms.transport.fee.registration').create(cr ,uid ,{
-                                                                          'name': rec.id,
+                                                                          'name': feetypid[0],
                                                                           'parent_id': record.id,
                                                                           'fee_month': obj.id,
                                                                           'fee_amount': rec.monhtly_fee
@@ -291,7 +320,7 @@ class sms_transport_fee_registration(osv.osv):
     
     _name="sms.transport.fee.registration"
     _columns = {
-        'name':fields.many2one('sms.transport.fee.structure','Transport Fee Structure'),
+        'name':fields.many2one('smsfee.classes.fees.lines','Fee Type'),
         'parent_id':fields.many2one('sms.transport.registrations','Transport Register'),
         'fee_month':fields.many2one('sms.session.months','Fee Month'),
         'fee_amount':fields.float('Amount'),
@@ -330,15 +359,6 @@ class sms_transport_fee_payments(osv.osv):
             result[f.id] = string
         return result
     
-    def _set_bill_no(self, cr, uid, parent_id, parent_object, module):
-        create = self.pool.get('sms.fee.challan.no').create(cr, uid, {
-                   'parent_obj_id': parent_id,
-                   'parent_object': parent_object,
-                   'module': module,
-                   'receipt_book_id': module,
-                   'year':'2017',
-                   }) 
-        return create
     
     def _get_bill_no(self, cr, uid, parent_id, parent_object, module):
         sql =   """SELECT  id  FROM sms_fee_challan_no where parent_obj_id = """+str(parent_id)
@@ -815,53 +835,116 @@ sms_transport_fee_challan_lines()
 
 class sms_session_months(osv.osv):
     """ This object is inherited to Apply Transport Fees on Students """
-    def update_monthly_feeregister(self, cr, uid, ids, name):
-        """Method Servers the purpose of applying transport fees on student, in unpaid status. Currently called by 
-           1) Months in Academic Session 
-           2)  
-           3)
+    def update_monthly_feeregister_transport(self, cr, uid, ids, name):
+        """This method now getting transport fee from smsfee classes fees lines, but when the fee structure is change for smsfee_studentfee
+           then it will directly pick the transport fee id from smsfee_feetypes while its amount will be picked from rout or destination , 
+           the transport fee str is also not necesarry to be defined for every session and every rout
            """
-        super(sms_session_months, self).update_monthly_feeregister(cr, uid, ids, name)
-#         for rec in self.browse(cr, uid, ids):
-#             student_ids = self.pool.get('sms.transport.registrations').search(cr, uid, [('state','=','Registered')])
-#             student_recs = self.pool.get('sms.transport.registrations').browse(cr, uid, student_ids)
-#             
-#             for student_rec in student_recs:
-#                 monthly_fee_sql = """SELECT monhtly_fee FROM sms_transport_fee_structure WHERE 
-#                                         session_id = """ + str(rec.session_id.id) + """
-#                                         AND transport_route = """ +str(student_rec.transport_route.id) + """"""
-#                 cr.execute(monthly_fee_sql)
-#                 monthly_fee = cr.fetchone()
-#                 if not monthly_fee:
-#                     raise osv.except_osv(('Fee Structure not found'),('Please Define a Transport Fee Structure for '+str(student_rec.transport_route.name)+" For Session: "+str(rec.session_id.name)))
-#                 fee_already_exists =  self.pool.get('sms.transport.fee.payments').search(cr, uid, [('student_id','=',student_rec.student_id.id),('due_month','=',rec.id)])
-#                 if not fee_already_exists:
-#                     fee_month = rec.id
-#                     due_month = rec.id
-#                     fee_dict= {
-#                         'student_id': student_rec.student_id.id,
-#                         'registeration_id': student_rec.id,
-#                         'fee_amount': monthly_fee[0],
-#                         'due_month': due_month,
-#                         'fee_month': fee_month,
-#                         'late_fee':0,
-#                         'total_fees':0,
-#                         'date_fee_charged':date.today(),
-#                         'state':'fee_calculated'
-#                         }
-#                     create_trans_fee = self.pool.get('sms.transport.fee.payments').create(cr,uid,fee_dict)  
-#                     if create_trans_fee:
-#                         self.write(cr, uid, rec.id, {'update_log':'Last update on:'+str(date.today()),'state':'Updated'})
-#                 else:
-#                     print 'Transport fee record for student '+ str(student_rec.student_id.id) +' already exists'
-        return True
+        for f in self.browse(cr, uid, ids):
+            parent_session_id = f.session_id.id
+            #search all classes in this session
+                        # search all feetypes in this fs of thi class
+            ft_list = []
+            sql = """SELECT smsfee_classes_fees_lines.id from smsfee_classes_fees_lines
+                                    inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                                    where smsfee_feetypes.category =  'Transport'"""
+            cr.execute(sql)
+            feetypid = cr.fetchone()[0]
+            if not feetypid:
+                raise osv.except_osv(('Transport Fee Not Found'),('Transport fee is not defined in any class, Goto fee management of any class and add transport under any fee structure.'))
+            ftrow = self.pool.get('smsfee.classes.fees.lines').browse(cr,uid,feetypid)  
+            vehcle_ids = self.pool.get('sms.transport.vehcile').search(cr,uid,[])
+            if vehcle_ids:
+                veh_rec = self.pool.get('sms.transport.vehcile').browse(cr,uid,vehcle_ids)
+                
+                for this_veh in veh_rec:
+                        students_ids = this_veh.registered_students
+                        for this_student in students_ids:
+                            if this_student.transport_availed and this_student.state == 'Admitted':
+                                #call method to add this fee to student
+                                call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student.id, this_student.current_class.id, ftrow, f.id)
+                                           
+                        #Update fee register object for this month 
+                        # search if this month already exists then leav, otherwise create new record
+                        register_id = self.pool.get('smsfee.transportfee.register').search(cr,uid,[('vehicle_id','=',this_veh.id),('month','=',f.id)])
+                        if not register_id:
+                            fee_register = self.pool.get('smsfee.transportfee.register').create(cr,uid,{
+                                                                'vehicle_id':this_veh.id,                                                       
+                                                                'month':f.id, 
+                                                                    })
+            self.write(cr,uid,f.id,{'transport_update_log':'Last update on:'+str(datetime.date.today())})
+        return 
     
     _name = 'sms.session.months'
     _description = "Stores months of a session"
     _inherit = 'sms.session.months'
-    _columns = {} 
+    _columns = {
+                 'transport_update_log': fields.char('Last Update',size = 50),  
+                } 
     
 sms_session_months()
+
+class smsfee_transportfee_register(osv.osv):
+    
+    """ Store monthly fee history of all vehicles, when month fee register is updated, new record is inserted in this objects """
+    
+    def create(self, cr, uid, vals, context=None, check=True):
+         result = super(osv.osv, self).create(cr, uid, vals, context)
+#          for obj in self.browse(cr, uid, context=context):
+         return result
+   
+    def _set_name(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+             result[f.id] = str(f.vehicle_id.name)+" --- "+str(f.month.name)
+        return result
+    
+    def _set_forcasted_fee(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        #this query will be changed when function for fee reurned is included
+        for f in self.browse(cr, uid, ids, context=context):
+             sql = """SELECT COALESCE(sum(fee_amount),'0')  from smsfee_studentfee
+                      WHERE due_month = """+str(f.month.id)+"""
+                      """
+             cr.execute(sql)
+             amount = cr.fetchone() 
+             if amount:
+                 result[f.id] = float(amount[0]) 
+             else:
+                 result[f.id] = float(amount[0])
+        return result         
+             
+    def _set_paid_fee(self, cr, uid, ids, name, args, context=None):
+         #this query will be changed when function for fee reurned is included
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+             sql = """SELECT COALESCE(sum(paid_amount),'0') from smsfee_studentfee
+                      WHERE  reconcile = True"""
+             cr.execute(sql)
+             amount = cr.fetchone() 
+             if amount:
+                 result[f.id] = float(amount[0]) 
+             else:
+                 result[f.id] = float(amount[0])
+        return result                  
+    
+    _name = 'smsfee.transportfee.register'
+    _order = "month desc"
+    """stores academic calendar month by month updates, user has to manually update fee register for each classs for each month. this object also sotres monthly fee received in each month.
+       """
+    _description = "Stores transport fee register"
+    _columns = {
+        'name':fields.function(_set_name, method=True,  string='Fee',type='char'),
+        'vehicle_id': fields.many2one('sms.transport.vehcile','Van',readonly = True),      
+        'month': fields.many2one('sms.session.months','Month',readonly = True),
+        'month_forcasted_fee':fields.function(_set_forcasted_fee, method=True,  string='Forcasted',type='float'),
+        'month_fee_received':fields.function(_set_paid_fee, method=True,  string='Received',type='float'),
+    }
+smsfee_transportfee_register()
+
+
+
+
 
 class res_company(osv.osv):
     """This object is used to add fields in company ."""
@@ -884,3 +967,4 @@ class res_company(osv.osv):
             'company_cfieldeight_trans':fields.char('Field Eight', size=256),
                 }
 res_company()              
+

@@ -43,18 +43,6 @@ class res_company(osv.osv):
 res_company()
 
 
-class sms_fee_challan_no(osv.osv):
-    """this object sore challan no of all challans in receobppk, transport challans etc."""
-    _name = 'sms.fee.challan.no'
-    _columns = {
-    'parent_obj_id': fields.integer('Parent ID'),
-    'parent_object': fields.char('Parent_obj'),
-    'module': fields.char('Module'),
-    'year': fields.char('Year'),
-    }
-    _defaults = {
-    }
-sms_fee_challan_no()
 
 class sms_student_class_promotion(osv.osv):
     """the objects adds fee portion in student promotion process of sms module last update 26-8-2016"""
@@ -383,12 +371,13 @@ class sms_student(osv.osv):
         result[f.id] = amount
         return result
 
-        
+    #sms_student    
     _name = 'sms.student'
     _inherit ='sms.student'
         
     _columns = {
             'studen_fee_ids':fields.one2many('smsfee.studentfee', 'student_id','Student Fee'),
+            'fee_bills':fields.one2many('smsfee.receiptbook', 'student_id','Fee Bills'),
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Paybles', type='float', size=300),
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
@@ -611,7 +600,7 @@ class smsfee_classes_fees_lines(osv.osv):
             return True
         else:
             return False
-    
+    #smsfee_classes_fees_lines
     _name = 'smsfee.classes.fees.lines'
    
     _description = "Stores classes fee"
@@ -725,14 +714,15 @@ class smsfee_feetypes(osv.osv):
 #          
 #             return new_feetype
     
-    
+    #smsfee_feetypes
     _name = 'smsfee.feetypes'
     _description = "This object store fee types"
     _columns = {
         'name': fields.char(string = 'Fee Type',size = 100,required = True),
         'fs_id':fields.many2one('sms.feestructure'),      
         'description': fields.char(string = 'Description',size = 100),
-        'subtype': fields.selection([('Monthly_Fee','Monthly Fee'),('at_admission','Charged at The Time of Admission'),('Promotion_Fee','Promotion Fee'),('Annual_fee','Annual Fee'),('Refundable','Refundable'),('Other','Other')],'Fee Category',required = True),
+        'subtype': fields.selection([('Monthly_Fee','Monthly Fee'),('at_admission','Charged at The Time of Admission'),('Promotion_Fee','Promotion Fee'),('Annual_fee','Annual Fee'),('Refundable','Refundable'),('Other','Other')],'Repetition',required = True),
+        'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],'Fee Category',required=True),
     }
     _sql_constraints = [  
         ('Fee Exisits', 'unique (name)', 'Fee Already exists!')
@@ -779,6 +769,13 @@ class smsfee_studentfee(osv.osv):
                 string = f.fee_type.name
             result[f.id] = string
         return result
+    
+    def getfee_cate(self, cr, uid, ids, fields,args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            result[f.id] = f.fee_type.fee_type.category
+        return result
+
     
     def get_student_total_paybles(self, cr, uid, ids, acad_std_id,context=None):
         
@@ -900,7 +897,14 @@ class smsfee_studentfee(osv.osv):
             if rec.state == False or rec.date_fee_charged == False:
                 self.write(cr ,uid ,result ,{'state':'fee_unpaid','date_fee_charged': time.strftime('%Y-%m-%d')})
         return result
-
+    _SELECTION = [
+    ('Academics', 'Academics'),
+    ('Transport', 'Transport'),
+    ('Hostel', 'Hostel'),
+    ('Stationary', 'Portal'),
+    ('Portal', 'Portal')]
+    
+    #smsfee_studentfee
     _name = 'smsfee.studentfee'
     _description = "Stores student fee record"
     _columns = {
@@ -912,6 +916,7 @@ class smsfee_studentfee(osv.osv):
         'date_fee_charged':fields.date('Date Fee Charged'),
         'date_fee_paid':fields.date('Date Fee Paid'),
         'fee_type':fields.many2one('smsfee.classes.fees.lines','Fee Type'),
+        'category':fields.function(getfee_cate, method=True,  string='Category',type='selection',selection=[('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')]),
         'generic_fee_type':fields.many2one('smsfee.feetypes','G.Feetype'),
         'fee_month':fields.many2one('sms.session.months','Fee Month'),
         'due_month':fields.many2one('sms.session.months','Payment Month'),
@@ -1113,32 +1118,25 @@ smsfee_fee_adjustment()
 class smsfee_receiptbook(osv.osv):
     """ A fee receopt book, stores fee payments history of students """
     
-    def _set_bill_no(self, cr, uid, parent_id, parent_object, module):
-        create = self.pool.get('sms.fee.challan.no').create(cr, uid, {
-                   'parent_obj_id': parent_id,
-                   'parent_object':parent_object,
-                   'module': module,
-                   'receipt_book_id':module,
-                   'year':'2017',
-                   }) 
-        return create
-    
-    def _get_bill_no(self, cr, uid, parent_id, parent_object, module):
-        sql =   """SELECT  id  FROM sms_fee_challan_no where parent_obj_id = """+str(parent_id)
-        cr.execute(sql)
-        res = cr.fetchone()
-        if not res:
-            from random import randint
-            res = [randint(0,9)]
-        no = int(res[0])
-        return  str(no)+"-02"+str(2017)
+    def _set_bill_no(self, cr, uid, session_id, fee_month, module):
+        #first generate sequnce no
+        today = datetime.date.today()
+        month = datetime.datetime.strptime(str(today), '%Y-%m-%d').strftime('%m') 
+        year = datetime.datetime.strptime(str(today), '%Y-%m-%d').strftime('%Y') 
         
+        """ The following query is working pefectly only when deletion is not allowed on receipbook in any case
+            if dletion is allwoed, then count will generate duplicated value,"""
+        sql =   """SELECT  COALESCE(count(id),'0')  FROM smsfee_receiptbook
+                     WHERE session_id ="""+str(session_id)
+        cr.execute(sql)
+        counter1 = int(cr.fetchone()[0]) + 1
+        counter = str(counter1) +"-"+str(month)+str(year)
+        return counter
+    
+           
     def create(self, cr, uid, vals, context=None, check=True):
          
-        vals['name'] =  'slipno'
         result = super(osv.osv, self).create(cr, uid, vals, context)
-        generate_slip_no = self._set_bill_no(cr, uid, result, 'smsfee.receiptbook', 'smsfee')
-        #get_slip_no = self._get_bill_no(cr, uid, result,'smsfee.receiptbook','smsfee')
         return result
   
      
@@ -1158,47 +1156,48 @@ class smsfee_receiptbook(osv.osv):
         return True
     
     def load_std_fee(self, cr, uid, ids, context=None):
-        brows =   self.browse(cr, uid, ids, context)
-        unlink = self.unlink_lines(cr, uid,ids[0],None)
-        student = brows[0].student_id.id
-        self.onchange_student(cr, uid, ids, None)
-        self.write(cr, uid, ids[0], {'student_id':student,})    
-       
-        fee_ids = self.pool.get('smsfee.studentfee').search(cr, uid, [('student_id','=',student),('reconcile','=',0)])
-            
-        if fee_ids:
-            total_recvble = 0
-            for fees in fee_ids:
-                late_fee = 0
-                reconcile = False
+        for f in self.browse(cr, uid, ids, context):
+            brows =   self.browse(cr, uid, ids, context)
+            unlink = self.unlink_lines(cr, uid,ids[0],None)
+            student = brows[0].student_id.id
+            self.onchange_student(cr, uid, ids, None)
+            self.write(cr, uid, ids[0], {'student_id':student,'name':int(12)})    
+           
+            fee_ids = self.pool.get('smsfee.studentfee').search(cr, uid, [('student_id','=',student),('reconcile','=',0)])
                 
+            if fee_ids:
+                total_recvble = 0
+                for fees in fee_ids:
+                    late_fee = 0
+                    reconcile = False
                     
-                obj = self.pool.get('smsfee.studentfee').browse(cr, uid, fees)
-                if  obj.fee_amount == 0 or obj.fee_amount+late_fee ==0:
-                    reconcile = True
-                if brows[0].receive_whole_amount:
-                    paid_fee =  obj.fee_amount+late_fee
-                    reconcile = True
-                else:
-                    paid_fee = 0
-                    
+                        
+                    obj = self.pool.get('smsfee.studentfee').browse(cr, uid, fees)
                     if  obj.fee_amount == 0 or obj.fee_amount+late_fee ==0:
                         reconcile = True
+                    if brows[0].receive_whole_amount:
+                        paid_fee =  obj.fee_amount+late_fee
+                        reconcile = True
                     else:
-                        reconcile = False
-                total_recvble = total_recvble + obj.fee_amount 
-                create = self.pool.get('smsfee.receiptbook.lines').create(cr, uid, {
-                       'acad_cal_id': obj.acad_cal_id.id,
-                       'fee_type':obj.fee_type.id,
-                       'fee_month': obj.fee_month.id,
-                       'receipt_book_id':ids[0],
-                       'student_fee_id':obj.id,
-                       'fee_amount': obj.fee_amount,
-                       'total': obj.fee_amount+late_fee,
-                       'paid_amount':paid_fee,
-                       'reconcile':reconcile
-                       }) 
-            self.write(cr, uid, ids[0], {'state':'fee_calculated','total_paybles':total_recvble})
+                        paid_fee = 0
+                        
+                        if  obj.fee_amount == 0 or obj.fee_amount+late_fee ==0:
+                            reconcile = True
+                        else:
+                            reconcile = False
+                    total_recvble = total_recvble + obj.fee_amount 
+                    create = self.pool.get('smsfee.receiptbook.lines').create(cr, uid, {
+                           'acad_cal_id': obj.acad_cal_id.id,
+                           'fee_type':obj.fee_type.id,
+                           'fee_month': obj.fee_month.id,
+                           'receipt_book_id':ids[0],
+                           'student_fee_id':obj.id,
+                           'fee_amount': obj.fee_amount,
+                           'total': obj.fee_amount+late_fee,
+                           'paid_amount':paid_fee,
+                           'reconcile':reconcile
+                           }) 
+                self.write(cr, uid, ids[0], {'state':'fee_calculated','total_paybles':total_recvble})
         return
     
     def confirm_fee_received(self, cr, uid, ids, context=None):
@@ -1412,64 +1411,91 @@ class smsfee_receiptbook(osv.osv):
             self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})  
         return result
     
-    def check_fee_challans_issued(self, cr, uid, class_id, student_id):
+    def check_fee_challans_issued(self, cr, uid, class_id, student_id,category):
+        # Date 7 may 2017
+        #this objects will generate challans if challans are not exists
+        # the same method will be used by all modules, may be one more argument will be added, module_id e.g categoty id
+        # the challan cration method of transport will be delted, transport will also call this method
+        # challan category will be used in the case when separate challans tp ne printed for each category, we can keep this setting 
+        # in res company wheter to print combine challans or separate (this code is not currently set for combine challans .13 may 2017)
         result = {}
-        fee_ids = self.pool.get('smsfee.studentfee').search(cr ,uid ,[('student_id','=',student_id),('state','=','fee_unpaid')])
+        fee_ids = []
+        sql = """SELECT distinct smsfee_studentfee.id from smsfee_studentfee
+                  inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                  inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                  where smsfee_feetypes.category = '"""+str(category)+"""'
+                  and smsfee_studentfee.student_id = """+str(student_id)+ """ and smsfee_studentfee.state ='fee_unpaid'
+                     """
+        cr.execute(sql)
+        _ids = cr.fetchall()
+        for thisfee in _ids:
+            fee_ids.append(thisfee[0])
+
+        #fee_ids = self.pool.get('smsfee.studentfee').search(cr ,uid ,[('student_id','=',226),('state','=','fee_unpaid'),('category','=','Transport')])
+#         raise osv.except_osv((_ids), (fee_ids))
         if fee_ids:
             challan_ids = self.pool.get('smsfee.receiptbook').search(cr, uid,
                                                                      [('student_id','=',student_id),
                                                                       ('student_class_id','=', class_id),
-                                                                      ('state','=','fee_calculated')])
+                                                                      ('state','=','fee_calculated'),
+                                                                      ('challan_cat','=',category)])
+            
             if challan_ids:
                 #---------------------- Get all unpaid amount receiveable from student -------------------------------------
-                receipt_total_fee = []
-                std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr ,uid ,fee_ids)
-                if std_unpaid_fees:
-                    current_fee_amount = 0
-                    for unpaidfee in std_unpaid_fees:
-                        current_fee_amount = current_fee_amount + unpaidfee.fee_amount
-                #---------------------- Get Unpaid Amount Appearing in the Cuurent Fee Receipt -----------------------------
-                for recipt in self.pool.get('smsfee.receiptbook').browse(cr, uid, challan_ids):
-                    tlt_line_fee = 0
-                    for lines in recipt.receiptbook_lines_ids:
-                        tlt_line_fee =tlt_line_fee + lines.total
-                    receipt_total_fee.append(tlt_line_fee)
-                #---------------------- if old_val is not equal to new_val than create reciept -----------------------------
-                old_val = receipt_total_fee[-1]
-                if old_val <= current_fee_amount:
-                    total_paybles = 0
-                    if type(student_id) is list:
-                        student_id = student_id[0]
-                    session_id = self.pool.get('sms.student').browse(cr, uid, student_id).current_class.acad_session_id.id
-                    self.pool.get('smsfee.receiptbook').write(cr ,uid ,challan_ids, {'state':'Cancel'})
-                    receipt_id = self.pool.get('smsfee.receiptbook').create(cr ,uid , {'student_id':student_id,
+#                 receipt_total_fee = []
+#                 std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr ,uid ,fee_ids)
+#                 if std_unpaid_fees:
+#                     current_fee_amount = 0
+#                     for unpaidfee in std_unpaid_fees:
+#                         current_fee_amount = current_fee_amount + unpaidfee.fee_amount
+#                 #---------------------- Get Unpaid Amount Appearing in the Cuurent Fee Receipt -----------------------------
+#                 for recipt in self.pool.get('smsfee.receiptbook').browse(cr, uid, challan_ids):
+#                     tlt_line_fee = 0
+#                     for lines in recipt.receiptbook_lines_ids:
+#                         tlt_line_fee =tlt_line_fee + lines.total
+#                     receipt_total_fee.append(tlt_line_fee)
+#                 #---------------------- if old_val is not equal to new_val than create reciept -----------------------------
+#                 old_val = receipt_total_fee[-1]
+#                 if old_val <= current_fee_amount:
+#                     total_paybles = 0
+                if type(student_id) is list:
+                    student_id = student_id[0]
+                session_id = self.pool.get('sms.student').browse(cr, uid, student_id).current_class.acad_session_id.id
+                counter = self._set_bill_no(cr, uid,session_id,None,None)
+                self.pool.get('smsfee.receiptbook').write(cr ,uid ,challan_ids, {'state':'Cancel'})
+                receipt_id = self.pool.get('smsfee.receiptbook').create(cr ,uid , {'student_id':student_id,
                                                                                      'student_class_id':class_id,
                                                                                      'state':'fee_calculated',
+                                                                                     'counter':counter,
+                                                                                     'challan_cat':category,
                                                                                      'receipt_date':datetime.date.today(),
                                                                                      'session_id' :session_id})
-                    std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr ,uid ,fee_ids)
-                    if receipt_id:
-                        for unpaidfee in std_unpaid_fees:
-                            total_paybles = total_paybles + unpaidfee.fee_amount
-                            feelinesdict = {
-                            'fee_type': unpaidfee.fee_type.id,
-                            'student_fee_id': unpaidfee.id,
-                            'fee_month': unpaidfee.fee_month.id,
-                            'receipt_book_id': receipt_id,
-                            'fee_amount':unpaidfee.fee_amount,
-                            'late_fee':0,
-                            'total':unpaidfee.fee_amount}
-                            self.pool.get('smsfee.receiptbook.lines').create(cr ,uid, feelinesdict)
+                std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr ,uid ,fee_ids)
+                if receipt_id:
+                    for unpaidfee in std_unpaid_fees:
+                        
+#                         total_paybles = total_paybles + unpaidfee.fee_amount
+                        feelinesdict = {
+                        'fee_type': unpaidfee.fee_type.id,
+                        'student_fee_id': unpaidfee.id,
+                        'fee_month': unpaidfee.fee_month.id,
+                        'receipt_book_id': receipt_id,
+                        'fee_amount':unpaidfee.fee_amount,
+                        'late_fee':0,
+                        'total':unpaidfee.fee_amount}
+                        self.pool.get('smsfee.receiptbook.lines').create(cr ,uid, feelinesdict)
                     
-                else:
-                    print "donot create challan"
+                
             else:
                 total_paybles = 0
                 if type(student_id) is list:
                     student_id = student_id[0]
                 session_id = self.pool.get('sms.student').browse(cr, uid, student_id).current_class.acad_session_id.id
+                counter = self._set_bill_no(cr, uid,session_id,None,None)
                 receipt_id = self.pool.get('smsfee.receiptbook').create(cr ,uid , {'student_id':student_id,
                                                                                   'student_class_id':class_id,
+                                                                                  'counter':counter,
+                                                                                  'challan_cat':category,
                                                                                   'state':'fee_calculated',
                                                                                   'receipt_date':datetime.date.today(),
                                                                                   'session_id' :session_id})
@@ -1489,11 +1515,14 @@ class smsfee_receiptbook(osv.osv):
         return True 
 
     _order = 'id desc'
+    #smsfee_receiptbook
     _name = 'smsfee.receiptbook'
     _description = "This object store fee types"
     _columns = {
-        'name': fields.char('Receipt No.',type = 'char'),      
+        'name': fields.char('Bill No', readonly =True,size=15), 
+        'counter': fields.char('counter', readonly =True,size=15),    
         'receipt_date': fields.date('Date'),
+        'challan_cat':fields.selection([('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],'Fee Category',readonly=True),
         'session_id':fields.many2one('sms.academics.session', 'Session'),
         'fee_structure': fields.char(string = 'Fee Structure',size = 100),
         'manual_recpt_no': fields.char(string = 'Manual Receipt No',size = 100),
@@ -1527,7 +1556,6 @@ class smsfee_receiptbook(osv.osv):
     _defaults = {
          'state':'Draft',
          'payment_method': 'Cash',
-         'student_id':_get_id ,
          'total_paid_amount': 0.0,
          'receipt_date':lambda *a: time.strftime('%Y-%m-%d'),
     }
@@ -1606,9 +1634,10 @@ class smsfee_receiptbook_lines(osv.osv):
     def _set_feename(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            result[f.id] = f.student_fee_id.name
+            result[f.id] = str(f.student_fee_id.name)
         return result
     
+    #smsfee_receiptbook_lines
     _name = 'smsfee.receiptbook.lines'
     _rec_name = 'fee_name'
     _description = "This object store fee types"
