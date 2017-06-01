@@ -1193,7 +1193,7 @@
                 </group>	
 				<group string="">
 					<field name="subjects_loaded" readonly = "1"/>
-					<field name="fee_defined" readonly = "1"/>
+					<field name="fee_defined"/>
 					<field name="timetable_created" readonly = "1"/>
 					<field name="pending_results" attrs="{'invisible':[('state','!=','Complete')]}"/>
 				</group>

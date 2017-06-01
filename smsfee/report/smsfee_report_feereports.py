@@ -386,8 +386,9 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             result = []
             """Late fee amount is not shown. to show it, make another columns on right side of others and mention it in separate column"""
             this_form = self.datas['form']
-            cls_id = this_form['class_id'][0]
-            students_cad_id = self.pool.get('sms.student').search(self.cr, self.uid,[('current_class', '=', cls_id)], order='name')
+            cls_id = this_form['class_id']
+            
+            students_cad_id = self.pool.get('sms.student').search(self.cr, self.uid,[('current_class', 'in', [1,2,3,4,5,6,7,8,9,10,11,12,13,17,18,19,20,21,22,23,24,25,26,27,29,30,31])], order='name')
             students_acad_rec = self.pool.get('sms.student').browse(self.cr, self.uid,students_cad_id)
             
             order_by = self.pool.get('res.company').browse(self.cr,self.uid,self.uid).order_of_report
@@ -398,7 +399,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 
             i = 1    
             for student in students_acad_rec:
-                mydict = {'sno':'SNO','student':'Student','registration_no':'','father':'Father','fee_amount':'--','remarks':'Remarks','total':'TOTAL'}
+                mydict = {'sno':'SNO','student':'Student','registration_no':'','class_name':student.current_class.name,'father':'Father','fee_amount':'--','remarks':'Remarks','total':'TOTAL'}
                 mydict['father'] = student.father_name
                 mydict['sno'] = i
                 mydict['registration_no'] = student.registration_no
@@ -406,7 +407,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 fee_amount = float(0)
                 rec = float(0)
                 all_monthly_paid = True
-                sql = """SELECT sum(fee_amount) from smsfee_studentfee
+                sql_academics = """SELECT COALESCE(sum(fee_amount),'0')  from smsfee_studentfee
                         inner join smsfee_classes_fees_lines 
                         on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                         inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
@@ -414,14 +415,40 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                         and  smsfee_studentfee.student_id = """+str(student.id)+"""
                         AND state = 'fee_unpaid'
                          """
-                self.cr.execute(sql)
+                self.cr.execute(sql_academics)
                 rec = self.cr.fetchone()     
-                if rec[0] > 0:
-                    fee_amount = rec[0]
-                    mydict['student'] = student.name
-                    mydict['fee_amount'] = '{0:,d}'.format(fee_amount)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
-                    result.append(mydict)
-                    i = i + 1
+                fee_amount1 = rec[0]
+                mydict['student'] = student.name
+                mydict['fee_amount_academics'] = '{0:,d}'.format(fee_amount1)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                
+                sql_transport = """SELECT COALESCE(sum(fee_amount),'0')  from smsfee_studentfee
+                        inner join smsfee_classes_fees_lines 
+                        on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                        where smsfee_feetypes.category =  'Transport'
+                        and  smsfee_studentfee.student_id = """+str(student.id)+"""
+                        AND state = 'fee_unpaid'
+                         """
+                self.cr.execute(sql_transport)
+                rec = self.cr.fetchone()     
+                fee_amount2 = rec[0]
+                mydict['fee_amount_transport'] = '{0:,d}'.format(fee_amount2)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                
+                sql_total = """SELECT COALESCE(sum(fee_amount),'0')  from smsfee_studentfee
+                       inner join smsfee_classes_fees_lines 
+                        on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                        where   smsfee_studentfee.student_id = """+str(student.id)+"""
+                        AND state = 'fee_unpaid'
+                         """
+                self.cr.execute(sql_total)
+                rec = self.cr.fetchone()     
+                fee_amount3 = rec[0]
+                mydict['fee_amount_total'] = '{0:,d}'.format(fee_amount3)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                
+                
+                result.append(mydict)
+                i = i + 1
                 
             return result
 #---------------------------------------------------------------------------------------------------------------------------------------------------

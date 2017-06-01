@@ -24,10 +24,12 @@ class fee_reports(osv.osv_memory):
 			  'from_date': fields.date('From'),
               'to_date': fields.date('To'),
               'month': fields.many2one('sms.session.months','Month',domain="[('session_id','=',session)]"),
-              'helptext':fields.text('Help Text')
+              'helptext':fields.text('Help Text'),
+              'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('All','All Fee Categories')],'Fee Category')
                }
     _defaults = {
                  'session':_get_active_session,
+                 'category':'Academics',
                  'helptext':'Print Fee Reports:\n Annual Fee Collection Report, Monthly Fee Collection,Monthly Fee Strucuture Wise Collection,Annual & Monthly Defaulter students..Many More '
            }
     

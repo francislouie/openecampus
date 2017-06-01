@@ -6,11 +6,17 @@
 	groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer" sequence="0"/>
 
 	<menuitem id="menu_configuration_id" name="Configuration" parent="" sequence="5" groups="group_sms_admin,group_sms_director"/>
+	<menuitem id="menu_exective_reports_id" name="Exective Reports" parent="" sequence="6" groups="group_sms_admin,group_sms_director"/>
 	<menuitem id="menu_quick_setting_id" name="Quick Setting" parent="menu_configuration_id" sequence="2" groups="group_sms_admin,group_sms_director,group_sms_admission_manager" />
 	<menuitem id="menu_session_stting_id" name="Session Setting" parent="menu_quick_setting_id" sequence="2" groups="group_sms_admin,group_sms_director,group_sms_admission_manager"/>
     <menuitem id="session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_session"/>
     <menuitem id="academic_session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_academic_session"/>
-
+	
+	<!-- Exective Reports
+	<menuitem id="menu_fee_reports_subheads" name="Fee Reports"  parent="menu_exective_reports_id" sequence="1"  groups="group_sms_admin,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_admission_officer" sequence="1"/>
+	<menuitem id="menu_academic_calendar_draft" name = "Defaulter Students" parent="menu_fee_reports_subheads" action=""
+	sequence="1" groups="group_sms_director,group_sms_principal,group_sms_fee_officer,group_sms_admission_officer,group_sms_officers_exams,group_sms_admin,group_sms_admission_manager,group_sms_manager_exams,group_sms_fee_manager,group_sms_fee_officer"/>
+	-->t
 	<!-- Attendance 
 	<menuitem id="menu_sms_attendance" name="Attendance"  groups="group_sms_admin,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_admission_officer" sequence="1"/>
 	<menuitem id="menu_attendance" name="Class Attendance" parent="sms.menu_sms_attendance" sequence="1" groups="group_sms_principal,group_sms_admin,group_sms_admission_officer,group_sms_admission_manager"/>

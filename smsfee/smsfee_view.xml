@@ -94,7 +94,7 @@
 				<button name="update_monthly_feeregister" string="Update Fee" type="object"
                                     groups="" 
 									icon="terp-gtk-jump-to-ltr" 
-									attrs="{'readonly':[('state','=','Updated')]}"
+									
 									confirm = "Are you sure update register with selected month?"
                                     />
 				</xpath>
