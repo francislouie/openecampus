@@ -2,6 +2,18 @@ from openerp.osv import fields, osv
 import logging
 _logger = logging.getLogger(__name__)
 
+class open_challns_wizardlines(osv.osv_memory):
+    _name = 'open.challns.wizardlines'
+    _rec_name = 'challno'
+    _columns = {
+        'challno': fields.char('Bill No'),
+        'amount': fields.float('Amount'),
+        'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category'),
+        'status_after_print':fields.selection([('Open','Open'),('Cancel','Will be Cancel')],'Fee Bill Future'),
+        'wizard_id': fields.many2one('class.singlestudent_fee_receipt_openchallans', 'Parent'),
+    }
+
+
 class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
     
     """this wizard is used to print single student fee challan both for transport and cademics, from 14 may 2017 """
@@ -14,12 +26,13 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
     _name = "class.singlestudent_unpaidfee_receipt"
     _description = "Single Student's Unpaid Fee Receipt"
     _columns = {
-                'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category'),
+              'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category'),
               'student_id': fields.many2one('sms.student', 'Student', domain="[('state','=','Admitted')]", help="Student"),
               'due_date': fields.date('Due Date', required=True),
               'amount_after_due_date': fields.integer('Fine After Due Date'),
+              'exiting_challan_ids': fields.one2many('open.challns.wizardlines','wizard_id', 'Existing Bills'),
                }
-    _defaults = {'student_id':_get_student,'category':'Academics'}
+    _defaults = {'student_id':_get_student,'category':'Academics','amount_after_due_date':200}
     
     def create_unpaid_challans(self, cr, uid, student_id,category):
         _logger.warning("Deprecated ............................................................................")

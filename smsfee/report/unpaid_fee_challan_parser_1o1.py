@@ -157,7 +157,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
     def get_challan_number(self, data):
         challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=',data)])
         challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
-        challan =  challan_rec[0].counter
+        challan =  challan_rec[0].counter or str(challan_rec[0].id)+"*****"
         return challan
  
     def get_candidate_info(self, data):

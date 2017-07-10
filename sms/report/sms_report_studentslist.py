@@ -135,6 +135,24 @@ class sms_report_studentslist(report_sxw.rml_parse):
         return result
     
     def get_student_biodata(self,form):
+         #temporary query to set students security fee
+        sql0 = """SELECT smsfee_studentfee.id,student_id,receipt_no,paid_amount FROM smsfee_studentfee
+              inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+              inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+            WHERE smsfee_feetypes.refundable = True  and smsfee_studentfee.state = 'fee_paid'"""
+        self.cr.execute(sql0)
+        feeids = self.cr.fetchall()
+        if feeids:
+            for booklines_rw in feeids:
+            
+                addfee = self.pool.get('smsfee.studentfee.refundable').create(self.cr,self.uid,{
+                                        'student_id':booklines_rw[1],
+                                        'receipt_no':booklines_rw[2],
+                                        'amount_received':booklines_rw[3],
+                                        'amount_paid_back':0,
+                                        'student_fee_id':booklines_rw[0],
+                                        'state':'to_be_paid'})
+        
         res = []
         s_no = 0        
         _ids = self.pool.get('sms.academiccalendar.student').search(self.cr ,self.uid ,[('name','=',form['acad_cal'][0])])

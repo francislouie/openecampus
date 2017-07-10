@@ -126,12 +126,56 @@ class sms_session_months(osv.osv):
             self.write(cr,uid,f.id,{'update_log':'Last update on:'+str(datetime.date.today()),'state':'Updated'})
         return 
     
+    def calc_month(self, cr, uid,ids,field_names, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            result[f.id] = {}
+            if type(field_names) is not list:
+                field_names = [field_names]
+            
+            for key_str in field_names:
+                result[f.id][key_str] = 0.0
+            
+            if 'month_focasted_amount' in field_names:
+                sql1 = """SELECT COALESCE(sum(fee_amount),'0') from smsfee_studentfee
+                         inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                               WHERE fee_month = """+str(f.id)+ """ and state = 'fee_unpaid' AND smsfee_feetypes.category='Academics'"""
+                print "sql:",sql1
+                cr.execute(sql1)
+                row1 = cr.fetchone()
+                print "..111....", row1[0]
+                result[f.id]['month_focasted_amount'] = float(row1[0])
+            
+            elif 'month_collected_amout' in field_names:
+                sql2 = """SELECT COALESCE(sum(paid_amount),'0') from smsfee_studentfee
+                        inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                               WHERE fee_month = """+str(f.id)+ """ and state = 'fee_paid' AND smsfee_feetypes.category='Academics'"""
+                cr.execute(sql2)
+                row2 = cr.fetchone()
+                print "..sql2....", sql2
+                result[f.id]['month_collected_amout'] = float(row2[0])
+                
+            elif 'month_recovery_ratio' in field_names:
+                if f.month_focasted_amount >0:
+                    forcasted = f.month_focasted_amount
+                else:
+                    forcasted = 1
+                ratio = float((f.month_collected_amout*100)/forcasted)
+                print "333.....",ratio
+                result[f.id]['month_recovery_ratio'] = float((f.month_collected_amout*100)/forcasted)
+        return result
+    
     _name = 'sms.session.months'
     _description = "stores months of a session"
     _inherit = 'sms.session.months'
     _columns = {
         'update_log': fields.char('Year',size = 50),  
-        'state':fields.selection([('To_Update','To Be Updated'),('Updated','Updated')],'State')
+        'state':fields.selection([('To_Update','To Be Updated'),('Updated','Updated')],'State'),
+        'month_focasted_amount':fields.function(calc_month, multi = '1',method=True,  string='Forcasted',type='float'),
+        'month_collected_amout':fields.function(calc_month,multi = '2', method=True,  string='Collection',type='float'),
+        'month_recovery_ratio':fields.function(calc_month,multi = '3', method=True,  string='Ratio',type='float'),
     } 
 #     _sql_constraints = [('name_unique', 'unique (session_id,session_month_id)', """ Session month name must be Unique.""")]
 sms_session_months()
@@ -349,11 +393,14 @@ class sms_student(osv.osv):
         }
         return result 
     def set_paybles(self, cr, uid, ids, context={}, arg=None, obj=None):
+        # temproray inner joins are used to get to fee cateogry of fee ttype, when fee strucre of student fee table is refined, one inner joiin will be removed
         result = {}
         records =  self.browse(cr, uid, ids, context)
         for f in records:
             sql =   """SELECT  COALESCE(sum(fee_amount),'0')  FROM smsfee_studentfee
-                     WHERE student_id ="""+str(ids[0])+"""  AND state='fee_unpaid'"""
+                     inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                     WHERE student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics'  AND state='fee_unpaid'"""
             cr.execute(sql)
             amount = float(cr.fetchone()[0])
         result[f.id] = amount
@@ -365,21 +412,38 @@ class sms_student(osv.osv):
 
         for f in records:
             sql =   """SELECT COALESCE(sum(fee_amount),'0')  FROM smsfee_studentfee
-                     WHERE student_id ="""+str(ids[0])+"""  AND state='fee_paid'"""
+                     WHERE student_id ="""+str(f.id)+"""  AND state='fee_paid'"""
             cr.execute(sql)
             amount = float(cr.fetchone()[0])
         result[f.id] = amount
         return result
 
+    def get_student_fee_views(self, cr, uid, ids, field_names, arg=None, context=None):
+        """This was clients requirements to show academis and transport ,and hostel etc fee separately, we made this method to use in 
+           each module, this will be called by relavent columns to show fee history of one module only, here this method shows fee
+           hisotry for academics only """
+        records = self.browse(cr,uid,ids)
+        res = {}
+        for f in records:
+            sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
+                       inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics' """
+            cr.execute(sql)
+            res[f.id] = [x[0] for x in cr.fetchall()]
+#         raise osv.except_osv((res), (sql))
+        return res
     #sms_student    
     _name = 'sms.student'
     _inherit ='sms.student'
         
     _columns = {
             'studen_fee_ids':fields.one2many('smsfee.studentfee', 'student_id','Student Fee'),
-            'fee_bills':fields.one2many('smsfee.receiptbook', 'student_id','Fee Bills'),
+            'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
+            'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
+            'fee_bills':fields.one2many('smsfee.receiptbook', 'student_id','Fee Bills' ),
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
-            'total_paybles':fields.function(set_paybles, method=True, string='Paybles', type='float', size=300),
+            'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
 
     }
@@ -723,6 +787,7 @@ class smsfee_feetypes(osv.osv):
         'description': fields.char(string = 'Description',size = 100),
         'subtype': fields.selection([('Monthly_Fee','Monthly Fee'),('at_admission','Charged at The Time of Admission'),('Promotion_Fee','Promotion Fee'),('Annual_fee','Annual Fee'),('Refundable','Refundable'),('Other','Other')],'Repetition',required = True),
         'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],'Fee Category',required=True),
+        'refundable':fields.boolean('Refundable')
     }
     _sql_constraints = [  
         ('Fee Exisits', 'unique (name)', 'Fee Already exists!')
@@ -866,6 +931,22 @@ class smsfee_studentfee(osv.osv):
              result[f.id] = f.late_fee + f.fee_amount
         return result
     
+    def set_refundable_fee(self, cr, uid, booklines_rw):
+        """ this method is called when student fee is received, this methods accepts receptbooklines reocrd full row as argument
+            a) it check if the recived fee is refundable then it creates an entry in student table of refundable fees. """
+#         raise osv.except_osv(('called2'), (booklines_rw))
+        if booklines_rw.student_fee_id.fee_type.fee_type.refundable ==True:
+            add_fee = self.pool.get('smsfee.studentfee.refundable').create(cr,uid,{
+                                        'student_id':booklines_rw.student_fee_id.student_id.id,
+                                        'receipt_no':booklines_rw.receipt_book_id.id,
+                                        'amount_received':booklines_rw.paid_amount,
+                                        'amount_paid_back':0,
+                                        'student_fee_id':booklines_rw.student_fee_id.id,
+                                        'state':'to_be_paid',
+                    
+                    })  
+        return 
+    
     def onchange_set_domain(self, cr, uid,ids,student_id,context):
         val = {}
         #~~~~~~~~~~~~~get class name~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -916,7 +997,7 @@ class smsfee_studentfee(osv.osv):
         'date_fee_charged':fields.date('Date Fee Charged'),
         'date_fee_paid':fields.date('Date Fee Paid'),
         'fee_type':fields.many2one('smsfee.classes.fees.lines','Fee Type'),
-        'category':fields.function(getfee_cate, method=True,  string='Category',type='selection',selection=[('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')]),
+        'category':fields.function(getfee_cate, method=True,  string='Category',type='selection',selection=[('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],store=True),
         'generic_fee_type':fields.many2one('smsfee.feetypes','G.Feetype'),
         'fee_month':fields.many2one('sms.session.months','Fee Month'),
         'due_month':fields.many2one('sms.session.months','Payment Month'),
@@ -938,6 +1019,41 @@ class smsfee_studentfee(osv.osv):
         'student_id': lambda self, cr, uid, context: context.get('student_id', False),
     }
 smsfee_studentfee()
+
+#===== Refundabble fee objects
+
+class smsfee_studentfee_refundable(osv.osv):
+    def calculate_balance(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            result[f.id] = int(f.amount_received - f.amount_paid_back)
+        return result
+    
+    _name = 'smsfee.studentfee.refundable'    
+    _columns = {
+        'name':fields.many2one('smsfee.feetypes','Fee Type', domain="[('refundable','=',True)]"),
+        'receipt_no':fields.many2one('smsfee.receiptbook','Receipt No'),
+        'student_id':fields.many2one('sms.student','Student'),
+        'amount_received':fields.integer('Amount Received'),
+        'amount_paid_back':fields.integer('Paid Amount'),
+        'paid_back_by': fields.many2one('res.users','Refunded By'),
+        'date_paid_back_date': fields.datetime('Refunded On'),
+        'student_fee_id': fields.many2one('smsfee.studentfee','Fee Register'),
+        'balance': fields.function(calculate_balance,string = 'Balance.',type = 'integer',method = True),   
+        'state':fields.selection([('to_be_paid','To be Paid Back'),('paid_back','Paid To Student'),('adjusted','Adjusted')],'Status',readonly=True),
+        #------------total payables---------------------------------
+    }
+     
+    _defaults = {
+    }
+smsfee_studentfee_refundable()
+
+
+
+#==== End of refunable fee oabject
+
+
+
 
 #========================================Student Withdraw process ==============================
 class smsfee_std_withdraw(osv.osv):
@@ -1310,12 +1426,17 @@ class smsfee_receiptbook(osv.osv):
                        'voucher_date':datetime.date.today(),
                        'voucher_no':move_id
                        })
-            search_booklines = self.pool.get('smsfee.receiptbook.lines').search(cr, uid, [('receipt_book_id','=',ids[0]),('reconcile','=',False)], context=context) 
+            search_booklines = self.pool.get('smsfee.receiptbook.lines').search(cr, uid, [('receipt_book_id','=',ids[0])], context=context) 
             print "serarched ids to delete ",search_booklines
             if search_booklines:
-               for del_id in search_booklines:
-                   print "found ids to delte ",del_id
-                   self.pool.get('smsfee.receiptbook.lines').unlink(cr,uid,del_id)
+               rec_booklines = self.pool.get('smsfee.receiptbook.lines').browse(cr,uid,search_booklines) 
+               for booklin_id in rec_booklines:
+                   if not booklin_id.reconcile:
+                       self.pool.get('smsfee.receiptbook.lines').unlink(cr,uid,booklin_id.id)
+                   else:
+                       #call method ro record refundable fees
+                       set_refund = self.pool.get('smsfee.studentfee').set_refundable_fee(cr, uid,booklin_id)
+                    
         else:
             raise osv.except_osv(('No Fee Paid'),('Paid amount or Discount should not be 0'))
 #         for np in lines_obj :
@@ -1520,7 +1641,7 @@ class smsfee_receiptbook(osv.osv):
     _description = "This object store fee types"
     _columns = {
         'name': fields.char('Bill No', readonly =True,size=15), 
-        'counter': fields.char('counter', readonly =True,size=15),    
+        'counter': fields.char('Bill No.', readonly =True,size=15),    
         'receipt_date': fields.date('Date'),
         'challan_cat':fields.selection([('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],'Fee Category',readonly=True),
         'session_id':fields.many2one('sms.academics.session', 'Session'),

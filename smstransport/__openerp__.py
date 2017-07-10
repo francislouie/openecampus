@@ -6,7 +6,7 @@
     'description': """This Module serves the purpose of managing transport
                       system for a school""",
     'website': 'http://www.inovtec.com.pk',
-    'depends' : ['base','account','account_accountant','sms'],
+    'depends' : ['base','account','account_accountant','sms','smsfee'],
     'data': ['security/smstransport_security.xml',
              'security/ir.model.access.csv',
              'wizard/smstransport_class_fee_receipt_unpaid.xml',

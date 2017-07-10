@@ -17,12 +17,15 @@ class fee_reports(osv.osv_memory):
                                                ('annaul_report_single_class','2:\tAnnual Fee Collection Report (Single Class)'),
                                                ('monthly_report_all_classes','3:\tMonthly Fee Collection Report (All Classes)'),
                                                ('student_paid_fee_report','4:\tStudents Paid Fee Report'),
-                                               ('defaulter_list_annual','5:\tDefaulter Student list (Whole Session)'),
-                                               ('defaulter_student_list','6:\Defaulter Student list'),
+                                               ('refundable_tobe_paid','5:\tRefundable Fee (To be Paid back to Students)'),
 											   ('monthly_feestructure_report_all_classes','7:\tMonthly Fee Structure Wise Collection Report (All Classes)'),
                                                ],'Report Type',required = True),
 			  'from_date': fields.date('From'),
               'to_date': fields.date('To'),
+              'refundable_report_option': fields.selection([('to_be_paid','1:\tTo be Paid To Students'),
+                                               ('paid_back','2:\t Already Paid To Students'),
+                                               ('all','2:\tShow All Cases'),
+                                               ],'Options',required = True),
               'month': fields.many2one('sms.session.months','Month',domain="[('session_id','=',session)]"),
               'helptext':fields.text('Help Text'),
               'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('All','All Fee Categories')],'Fee Category')
@@ -53,6 +56,8 @@ class fee_reports(osv.osv_memory):
             report = 'smsfee_annaul_defaulter_list_name'        
         elif reporttype =='monthly_feestructure_report_all_classes':
             report = 'smsfee.monthly.feestructure.collections.allclasses.name'
+        elif reporttype =='refundable_tobe_paid':
+            report = 'smsfee.refundablefee.tobepaid.name'
                 
         
  
