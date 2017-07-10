@@ -4486,21 +4486,22 @@ class student_admission_register(osv.osv):
                 if months:
                     month_rec = self.pool.get('smsfee.classfees.register').browse(cr,uid,months)
                 for line in rec_feelins:
-                    if line.fee_type.subtype == 'Monthly_Fee':
-                        #1st get session id for student class, then get all months of that session
-                        class_session_id = stu_ids.student_class.session_id.id
-                        
-                        #get month of class updated till
-                        for this_month in month_rec:
+                    if line.fee_type.category == 'Academics':
+                        if line.fee_type.subtype == 'Monthly_Fee':
+                            #1st get session id for student class, then get all months of that session
+                            class_session_id = stu_ids.student_class.session_id.id
+                            
+                            #get month of class updated till
+                            for this_month in month_rec:
+                                self.pool.get('admission.register.student.fees').create(cr ,uid ,{
+                                                                                  'name': line.id,
+                                                                                  'parent_id': stu_ids.id,
+                                                                                  'fee_month': this_month.month.id,
+                                                                                  'amount': line.amount
+                                                                                  })
+                        else:
+                            #so this is not monthly fee, proceed with inserting single rocrd in fee
                             self.pool.get('admission.register.student.fees').create(cr ,uid ,{
-                                                                              'name': line.id,
-                                                                              'parent_id': stu_ids.id,
-                                                                              'fee_month': this_month.month.id,
-                                                                              'amount': line.amount
-                                                                              })
-                    else:
-                        #so this is not monthly fee, proceed with inserting single rocrd in fee
-                        self.pool.get('admission.register.student.fees').create(cr ,uid ,{
                                                                           'name': line.id,
                                                                           'parent_id': stu_ids.id,
                                                                           'fee_month': month_rec[0].month.id,

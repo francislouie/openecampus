@@ -295,6 +295,7 @@ class sms_transport_registrations(osv.osv):
     _columns = {
         'name' : fields.function(_set_registration_name, method=True, store = True, size=256, string='Registration',type='char'),
         'registration_type':fields.selection([('Employee', 'Employee'),('Student', 'Student')], 'Registration For', required=True),
+        'registration_no':fields.related('student_id', 'registration_no', type='char', string='Registration No'),  
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
         'student_reg_no':fields.char('Search Student(Reg No)', size=256),
@@ -404,6 +405,9 @@ sms_transport_fee_payments()
 class hr_employee(osv.osv):
     
     """This object is used to add fields in employee"""
+    
+    
+    
     _name = 'hr.employee'
     _inherit ='hr.employee'
         
@@ -418,17 +422,47 @@ hr_employee()
 class sms_student(osv.osv):
     
     """This object is used to add fields in sms.student"""
+    def get_student_fee_views(self, cr, uid, ids, field_names, arg=None, context=None):
+        """This was clients requirements to show academis and transport ,and hostel etc fee separately, we made this method to use in 
+           each module, this will be called by relavent columns to show fee history of one module only, here this method shows fee
+           hisotry for transport only """
+        records = self.browse(cr,uid,ids)
+        res = {}
+        for f in records:
+            sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
+                       inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Transport' """
+            cr.execute(sql)
+            res[f.id] = [x[0] for x in cr.fetchall()]
+        return res
+    
+    def set_paybles_transport(self, cr, uid, ids, context={}, arg=None, obj=None):
+        # temproray inner joins are used to get to fee cateogry of fee ttype, when fee strucre of student fee table is refined, one inner joiin will be removed
+        result = {}
+        records =  self.browse(cr, uid, ids, context)
+        for f in records:
+            sql =   """ SELECT  COALESCE(sum(fee_amount),'0')  FROM smsfee_studentfee
+                       inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                     WHERE student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Transport'  AND state='fee_unpaid'"""
+            cr.execute(sql)
+            amount = float(cr.fetchone()[0])
+        result[f.id] = amount
+        return result
     
     _name = 'sms.student'
     _inherit ='sms.student'
         
     _columns = {
             'vehcile_reg_students_id':fields.many2one('sms.transport.vehcile','Vechile Registration'),
+            'view_transport_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Transport Fee'),
             'transport_availed':fields.boolean('Transport Availed?'),
             'transport_fee_history':fields.float('Fee History'),
-            'transoprt_amount':fields.float('Transport Amount'),
+            'total_paybles_transport':fields.function(set_paybles_transport, method=True, string='Balance(Transport)', type='float'),
             'transport_reg_id':fields.many2one('sms.transport.registrations','Transport Registration'),
             'transport_fee_payment_ids':fields.one2many('sms.transport.fee.payments','student_id','Transport Payments'),
+            
                 }
 sms_student()
 

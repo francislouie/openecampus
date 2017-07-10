@@ -21,7 +21,7 @@
   	<stylesheet>
     
     <blockTableStyle id="Standard_Outline">
-    <blockAlignment value="LEFT"/>
+    <blockAlignment value="CENTER"/>
     <blockValign value="TOP"/>
     </blockTableStyle>
     
@@ -29,21 +29,25 @@
       <blockAlignment value="LEFT"/>
       <blockValign value="TOP"/>
       </blockTableStyle>
+      
+  <blockTableStyle id="Table2">
+	    <blockAlignment value="LEFT"/>
+	    <blockValign value="TOP"/>
+		<blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+	    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+	    <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
+		<blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
+		<blockBackground colorName="#e6e6e6" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
     
-    <blockTableStyle id="Table_1">
-    <blockAlignment value="LEFT"/>
-    <blockValign value="TOP"/>
-    <blockLeftPadding length="0.0" start="0,0" stop="-1,-1"/>
-	<blockTopPadding length="0.0" start="0,0" stop="-1,-1"/>
-    <blockBottomPadding length="0.0" start="0,0" stop="-1,-1"/>
-    <lineStyle kind="LINEBELOW" colorName="#000000" start="0,-1" stop="0,-1"/>
-    </blockTableStyle>
-    
+        
     <blockTableStyle id="Table_maintable">
     <blockAlignment value="LEFT"/>
     <blockValign value="TOP"/>
 	<blockTopPadding length="0.0" start="0,0" stop="-1,-1"/>
     <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+    <blockBackground colorName="#e6e6e6" start="1,0" stop="1,-1"/>
+     <blockBackground colorName="#e6e6e6" start="15,0" stop="15,-1"/>
     <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
 	</blockTableStyle>
 	
@@ -59,30 +63,9 @@
     <initialize>
 	<paraStyle name="all" alignment="justify"/>
     </initialize>
-    <paraStyle name="P1" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P11" fontName="Helvetica" fontSize="15.0" leading="16" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="9" alignment="LEFT" textColor="#000000"/>
-    <paraStyle name="P2Small" fontName="Helvetica" fontSize="7.0" leading="8" alignment="LEFT" textColor="#000000"/>
-    <paraStyle name="P3" fontName="Helvetica" fontSize="12.0" leading="20" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
-    <paraStyle name="P4" fontName="Helvetica" fontSize="10.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P5" fontName="Times-Roman" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P6" fontName="Times-Roman" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P7" fontName="Helvetica" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P8" fontName="Times-Roman" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="ParaWhite" fontName="Helvetica" fontSize="9.0" leading="18" alignment="CENTER"  spaceBefore="0.0" spaceAfter="0.0" textColor="#FFFFFF"/>
-    <paraStyle name="Standard" fontName="Times-Roman"/>
-    <paraStyle name="Heading" fontName="Helvetica" fontSize="12.0" leading="17" spaceBefore="12.0" spaceAfter="6.0" alignment="CENTER" />
-    <paraStyle name="Text body" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
-    <paraStyle name="List" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
-    <paraStyle name="Caption" fontName="Times-Roman" fontSize="12.0" leading="15" spaceBefore="6.0" spaceAfter="6.0"/>
-    <paraStyle name="Index" fontName="Times-Roman"/>
-    <paraStyle name="Table Contents" fontName="Times-Roman"/>
-    <paraStyle name="terp_header" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="LEFT" spaceBefore="12.0" spaceAfter="6.0"/>
-    <paraStyle name="terp_header_Centre" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
-    <paraStyle name="Table Heading" fontName="Times-Roman" alignment="CENTER"/>
-    <paraStyle name="terp_default_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_9" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="terp_default_9_italic" fontName="Helvetica-Oblique" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="para_heading2" fontName="Helvetica" fontSize="9.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="para_heading" fontName="Helvetica" fontSize="8.0" leading="13" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="para_heading3" fontName="Helvetica" fontSize="8.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
 	<paraStyle name="para_title" fontName="Helvetica" fontSize="12.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
 
     <images/>
@@ -96,30 +79,53 @@
 	    </blockTable>
 
     <section>
-   	<blockTable colWidths="30.0,65.0,90.0,57.0,44.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0,33.0" repeatRows="1" style="Table_maintable">
-      <para style="para_1">[[ repeatIn(students_paidfee_report('Form'),'r') ]]</para>
+    
+   	<blockTable colWidths="25.0,35.0,85.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,40.0" repeatRows="1" style="Table2">
+	 <para style="P1">[[repeatIn(students_paidfee_report(data['form']),'r')]]</para> 
+	<para style="P6">[[ r['flag']!='a' and removeParentNode('blockTable')]]</para>
       <tr>
-		<td><para style="para_heading2">[[ r['sno'] ]]</para></td>
+      	<td><para style="para_heading2">[[ r['sno'] ]]</para></td>
 		<td><para style="para_heading2">[[ r['reg_no'] ]]</para></td>
         <td><para style="para_heading2">[[ r['student'] ]]</para></td>
-        <td><para style="para_heading">[[ r['admission_fee'] ]]</para></td>
-        <td><para style="para_heading">[[ r['annual_fee'] ]]</para></td>
-        <td><para style="para_heading">[[ r['security'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft1'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft2'] ]]</para></td>
+		<td><para style="para_heading2">[[ r['ft3'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft4'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft5'] ]]</para></td>
+         <td><para style="para_heading2">[[ r['ft6'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft7'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft8'] ]]</para></td>
+		<td><para style="para_heading2">[[ r['ft9'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft10'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft11'] ]]</para></td>
+         <td><para style="para_heading2">[[ r['ft12'] ]]</para></td>
+         <td><para style="para_heading2">[[ r['total'] ]]</para></td>
+      </tr>
+	
+    </blockTable>
+    <blockTable colWidths="25.0,35.0,85.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,40.0" repeatRows="1" style="Table_maintable">
+	<para style="P6">[[ r['flag']!='b' and removeParentNode('blockTable')]]</para>
+      <tr>
+      	<td><para style="para_heading">[[ r['sno'] ]]</para></td>
+		<td><para style="para_heading">[[ r['reg_no'] ]]</para></td>
+        <td><para style="para_heading3">[[ r['student'] ]]</para></td>
         <td><para style="para_heading">[[ r['ft1'] ]]</para></td>
         <td><para style="para_heading">[[ r['ft2'] ]]</para></td>
 		<td><para style="para_heading">[[ r['ft3'] ]]</para></td>
-        <td><para style="bold_column">[[ r['ft4'] ]]</para></td>
-        <td><para style="bold_column">[[ r['ft5'] ]]</para></td>
-         <td><para style="para_heading">[[ r['ft6'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft4'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft5'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft6'] ]]</para></td>
         <td><para style="para_heading">[[ r['ft7'] ]]</para></td>
         <td><para style="para_heading">[[ r['ft8'] ]]</para></td>
 		<td><para style="para_heading">[[ r['ft9'] ]]</para></td>
-        <td><para style="bold_column">[[ r['ft10'] ]]</para></td>
-        <td><para style="bold_column">[[ r['ft11'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft10'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft11'] ]]</para></td>
          <td><para style="para_heading">[[ r['ft12'] ]]</para></td>
-        
+          <td><para style="para_heading">[[ r['total'] ]]</para></td>
       </tr>
 	
-    </blockTable></section>
+    </blockTable>
+    
+    </section>
 	</story>
 </document>

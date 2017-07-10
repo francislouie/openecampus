@@ -94,13 +94,6 @@
 "78","smsfee.festructure.revision","model_smsfee_festructure_revision","sms.group_sms_principal",1,0,0,0
 "79","smsfee.classes.fees.lines","model_smsfee_classes_fees_lines","sms.group_sms_principal",1,0,0,0
 
-"80","sms.fee.challan.no","model_sms_fee_challan_no","sms.group_sms_director",1,1,1,0
-"81","sms.fee.challan.no","model_sms_fee_challan_no","sms.group_sms_fee_manager",1,1,1,0
-"82","sms.fee.challan.no","model_sms_fee_challan_no","sms.group_sms_fee_officer",1,1,1,0
-"83","sms.fee.challan.no","model_sms_fee_challan_no","sms.group_sms_manager_exams",1,1,1,0
-"84","sms.fee.challan.no","model_sms_fee_challan_no","sms.group_sms_officers_exams",1,1,1,0
-"85","sms.fee.challan.no","model_sms_fee_challan_no","sms.group_sms_admin",1,1,1,1
-
 "86","smsfee.classfees.register","model_smsfee_classfees_register","sms.group_sms_manager_exams",1,1,1,0
 "87","smsfee.feetypes","model_smsfee_feetypes","sms.group_sms_manager_exams",1,1,1,0
 "88","smsfee.studentfee","model_smsfee_studentfee","sms.group_sms_manager_exams",1,1,1,0
@@ -127,6 +120,9 @@
 "106","smsfee.studentfee","model_smsfee_studentfee","sms.group_sms_admission_officer",1,0,0,0
 "107","smsfee.receiptbook","model_smsfee_receiptbook","sms.group_sms_admission_officer",1,0,0,0
 "108","smsfee.receiptbook.lines","model_smsfee_receiptbook_lines","sms.group_sms_admission_officer",1,0,0,0
-"109","sms.fee.challan.no","model_sms_fee_challan_no","sms.group_sms_admission_officer",1,1,1,0
-"110","sms.fee.challan.no","model_sms_fee_challan_no","sms.group_sms_admission_manager",1,1,1,0
-
+"111","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_director",1,1,1,0
+"112","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_admission_manager",1,1,1,0
+"113","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_admission_officer",1,1,1,0
+"114","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_fee_manager",1,1,1,0
+"115","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_fee_officer",1,1,1,0
+"1165","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_officers_exams",1,0,0,0
