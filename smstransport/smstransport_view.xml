@@ -167,7 +167,8 @@
 				<header>
 				</header>
 				<sheet>
-					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
+					 <separator string="Transport Vehicle" colspan="4"/>
+					<label for="name" class="oe_edit_only" string="Name"/><h2><field name="name" nolabel="1"/></h2>
 					<group name="transport_vehcile_inner_1" col="4" colspan="2"> 
 						<field name="vehcile_type"/>
 						<field name="max_accomodation"/>
@@ -177,6 +178,19 @@
 						<field name="vehcile_no"/>
 					</group>
 					<notebook>
+						<page readonly = "1" string = "Collections Register">
+						<h3><p>Monthly Collections Register</p></h3>
+						<field name="fee_register" widget="one2many_list" readonly ="1">
+							<tree string = "Click to see details" delete="false">
+								<field name="name" />
+								<field name="month" />
+								<field name="month_forcasted_fee" />
+								<field name="month_fee_received" />
+								
+							</tree>
+						
+						</field>
+						</page>
 						<page string="Transport Route">
 							<field name="transport_route" nolabel="1" colspan="4"/>
 						</page>
@@ -356,10 +370,8 @@
 		<field name="model">sms.transport.registrations</field>
 		<field name="arch" type="xml">
 			<tree string="Transport Registration">
+				<field name="registration_no"/>
 				<field name="student_id"/>
-				<field name="employee_id"/>
-				<field name="reg_start_date"/>
-				<field name="reg_end_date"/>
 				<field name="registration_type" invisible="1"/>
 				<field name="current_vehcile"/>
 				<field name="state"/>
@@ -367,13 +379,11 @@
 		</field>
 	</record>
 
-	<record id="view_sms_transport_registration_search" model="ir.ui.view">
-		<field name="name">sms.transport.registrationssearch</field>
+	<record id="view_sms_transport_registration_search1" model="ir.ui.view">
+		<field name="name">sms.transport.registrationssearch1</field>
 		<field name="model">sms.transport.registrations</field>
 		<field name="arch" type="xml">
-			<search string="Transport Registration">
-				<field name="transport_route" string="Destination"/>
-				<field name="registration_type" string="Registration Type"/>
+			<search string="Search Students">
 				<field name="employee_id" string="Employee"/>
 				<field name="student_id" string="Student"/>
 				<field name="current_vehcile" string="Vehcile"/>
@@ -396,7 +406,7 @@
 		<field name="view_type">form</field>
 		<field name="view_mode">tree,form</field>
         <field name="domain">[('state','in',['Draft','Withdrawn','waiting_approval'])]</field>
-		<field name="search_view_id" ref="view_sms_transport_registration_search"/>
+		<field name="search_view_id" ref="view_sms_transport_registration_search1"/>
 	</record>
 	
 	<record model="ir.actions.act_window" id="action_transport_registration_registered">
@@ -406,7 +416,7 @@
 		<field name="view_type">form</field>
 		<field name="view_mode">tree,form</field>
         <field name="domain">[('state','=','Registered')]</field>
-		<field name="search_view_id" ref="view_sms_transport_registration_search"/>
+		<field name="search_view_id" ref="view_sms_transport_registration_search1"/>
 	</record>
 
 	<!-- Sms Student Inherit -->
@@ -423,7 +433,6 @@
 						<field name="vehcile_reg_students_id"/>
 						<field name="transport_availed"/>
 						<field name="transport_fee_history"/>
-						<field name="transoprt_amount"/>
 						<field name="transport_reg_id"/>
 					</group>
 				</page>
@@ -471,6 +480,33 @@
 				</sheet>	 	
 			</form>
 		</field>
+	</record>
+	
+	<!-- Sms Student fee -->
+	<record model="ir.ui.view" id="inherit_view_sms_student_transportfee12_form">
+	<field name="name">sms.student.inherit.trnasportfee12</field>
+	<field name="model">sms.student</field>
+	<field name="inherit_id" ref="smsfee.inherit_view_sms_student_form"/>
+	<field name="type">form</field>
+	<field name="arch" type="xml">
+		<data>
+			
+			<xpath expr="//page[@string='Fee Academics']" position="after">
+				<page string = "Transport Fee">
+				<group>
+					<group>					
+					<div class="oe_title"><label for="total_paybles"/>
+						<h2><field name="total_paybles_transport"/></h2>
+					</div>
+					</group>
+				</group>
+				<group readonly ="1">		    	 		
+				<field name="view_transport_fee" nolabel="1"/>
+				</group>
+				</page>
+	        </xpath>
+		</data>
+	</field>
 	</record>
 
 	<record model="ir.ui.view" id="view_sms_transport_fee_payments_tree">
@@ -653,8 +689,8 @@
 		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
 	</record>
 
-	<record model="ir.actions.act_window" id="action_transport_feechallan_search_id">
-		<field name="name">Search A Challan</field>
+	<record model="ir.actions.act_window" id="action_transport_feechallan_search_id_old">
+		<field name="name">Old Challans (Temp)</field>
 		<field name="res_model">sms.transportfee.challan.book</field>
 		<field name="type">ir.actions.act_window</field>
 		<field name="view_type">form</field>
@@ -685,15 +721,16 @@
 	<record model = "ir.ui.view" id="sms_session_months_inherit_trnasport">
 		<field name = "name">sms.session.months.tree_transprt</field>	
 		<field name = "model">sms.session.months</field>
-		<field name = "inherit_id" ref = "smsfee.sms_session+months_ih_ihrt"/>
+		<field name = "inherit_id" ref = "smsfee.sms_session_months_ih_ihrt"/>
 		<field name = "arch" type = "xml">
-			<xpath expr = "//button[@name ='update_monthly_feeregister']" position = "replace">
-				<button name="update_monthly_feeregister" string="Update Fee" type="object"
+			<xpath expr = "//button[@name ='update_monthly_feeregister']" position = "after">
+				<button name="update_monthly_feeregister_transport" string="Update Transport Fee" type="object"
                                     groups="" 
-									icon="terp-gtk-jump-to-ltr" 
-									attrs="{'readonly':[('state','=','Updated')]}"
-									confirm = "Are you sure update register with selected month?"
+									icon="terp-go-today" 
+									
+									confirm = "Update Transport register for selected month?"
                                     />
+                <field name="transport_update_log" />
 			</xpath>
 		</field>
 	</record>

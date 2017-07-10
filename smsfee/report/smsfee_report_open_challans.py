@@ -109,7 +109,9 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         return bank
  
     def get_challan_number(self, data):
-        challan = self.pool.get('smsfee.receiptbook')._get_bill_no(self.cr, self.uid, data, 'smsfee.receiptbook', None)
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=',data)])
+        challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
+        challan =  challan_rec[0].name
         return challan
  
     def get_candidate_info(self, data):

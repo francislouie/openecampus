@@ -11,7 +11,7 @@
                 <form string="Student Fee Receipt" version="7.0">
                     <group>
                     <h1><field name="challan_id" readonly="1" nolabel="1"/></h1>
-					<group col="6" String = "" >
+					<group col="6" string = "" >
 						 <field name="due_date" />
 						 <newline/>
 						 <field name="amount_after_due_date"/>

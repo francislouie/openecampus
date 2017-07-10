@@ -8,6 +8,10 @@
 	<menuitem id="menu_fee_head_id" name="Fee Management" parent="menu_fee_head_id_top" sequence="1" 
 	groups="sms.group_sms_director,sms.group_sms_fee_manager,sms.group_sms_admission_manager,sms.group_sms_admission_officer,sms.group_sms_manager_exams,sms.group_sms_principal"/>
 
+	<menuitem id="menu_fee_subhead_id" name="Fee Reports" parent="menu_fee_head_id_top" sequence="2" 
+	groups="sms.group_sms_director,sms.group_sms_fee_manager,sms.group_sms_admission_manager,sms.group_sms_admission_officer,sms.group_sms_manager_exams,sms.group_sms_principal"/>
+	
+	
 	<menuitem id="menu_feetypes_id" parent="menu_fee_head_id" sequence="1" 
 	groups="sms.group_sms_director,sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager,sms.group_sms_principal" action="action_feetypes"/>
 
@@ -29,8 +33,12 @@
 	<menuitem id="menu_fee_searchchallans_id" parent="menu_fee_challans_id" sequence="6" groups="sms.group_sms_director,sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager,sms.group_sms_admission_officer,sms.group_sms_fee_officer" 
 	action="action_receiptbook_search_id"/>
 
-	<menuitem id="menu_fee_feereports" icon ="terp-graph" parent="menu_fee_head_id" sequence="4" action="action_fee_reports" 
+	<menuitem id="menu_fee_feereports" icon ="terp-graph" parent="menu_fee_subhead_id" sequence="4" action="action_fee_reports" 
 	groups="sms.group_sms_director,sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager,sms.group_sms_fee_officer"/>
+
+	<menuitem id="menu_fee_reportsdefaulters" icon ="terp-graph" parent="menu_fee_subhead_id" sequence="4" action="action_defaulterfee_reports" 
+	groups="sms.group_sms_director,sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager,sms.group_sms_fee_officer"/>
+
 
 	<menuitem id="menu_dailyfee_feereports" icon ="terp-graph" parent="menu_fee_head_id" sequence="5" action="action_dailyfee_reports" 
 	groups="sms.group_sms_director,sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager,sms.group_sms_fee_officer"/>

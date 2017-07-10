@@ -56,6 +56,15 @@
             multi="True"
             rml="smsfee/report/smsfee_monthly_feestructure_collections_allclasses.rml"
             string="Fee Reports"
+            />  
+            
+             <report
+            id="report_refundable_fees_tobe_paid_back_id"
+            model="smsfee.classfees.register"
+            name="smsfee.refundablefee.tobepaid.name"
+            multi="True"
+            rml="smsfee/report/smsfee_refundable_fee_report.rml"
+            string="Fee Reports"
             />   
             
              <report

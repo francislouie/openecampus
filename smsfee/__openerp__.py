@@ -10,6 +10,7 @@
     'data': [
              'security/smsfee_security.xml',
              'security/ir.model.access.csv',
+             'wizard/smsfee_wizard_defaulter_students.xml',
              'wizard/smsfee_wizard_update_fee_register.xml',
              'wizard/smsfee_wizard_fee_reports.xml',
              'wizard/smsfee_wizard_class_fee_receipt_unpaid.xml',

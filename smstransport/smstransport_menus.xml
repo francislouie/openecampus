@@ -19,24 +19,29 @@
 	<menuitem name="Vehicles" id="sms_transport_vechiles_id" sequence = "5" parent="sms_transport_configuration_id"
 	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_vehcile"/>
 
-	<menuitem name="Transport Challans" id="smstransport_fee_head_id" parent="smsfee.menu_fee_head_id_top" sequence="10" 
+	<menuitem name="Transport Challans" id="smstransport_fee_head_id" parent="sms_transport_root_id" sequence="10" 
 	groups="sms.group_sms_admin,sms.group_sms_director" />
 
 	<menuitem id="menu_transportfee_open_challans_id" parent="smstransport_fee_head_id" sequence="11" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_open_id"/>
+	groups="sms.group_sms_admin,sms.group_sms_director" action="smsfee.action_receiptbook_open_id_transport"/>
 
 	<menuitem id="menu_transportfee_waaitingapproval_challans_id" parent="smstransport_fee_head_id" sequence="13" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_watitingapproval_id"/>
+	groups="sms.group_sms_admin,sms.group_sms_director" action="smsfee.action_receiptbook_tobeaproved_id_transport"/>
 	
 	<menuitem id="menu_transportfee_paid_challans_id" parent="smstransport_fee_head_id" sequence="14" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_paid_id"/>
+	groups="sms.group_sms_admin,sms.group_sms_director" action="smsfee.action_receiptbook_paid_id_transposrt"/>
 
 	<menuitem id="menu_transportfee_cancelled_challans_id" parent="smstransport_fee_head_id" sequence="15" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_cancel_id"/>
+	groups="sms.group_sms_admin,sms.group_sms_director" action="smsfee.action_receiptbook_cancel_id_transport"/>
 
 	<menuitem id="menu_transportfee_searchchallans_id" parent="smstransport_fee_head_id" sequence="16" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_search_id"/>
+	groups="sms.group_sms_admin,sms.group_sms_director" action="smsfee.action_receiptbook_search_id_transport"/>
 
+	<!-- challans of old transport fee book, will be removed later on -->
+	<menuitem id="menu_transportfee_searchchallans_id" parent="smstransport_fee_head_id" sequence="16" 
+	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_search_id_old"/>
+	
+	<!-- -->
 	<menuitem name="Fee Settings" id="sms_transport_fee_config_id" sequence = "5" parent="sms_transport_root_id"
 	groups="sms.group_sms_admin,sms.group_sms_director"/>
 

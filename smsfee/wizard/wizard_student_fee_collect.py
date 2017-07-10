@@ -13,28 +13,14 @@ class class_student_fee_collect(osv.osv_memory):
     _description = "Student's Fee Collection"
     _columns = {
               'student_id': fields.many2one('sms.student', 'Student', domain="[('state','=','Admitted')]", help="Student"),
-              'challan_id': fields.many2one('smsfee.receiptbook', 'Challan', domain="[('state','=','fee_calculated'),('student_id','=',student_id)]", help="Challan", required=True),
+              'challan_id': fields.many2one('smsfee.receiptbook', 'Fee Bill', domain="[('state','=','fee_calculated'),('student_id','=',student_id)]", help="Challan", required=True),
                }
     _defaults = {'student_id':_get_student}
 
     def action_pay_student_fee(self, cr, uid, ids, context):
-        ctx = {}
+        domain = []
         thisform = self.read(cr, uid, ids)[0]        
-        student_id = self.pool.get('sms.student').search(cr, uid, [('id','=',thisform['student_id'][0])])        
-        for f in self.pool.get('sms.student').browse(cr, uid, student_id):
-            if not context:
-                ctx = {
-                'student_id':f.id,
-                'student_class_id':f.current_class.id,
-                'session_id':f.current_class.acad_session_id.id,
-                'fee_structure_id':f.fee_type.id
-                }
-            else:
-                ctx = context
-                ctx['student_id'] = f.id
-                ctx['student_class_id'] = f.current_class.id,
-                ctx['fee_structure_id'] = f.fee_type.id
-                ctx['session_id'] = f.current_class.acad_session_id.id
+        domain = [('id','>=',thisform['challan_id'][0])]
                 
         result = {
                 'type': 'ir.actions.act_window',
@@ -45,7 +31,7 @@ class class_student_fee_collect(osv.osv_memory):
                 'view_id': False,
                 'nodestroy': True,
                 'target': 'current',
-                'context': ctx,
+                'domain': domain,
                 }
 
         return result 

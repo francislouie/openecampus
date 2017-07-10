@@ -83,18 +83,22 @@
 	    </record>
 	    
 <!--Session months inherited-->
-		<record model = "ir.ui.view" id = "sms_session+months_ih_ihrt">
+		<record model = "ir.ui.view" id = "sms_session_months_ih_ihrt">
 			<field name = "name">sms.session.months.tree11</field>	
 			<field name = "model">sms.session.months</field>
 			<field name = "inherit_id" ref = "sms.view_sessionmonths_tree"/>
 			<field name = "arch" type = "xml">
 				<xpath expr = "//field[@name ='session_id']" position = "after">
 				<field name="state" invisible="1" />
+				<field name="id"  />
+				<field name="month_focasted_amount"  />
+				<field name="month_collected_amout"  />
+				<field name="month_recovery_ratio"  />
 				<field name="update_log" attrs="{'invisible':[('state','=','To_Update')]}"/>
 				<button name="update_monthly_feeregister" string="Update Fee" type="object"
                                     groups="" 
 									icon="terp-gtk-jump-to-ltr" 
-									attrs="{'readonly':[('state','=','Updated')]}"
+									
 									confirm = "Are you sure update register with selected month?"
                                     />
 				</xpath>
@@ -250,23 +254,63 @@
 		      <field name="classes_history" position="after">
 			  	</field>
 				<notebook>
-					<page string = "Fee Details">
-					<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
-					<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-					<button name="%(action_student_fee_collect_id)d" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-					<group>
-						<group>					
-						<div class="oe_title"><label for="total_paybles"/>
-							<h2><field name="total_paybles"/></h2>
-						</div>
-						<div class="oe_title"><label for="total_paid_amount"/>
-							<h2><field name="total_paid_amount"/></h2>
-						</div>
+					<page string = "Fees Payments">
+						<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
+							<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Print Fee Bills" states="Admitted,admission_cancel,drop_out,deceased,passout,slc,Withdraw" type="action" class="oe_highlight" groups=""/>
+							<button name="%(action_student_fee_collect_id)d" string="Receive a Fee Bill" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+							
+						<notebook>
+						<page string = "Fee Academics">
+							<group>
+								<group>					
+								<div class="oe_title"><label for="total_paybles"/>
+									<h2><field name="total_paybles"/></h2>
+								</div>
+								
+								</group>
+							</group>
+							<group readonly ="1">		    	 		
+							<field name="view_academics_fee"     nolabel="1"/>
+							</group>
+							
+						</page>
+						<page string = "Fee Refundable">
+						<field  name="refundable_fee_ids"     nolabel="1" widget="one2many_list"   >
+							<tree editable = "top" >
+								<field name="receipt_no" readonly ="1"/>
+								<field name="amount_received" readonly ="1"/>
+								<field name="state" readonly ="0"/>
+							 </tree>
+							 <form editable = "top">
+								<field name="name" readonly ="1"/>
+								<field name="receipt_no" readonly ="1"/>
+								<field name="amount_received" readonly ="1"/>
+								<field name="student_fee_id" readonly ="1"/>
+								<field name="balance" readonly ="1"/>
+								<field name="paid_back_by" readonly ="1"/>
+								<field name="date_paid_back_date" readonly ="1"/>
+								<field name="state" />
+							 </form>
+							 </field>
+						</page>
+						<page string = "Edit or Add New Fee">
+						<group string = "Update, Delete or add new Fee" readonly ="1">		    	 		
+							<field  name="studen_fee_ids"     nolabel="1"  attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"   />
 						</group>
-					</group>
-					<group readonly ="1">		    	 		
-					<field name="studen_fee_ids"  nolabel="1" attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}" />
-					</group>
+						</page>
+						<page string = "Fee Bills">
+						<field name="fee_bills" widget="one2many_list" domain="[('category','=','Academics')]"  nolabel="1">
+							<tree string="Fee Bills" >
+								<field name="name"/>
+								<field name="receipt_date"/>
+								<field name="state"/>
+								<field name="fee_received_by"/>
+								<field name="total_paybles"/>
+								<field name="challan_cat"/>
+							 </tree>
+						</field>
+						</page>
+						</notebook>
 			    	</page>
 			   </notebook>
 		      </field>
@@ -448,9 +492,12 @@
  			 <sheet>
 						<group string ="Fee Type">
 						<group>
-							<field name="name" />
-							<field name="description" />
+							
+							<field name="name"  />
 							<field name="subtype"/>
+							<field name="category"/>
+							<field name="refundable"/>
+							<field name="description" />
 						</group>
 						</group>
 				</sheet>	 	
@@ -502,28 +549,24 @@
 			<field name="state" widget="statusbar" statusbar_visible="fee_unpaid,fee_paid,fee_returned"/>
              </header>
 			<sheet>
+			<h1>Student Fee Register</h1>
 			<newline/><h2><field name="student_id"  readonly = "1" on_change="onchange_set_domain(student_id,context)" /></h2>
 			<newline/><h2><field name="acad_cal_id"  readonly = "1"/></h2>
 			<h2><field name="name"/></h2>
 			<group >
-			<group>
+			<group >
 
-				<field name="fee_type" on_change="onchange_get_amount(fee_type)"  />
-				<field name="fee_amount" />
-<!--
-				<field name="total_payable" />
-				<field name="late_fee" />
-				<field name="total_amount" readonly = "1"/>
-				<field name="returned_amount" attrs="{'invisible':[('state','IN',['fee_unpaid','fee_paid'])]}" readonly = "1" />
--->
+				<field name="fee_type" attrs="{'readonly':[('state','IN',['fee_paid'])]}" on_change="onchange_get_amount(fee_type)"  />
+				<field name="fee_amount" attrs="{'readonly':[('state','IN',['fee_paid'])]}" />
+				<field name="net_total" readonly = "1"/>
+				<field name="receipt_no" attrs="{'readonly':[('state','IN',['fee_paid'])]}"/>
 			</group>
 				 <group>
 					<field name="fee_month" />
 					<field name="paid_amount" readonly = "1"/>
 					<field name="discount" readonly = "1"/>
-					<field name="net_total" readonly = "1"/>
-					<field name="receipt_no"/>
-					<field name="id" string = "Record#"/>
+					
+					
 			    </group>
 		    </group>
 		    
@@ -535,6 +578,8 @@
 			</group>
 				 <group>
 					<field name="due_month" readonly = "1"/>
+					<field name="id" string = "Record#"/>
+					<field name="category"/>
 				</group>
 		    </group>	
 					
@@ -547,12 +592,12 @@
             <field name="name">smsfee.studentfee.tree</field>
             <field name="model">smsfee.studentfee</field>
             <field name="arch" type="xml">
-                <tree colors="red:state =='fee_unpaid';blue:state=='fee_returned'" string="Student Fee">
+                <tree colors="red:state =='fee_unpaid';blue:state=='fee_returned';green:category=='Transport'" string="Student Fee Register">
 					<field name="name"/>
 					<field name="fee_amount"/>
 					<field name="paid_amount"/>
 					<field name="state"/>
-					<field name="returned_amount"/>
+					<field name="category" invisible ="1"/>
 			    </tree>
             </field>
         </record>
@@ -679,7 +724,7 @@
 			</group>
 			<group >
 					<group>
-					<field name="father_name" readonly ="1" />
+					<field name="counter" readonly ="1" />
 					
 					
 					<field name="receive_whole_amount" attrs="{'readonly':[('state','!=','Draft')]}" />	
@@ -689,17 +734,14 @@
 						
 							<field name="receipt_date" required ="1"  attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 							<field name="payment_method" readonly = "1"  required ="1" />	
-							<field name="manual_recpt_no" attrs="{'readonly':[('state','IN',['Paid','Cancel','Adjusted'])]}" />								
+							<field name="manual_recpt_no"  />								
 					</group>
 					</group>
 					<notebook>
         				    <page string="Fee Received" attrs="{'readonly':[('receive_whole_amount','=',1)]}" >
 							<field name="receiptbook_lines_ids" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 							</page>
-							<page string="Note" >
-							<p><h2>Need correction?</h2> <button name="request_for_adjustment" string="Ask For Fee Adjustment"  states="Paid" type="object"  class="oe_highlight" /></p>
-							<field name="note_at_receive" nolabel ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
-							</page>
+							
 							<page string="Accounting Enteries" >
 								<group>
 									<group>
@@ -712,17 +754,23 @@
 									</group>
 								</group>
 							</page>
+							<page string="Note" >
+							<p><h2>Need correction?</h2> <button name="request_for_adjustment" string="Ask For Fee Adjustment"  states="Paid" type="object"  class="oe_highlight" /></p>
+							<field name="id" stribg = "File#"/>
+							</page>
 							<!--<page string="Fee Adjustment" attrs="{'invisible':[('state','NOT IN',['Request_Adjustment','Adjusted'])]}" >
 							<field name="receipt_book_idd" nolabel ="1" attrs="{'readonly':[('state','NOT IN',['Request_Adjustment'])]}"  />
 							<newline/>
 							<p>Select the fee you want to make adjustment by click <font color ="blue">add an item above</font></p>
 							</page> -->
 					</notebook>
+					<h2>Remarks</h2>
+					<field name="note_at_receive" nolabel ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 				<group>
 				<h2> <label for="total_paybles" string="Total Amount"/><field name="total_paybles" readonly ="1"/></h2>
 				
 				<h2><label for="total_paid_amount" string="Paid Amount"/><field name="total_paid_amount" readonly ="1"/></h2>
-				
+				 <h2><label for="challan_cat" string="Category"/><field name="challan_cat" readonly ="1"/></h2>
 				</group>
 				
 					<group string ="">
@@ -737,13 +785,13 @@
             <field name="name">smsfee.receiptbook.tree</field>
             <field name="model">smsfee.receiptbook</field>
             <field name="arch" type="xml">
-                <tree string="Classes Fees">
-					<field name="name"/>
+                <tree fonts="bold:challan_cat=='Transport'" string="Fee Bills">
+					<field name="counter"/>
 					<field name="student_id" domain="[('current_class','=',name)]" />
 					<field name="std_reg_no"/>
 					<field name="receipt_date"/>
 					<field name="state"/>
-					<field name="fee_received_by"/>
+					<field name="challan_cat"/>
 					<field name="total_paybles"/>
 				 </tree>
             </field>
@@ -759,6 +807,8 @@
 					<field name="name" string= "Receipt No" />
 					<field name="manual_recpt_no" string= "Manual Receipt No"/>
 					<field name="std_reg_no" string="Registration Number"/>
+					<field name="challan_cat" string="Category"/>
+					<field name="fee_approved_by" string="Approved By"/>
                 </search>
             </field>
         </record>
@@ -768,7 +818,7 @@
             <field name="res_model">smsfee.receiptbook</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="domain">[('state','=','fee_calculated')]</field>
+            <field name="domain">[('state','=','fee_calculated'),('challan_cat','=','Academics')]</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{'search_default_draft': 1}</field>
 	        <field name="search_view_id" ref="view_receiptbook_search"/>
@@ -779,7 +829,7 @@
             <field name="res_model">smsfee.receiptbook</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="domain">[('state','=','Waiting_Approval')]</field>
+            <field name="domain">[('state','=','Waiting_Approval'),('challan_cat','=','Academics')]</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{'search_default_draft': 1}</field>
 	        <field name="search_view_id" ref="view_receiptbook_search"/>
@@ -790,7 +840,7 @@
             <field name="res_model">smsfee.receiptbook</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="domain">[('state','=','Paid')]</field>
+            <field name="domain">[('state','=','Paid'),('challan_cat','=','Academics')]</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{'search_default_draft': 1}</field>
 	        <field name="search_view_id" ref="view_receiptbook_search"/>
@@ -801,7 +851,7 @@
             <field name="res_model">smsfee.receiptbook</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="domain">[('state','in',['Cancel'])]</field>
+            <field name="domain">[('state','in',['Cancel']),('challan_cat','=','Academics')]</field>
             <field name="view_mode">tree,form</field>
             <field name="context">{'search_default_draft': 1}</field>
         </record>
@@ -812,9 +862,67 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
+            <field name="domain">[('challan_cat','=','Academics')]</field>
             <field name="context">{'search_default_draft': 1}</field>
              <field name="domain">[('state','in',['Draft','Adjusted','fee_calculated','Cancel','Paid'])]</field>
         </record>
+        
+        <!-- Challans for transport menu  -->
+        
+        <record model="ir.actions.act_window" id="action_receiptbook_open_id_transport">
+            <field name="name">Open Challans</field>
+            <field name="res_model">smsfee.receiptbook</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('state','=','fee_calculated'),('challan_cat','=','Transport')]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_draft': 1}</field>
+	        <field name="search_view_id" ref="view_receiptbook_search"/>
+        </record>
+
+		<record model="ir.actions.act_window" id="action_receiptbook_tobeaproved_id_transport">
+            <field name="name">Challans To Be Approved</field>
+            <field name="res_model">smsfee.receiptbook</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('state','=','Waiting_Approval'),('challan_cat','=','Transport')]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_draft': 1}</field>
+	        <field name="search_view_id" ref="view_receiptbook_search"/>
+        </record>
+
+		 <record model="ir.actions.act_window" id="action_receiptbook_paid_id_transposrt">
+            <field name="name">Paid Challans</field>
+            <field name="res_model">smsfee.receiptbook</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('state','=','Paid'),('challan_cat','=','Transport')]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_draft': 1}</field>
+	        <field name="search_view_id" ref="view_receiptbook_search"/>
+        </record>
+        
+         <record model="ir.actions.act_window" id="action_receiptbook_cancel_id_transport">
+            <field name="name">Cancelled Challans</field>
+            <field name="res_model">smsfee.receiptbook</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('state','in',['Cancel']),('challan_cat','=','Transport')]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_draft': 1}</field>
+        </record>
+        
+         <record model="ir.actions.act_window" id="action_receiptbook_search_id_transport">
+            <field name="name">Search A Challan</field>
+            <field name="res_model">smsfee.receiptbook</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="domain">[('challan_cat','=','Transport')]</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_draft': 1}</field>
+             <field name="domain">[('state','in',['Draft','Adjusted','fee_calculated','Cancel','Paid'])]</field>
+        </record>
+        
 
 <!-- sms.fee receipt book.lines -->
     

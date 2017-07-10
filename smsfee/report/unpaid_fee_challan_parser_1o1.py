@@ -14,6 +14,9 @@ import babel
 logger = netsvc.Logger()
 result_acc=[]
      
+"""This is the main parsor that prints challans for academics and transport with 1 student per page 
+   class wise, other parsers that prints class wise challans, should be rmeoved """
+
 class unpaid_fee_challan_parser(report_sxw.rml_parse):
  
     def __init__(self, cr, uid, name, context):
@@ -88,13 +91,14 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
-                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':''}
+                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':'','dbid':''}
                     challan_dict['challan_number'] = self.get_challan_number(challan.id)
                     challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                     challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
                     challan_dict['vertical_lines'] = self.get_vertical_lines_total(challan.id)
                     challan_dict['total_amount'] = self.get_total_amount(challan.id)
-                    challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id)
+                    challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id) 
+                    challan_dict['dbid'] = self.print_challan_dbid(challan.id) 
                     if self.datas['form']['amount_after_due_date']:
                         challan_dict['amount_after_due_date'] = challan_dict['total_amount'] + self.datas['form']['amount_after_due_date'] 
                     else:
@@ -151,7 +155,9 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return bank
  
     def get_challan_number(self, data):
-        challan = self.pool.get('smsfee.receiptbook')._get_bill_no(self.cr, self.uid, data,'smsfee.receiptbook', None)
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=',data)])
+        challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
+        challan =  challan_rec[0].counter or str(challan_rec[0].id)+"*****"
         return challan
  
     def get_candidate_info(self, data):
@@ -178,6 +184,9 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
             result.append(dict) 
         return result
+    
+    def print_challan_dbid(self, data):
+        return data
      
     def get_total_amount(self, data):
         receipt = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid, data)
