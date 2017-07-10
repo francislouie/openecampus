@@ -12,7 +12,7 @@ class fee_reports(osv.osv_memory):
     _description = "admits student in a selected class"
     _columns = {
               "session": fields.many2one('sms.session', 'Session', help="Select A session , you can also print reprts from previous session."),
-              "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('session_id','=',session),('fee_defined','=',1)]", help="Select A class to load its subjects."),
+              "class_id": fields.many2many('sms.academiccalendar','academiccalendar_class_fee','self_id','academiccalendar_id','Class',domain="[('session_id','=',session),('fee_defined','=',1)]"),
               'report_type': fields.selection([('annaul_report_all_classes','1:\tAnnual Fee Collection Report (All Classes)'),
                                                ('annaul_report_single_class','2:\tAnnual Fee Collection Report (Single Class)'),
                                                ('monthly_report_all_classes','3:\tMonthly Fee Collection Report (All Classes)'),
@@ -24,10 +24,12 @@ class fee_reports(osv.osv_memory):
 			  'from_date': fields.date('From'),
               'to_date': fields.date('To'),
               'month': fields.many2one('sms.session.months','Month',domain="[('session_id','=',session)]"),
-              'helptext':fields.text('Help Text')
+              'helptext':fields.text('Help Text'),
+              'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('All','All Fee Categories')],'Fee Category')
                }
     _defaults = {
                  'session':_get_active_session,
+                 'category':'Academics',
                  'helptext':'Print Fee Reports:\n Annual Fee Collection Report, Monthly Fee Collection,Monthly Fee Strucuture Wise Collection,Annual & Monthly Defaulter students..Many More '
            }
     

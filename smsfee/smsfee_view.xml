@@ -83,7 +83,7 @@
 	    </record>
 	    
 <!--Session months inherited-->
-		<record model = "ir.ui.view" id = "sms_session+months_ih_ihrt">
+		<record model = "ir.ui.view" id = "sms_session_months_ih_ihrt">
 			<field name = "name">sms.session.months.tree11</field>	
 			<field name = "model">sms.session.months</field>
 			<field name = "inherit_id" ref = "sms.view_sessionmonths_tree"/>
@@ -94,7 +94,7 @@
 				<button name="update_monthly_feeregister" string="Update Fee" type="object"
                                     groups="" 
 									icon="terp-gtk-jump-to-ltr" 
-									attrs="{'readonly':[('state','=','Updated')]}"
+									
 									confirm = "Are you sure update register with selected month?"
                                     />
 				</xpath>
@@ -250,23 +250,40 @@
 		      <field name="classes_history" position="after">
 			  	</field>
 				<notebook>
-					<page string = "Fee Details">
-					<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
-					<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-					<button name="%(action_student_fee_collect_id)d" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-					<group>
-						<group>					
-						<div class="oe_title"><label for="total_paybles"/>
-							<h2><field name="total_paybles"/></h2>
-						</div>
-						<div class="oe_title"><label for="total_paid_amount"/>
-							<h2><field name="total_paid_amount"/></h2>
-						</div>
-						</group>
-					</group>
-					<group readonly ="1">		    	 		
-					<field name="studen_fee_ids"  nolabel="1" attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}" />
-					</group>
+					<page string = "Fees Payments">
+						<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
+							<!--<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Print Fee Bills" states="Admitted,admission_cancel,drop_out,deceased,passout,slc,Withdraw" type="action" class="oe_highlight" groups=""/>-->
+							<button name="%(action_student_fee_collect_id)d" string="Receive a Fee Bill" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+							
+						<notebook>
+						<page string = "Fee History">
+							<group>
+								<group>					
+								<div class="oe_title"><label for="total_paybles"/>
+									<h2><field name="total_paybles"/></h2>
+								</div>
+								<div class="oe_title"><label for="total_paid_amount"/>
+									<h2><field name="total_paid_amount"/></h2>
+								</div>
+								</group>
+							</group>
+							<group readonly ="1">		    	 		
+							<field name="studen_fee_ids"   nolabel="1" attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"   />
+							</group>
+						</page>
+						<page string = "Fee Bills">
+						<field name="fee_bills" widget="one2many_list"  nolabel="1">
+							<tree string="Fee Bills">
+								<field name="name"/>
+								<field name="receipt_date"/>
+								<field name="state"/>
+								<field name="fee_received_by"/>
+								<field name="total_paybles"/>
+								<field name="challan_cat"/>
+							 </tree>
+						</field>
+						</page>
+						</notebook>
 			    	</page>
 			   </notebook>
 		      </field>
@@ -448,9 +465,12 @@
  			 <sheet>
 						<group string ="Fee Type">
 						<group>
-							<field name="name" />
-							<field name="description" />
+							
+							<field name="name"  />
 							<field name="subtype"/>
+							<field name="category"/>
+							
+							<field name="description" />
 						</group>
 						</group>
 				</sheet>	 	
@@ -502,28 +522,24 @@
 			<field name="state" widget="statusbar" statusbar_visible="fee_unpaid,fee_paid,fee_returned"/>
              </header>
 			<sheet>
+			<h1>Student Fee Register</h1>
 			<newline/><h2><field name="student_id"  readonly = "1" on_change="onchange_set_domain(student_id,context)" /></h2>
 			<newline/><h2><field name="acad_cal_id"  readonly = "1"/></h2>
 			<h2><field name="name"/></h2>
 			<group >
-			<group>
+			<group >
 
-				<field name="fee_type" on_change="onchange_get_amount(fee_type)"  />
-				<field name="fee_amount" />
-<!--
-				<field name="total_payable" />
-				<field name="late_fee" />
-				<field name="total_amount" readonly = "1"/>
-				<field name="returned_amount" attrs="{'invisible':[('state','IN',['fee_unpaid','fee_paid'])]}" readonly = "1" />
--->
+				<field name="fee_type" attrs="{'readonly':[('state','IN',['fee_paid'])]}" on_change="onchange_get_amount(fee_type)"  />
+				<field name="fee_amount" attrs="{'readonly':[('state','IN',['fee_paid'])]}" />
+				<field name="net_total" readonly = "1"/>
+				<field name="receipt_no" attrs="{'readonly':[('state','IN',['fee_paid'])]}"/>
 			</group>
 				 <group>
 					<field name="fee_month" />
 					<field name="paid_amount" readonly = "1"/>
 					<field name="discount" readonly = "1"/>
-					<field name="net_total" readonly = "1"/>
-					<field name="receipt_no"/>
-					<field name="id" string = "Record#"/>
+					
+					
 			    </group>
 		    </group>
 		    
@@ -535,6 +551,8 @@
 			</group>
 				 <group>
 					<field name="due_month" readonly = "1"/>
+					<field name="id" string = "Record#"/>
+					<field name="category"/>
 				</group>
 		    </group>	
 					
@@ -547,12 +565,12 @@
             <field name="name">smsfee.studentfee.tree</field>
             <field name="model">smsfee.studentfee</field>
             <field name="arch" type="xml">
-                <tree colors="red:state =='fee_unpaid';blue:state=='fee_returned'" string="Student Fee">
+                <tree colors="red:state =='fee_unpaid';blue:state=='fee_returned';green:category=='Transport'" string="Student Fee Register">
 					<field name="name"/>
 					<field name="fee_amount"/>
 					<field name="paid_amount"/>
 					<field name="state"/>
-					<field name="returned_amount"/>
+					<field name="category" invisible ="1"/>
 			    </tree>
             </field>
         </record>
@@ -689,7 +707,7 @@
 						
 							<field name="receipt_date" required ="1"  attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 							<field name="payment_method" readonly = "1"  required ="1" />	
-							<field name="manual_recpt_no" attrs="{'readonly':[('state','IN',['Paid','Cancel','Adjusted'])]}" />								
+							<field name="manual_recpt_no"  />								
 					</group>
 					</group>
 					<notebook>
@@ -698,7 +716,7 @@
 							</page>
 							<page string="Note" >
 							<p><h2>Need correction?</h2> <button name="request_for_adjustment" string="Ask For Fee Adjustment"  states="Paid" type="object"  class="oe_highlight" /></p>
-							<field name="note_at_receive" nolabel ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
+							
 							</page>
 							<page string="Accounting Enteries" >
 								<group>
@@ -718,11 +736,12 @@
 							<p>Select the fee you want to make adjustment by click <font color ="blue">add an item above</font></p>
 							</page> -->
 					</notebook>
+					<field name="note_at_receive" nolabel ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
 				<group>
 				<h2> <label for="total_paybles" string="Total Amount"/><field name="total_paybles" readonly ="1"/></h2>
 				
 				<h2><label for="total_paid_amount" string="Paid Amount"/><field name="total_paid_amount" readonly ="1"/></h2>
-				
+				 <h2><label for="challan_cat" string="Category"/><field name="challan_cat" readonly ="1"/></h2>
 				</group>
 				
 					<group string ="">
@@ -737,13 +756,13 @@
             <field name="name">smsfee.receiptbook.tree</field>
             <field name="model">smsfee.receiptbook</field>
             <field name="arch" type="xml">
-                <tree string="Classes Fees">
+                <tree fonts="bold:challan_cat=='Transport'" string="Fee Bills">
 					<field name="name"/>
 					<field name="student_id" domain="[('current_class','=',name)]" />
 					<field name="std_reg_no"/>
 					<field name="receipt_date"/>
 					<field name="state"/>
-					<field name="fee_received_by"/>
+					<field name="challan_cat"/>
 					<field name="total_paybles"/>
 				 </tree>
             </field>
@@ -759,6 +778,8 @@
 					<field name="name" string= "Receipt No" />
 					<field name="manual_recpt_no" string= "Manual Receipt No"/>
 					<field name="std_reg_no" string="Registration Number"/>
+					<field name="challan_cat" string="Category"/>
+					<field name="fee_approved_by" string="Approved By"/>
                 </search>
             </field>
         </record>

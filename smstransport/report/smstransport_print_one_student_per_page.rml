@@ -13,6 +13,10 @@
 			<image x="300" y="545" height="50.0" width="50.0">[[company.logo]]</image>
 			<image x="590" y="545" height="50.0" width="50.0">[[company.logo]]</image>
 			
+			<image x="230" y="550.0" height="50.0" file="addons/smstransport/static/src/img/schoo_bus1.png"></image>
+			<image x="520" y="550.0" height="50.0" file="addons/smstransport/static/src/img/schoo_bus1.png"></image>
+			<image x="805" y="550.0" height="50.0" file="addons/smstransport/static/src/img/schoo_bus1.png"></image>
+			
 			<setFont name="Helvetica-Bold" size="7"/>
             <drawString x="50" y="575">A/C 10146-16105317</drawString>
             <setFont name="Helvetica" size="7" />

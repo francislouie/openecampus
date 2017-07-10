@@ -11,20 +11,22 @@
                 <form string="Student Fee Receipt" version="7.0">
                     <group>
                     <h1><field name="student_id" readonly ="1" nolabel = "1" /></h1>
-					<group col="6" String = "" >
-						 <field name="due_date" />
+					<group col="6" string = "" >
+						 
+						 <newline/><field name="due_date" />
 						 <newline/>
 						 <field name="amount_after_due_date"/>
 				    </group>
                     </group>
                     <group>
                     <ol>
+                    	
 	                    <li><p>To Cancel a challan, goto <strong>Open Challans</strong> under <strong>Fee Management</strong> menu.</p></li>
 	                    <li><p><font color = "red">Generating New Fee Challan will cancel all previous unpaid challans</font></p></li>
                     </ol>
                     </group>
                      <footer>
-                        <button string="Print" name="print_singlestudent_unpaidfee_report" type="object" class="oe_highlight"/>
+                        <button string="Print Transport Fee Bill" name="print_singlestudent_unpaidfee_report" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
