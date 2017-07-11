@@ -148,23 +148,38 @@ class sms_report_studentslist(report_sxw.rml_parse):
         return result
     
     def get_student_biodata(self,form):
-         #temporary query to set students security fee
-        sql0 = """SELECT smsfee_studentfee.id,student_id,receipt_no,paid_amount FROM smsfee_studentfee
-              inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-              inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-            WHERE smsfee_feetypes.refundable = True  and smsfee_studentfee.state = 'fee_paid'"""
-        self.cr.execute(sql0)
-        feeids = self.cr.fetchall()
-        if feeids:
-            for booklines_rw in feeids:
-            
-                addfee = self.pool.get('smsfee.studentfee.refundable').create(self.cr,self.uid,{
-                                        'student_id':booklines_rw[1],
-                                        'receipt_no':booklines_rw[2],
-                                        'amount_received':booklines_rw[3],
-                                        'amount_paid_back':0,
-                                        'student_fee_id':booklines_rw[0],
-                                        'state':'to_be_paid'})
+        
+        #------  To Populate admission confirmation date in student_admission_register object ------------------
+        sql = """SELECT sms_student.id, sms_student.admitted_on, student_admission_register.id
+                FROM sms_student
+                INNER JOIN student_admission_register
+                ON sms_student.admission_form_no = student_admission_register.id
+                """
+        self.cr.execute(sql)
+        studentrecs = self.cr.fetchall()
+        
+        for rec in studentrecs:
+            updating = self.pool.get('student.admission.register').write(self.cr, self.uid, rec[2], {'date_admission_confirmed':rec[1]})
+            if updating:
+                print 'success'
+                
+#         temporary query to set students security fee
+#         sql0 = """SELECT smsfee_studentfee.id,student_id,receipt_no,paid_amount FROM smsfee_studentfee
+#               inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+#               inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+#             WHERE smsfee_feetypes.refundable = True  and smsfee_studentfee.state = 'fee_paid'"""
+#         self.cr.execute(sql0)
+#         feeids = self.cr.fetchall()
+#         if feeids:
+#             for booklines_rw in feeids:
+#             
+#                 addfee = self.pool.get('smsfee.studentfee.refundable').create(self.cr,self.uid,{
+#                                         'student_id':booklines_rw[1],
+#                                         'receipt_no':booklines_rw[2],
+#                                         'amount_received':booklines_rw[3],
+#                                         'amount_paid_back':0,
+#                                         'student_fee_id':booklines_rw[0],
+#                                         'state':'to_be_paid'})
         
         res = []
         s_no = 0        
