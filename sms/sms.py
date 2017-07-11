@@ -4436,7 +4436,7 @@ class student_admission_register(osv.osv):
         if register_subjects: 
             register_fee = self.confirm_student_fee_registration(cr ,uid ,f.student_class.id,student_id,f.id)
             if register_fee:
-                self.write(cr, uid, ids, {'state': 'Confirm'})
+                self.write(cr, uid, ids, {'state': 'Confirm', 'date_admission_confirmed':datetime.date.today()})
                 return True
             else:
                 raise osv.except_osv(('Not Admitted'), ('Something happen wrong when registersting student fee. Contact System Admin'))
@@ -4663,6 +4663,7 @@ class student_admission_register(osv.osv):
         'permanent_country': fields.many2one('res.country', 'Country'), 
         'domocile': fields.char(string = "Domicile", size=32),
         'is_migrated':fields.boolean(string="Migrated"),
+        'date_admission_confirmed':fields.date('Admission Confirmed On'),
     } 
     _sql_constraints = [('Student_Admission', 'unique (name,student_class,state)', """ Student Admission for this class already exists.""")]
     _defaults = {  'state': lambda*a :'Draft','cur_country': _set_default_country, 'gender':_get_default_gender,}
