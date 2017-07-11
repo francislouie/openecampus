@@ -2966,6 +2966,7 @@
 						  <field name="fee_structure"  required="1" attrs="{'readonly':[('state','!=','Draft')]}" />
 						  <field name="form_no" readonly="1" attrs="{'invisible':[('state','=','Draft')]}" />
 						  <field name="is_migrated" readonly="1" />
+						  <field name="date_admission_confirmed" readonly="1"/>
                    </group>
 				   <newline/>
 					

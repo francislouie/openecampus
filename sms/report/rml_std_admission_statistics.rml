@@ -3,29 +3,15 @@
   <template pageSize="(792.0,672.0)" title="Crossovered Analytic" author="Izbaila Imtiaz" allowSplitting="20">
     <pageTemplate id="first">
       <frame id="first" x1="25.0" y1="17.0" width="738" height="615"/>
+         <header>
+            <pageGraphics>
+               <setFont name="Helvetica-Bold" size="11" />
+               <drawString x="10.0cm" y="22.4cm"> [[ get_date_range(data['form']) ]]</drawString>
+            </pageGraphics>
+         </header>
     </pageTemplate>
   </template>>
    <stylesheet>
-    <blockTableStyle id="Standard_Outline">
-      <blockAlignment value="LEFT"/>
-      <blockValign value="TOP"/>
-    </blockTableStyle>
-    
-	<blockTableStyle id="Table1">
-    <blockAlignment value="CENTER"/>
-    <blockValign value="TOP"/>
-	<blockTopPadding length="8.0" start="0,0" stop="-1,-1"/>
-    <blockBottomPadding length="13.0" start="0,0" stop="-1,-1"/>
-    <lineStyle kind="GRID" colorName="#FFFFFF" start="0,0" stop="-1,-1"/>
-	</blockTableStyle>
-	
-	<blockTableStyle id="Table2">
-    <blockAlignment value="CENTER"/>
-    <blockValign value="TOP"/>
-	<blockTopPadding length="8.0" start="0,0" stop="-1,-1"/>
-    <blockBottomPadding length="13.0" start="0,0" stop="-1,-1"/>
-    <lineStyle kind="GRID" colorName="#FFFFFF" start="0,0" stop="-1,-1"/>
-	</blockTableStyle>
 	
 	<blockTableStyle id="Table21">
     <blockAlignment value="CENTER"/>
@@ -40,27 +26,27 @@
     </initialize>
     <paraStyle name="para_1" fontName="Helvetica" fontSize="9.0" leading="9" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <images/>
-  
+
   </stylesheet>
   <story>
+
     <section>
-
-		<blockTable colWidths="30.0,140.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0,70.0" style="Table21">
-		<tr>
-		<para>[[repeatIn(get_admission_statistics(data['form']),'s')]]</para> 
-		<td><para style="para_1">[[(s['s_no'])]]</para></td>
-   	   	<td><para style="para_1">[[(s['acad_cal'])]]</para></td>
-       	<td><para style="para_1">[[(s['fs1'])]]</para></td>
-       	<td><para style="para_1">[[(s['fs2'])]]</para></td>
-       	<td><para style="para_1">[[(s['fs3'])]]</para></td>
-       	<td><para style="para_1">[[(s['fs4'])]]</para></td>
-       	<td><para style="para_1">[[(s['fs5'])]]</para></td>
-       	<td><para style="para_1">[[(s['fs6'])]]</para></td>
-       	<td><para style="para_1">[[(s['fs7'])]]</para></td>
-       	<td><para style="para_1">[[(s['fs8'])]]</para></td>
-		</tr>
+		<blockTable colWidths="30.0,140.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0" style="Table21">
+			<tr>
+				<para>[[repeatIn(get_admission_statistics(data['form']),'s')]]</para> 
+				<td><para style="para_1">[[(s['s_no'])]]</para></td>
+		   	   	<td><para style="para_1">[[(s['acad_cal'])]]</para></td>
+		       	<td><para style="para_1">[[(s['fs1'])]]</para></td>
+		       	<td><para style="para_1">[[(s['fs2'])]]</para></td>
+		       	<td><para style="para_1">[[(s['fs3'])]]</para></td>
+		       	<td><para style="para_1">[[(s['fs4'])]]</para></td>
+		       	<td><para style="para_1">[[(s['fs5'])]]</para></td>
+		       	<td><para style="para_1">[[(s['fs6'])]]</para></td>
+		       	<td><para style="para_1">[[(s['fs7'])]]</para></td>
+		       	<td><para style="para_1">[[(s['fs8'])]]</para></td>
+		       	<td><para style="para_1">[[(s['total_stds'])]]</para></td>
+			</tr>
 		</blockTable>
-
 	</section>
   </story>
 </document>

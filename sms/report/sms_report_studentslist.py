@@ -17,6 +17,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
             'print_students_class_list':self.print_students_class_list,
             'get_student_biodata' : self.get_student_biodata,
             'print_student_se_passes':self.print_student_se_passes,
+            'get_date_range':self.get_date_range,
         })
         self.base_amount = 0.00
     
@@ -72,17 +73,19 @@ class sms_report_studentslist(report_sxw.rml_parse):
             i = i + 1
             result.append(mydict)
         return result
+
+    def get_date_range(self, form): 
+        return "Admissions From: "+str(form['start_date'])+" To: "+str(form['end_date'])
     
-    def get_admission_statistics(self, data):                                                         
+    def get_admission_statistics(self, data):
         result = []
         fslist = []
         this_form = self.datas['form']
         fee_st =tuple(self.pool.get('sms.feestructure').search(self.cr, self.uid, []))
         _logger.info("_______ %r out of_________", (fee_st))
         i = 1
-        
         #-------------- Setting Fee Structure Label Table for Report -----------------------------        
-        my_dict = {'s_no':'#', 'acad_cal':'Class', 'state':'State', 'fs1':'', 'fs2':'', 'fs3':'', 'fs4':'', 'fs5':'', 'fs6':'','fs7':'','fs8':''}
+        my_dict = {'s_no':'#', 'acad_cal':'Class', 'state':'State', 'fs1':'', 'fs2':'', 'fs3':'', 'fs4':'', 'fs5':'', 'fs6':'','fs7':'','fs8':'', 'total_stds':'Total Students'}
         for fs in fee_st:
             recfee_st  = self.pool.get('sms.feestructure').browse(self.cr, self.uid, fs)
             sql_checking = """
@@ -100,38 +103,48 @@ class sms_report_studentslist(report_sxw.rml_parse):
             my_dict['fs'+ str(i)] = recfee_st.name
             fslist.append(recfee_st.id)
             i = i +1
-
-        result.append(my_dict)  
-        sql = """SELECT id ,name ,state FROM sms_academiccalendar ORDER BY name"""
+            
+        result.append(my_dict)
+#        sql = """SELECT id ,name ,state FROM sms_academiccalendar ORDER BY name"""
+        sql = """SELECT DISTINCT tab2.id, tab2.name, tab2.state, tab1.state, tab1.date_admission_confirmed 
+                FROM student_admission_register as tab1
+                INNER JOIN sms_academiccalendar as tab2
+                ON tab1.student_class = tab2.id
+                WHERE tab1.date_admission_confirmed BETWEEN '""" + this_form['start_date'] + """' AND '""" + this_form['end_date'] + """' 
+                AND tab1.state = 'Confirm'"""
+                
         self.cr.execute(sql)
         acad_cal = self.cr.fetchall()
         j = 1
 
         #-------------- Getting All Classes -----------------------------        
         for cls in acad_cal:
-            my_dict = {'s_no':'', 'acad_cal':'', 'state':'', 'fs1':'', 'fs2':'', 'fs3':'','fs4':'','fs5':'', 'fs6':'','fs7':'','fs8':''}            
+            my_dict = {'s_no':'', 'acad_cal':'', 'state':'', 'fs1':'', 'fs2':'', 'fs3':'','fs4':'','fs5':'', 'fs6':'','fs7':'','fs8':'', 'total_stds':''}            
             my_dict['s_no'] = j
             my_dict['acad_cal'] = cls[1]
             my_dict['state'] = cls[2]
             j +=1
             k = 1
+            my_dict['total_stds'] = 0
+            
             #-------------- Checking admitted students in the specified date range -----------------------------        
             for fs in fslist:
+                
                 sql = """SELECT COUNT(sms_student.id) 
                     FROM sms_student
                     INNER JOIN sms_academiccalendar_student 
                     ON sms_student.id = sms_academiccalendar_student.std_id
                     WHERE sms_student.current_class = """ + str(cls[0]) + """ 
                     AND sms_student.fee_type = """ + str(fs) + """
-                    AND sms_student.state in ('Admitted','admission_cancel','drop_out','slc') 
+                    AND sms_student.state in ('Admitted','admission_cancel','drop_out','slc')
                     AND sms_student.admitted_on BETWEEN '""" + this_form['start_date'] + """' AND '""" + this_form['end_date'] + """'"""
-                
+                    
                 self.cr.execute(sql)
                 row = self.cr.fetchone()
                 my_dict['fs'+str(k)] =  row[0]
+                my_dict['total_stds'] = my_dict['total_stds'] + row[0] 
                 k = k +1        
             result.append(my_dict)
-            
         return result
     
     def get_student_biodata(self,form):
