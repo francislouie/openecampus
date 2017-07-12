@@ -1657,8 +1657,8 @@ class smsfee_receiptbook(osv.osv):
         'receive_whole_amount': fields.boolean('Receive Whole Amount'),
         'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
-         'fee_approved_by': fields.many2one('res.users', 'Approved By'),
-         'approve_date': fields.datetime('Date Approved',readonly=True),
+        'fee_approved_by': fields.many2one('res.users', 'Approved By'),
+        'approve_date': fields.datetime('Date Approved',readonly=True),
         'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),
         'cancel_date': fields.datetime('Cancel Date',readonly=True),
         #fields related to adjustment

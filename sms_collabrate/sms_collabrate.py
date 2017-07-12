@@ -100,49 +100,81 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
     
-    def stdfee_history(self, cr, uid, student_id, aca_cal_id, state):
+    def stdfee_history(self, cr, uid, student_id, aca_cal_id, state, category):
         result = []
-        fees_ids = self.pool.get('smsfee.studentfee').search(cr,uid, [('acad_cal_id','=', aca_cal_id),
-                                                                      ('student_id','=', student_id),
-                                                                      ('state','=',state)])
-        if fees_ids:
-            for this_fee in self.pool.get('smsfee.studentfee').browse(cr, uid, fees_ids):
+        if category == 'Academics':
+            sql = """
+                    SELECT tab1.id, tab1.date_fee_charged, tab1.date_fee_paid, tab1.state, tab1.fee_amount, 
+                    tab1.discount, tab1.paid_amount, tab1.state
+                    FROM smsfee_studentfee as tab1
+                    INNER JOIN smsfee_classes_fees_lines as tab2
+                    ON tab1.fee_type = tab2.id
+                    INNER JOIN smsfee_feetypes as tab3
+                    ON tab2.fee_type = tab3.id
+                    WHERE tab1.student_id ="""+str(student_id)+""" 
+                    AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
+                    AND tab1.state = '"""+state+"""'
+                    AND tab3.category = 'Academics'"""
+                    
+        elif category == 'Transport':
+            sql = """
+                    SELECT tab1.id, tab1.date_fee_charged, tab1.date_fee_paid, tab1.state, tab1.fee_amount, 
+                    tab1.discount, tab1.paid_amount, tab1.state
+                    FROM smsfee_studentfee as tab1
+                    INNER JOIN smsfee_classes_fees_lines as tab2
+                    ON tab1.fee_type = tab2.id
+                    INNER JOIN smsfee_feetypes as tab3
+                    ON tab2.fee_type = tab3.id
+                    WHERE tab1.student_id ="""+str(student_id)+""" 
+                    AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
+                    AND tab1.state = '"""+state+"""'
+                    AND tab3.category = 'Transport'"""
+                    
+        else:
+            sql = """
+                    SELECT tab1.id, tab1.date_fee_charged, tab1.date_fee_paid, tab1.fee_amount, tab1.discount,  
+                    tab1.paid_amount, tab1.state
+                    FROM smsfee_studentfee as tab1
+                    WHERE tab1.student_id ="""+str(student_id)+""" 
+                    AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
+                    AND tab1.state = '"""+state+"""'""" 
+                    
+        cr.execute(sql)
+        sql_recs = cr.fetchall()
+        if sql_recs:
+            for rec in sql_recs:
                 my_dict = {
-                            'id':this_fee.id,
-                            'date_fee_charged':this_fee.date_fee_charged,
-                            'date_fee_paid':this_fee.date_fee_paid,
-                            'fee_amount':this_fee.fee_amount,
-                            'discount':this_fee.discount,
-                            'paid_amount':this_fee.paid_amount,
-                            'state':this_fee.state,
+                            'id':rec[0],
+                            'date_fee_charged':rec[1],
+                            'date_fee_paid':rec[2],
+                            'fee_amount':rec[3],
+                            'discount':rec[4],
+                            'paid_amount':rec[5],
+                            'state':rec[6],
                             'return_status':1,
                             'return_desc':'Success'
                         }
                 result.append(my_dict)
-#         else:
-#             my_dict = {
-#                         'return_status':0,
-#                         'return_desc':'No Fee Record Found'
-#                         }
-#             result.append(my_dict)
         else:
             my_dict = {
                         'return_status':0,
-                        'return_desc':'No Record Found'
+                        'return_desc':'No Fee Record Found'
                         }
             result.append(my_dict)
         return result
 
-    def stdfee_feebils(self, cr, uid, student_id, state):
+    def stdfee_feebils(self, cr, uid, student_id, state, category):
         result = []
         receipt_ids = self.pool.get('smsfee.receiptbook').search(cr,uid, [('student_id','=', student_id),
-                                                                      ('state','=',state)])
+                                                                          ('state','=',state),
+                                                                          ('challan_cat','=',category)])
         if receipt_ids:
             for this_recipt in self.pool.get('smsfee.receiptbook').browse(cr, uid, receipt_ids):
                 if this_recipt.manual_recpt_no:
                     receipt_no = this_recipt.manual_recpt_no
                 else:
                     receipt_no = 'Null'
+                    
                 my_dict = {
                             'id':this_recipt.id,
                             'name':this_recipt.name,
