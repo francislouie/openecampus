@@ -997,7 +997,7 @@ class smsfee_studentfee(osv.osv):
         'date_fee_charged':fields.date('Date Fee Charged'),
         'date_fee_paid':fields.date('Date Fee Paid'),
         'fee_type':fields.many2one('smsfee.classes.fees.lines','Fee Type'),
-        'category':fields.function(getfee_cate, method=True,  string='Category',type='selection',selection=[('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],store=True),
+        'category':fields.function(getfee_cate, method=True,  string='Category',type='selection', selection=[('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],store=True),
         'generic_fee_type':fields.many2one('smsfee.feetypes','G.Feetype'),
         'fee_month':fields.many2one('sms.session.months','Fee Month'),
         'due_month':fields.many2one('sms.session.months','Payment Month'),
