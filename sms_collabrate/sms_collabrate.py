@@ -70,7 +70,7 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
     
-    def getstudent_subjects(self, cr, uid, student_id,aca_cal_id):
+    def getstudent_subjects(self, cr, uid, student_id, aca_cal_id):
         result = []
         acad_cal_std_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=', aca_cal_id),('std_id','=', student_id),('subject_status','in',['Current','Promoted'])])
         if acad_cal_std_id:
@@ -100,36 +100,68 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
     
-    def stdfee_history(self, cr, uid, student_id,aca_cal_id,std_id):
+    def stdfee_history(self, cr, uid, student_id, aca_cal_id, state):
         result = []
-        fees_ids = self.pool.get('smsfee.studentfee').search(cr,uid,[('acad_cal_id','=', aca_cal_id),('student_id','=', student_id),('state','in',['fee_unpaid','fee_paid'])])
+        fees_ids = self.pool.get('smsfee.studentfee').search(cr,uid, [('acad_cal_id','=', aca_cal_id),
+                                                                      ('student_id','=', student_id),
+                                                                      ('state','=',state)])
         if fees_ids:
             for this_fee in self.pool.get('smsfee.studentfee').browse(cr, uid, fees_ids):
-                
                 my_dict = {
                             'id':this_fee.id,
                             'name':this_fee.name,
                             'date_fee_charged':this_fee.date_fee_charged,
                             'date_fee_paid':this_fee.date_fee_paid,
-                            'fee_amount':this_fee.subject.id,
-                            'discount':this_fee.paid_amount,
+                            'fee_amount':this_fee.fee_amount,
+                            'discount':this_fee.discount,
                             'paid_amount':this_fee.paid_amount,
-                             'state':this_fee.state,
-                              'return_status':1,
-                                'return_desc':'Success'
+                            'state':this_fee.state,
+                            'return_status':1,
+                            'return_desc':'Success'
                         }
                 result.append(my_dict)
-            else:
-                my_dict = {
-                                'return_status':0,
-                                'return_desc':'No Fee Record Found'
-                            }
-                result.append(my_dict)
+#         else:
+#             my_dict = {
+#                         'return_status':0,
+#                         'return_desc':'No Fee Record Found'
+#                         }
+#             result.append(my_dict)
+            print result
         else:
             my_dict = {
-                                'return_status':0,
-                                'return_desc':'No Active Class Found'
-                            }
+                        'return_status':0,
+                        'return_desc':'No Record Found'
+                        }
+            result.append(my_dict)
+        return result
+
+    def stdfee_feebils(self, cr, uid, student_id, state):
+        result = []
+        print 'Student:-------', student_id 
+        print'with fee state------', state
+        fees_ids = self.pool.get('smsfee.studentfee').search(cr,uid, [('student_id','=', student_id),
+                                                                      ('state','=',state)])
+        if fees_ids:
+            for this_fee in self.pool.get('smsfee.studentfee').browse(cr, uid, fees_ids):
+                my_dict = {
+                            'id':this_fee.id,
+                            'name':this_fee.name,
+                            'date_fee_charged':this_fee.date_fee_charged,
+                            'date_fee_paid':this_fee.date_fee_paid,
+                            'fee_amount':this_fee.fee_amount,
+                            'discount':this_fee.discount,
+                            'paid_amount':this_fee.paid_amount,
+                            'state':this_fee.state,
+                            'return_status':1,
+                            'return_desc':'Success'
+                        }
+                result.append(my_dict)
+            print result
+        else:
+            my_dict = {
+                        'return_status':0,
+                        'return_desc':'No Record Found'
+                        }
             result.append(my_dict)
         return result
     
