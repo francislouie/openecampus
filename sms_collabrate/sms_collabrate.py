@@ -109,7 +109,6 @@ class sms_collabrator(osv.osv):
             for this_fee in self.pool.get('smsfee.studentfee').browse(cr, uid, fees_ids):
                 my_dict = {
                             'id':this_fee.id,
-                            'name':this_fee.name,
                             'date_fee_charged':this_fee.date_fee_charged,
                             'date_fee_paid':this_fee.date_fee_paid,
                             'fee_amount':this_fee.fee_amount,
