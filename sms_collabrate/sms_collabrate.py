@@ -132,8 +132,8 @@ class sms_collabrator(osv.osv):
                     
         else:
             sql = """
-                    SELECT tab1.id, tab1.date_fee_charged, tab1.date_fee_paid, tab1.fee_amount, tab1.discount,  
-                    tab1.paid_amount, tab1.state
+                    SELECT tab1.id, tab1.date_fee_charged, tab1.date_fee_paid, tab1.state, tab1.fee_amount, 
+                    tab1.discount, tab1.paid_amount, tab1.state
                     FROM smsfee_studentfee as tab1
                     WHERE tab1.student_id ="""+str(student_id)+""" 
                     AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
@@ -147,10 +147,10 @@ class sms_collabrator(osv.osv):
                             'id':rec[0],
                             'date_fee_charged':rec[1],
                             'date_fee_paid':rec[2],
-                            'fee_amount':rec[3],
-                            'discount':rec[4],
-                            'paid_amount':rec[5],
-                            'state':rec[6],
+                            'fee_amount':rec[4],
+                            'discount':rec[5],
+                            'paid_amount':rec[6],
+                            'state':rec[7],
                             'return_status':1,
                             'return_desc':'Success'
                         }
