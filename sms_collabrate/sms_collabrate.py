@@ -126,7 +126,6 @@ class sms_collabrator(osv.osv):
 #                         'return_desc':'No Fee Record Found'
 #                         }
 #             result.append(my_dict)
-            print result
         else:
             my_dict = {
                         'return_status':0,
@@ -137,26 +136,27 @@ class sms_collabrator(osv.osv):
 
     def stdfee_feebils(self, cr, uid, student_id, state):
         result = []
-        print 'Student:-------', student_id 
-        print'with fee state------', state
-        fees_ids = self.pool.get('smsfee.studentfee').search(cr,uid, [('student_id','=', student_id),
+        receipt_ids = self.pool.get('smsfee.receiptbook').search(cr,uid, [('student_id','=', student_id),
                                                                       ('state','=',state)])
-        if fees_ids:
-            for this_fee in self.pool.get('smsfee.studentfee').browse(cr, uid, fees_ids):
+        if receipt_ids:
+            for this_recipt in self.pool.get('smsfee.receiptbook').browse(cr, uid, receipt_ids):
+                if this_recipt.manual_recpt_no:
+                    receipt_no = this_recipt.manual_recpt_no
+                else:
+                    receipt_no = 'Null'
                 my_dict = {
-                            'id':this_fee.id,
-                            'name':this_fee.name,
-                            'date_fee_charged':this_fee.date_fee_charged,
-                            'date_fee_paid':this_fee.date_fee_paid,
-                            'fee_amount':this_fee.fee_amount,
-                            'discount':this_fee.discount,
-                            'paid_amount':this_fee.paid_amount,
-                            'state':this_fee.state,
+                            'id':this_recipt.id,
+                            'name':this_recipt.name,
+                            'receipt_date':this_recipt.receipt_date,
+                            'manual_receipt_no':receipt_no,
+                            'total_paybles':this_recipt.total_paybles,
+                            'total_paid_amount':this_recipt.total_paid_amount,
+                            'due_date':'2017-01-01',
+                            'challan_cat':this_recipt.challan_cat,
                             'return_status':1,
                             'return_desc':'Success'
                         }
                 result.append(my_dict)
-            print result
         else:
             my_dict = {
                         'return_status':0,
