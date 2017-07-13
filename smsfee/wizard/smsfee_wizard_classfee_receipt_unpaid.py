@@ -27,7 +27,8 @@ class class_fee_receipts_unpaid(osv.osv_memory):
         if student_ids:
             recstudent = self.pool.get('sms.academiccalendar.student').browse(cr,uid,student_ids)
             for student in recstudent:
-                self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id[0], student.std_id.id,category)
+                #----------Passing 'Full' as an argument. Since this challan is for whole class so we don't need to pass the option of Partial here ----- 
+                self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id[0], student.std_id.id, category, 'Full', None)
         return True
 
     def check_challan_print_type(self, cr, uid, thisform):

@@ -12,7 +12,7 @@ class open_challns_wizardlines(osv.osv_memory):
         'status_after_print':fields.selection([('Open','Open'),('Cancel','Will be Cancel')],'Fee Bill Future'),
         'wizard_id': fields.many2one('class.singlestudent_fee_receipt_openchallans', 'Parent'),
     }
-
+    _defaults = {}
 
 class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
     
@@ -23,6 +23,44 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
         std_id =  obj.id
         return std_id
     
+    def _get_unpaid_fee_months(self, cr, uid, ids):
+        result = []
+        obj = self.browse(cr, uid, ids['active_id'])
+        #------------------------------------------------------------------------------------------
+        # There is a slight issue in loading fee_month by default using this method, we need to
+        # check the category of challan also, since we load it by default so we cannot compare it
+        # against the value specified in category option in this wizard
+        #------------------------------------------------------------------------------------------
+        sql = """SELECT DISTINCT fee_month FROM smsfee_studentfee 
+                WHERE student_id= '"""+str(obj.id)+"""' AND state = 'fee_unpaid'"""
+        cr.execute(sql)
+        unpaidfee_ids = cr.fetchall()
+        for rec in unpaidfee_ids:
+            if not rec[0]:
+                continue
+            else:
+                result.append(rec[0])
+        return result
+
+#     def _get_existing_challans(self, cr, uid, ids):
+#         result = []
+#         mydict={}
+#         obj = self.browse(cr, uid, ids['active_id'])
+#         unpaid_challan_ids = self.pool.get('smsfee.receiptbook').search(cr, uid, [('student_id','=',obj.id),('state','=','fee_calculated')])
+#         unpaid_challan_objs = self.pool.get('smsfee.receiptbook').browse(cr, uid, unpaid_challan_ids)
+#         for unpaidfee_id in unpaid_challan_objs:
+#             if unpaidfee_id.challan_cat == obj.category:
+#                 printstatus = 'Cancel'
+#             else:
+#                 printstatus = 'Open'
+#             printstatus = '12'
+#             mydict['challno'] = unpaidfee_id.counter
+#             mydict['amount']=unpaidfee_id.total_paybles,
+#             mydict['category']=unpaidfee_id.challan_cat,
+#             mydict['status_after_print']=printstatus
+#             result.append(mydict)
+#         return result
+        
     _name = "class.singlestudent_unpaidfee_receipt"
     _description = "Single Student's Unpaid Fee Receipt"
     _columns = {
@@ -31,26 +69,45 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
               'due_date': fields.date('Due Date', required=True),
               'amount_after_due_date': fields.integer('Fine After Due Date'),
               'exiting_challan_ids': fields.one2many('open.challns.wizardlines','wizard_id', 'Existing Bills'),
+              'fee_receiving_type':fields.selection([('Full','Full'),('Partial','Partial')], 'Challan Type'),
+              'unpaidfee_months_id':fields.many2many('sms.session.months', 'singlestd_partialchallan_sessionmonths', 'thisobj_id','months_id', 'Month'),
                }
-    _defaults = {'student_id':_get_student,'category':'Academics','amount_after_due_date':200}
+    _defaults = {'student_id':_get_student,
+                 'category':'Academics',
+                 'amount_after_due_date':200,
+                 'fee_receiving_type': 'Full',
+                 'unpaidfee_months_id':_get_unpaid_fee_months,
+#                 'exiting_challan_ids':_get_existing_challans,
+                 }
     
-    def create_unpaid_challans(self, cr, uid, student_id,category):
+    def create_unpaid_challans(self, cr, uid, student_id, category, challan_type, month_ids):
         _logger.warning("Deprecated ............................................................................")
         student_id = self.pool.get('sms.student').search(cr,uid,[('id','=',student_id[0])])
         class_id = self.pool.get('sms.student').browse(cr,uid,student_id)[0].current_class.id
-        self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id, student_id[0],category)
+        self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id, student_id[0], category, challan_type, month_ids)
         return True
 
     def print_singlestudent_unpaidfee_report(self, cr, uid, ids, data):
-
         thisform = self.read(cr, uid, ids)[0]
-        
+        selected_months = thisform['unpaidfee_months_id']
         if thisform['category'] == 'Academics':
-            self.create_unpaid_challans(cr, uid, thisform['student_id'],'Academics')
+            #--------------------------------------------------------------------------
+            if thisform['fee_receiving_type'] == 'Full':
+                self.create_unpaid_challans(cr, uid, thisform['student_id'], 'Academics', 'Full', None)
+            elif thisform['fee_receiving_type'] == 'Partial':
+                self.create_unpaid_challans(cr, uid, thisform['student_id'], 'Academics', 'Partial', selected_months)
+            #--------------------------------------------------------------------------
             report = 'smsfee_stu_unpaidfee_receipt_name'
+            #--------------------------------------------------------------------------
         elif thisform['category'] == 'Transport':
-            self.create_unpaid_challans(cr, uid, thisform['student_id'],'Transport')
+            #--------------------------------------------------------------------------
+            if thisform['fee_receiving_type'] == 'Full':
+                self.create_unpaid_challans(cr, uid, thisform['student_id'], 'Transport', 'Full', None)
+            elif thisform['fee_receiving_type'] == 'Partial':
+                self.create_unpaid_challans(cr, uid, thisform['student_id'], 'Transport', 'Partial', selected_months)
+            #--------------------------------------------------------------------------
             report = 'smstransport_stu_unpaidtransportfee_receipt'
+            #--------------------------------------------------------------------------
         datas = {
              'ids': [],
              'active_ids': '',

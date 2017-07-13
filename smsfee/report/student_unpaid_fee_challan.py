@@ -149,9 +149,9 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
  
     def get_on_accounts(self, data):
         result = []
-        lines_ids = self.pool.get('smsfee.receiptbook.lines').search(self.cr,self.uid, [('receipt_book_id','=',data)])
+        lines_ids = self.pool.get('smsfee.receiptbook.lines').search(self.cr, self.uid, [('receipt_book_id','=',data)])
         if lines_ids:
-            challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr,self.uid,lines_ids)
+            challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr, self.uid, lines_ids)
         for challan in challans:
             dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
             result.append(dict) 

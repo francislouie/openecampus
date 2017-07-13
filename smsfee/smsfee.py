@@ -795,8 +795,7 @@ class smsfee_feetypes(osv.osv):
 smsfee_feetypes()
 
 class smsfee_studentfee(osv.osv):
-    
-    
+        
     """ Stores student fee record"""
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
@@ -1011,7 +1010,7 @@ class smsfee_studentfee(osv.osv):
         'reconcile':fields.boolean('Reconcile'), 
         'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
         #------------total payables---------------------------------
-        'total_payable': fields.function(_get_total_payables,string = 'Total Payable',type = 'integer',method = True,store = True),  
+        'total_payable': fields.function(_get_total_payables,string = 'Total Payable',type = 'integer',method = True,store = True),
     }
      
     _defaults = {
@@ -1532,7 +1531,7 @@ class smsfee_receiptbook(osv.osv):
             self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})  
         return result
     
-    def check_fee_challans_issued(self, cr, uid, class_id, student_id,category):
+    def check_fee_challans_issued(self, cr, uid, class_id, student_id, category, challan_type, month_ids):
         # Date 7 may 2017
         #this objects will generate challans if challans are not exists
         # the same method will be used by all modules, may be one more argument will be added, module_id e.g categoty id
@@ -1541,12 +1540,18 @@ class smsfee_receiptbook(osv.osv):
         # in res company wheter to print combine challans or separate (this code is not currently set for combine challans .13 may 2017)
         result = {}
         fee_ids = []
+        if month_ids:
+            month_str = str(tuple(month_ids))
+            month_str = "AND smsfee_studentfee.fee_month in " + month_str.replace(',)', ')')
+        else:
+            month_str = """"""
+            
         sql = """SELECT distinct smsfee_studentfee.id from smsfee_studentfee
                   inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                   inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
                   where smsfee_feetypes.category = '"""+str(category)+"""'
-                  and smsfee_studentfee.student_id = """+str(student_id)+ """ and smsfee_studentfee.state ='fee_unpaid'
-                     """
+                  and smsfee_studentfee.student_id = """+str(student_id)+ """ and smsfee_studentfee.state ='fee_unpaid'""" + month_str
+        
         cr.execute(sql)
         _ids = cr.fetchall()
         for thisfee in _ids:
@@ -1589,12 +1594,12 @@ class smsfee_receiptbook(osv.osv):
                                                                                      'state':'fee_calculated',
                                                                                      'counter':counter,
                                                                                      'challan_cat':category,
+                                                                                     'challan_type':challan_type,
                                                                                      'receipt_date':datetime.date.today(),
                                                                                      'session_id' :session_id})
                 std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr ,uid ,fee_ids)
                 if receipt_id:
                     for unpaidfee in std_unpaid_fees:
-                        
 #                         total_paybles = total_paybles + unpaidfee.fee_amount
                         feelinesdict = {
                         'fee_type': unpaidfee.fee_type.id,
@@ -1606,7 +1611,6 @@ class smsfee_receiptbook(osv.osv):
                         'total':unpaidfee.fee_amount}
                         self.pool.get('smsfee.receiptbook.lines').create(cr ,uid, feelinesdict)
                     
-                
             else:
                 total_paybles = 0
                 if type(student_id) is list:
@@ -1617,6 +1621,7 @@ class smsfee_receiptbook(osv.osv):
                                                                                   'student_class_id':class_id,
                                                                                   'counter':counter,
                                                                                   'challan_cat':category,
+                                                                                  'challan_type':challan_type,
                                                                                   'state':'fee_calculated',
                                                                                   'receipt_date':datetime.date.today(),
                                                                                   'session_id' :session_id})
@@ -1670,6 +1675,7 @@ class smsfee_receiptbook(osv.osv):
         'voucher_no': fields.many2one('account.move', 'Voucher No',readonly=True),
         'late_fee' : fields.float('Late Fee'),
         'std_reg_no': fields.related('student_id','registration_no',type='char',relation='sms.student', string='Registration Number', readonly=True),
+        'challan_type':fields.selection([('Full','Full'),('Partial','Partial')],'Challan Type'),
     }
     _sql_constraints = [  
         #('Fee Exisits', 'unique (name)', 'Fee Receipt No Must be Unique!')
