@@ -27,14 +27,15 @@ class res_company(osv.osv):
     'bank_name2':fields.char('Bank Name', size=256),
     'bank_acctno1':fields.integer('Account Number'),
     'bank_acctno2':fields.integer('Account Number'),
-    'company_cfieldone':fields.char('Field One', size=256),
-    'company_cfieldtwo':fields.char('Field Two', size=256),
-    'company_cfieldthree':fields.char('Field Three', size=256),
-    'company_cfieldfour':fields.char('Field Four', size=256),
-    'company_cfieldfive':fields.char('Field Five', size=256),
+    'company_cfieldone':fields.char('Heading Line One', size=256),
+    'company_cfieldtwo':fields.char('Heading Line Two', size=256),
+    'company_cfieldthree':fields.char('Heading Line Three', size=256),
+    'company_cfieldfour':fields.char('Footer Line One', size=256),
+    'company_cfieldfive':fields.char('Footer Line Two', size=256),
     'company_cfieldsix':fields.char('Field Six', size=256),
     'company_cfieldseven':fields.char('Field Seven', size=256),
     'company_cfieldeight':fields.char('Field Eight', size=256),
+    'company_clogo':fields.binary('Challan Logo'),
     'order_of_report':fields.selection([('by_name','By Name'),('by_registration_no','By Reg No')],'Order Of Report')
     }
     _defaults = {

@@ -991,14 +991,15 @@ class res_company(osv.osv):
             'bank_name2_trans':fields.char('Bank Name', size=256),
             'bank_acctno1_trans':fields.integer('Account Number'),
             'bank_acctno2_trans':fields.integer('Account Number'),
-            'company_cfieldone_trans':fields.char('Field One', size=256),
-            'company_cfieldtwo_trans':fields.char('Field Two', size=256),
-            'company_cfieldthree_trans':fields.char('Field Three', size=256),
-            'company_cfieldfour_trans':fields.char('Field Four', size=256),
-            'company_cfieldfive_trans':fields.char('Field Five', size=256),
+            'company_cfieldone_trans':fields.char('Transport Challan Heading One', size=256),
+            'company_cfieldtwo_trans':fields.char('Transport Challan Heading Two', size=256),
+            'company_cfieldthree_trans':fields.char('Transport Challan Heading Three', size=256),
+            'company_cfieldfour_trans':fields.char('Transport Challan Footer One', size=256),
+            'company_cfieldfive_trans':fields.char('Transport Challan Footer two', size=256),
             'company_cfieldsix_trans':fields.char('Field Six', size=256),
             'company_cfieldseven_trans':fields.char('Field Seven', size=256),
             'company_cfieldeight_trans':fields.char('Field Eight', size=256),
+            'company_clogo_trans':fields.binary('Transport Challan Logo'),
                 }
 res_company()              
 

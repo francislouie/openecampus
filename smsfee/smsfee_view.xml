@@ -12,13 +12,10 @@
 					<notebook>
 			  		<page string ="Fee Management">
 		              	  <separator string="Fee Accounts Configuration" colspan="4"/>
-
 						  <field name="enable_fm"/>
-
 							<group>
 							 <field name="order_of_report"/>
 							</group>
-
 						  <group>
 						  	<group>
 							<field name="fee_journal" colspan ="4" attrs="{'required':[('enable_fm','=',True)]}" domain="[('type','=','cash')]"/>
@@ -34,10 +31,10 @@
 							</group>	
                      		<separator string="Field for Challan Printing(Header)" colspan="4"/>
 							<group>
+							 <field name="company_clogo"/>
 							 <field name="company_cfieldone"/>
 							 <field name="company_cfieldtwo"/>
 							 <field name="company_cfieldthree"/>
-							 <field name="company_cfieldfour"/>
 							</group>
                      		<separator string="Field for Challan Printing(Footer)" colspan="4"/>
 							<group col="4" colspan="2">
@@ -45,6 +42,7 @@
 							 <field name="bank_acctno1"/>
 							 <field name="bank_name2"/>
 							 <field name="bank_acctno2"/>
+							 <field name="company_cfieldfour"/>
 							 <field name="company_cfieldfive"/>
 							 <field name="company_cfieldsix"/>
 							 <field name="company_cfieldseven"/>
