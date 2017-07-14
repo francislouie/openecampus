@@ -26,13 +26,14 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
     def _get_unpaid_fee_months(self, cr, uid, ids):
         result = []
         obj = self.browse(cr, uid, ids['active_id'])
-        #------------------------------------------------------------------------------------------
-        # There is a slight issue in loading fee_month by default using this method, we need to
-        # check the category of challan also, since we load it by default so we cannot compare it
-        # against the value specified in category option in this wizard
-        #------------------------------------------------------------------------------------------
-        sql = """SELECT DISTINCT fee_month FROM smsfee_studentfee 
-                WHERE student_id= '"""+str(obj.id)+"""' AND state = 'fee_unpaid'"""
+        sql = """SELECT tab1.fee_month
+                FROM smsfee_studentfee as tab1
+                INNER JOIN smsfee_classes_fees_lines as tab2
+                ON tab1.fee_type = tab2.id
+                INNER JOIN smsfee_feetypes as tab3
+                ON tab2.fee_type = tab3.id
+                WHERE tab1.student_id= '"""+str(obj.id)+"""' AND state = 'fee_unpaid'
+                AND tab3.category = 'Academics'"""
         cr.execute(sql)
         unpaidfee_ids = cr.fetchall()
         for rec in unpaidfee_ids:
