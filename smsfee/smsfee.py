@@ -39,8 +39,8 @@ class res_company(osv.osv):
     'order_of_report':fields.selection([('by_name','By Name'),('by_registration_no','By Reg No')],'Order Of Report')
     }
     _defaults = {
-    }
-    
+                 'fee_report_type':'One_on_One',
+                 }
 res_company()
 
 

@@ -976,10 +976,6 @@ class smsfee_transportfee_register(osv.osv):
     }
 smsfee_transportfee_register()
 
-
-
-
-
 class res_company(osv.osv):
     """This object is used to add fields in company ."""
     _name = 'res.company'
@@ -1001,5 +997,9 @@ class res_company(osv.osv):
             'company_cfieldeight_trans':fields.char('Field Eight', size=256),
             'company_clogo_trans':fields.binary('Transport Challan Logo'),
                 }
+    _defaults = {                
+                 'fee_report_type_trans':'One_on_One',
+                }
+    
 res_company()              
 
