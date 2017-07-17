@@ -41,27 +41,52 @@ class class_fee_receipts_unpaid(osv.osv_memory):
                 return 'print_three_on_one'
         return True
     
+    def check_trans_challan_print_type(self, cr, uid, thisform):
+        challan_type = self.pool.get('res.company').search(cr, uid, [])
+        challan_type = self.pool.get('res.company').browse(cr, uid, challan_type)
+        for obj in challan_type:
+            if obj.fee_report_type_trans == 'One_on_One':
+                return 'print_one_on_one'
+            else:
+                return 'print_three_on_one'
+        return True
     
     def print_fee_report_challan(self, cr, uid, ids, data):
         
         thisform = self.read(cr, uid, ids)[0]
         checking_challan = self.check_challan_print_type(cr, uid, thisform)
-        if checking_challan == 'print_three_on_one':
-            if thisform['category'] == 'Academics':
+        checking_trans_challan = self.check_trans_challan_print_type(cr, uid, thisform)
+        if thisform['category'] == 'Academics':
+            if checking_challan == 'print_three_on_one':
                 report = 'smsfee_print_three_student_per_page'
                 thisform = self.read(cr, uid, ids)[0]
                 self.create_unpaid_challans(cr, uid, thisform['class_id'],'Academics')
-            elif thisform['category'] == 'Transport':  
-                report = 'smstransport_print_three_student_per_page'
-                thisform = self.read(cr, uid, ids)[0]
-                self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')  
-        
-        elif checking_challan == 'print_one_on_one':
-            if thisform['category'] == 'Academics':
+                
+            elif checking_challan == 'print_one_on_one':
                 report = 'smsfee_print_one_student_per_page'
                 thisform = self.read(cr, uid, ids)[0]
                 self.create_unpaid_challans(cr, uid, thisform['class_id'],'Academics')
-            elif thisform['category'] == 'Transport':  
+                
+                
+            datas = {
+                 'ids': [],
+                 'active_ids': '',
+                 'model': 'smsfee.classfees.register',
+                 'form': self.read(cr, uid, ids)[0],
+                 }
+            return {
+                'type': 'ir.actions.report.xml',
+                'report_name':report,
+                'datas': datas,
+                }
+            
+        if thisform['category'] == 'Transport':
+            if checking_trans_challan == 'print_three_on_one':  
+                report = 'smstransport_print_three_student_per_page'
+                thisform = self.read(cr, uid, ids)[0]
+                self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')
+        
+            elif checking_trans_challan == 'print_one_on_one':  
                 report = 'smstransport_print_one_student_per_page'
                 thisform = self.read(cr, uid, ids)[0]
                 self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')  

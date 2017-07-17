@@ -26,7 +26,6 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             'get_user_name':self.get_user_name,
             'get_vertical_lines': self.get_vertical_lines,
             'get_vertical_lines_total': self.get_vertical_lines_total,
-            'get_banks':self.get_banks,
             'get_challan_number':self.get_challan_number,
             'get_candidate_info':self.get_candidate_info,
             'get_on_accounts':self.get_on_accounts,
@@ -34,8 +33,74 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             'get_amount_in_words':self.get_amount_in_words,
             'get_due_date':self.get_due_date,
             'get_class_group':self.get_class_group,
+            'get_challan_logo':self.get_challan_logo,
+            'get_challan_header_lineone':self.get_challan_header_lineone,
+            'get_challan_header_linetwo':self.get_challan_header_linetwo,
+            'get_challan_header_linethree':self.get_challan_header_linethree,
+            'get_challan_footer_one':self.get_challan_footer_one,
+            'get_challan_footer_two':self.get_challan_footer_two,
          })
         self.context = context
+
+    def get_challan_logo(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            logo = rec.company_clogo
+        return logo
+
+    def get_challan_header_lineone(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            fieldone = rec.company_cfieldone
+        return fieldone
+
+    def get_challan_header_linetwo(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            fieldtwo = rec.company_cfieldtwo
+        return fieldtwo
+    
+    def get_challan_header_linethree(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            fieldthree = rec.company_cfieldthree
+        return fieldthree
+    
+    def get_challan_footer_one(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            footerone = rec.company_cfieldfour
+        return footerone
+    
+    def get_challan_footer_two(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            footertwo = rec.company_cfieldfive
+        return footertwo
      
     def get_today(self):
         today = time.strftime('%d-%m-%Y')
@@ -109,7 +174,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                 challan_dict = {'challan_number_1':'','candidate_info_1':'','vertical_lines_1':'','on_accounts_1':'','total_amount_1':'','amount_in_words_1':'','amount_after_due_date_1':'',
                                 'challan_number_2':'','candidate_info_2':'','vertical_lines_2':'','on_accounts_2':'','total_amount_2':'','amount_in_words_2':'','amount_after_due_date_2':''}
                 
-                rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
+                rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid, challan_ids) 
                 for challan in rec_challan_ids:
                     if (i % 2) == 0:
                         index = 2
@@ -130,10 +195,9 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                         challan_dict = {'challan_number_1':'','candidate_info_1':'','vertical_lines_1':'','on_accounts_1':'','total_amount_1':'','amount_in_words_1':'','amount_after_due_date_1':'',
                                         'challan_number_2':'','candidate_info_2':'','vertical_lines_2':'','on_accounts_2':'','total_amount_2':'','amount_in_words_2':'','amount_after_due_date_2':''}
                     i = i + 1
-                
+
                 if (i-1) % 2 != 0:
                     challan_list.append(challan_dict)
-                    
         return challan_list  
      
     def get_user_name(self):
@@ -162,30 +226,10 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                     line_dots.append(dict)
         return line_dots    
      
-    def get_banks(self):
-        banks_ids = self.pool.get('res.company').search(self.cr,self.uid,[])
-        banks_recs = self.pool.get('res.company').browse(self.cr,self.uid,banks_ids)
-        for rec in banks_recs:
-            if rec.bank_name1 and rec.bank_acctno1:
-                bank= str(rec.bank_name1) + ' - ' +str(rec.bank_acctno1)
-            else:
-                bank = ''        
-        return bank
-
-    def get_banks_2(self):
-        banks_ids = self.pool.get('res.company').search(self.cr,self.uid,[])
-        banks_recs = self.pool.get('res.company').browse(self.cr,self.uid,banks_ids)
-        for rec in banks_recs:
-            if rec.bank_name1 and rec.bank_acctno1:
-                bank= str(rec.bank_name2) + ' - ' +str(rec.bank_acctno2)
-            else:
-                bank = ''
-        return bank
- 
     def get_challan_number(self, data):
-        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=', self.datas['form']['challan_id'][0])])
-        challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
-        challan =  challan_rec[0].name
+        challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid, [('id','=', data)])
+        challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid, challan_ids)
+        challan =  challan_rec[0].counter or str(challan_rec[0].id)+"*****"
         return challan
  
     def get_candidate_info(self, data):

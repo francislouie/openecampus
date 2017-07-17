@@ -12,27 +12,30 @@
 			<drawString x="420" y="585">[[get_class_group(data)]]</drawString>
 			<drawString x="720" y="585">[[get_class_group(data)]]</drawString>
 
-			<image x="002" y="545" height="50.0" width="50.0">[[company.logo]]</image>
-			<image x="300" y="545" height="50.0" width="50.0">[[company.logo]]</image>
-			<image x="590" y="545" height="50.0" width="50.0">[[company.logo]]</image>
+			<image x="002" y="545" height="50.0" width="45.0">[[get_challan_logo()]]</image>
+			<image x="300" y="545" height="50.0" width="45.0">[[get_challan_logo()]]</image>
+			<image x="590" y="545" height="50.0" width="45.0">[[get_challan_logo()]]</image>
 			
 			<setFont name="Helvetica-Bold" size="7"/>
-            <drawString x="50" y="575">[[company.name]] Khyber Campus</drawString>
+            <!--<drawString x="50" y="575">[[company.name]] Khyber Campus</drawString>-->
+            <drawString x="50" y="575">[[get_challan_header_lineone()]]</drawString>
             <setFont name="Helvetica" size="7" />
-            <drawString x="50" y="565">[[company.partner_id.street]]</drawString>
-            <drawString x="50" y="555">[[company.partner_id.phone]]</drawString>
+	        <!--<drawString x="50" y="565">[[company.partner_id.street]]</drawString>
+            <drawString x="50" y="555">[[company.partner_id.phone]]</drawString>-->
+            <drawString x="50" y="565">[[get_challan_header_linetwo()]]</drawString>
+            <drawString x="50" y="555">[[get_challan_header_linethree()]]</drawString>
 
 			<setFont name="Helvetica-Bold" size="7"/>
-            <drawString x="348" y="575">[[company.name]] Khyber Campus</drawString>
+            <drawString x="348" y="575">[[get_challan_header_lineone()]]</drawString>
             <setFont name="Helvetica" size="7" />
-            <drawString x="348" y="565">[[company.partner_id.street]]</drawString>
-            <drawString x="348" y="555">[[company.partner_id.phone]]</drawString>            
+            <drawString x="348" y="565">[[get_challan_header_linetwo()]]</drawString>
+            <drawString x="348" y="555">[[get_challan_header_linethree()]]</drawString>            
 
 			<setFont name="Helvetica-Bold" size="7"/>
-            <drawString x="638" y="575">[[company.name]] Khyber Campus</drawString>
+            <drawString x="638" y="575">[[get_challan_header_lineone()]]</drawString>
             <setFont name="Helvetica" size="7" />
-            <drawString x="638" y="565">[[company.partner_id.street]]</drawString>
-            <drawString x="638" y="555">[[company.partner_id.phone]]</drawString>            
+            <drawString x="638" y="565">[[get_challan_header_linetwo()]]</drawString>
+            <drawString x="638" y="555">[[get_challan_header_linethree()]]</drawString>            
 
 			<setFont name="Helvetica-Bold" size="9" />
 			<drawString x="180" y="533">Due Date : [[ get_due_date() ]]</drawString>
@@ -50,24 +53,10 @@
 
 			<setFont name="Helvetica" size="9"/>
 
-           	<drawString x="002" y="45">[[ get_banks() ]]</drawString>
-			<drawString x="300" y="45">[[ get_banks() ]]</drawString>
-			<drawString x="600" y="45">[[ get_banks() ]]</drawString>
-
-           	<drawString x="002" y="35">NIB Bank(All Branches)</drawString>
-			<drawString x="300" y="35">NIB Bank(All Branches)</drawString>
-			<drawString x="600" y="35">NIB Bank(All Branches)</drawString>
+           	<drawString x="002" y="35">[[get_challan_footer_one()]]</drawString>
+			<drawString x="300" y="35">[[get_challan_footer_one()]]</drawString>
+			<drawString x="600" y="35">[[get_challan_footer_one()]]</drawString>
 				
-			<!--
-           	<drawString x="002" y="45">[[ get_banks() ]]</drawString>
-			<drawString x="300" y="45">[[ get_banks() ]]</drawString>
-			<drawString x="600" y="45">[[ get_banks() ]]</drawString>
-
-           	<drawString x="002" y="35">[[ get_banks_2() ]]</drawString>
-			<drawString x="300" y="35">[[ get_banks_2() ]]</drawString>
-			<drawString x="600" y="35">[[ get_banks_2() ]]</drawString>
-			-->
-
 			<setFont name="Helvetica" size="7"/>
 
            	<drawString x="002" y="20">Printed by: [[ get_user_name() ]]</drawString>
@@ -77,8 +66,9 @@
            	<drawString x="002" y="5">Print Date: [[ get_today() ]]</drawString>
 			<drawString x="300" y="5">Print Date: [[ get_today() ]]</drawString>
 			<drawString x="600" y="5">Print Date: [[ get_today() ]]</drawString>
+
 			<setFont name="Helvetica" size="6"/>
-			<drawString x="80" y="4">Powered By:CYME Softwares,0346-9333776</drawString>
+			<drawString x="80"  y="4">Powered By:CYME Softwares,0346-9333776</drawString>
 			<drawString x="380" y="4">Powered By:CYME Softwares,0346-9333776</drawString>
 			<drawString x="680" y="4">Powered By:CYME Softwares,0346-9333776</drawString>
 
