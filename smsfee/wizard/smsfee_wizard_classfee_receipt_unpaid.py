@@ -54,7 +54,19 @@ class class_fee_receipts_unpaid(osv.osv_memory):
             elif thisform['category'] == 'Transport':  
                 report = 'smstransport_print_three_student_per_page'
                 thisform = self.read(cr, uid, ids)[0]
-                self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')  
+                self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')
+                  
+            datas = {
+                 'ids': [],
+                 'active_ids': '',
+                 'model': 'smsfee.classfees.register',
+                 'form': self.read(cr, uid, ids)[0],
+                 }
+            return {
+                'type': 'ir.actions.report.xml',
+                'report_name':report,
+                'datas': datas,
+                }
         
         elif checking_challan == 'print_one_on_one':
             if thisform['category'] == 'Academics':
