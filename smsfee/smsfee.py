@@ -2978,9 +2978,7 @@ class admission_register_student_fees(osv.osv):
             fs_id = rec_admin_reg.fee_structure.id
             fee_line_id = self.pool.get('smsfee.classes.fees').search(cr ,uid ,[('academic_cal_id','=',class_id),('fee_structure_id','=',fs_id)])
             if fee_line_id:
-                 print "found parent fs id ",fee_line_id[0]
-                 res['hidden_parent_feestr'] = fee_line_id[0]
-        print "res ",res
+                res['hidden_parent_feestr'] = fee_line_id[0]
         return res
     
     _name = 'admission.register.student.fees'
