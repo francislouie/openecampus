@@ -115,7 +115,8 @@ class sms_collabrator(osv.osv):
                     ON tab1.fee_month = tab4.id
                     WHERE tab1.student_id ="""+str(student_id)+""" 
                     AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
-                    AND tab3.category = 'Academics'"""
+                    AND tab3.category = 'Academics'
+                    ORDER BY tab1.state desc"""
                     
         elif category == 'Transport':
             sql = """
@@ -130,7 +131,8 @@ class sms_collabrator(osv.osv):
                     ON tab1.fee_month = tab4.id
                     WHERE tab1.student_id ="""+str(student_id)+""" 
                     AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
-                    AND tab3.category = 'Transport'"""
+                    AND tab3.category = 'Transport'
+                    ORDER BY tab1.state desc"""
                     
         else:
             sql = """
@@ -144,13 +146,13 @@ class sms_collabrator(osv.osv):
                     INNER JOIN sms_session_months as tab4
                     ON tab1.fee_month = tab4.id
                     WHERE tab1.student_id ="""+str(student_id)+""" 
-                    AND tab1.acad_cal_id ="""+str(aca_cal_id)+"""""" 
+                    AND tab1.acad_cal_id ="""+str(aca_cal_id)+"""
+                    ORDER BY tab1.state desc""" 
                     
         cr.execute(sql)
         sql_recs = cr.fetchall()
         if sql_recs:
             for rec in sql_recs:
-
                 if rec[7] == 'Monthly_Fee':
                     fee_name = rec[6] + " ("+ rec[5] +")"
                 else:
