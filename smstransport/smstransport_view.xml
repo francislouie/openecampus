@@ -758,10 +758,7 @@
 		<field name="type">form</field>
 		<field name="arch" type="xml">
 			<notebook>
-			<page string="Challan Print" position="after">
-				<group col="4" colspan="2">
-					 <field name="fee_report_type_trans"/>
-				</group>
+			<page string="Transport Fee Management" position="after">
          		<separator string="Field for Transport Challan Printing(Header)" colspan="4"/>
 				<group>
 					 <field name="company_clogo_trans"/>
