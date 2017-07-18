@@ -868,6 +868,7 @@ class sms_transport_fee_challan_lines(osv.osv):
 sms_transport_fee_challan_lines()
 
 class sms_session_months(osv.osv):
+    
     """ This object is inherited to Apply Transport Fees on Students """
     def update_monthly_feeregister_transport(self, cr, uid, ids, name):
         """This method now getting transport fee from smsfee classes fees lines, but when the fee structure is change for smsfee_studentfee
@@ -890,7 +891,6 @@ class sms_session_months(osv.osv):
             vehcle_ids = self.pool.get('sms.transport.vehcile').search(cr,uid,[])
             if vehcle_ids:
                 veh_rec = self.pool.get('sms.transport.vehcile').browse(cr,uid,vehcle_ids)
-                
                 for this_veh in veh_rec:
                         students_ids = this_veh.registered_students
                         for this_student in students_ids:
