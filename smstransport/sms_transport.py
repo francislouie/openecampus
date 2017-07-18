@@ -981,7 +981,6 @@ class res_company(osv.osv):
     _name = 'res.company'
     _inherit ='res.company'
     _columns = {
-            'fee_report_type_trans':fields.selection([('One_on_One','One Student Per Page'),('Two_on_One','Two Students Per Page')],'Challan Print Type'),
             ########## Fields for Transport Challan's Print Settings ##############################################
             'bank_name1_trans':fields.char('Bank Name', size=256),
             'bank_name2_trans':fields.char('Bank Name', size=256),
@@ -998,7 +997,6 @@ class res_company(osv.osv):
             'company_clogo_trans':fields.binary('Transport Challan Logo'),
                 }
     _defaults = {                
-                 'fee_report_type_trans':'One_on_One',
                 }
     
 res_company()              
