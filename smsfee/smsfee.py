@@ -878,11 +878,12 @@ class smsfee_studentfee(osv.osv):
                         'fee_month': fee_month,
                         'paid_amount':0,
                         'fee_amount': fee_type_row.amount,  
-                        'late_fee':0,  
+                        'late_fee':0,
+                        'discount':0,
                         'total_amount':fee_type_row.amount + 0, 
                         'reconcile':False,
-                         'state':'fee_unpaid'
-                        }
+                        'state':'fee_unpaid'
+                     }
             
             crate_fee = self.pool.get('smsfee.studentfee').create(cr,uid,fee_dcit) 
             if crate_fee:

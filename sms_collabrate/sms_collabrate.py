@@ -100,57 +100,69 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
     
-    def stdfee_history(self, cr, uid, student_id, aca_cal_id, state, category):
+    def stdfee_history(self, cr, uid, student_id, aca_cal_id, category):
         result = []
         if category == 'Academics':
             sql = """
-                    SELECT tab1.id, tab1.date_fee_charged, tab1.date_fee_paid, tab1.state, tab1.fee_amount, 
-                    tab1.discount, tab1.paid_amount, tab1.state
+                    SELECT tab1.id, tab1.date_fee_charged, tab1.state, tab1.fee_amount, 
+                    tab1.paid_amount, tab4.name, tab3.name, tab3.subtype
                     FROM smsfee_studentfee as tab1
                     INNER JOIN smsfee_classes_fees_lines as tab2
                     ON tab1.fee_type = tab2.id
                     INNER JOIN smsfee_feetypes as tab3
                     ON tab2.fee_type = tab3.id
+                    INNER JOIN sms_session_months as tab4
+                    ON tab1.fee_month = tab4.id
                     WHERE tab1.student_id ="""+str(student_id)+""" 
                     AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
-                    AND tab1.state = '"""+state+"""'
                     AND tab3.category = 'Academics'"""
                     
         elif category == 'Transport':
             sql = """
-                    SELECT tab1.id, tab1.date_fee_charged, tab1.date_fee_paid, tab1.state, tab1.fee_amount, 
-                    tab1.discount, tab1.paid_amount, tab1.state
+                    SELECT tab1.id, tab1.date_fee_charged, tab1.state, tab1.fee_amount, 
+                    tab1.paid_amount, tab4.name, tab3.name, tab3.subtype
                     FROM smsfee_studentfee as tab1
                     INNER JOIN smsfee_classes_fees_lines as tab2
                     ON tab1.fee_type = tab2.id
                     INNER JOIN smsfee_feetypes as tab3
                     ON tab2.fee_type = tab3.id
+                    INNER JOIN sms_session_months as tab4
+                    ON tab1.fee_month = tab4.id
                     WHERE tab1.student_id ="""+str(student_id)+""" 
                     AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
-                    AND tab1.state = '"""+state+"""'
                     AND tab3.category = 'Transport'"""
                     
         else:
             sql = """
-                    SELECT tab1.id, tab1.date_fee_charged, tab1.date_fee_paid, tab1.state, tab1.fee_amount, 
-                    tab1.discount, tab1.paid_amount, tab1.state
+                    SELECT tab1.id, tab1.date_fee_charged, tab1.state, tab1.fee_amount, 
+                    tab1.paid_amount, tab4.name, tab3.name, tab3.subtype
                     FROM smsfee_studentfee as tab1
+                    INNER JOIN smsfee_classes_fees_lines as tab2
+                    ON tab1.fee_type = tab2.id
+                    INNER JOIN smsfee_feetypes as tab3
+                    ON tab2.fee_type = tab3.id
+                    INNER JOIN sms_session_months as tab4
+                    ON tab1.fee_month = tab4.id
                     WHERE tab1.student_id ="""+str(student_id)+""" 
-                    AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
-                    AND tab1.state = '"""+state+"""'""" 
+                    AND tab1.acad_cal_id ="""+str(aca_cal_id)+"""""" 
                     
         cr.execute(sql)
         sql_recs = cr.fetchall()
         if sql_recs:
             for rec in sql_recs:
+
+                if rec[7] == 'Monthly_Fee':
+                    fee_name = rec[6] + " ("+ rec[5] +")"
+                else:
+                    fee_name = rec[6]
+                     
                 my_dict = {
                             'id':rec[0],
+                            'fee_name':fee_name,
                             'date_fee_charged':rec[1],
-                            'date_fee_paid':rec[2],
-                            'fee_amount':rec[4],
-                            'discount':rec[5],
-                            'paid_amount':rec[6],
-                            'state':rec[7],
+                            'fee_amount':rec[3],
+                            'paid_amount':rec[4],
+                            'state':rec[2],
                             'return_status':1,
                             'return_desc':'Success'
                         }
