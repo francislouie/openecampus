@@ -6,6 +6,7 @@ import xlrd
 from datetime import datetime, timedelta
 from datetime import datetime
 from dateutil import parser
+from dateutil import rrule
 import logging
 import datetime
 
@@ -121,13 +122,25 @@ class sms_session(osv.osv):
         print year_id
         for f in self.browse(cr, uid, [year_id], context=context):
             #load session months
-            self.pool.get('sms.session').load_session_months(cr,uid,year_id)
+            self.pool.get('sms.session').load_session_months(cr, uid, year_id)
+            #----Loading Calender Weeks----------------
+            self.pool.get('sms.session').load_session_weeks(cr, uid, year_id)
         return
 
-    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-       
+    def load_session_weeks(self, cr, uid, ids, *args):
+        for rec in self.browse(cr, uid, [ids]): 
+            start_date = datetime.datetime.strptime(rec.start_date, '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(rec.end_date, '%Y-%m-%d')  
+            weeks = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=end_date)
+            print weeks.count()        
+            create = self.pool.get('sms.session.months').create(cr,uid,{
+                    'session_id':m.id,
+                    'session_month_id':month,
+                    'session_year':year,                                                    
+                    })
+        return True
 
-          
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         if 'session_admissions_closed' in vals:
             acad_cal_ids = self.pool.get('sms.academiccalendar').search(cr, uid, [('session_id','=', ids)])
             if  acad_cal_ids:
@@ -4690,15 +4703,10 @@ class sms_calander_week(osv.osv):
         return result
      
     def calculate_weeks(self, cr, uid, ids, context):   
-        rec = self.browse(cr ,uid ,ids[0])
         d1 = datetime.strptime(rec.start_date, '%Y-%m-%d')
         d2 = datetime.strptime(rec.end_date, '%Y-%m-%d')  
-    
         day1 = (d1 - timedelta(days=d1.weekday()))
-        
-        
         day2 = (d2 - timedelta(days=d2.weekday()))
-        
         weeks =  (day2 - day1).days / 7
 #         for i in range(1,weeks):
 #             self.pool.get('sms.calander.week.lines').create(cr ,uid , {
@@ -4709,19 +4717,22 @@ class sms_calander_week(osv.osv):
 #                                                                        })
         #raise osv.except_osv(('d'), ('S....'))
 #         print (d2 - d1).days,"::::::::::::::", (d2 - d1).days/7
-        self.write(cr ,uid ,ids,{'state':'Confirm'})
+#        self.write(cr ,uid ,ids,{'state':'Confirm'})
         return True
     
     """This object contains the info about calander week. """
     _name = 'sms.calander.week'
     _columns = {
-        'name' : fields.char('Name'),
+        'name' : fields.char('Academic Calendar Week Number'),
         'start_date' : fields.date('Start Date'),
         'end_date' : fields.date('End Date'),
+        'calender_seq_no': fields.char('Solar Calendar Week Number'),
+        'year': fields.date('Year'),
         'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'State',required = True),
     }
-    _defaults = { 'state': lambda*a :'Draft'   }    
+    _defaults = {'state': lambda*a :'Draft'}    
     _sql_constraints = []
+    
 sms_calander_week()
 
 class sms_weekly_plan(osv.osv):
