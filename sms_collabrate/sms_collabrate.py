@@ -157,12 +157,25 @@ class sms_collabrator(osv.osv):
                     fee_name = rec[6] + " ("+ rec[5] +")"
                 else:
                     fee_name = rec[6]
+                if not rec[4]:
+                    paid_amount = 0
+                else:
+                    paid_amount = rec[4]
+                if not rec[3]:
+                    fee_amount = 0
+                else:
+                    fee_amount = rec[3]
+                if not rec[1]:
+                    date_fee_charged = '1960-01-01'
+                else:
+                    date_fee_charged = rec[1]
+                    
                 my_dict = {
                             'id':rec[0],
                             'fee_name':fee_name,
-                            'date_fee_charged':rec[1],
-                            'fee_amount':rec[3],
-                            'paid_amount':rec[4],
+                            'date_fee_charged':date_fee_charged,
+                            'fee_amount':fee_amount,
+                            'paid_amount':paid_amount,
                             'state':rec[2],
                             'return_status':1,
                             'return_desc':'Success'
