@@ -4700,13 +4700,13 @@ class sms_calander_week(osv.osv):
         day2 = (d2 - timedelta(days=d2.weekday()))
         
         weeks =  (day2 - day1).days / 7
-        for i in range(1,weeks):
-            self.pool.get('sms.calander.week.lines').create(cr ,uid , {
-                                                                       'name':"week-"+str(i),
-                                                                      # 'start_date':'',
-                                                                      # 'end_date':'',
-                                                                       'cal_week_id':ids[0],
-                                                                       })
+#         for i in range(1,weeks):
+#             self.pool.get('sms.calander.week.lines').create(cr ,uid , {
+#                                                                        'name':"week-"+str(i),
+#                                                                       # 'start_date':'',
+#                                                                       # 'end_date':'',
+#                                                                        'cal_week_id':ids[0],
+#                                                                        })
         #raise osv.except_osv(('d'), ('S....'))
 #         print (d2 - d1).days,"::::::::::::::", (d2 - d1).days/7
         self.write(cr ,uid ,ids,{'state':'Confirm'})
@@ -4718,31 +4718,11 @@ class sms_calander_week(osv.osv):
         'name' : fields.char('Name'),
         'start_date' : fields.date('Start Date'),
         'end_date' : fields.date('End Date'),
-        'cal_week_lines' : fields.one2many('sms.calander.week.lines','cal_week_id','Calender Week'),
         'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'State',required = True),
     }
     _defaults = { 'state': lambda*a :'Draft'   }    
     _sql_constraints = []
 sms_calander_week()
-
-class sms_calander_week_lines(osv.osv):
-    
-    def create(self, cr, uid, vals, context=None, check=True):
-        result = super(osv.osv, self).create(cr, uid, vals, context)
-        return result
-    
-    """This object contains the info about calander week. """
-    _name = 'sms.calander.week.lines'
-    _columns = {
-                
-        'name' : fields.char('Weeks'),
-        'start_date' : fields.date('Start Date'),
-        'end_date' : fields.date('End Date'),
-        'cal_week_id' : fields.many2one('sms.calander.week','Calender Week'),
-    }
-    _defaults = {    }    
-    _sql_constraints = []
-sms_calander_week_lines()
 
 class sms_weekly_plan(osv.osv):
     
@@ -4765,7 +4745,7 @@ class sms_weekly_plan(osv.osv):
     _columns = {
         'subject' : fields.many2one('sms.academiccalendar.subjects','Subject'),
         'teacher' : fields.many2one('hr.employee','Teacher'),
-        'week' : fields.many2one('sms.calander.week.lines','Calender Week'),
+        'week' : fields.many2one('sms.calander.week','Calender Week'),
         'filled_by' : fields.many2one('res.users','Filled by'),
         'work_guide' : fields.html('Weekly Plan'),
         'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'state',required = True),

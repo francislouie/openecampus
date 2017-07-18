@@ -3101,7 +3101,6 @@
 			          <field name="end_date" attrs="{'readonly':[('state','=','Confirm')]}" />
 			          <field name="state" readonly="1"/>
                   </group>
-				<field name="cal_week_lines"  attrs="{'readonly':[('state','=','Confirm')]}" />
 				</group>
 			</sheet>  
 			  </form>
@@ -3140,37 +3139,6 @@
             <field name="search_view_id" ref="view_sms_calander_week_search"/>
         </record>
 <!-- -->
-<!--calander week lines -->
-		<record model="ir.ui.view" id="view_sms_calander_week_lines_form">
-         <field name="name">sms.calander.week.lines.form</field>
-         <field name="model">sms.calander.week.lines</field>
-         <field name="arch" type="xml">
-            <form string="Calander week lines" version="7.0">
-				<group>
-                  <group string="Calander week lines">
-					  <field name="cal_week_id"/>
-			          <field name="name"/>
-			          <field name="start_date"/>
-			          <field name="end_date"/>						
-                  </group>
-				</group>  
-			  </form>
-            </field>
-        </record>
-		<record model="ir.ui.view" id="view_sms_calander_week_lines_form">
-         <field name="name">sms.calander.week.lines.form</field>
-         <field name="model">sms.calander.week.lines</field>
-         <field name="arch" type="xml">
-            <tree string="Calander week lines" >
-				  <field name="cal_week_id"/>
-				  <field name="name"/>
-		          <field name="start_date"/>
-		          <field name="end_date"/>						
-			  </tree>
-            </field>
-        </record>
-
-<!--END -->
 
 <!-- sms_weekly_plan -->
 		<record model="ir.ui.view" id="view_sms_weekly_plan_form">
