@@ -153,28 +153,21 @@ class sms_collabrator(osv.osv):
         sql_recs = cr.fetchall()
         if sql_recs:
             for rec in sql_recs:
-                if rec[1] and rec[2] and rec[3] and rec[4]:
-                    if rec[7] == 'Monthly_Fee':
-                        fee_name = rec[6] + " ("+ rec[5] +")"
-                    else:
-                        fee_name = rec[6]
-                    my_dict = {
-                                'id':rec[0],
-                                'fee_name':fee_name,
-                                'date_fee_charged':rec[1],
-                                'fee_amount':rec[3],
-                                'paid_amount':rec[4],
-                                'state':rec[2],
-                                'return_status':1,
-                                'return_desc':'Success'
-                            }
-                    result.append(my_dict)
+                if rec[7] == 'Monthly_Fee':
+                    fee_name = rec[6] + " ("+ rec[5] +")"
                 else:
-                    my_dict = {
-                                'return_status':0,
-                                'return_desc':'No Fee Record Found'
-                                }
-                    result.append(my_dict)
+                    fee_name = rec[6]
+                my_dict = {
+                            'id':rec[0],
+                            'fee_name':fee_name,
+                            'date_fee_charged':rec[1],
+                            'fee_amount':rec[3],
+                            'paid_amount':rec[4],
+                            'state':rec[2],
+                            'return_status':1,
+                            'return_desc':'Success'
+                        }
+                result.append(my_dict)
         else:
             my_dict = {
                         'return_status':0,
