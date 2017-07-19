@@ -250,4 +250,36 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
     
+    def sms_weekly_plan(self, cr, uid, week_id):
+        result = []
+        sql = """
+                SELECT sms_weekly_plan.id, sms_weekly_plan.teacher, sms_weekly_plan.work_guide,
+                sms_subject.name
+                FROM sms_weekly_plan 
+                INNER JOIN sms_academiccalendar_subjects ON
+                sms_weekly_plan.subject = sms_academiccalendar_subjects.id
+                INNER JOIN sms_subject ON 
+                sms_academiccalendar_subjects.subject_id = sms_subject.id
+                WHERE sms_weekly_plan.week = """+str(week_id)+""" 
+                ORDER BY id""" 
+                
+        cr.execute(sql)
+        sql_recs = cr.fetchall()
+        if sql_recs:
+            for rec in sql_recs:
+                my_dict = {'id':rec[0],
+                            'subject':rec[3],
+                            'work_plan':rec[2],
+                            'return_status':1,
+                            'return_desc':'Success'
+                        }
+                result.append(my_dict)
+        else:
+            my_dict = {
+                        'return_status':0,
+                        'return_desc':'No Record Found'
+                        }
+            result.append(my_dict)
+        return result
+    
 sms_collabrator()
