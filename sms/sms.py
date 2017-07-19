@@ -6,6 +6,7 @@ import xlrd
 from datetime import datetime, timedelta
 from datetime import datetime
 from dateutil import parser
+from dateutil import rrule
 import logging
 import datetime
 
@@ -113,21 +114,58 @@ class sms_session(osv.osv):
     """
     This object defines academic years/sessions within an academic session
     """
-    
-    
     def create(self, cr, uid, vals, context=None, check=True):
         result = {}
         year_id = super(osv.osv, self).create(cr, uid, vals, context)
-        print year_id
         for f in self.browse(cr, uid, [year_id], context=context):
             #load session months
-            self.pool.get('sms.session').load_session_months(cr,uid,year_id)
+            self.pool.get('sms.session').load_session_months(cr, uid, year_id)
+            #----Loading Calender Weeks----------------
+            self.pool.get('sms.session').load_session_weeks(cr, uid, year_id)
         return
 
-    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-       
+    def load_session_weeks(self, cr, uid, ids, *args):
+        for rec in self.browse(cr, uid, [ids]): 
+#            start_date = '2016-09-01'
+            start_date = datetime.datetime.strptime(rec.start_date, '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(rec.end_date, '%Y-%m-%d')  
+            weeks = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=end_date)
+            total_weeks = weeks.count()
+#            print "====",start_date.ctime()
+            loop_counter = 0
+            firstweek_date = start_date
+            while (loop_counter<=total_weeks):
+                day_of_week = firstweek_date.weekday()
+                if day_of_week == 0:
+                    beginning_of_week = firstweek_date
+                    end_of_week = firstweek_date + datetime.timedelta(days=6) 
+                    
+                else:
+                    to_beginning_of_week = datetime.timedelta(days=day_of_week)
+                    beginning_of_week = firstweek_date - to_beginning_of_week
+                    to_end_of_week = datetime.timedelta(days= 6 - day_of_week)
+                    end_of_week = firstweek_date + to_end_of_week
+                    
+                dt_ye = int(datetime.datetime.strptime(str(beginning_of_week), '%Y-%m-%d %H:%M:%S').strftime('%Y'))
+                dt_mo = int(datetime.datetime.strptime(str(beginning_of_week), '%Y-%m-%d %H:%M:%S').strftime('%m'))
+                dt_dt = int(datetime.datetime.strptime(str(beginning_of_week), '%Y-%m-%d %H:%M:%S').strftime('%d'))
+                
+                calendar_week_number = datetime.date(dt_ye, dt_mo, dt_dt).isocalendar()[1]
+                firstweek_date = end_of_week + datetime.timedelta(days=2) 
+                loop_counter = loop_counter + 1
 
-          
+                calendar_week = self.pool.get('sms.calander.week').create(cr, uid, {'name':str(loop_counter),
+                                                                                    'start_date':beginning_of_week,
+                                                                                    'end_date':end_of_week,   
+                                                                                    'calender_seq_no':str(calendar_week_number),
+                                                                                    'year':dt_ye,
+                                                                                    'state':'Draft',                                                 
+                                                                                    })
+                _logger.info("Creating Calendar Week : " +str(calendar_week))                
+                
+        return True
+
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         if 'session_admissions_closed' in vals:
             acad_cal_ids = self.pool.get('sms.academiccalendar').search(cr, uid, [('session_id','=', ids)])
             if  acad_cal_ids:
@@ -152,7 +190,6 @@ class sms_session(osv.osv):
         return result
      
     def start_new_session(self, cr, uid, ids, *args):
-        
         obj = self.browse(cr, uid, ids)
         if not obj[0].months_loaded:
              raise osv.except_osv(('Stop'), ('Please! First Load Session Months' ))
@@ -162,6 +199,7 @@ class sms_session(osv.osv):
                 sess = ''
                 for f in active_sessions:
                     rec = self.pool.get('sms.session').browse(cr, uid, f)
+                    self.pool.get('sms.session').load_session_weeks(cr, uid, f.id)
                     sess += "-"+rec.name
 #                 raise osv.except_osv(('Only 1 Session must be active at a time '), ('Active Session:'+sess))
             self.write(cr, uid, ids, {'state': 'Active'})
@@ -4690,23 +4728,18 @@ class sms_calander_week(osv.osv):
         return result
      
     def calculate_weeks(self, cr, uid, ids, context):   
-        rec = self.browse(cr ,uid ,ids[0])
-        d1 = datetime.strptime(rec.start_date, '%Y-%m-%d')
-        d2 = datetime.strptime(rec.end_date, '%Y-%m-%d')  
-    
-        day1 = (d1 - timedelta(days=d1.weekday()))
-        
-        
-        day2 = (d2 - timedelta(days=d2.weekday()))
-        
-        weeks =  (day2 - day1).days / 7
-        for i in range(1,weeks):
-            self.pool.get('sms.calander.week.lines').create(cr ,uid , {
-                                                                       'name':"week-"+str(i),
-                                                                      # 'start_date':'',
-                                                                      # 'end_date':'',
-                                                                       'cal_week_id':ids[0],
-                                                                       })
+#         d1 = datetime.strptime(rec.start_date, '%Y-%m-%d')
+#         d2 = datetime.strptime(rec.end_date, '%Y-%m-%d')  
+#         day1 = (d1 - timedelta(days=d1.weekday()))
+#         day2 = (d2 - timedelta(days=d2.weekday()))
+#         weeks =  (day2 - day1).days / 7
+#         for i in range(1,weeks):
+#             self.pool.get('sms.calander.week.lines').create(cr ,uid , {
+#                                                                        'name':"week-"+str(i),
+#                                                                       # 'start_date':'',
+#                                                                       # 'end_date':'',
+#                                                                        'cal_week_id':ids[0],
+#                                                                        })
         #raise osv.except_osv(('d'), ('S....'))
 #         print (d2 - d1).days,"::::::::::::::", (d2 - d1).days/7
         self.write(cr ,uid ,ids,{'state':'Confirm'})
@@ -4715,34 +4748,17 @@ class sms_calander_week(osv.osv):
     """This object contains the info about calander week. """
     _name = 'sms.calander.week'
     _columns = {
-        'name' : fields.char('Name'),
+        'name' : fields.char('Academic Calendar Week Number'),
         'start_date' : fields.date('Start Date'),
         'end_date' : fields.date('End Date'),
-        'cal_week_lines' : fields.one2many('sms.calander.week.lines','cal_week_id','Calender Week'),
+        'calender_seq_no': fields.char('Solar Calendar Week Number'),
+        'year': fields.integer('Year'),
         'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'State',required = True),
     }
-    _defaults = { 'state': lambda*a :'Draft'   }    
+    _defaults = {'state': lambda*a :'Draft'}    
     _sql_constraints = []
+    
 sms_calander_week()
-
-class sms_calander_week_lines(osv.osv):
-    
-    def create(self, cr, uid, vals, context=None, check=True):
-        result = super(osv.osv, self).create(cr, uid, vals, context)
-        return result
-    
-    """This object contains the info about calander week. """
-    _name = 'sms.calander.week.lines'
-    _columns = {
-                
-        'name' : fields.char('Weeks'),
-        'start_date' : fields.date('Start Date'),
-        'end_date' : fields.date('End Date'),
-        'cal_week_id' : fields.many2one('sms.calander.week','Calender Week'),
-    }
-    _defaults = {    }    
-    _sql_constraints = []
-sms_calander_week_lines()
 
 class sms_weekly_plan(osv.osv):
     
@@ -4765,7 +4781,7 @@ class sms_weekly_plan(osv.osv):
     _columns = {
         'subject' : fields.many2one('sms.academiccalendar.subjects','Subject'),
         'teacher' : fields.many2one('hr.employee','Teacher'),
-        'week' : fields.many2one('sms.calander.week.lines','Calender Week'),
+        'week' : fields.many2one('sms.calander.week','Calender Week'),
         'filled_by' : fields.many2one('res.users','Filled by'),
         'work_guide' : fields.html('Weekly Plan'),
         'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'state',required = True),

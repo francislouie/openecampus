@@ -177,7 +177,6 @@
 "179","base.res.partner","model_res_partner","group_sms_director",1,1,1,0
 "180","sms.session","model_sms_session","group_sms_director",1,1,1,1
 "181","sms.calander.week","model_sms_calander_week","group_sms_director",1,1,1,1
-"181","sms.calander.week.lines","model_sms_calander_week_lines","group_sms_director",1,1,1,1
 "182","project.transactional.log","model_project_transactional_log","group_sms_director",1,0,1,0
 
 "183","sms.classes","model_sms_classes","group_sms_director",1,1,1,0
@@ -449,7 +448,6 @@
 "470","sms.student.class.promotion.lines","model_sms_student_class_promotion_lines","group_sms_principal",1,0,0,0
 "471","sms.exam.datesheet.lines","model_sms_exam_datesheet_lines","group_sms_principal",1,0,0,0
 "472","sms.calander.week","model_sms_calander_week","group_sms_principal",1,0,0,0
-"473","sms.calander.week.lines","model_sms_calander_week_lines","group_sms_principal",1,0,0,0
 "473","sms.weekly.plan","model_sms_weekly_plan","group_sms_principal",1,0,0,0
 "474","sms.day","model_sms_day","group_sms_principal",1,0,0,0
 "475","sms.timetable","model_sms_timetable","group_sms_principal",1,0,0,0
@@ -468,4 +466,3 @@
 "487","sms.time","model_sms_time","group_sms_director",1,1,1,0
 "488","sms.timetable.slot","model_sms_timetable_slot","group_sms_director",1,1,1,0
 "489","sms.calander.week","model_sms_calander_week","group_sms_director",1,1,1,0
-"490","sms.calander.week.lines","model_sms_calander_week_lines","group_sms_director",1,1,1,0
