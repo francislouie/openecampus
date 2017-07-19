@@ -221,5 +221,34 @@ class sms_collabrator(osv.osv):
                         }
             result.append(my_dict)
         return result
+
+    def sms_weekly_calendar(self, cr, uid, week_id):
+        result = []
+        sql = """
+                SELECT id, name, state, start_date, end_date, calender_seq_no FROM sms_calander_week 
+                WHERE id = """+str(week_id)+""" 
+                ORDER BY id =""" 
+                    
+        cr.execute(sql)
+        sql_recs = cr.fetchall()
+        if sql_recs:
+            for rec in sql_recs:
+                my_dict = {'id':rec[0],
+                        'week_no':rec[1],
+                        'state':rec[2],
+                        'start_date':rec[3],
+                        'end_date':rec[4],
+                        'calender_seq_no':rec[5],                        
+                        'return_status':1,
+                        'return_desc':'Success'
+                        }
+                result.append(my_dict)
+        else:
+            my_dict = {
+                        'return_status':0,
+                        'return_desc':'No Record Found'
+                        }
+            result.append(my_dict)
+        return result
     
 sms_collabrator()
