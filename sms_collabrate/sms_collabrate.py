@@ -227,8 +227,7 @@ class sms_collabrator(osv.osv):
         sql = """
                 SELECT id, name, state, start_date, end_date, calender_seq_no FROM sms_calander_week 
                 WHERE state = '"""+str(state)+"""' 
-                ORDER BY id =""" 
-                    
+                ORDER BY id""" 
         cr.execute(sql)
         sql_recs = cr.fetchall()
         if sql_recs:
