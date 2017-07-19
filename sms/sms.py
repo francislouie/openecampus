@@ -114,12 +114,9 @@ class sms_session(osv.osv):
     """
     This object defines academic years/sessions within an academic session
     """
-    
-    
     def create(self, cr, uid, vals, context=None, check=True):
         result = {}
         year_id = super(osv.osv, self).create(cr, uid, vals, context)
-        print year_id
         for f in self.browse(cr, uid, [year_id], context=context):
             #load session months
             self.pool.get('sms.session').load_session_months(cr, uid, year_id)
@@ -129,15 +126,43 @@ class sms_session(osv.osv):
 
     def load_session_weeks(self, cr, uid, ids, *args):
         for rec in self.browse(cr, uid, [ids]): 
+#            start_date = '2016-09-01'
             start_date = datetime.datetime.strptime(rec.start_date, '%Y-%m-%d')
             end_date = datetime.datetime.strptime(rec.end_date, '%Y-%m-%d')  
             weeks = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=end_date)
-            print weeks.count()        
-            create = self.pool.get('sms.session.months').create(cr,uid,{
-                    'session_id':m.id,
-                    'session_month_id':month,
-                    'session_year':year,                                                    
-                    })
+            total_weeks = weeks.count()
+#            print "====",start_date.ctime()
+            loop_counter = 0
+            firstweek_date = start_date
+            while (loop_counter<=total_weeks):
+                day_of_week = firstweek_date.weekday()
+                if day_of_week == 0:
+                    beginning_of_week = firstweek_date
+                    end_of_week = firstweek_date + datetime.timedelta(days=6) 
+                    
+                else:
+                    to_beginning_of_week = datetime.timedelta(days=day_of_week)
+                    beginning_of_week = firstweek_date - to_beginning_of_week
+                    to_end_of_week = datetime.timedelta(days= 6 - day_of_week)
+                    end_of_week = firstweek_date + to_end_of_week
+                    
+                dt_ye = int(datetime.datetime.strptime(str(beginning_of_week), '%Y-%m-%d %H:%M:%S').strftime('%Y'))
+                dt_mo = int(datetime.datetime.strptime(str(beginning_of_week), '%Y-%m-%d %H:%M:%S').strftime('%m'))
+                dt_dt = int(datetime.datetime.strptime(str(beginning_of_week), '%Y-%m-%d %H:%M:%S').strftime('%d'))
+                
+                calendar_week_number = datetime.date(dt_ye, dt_mo, dt_dt).isocalendar()[1]
+                firstweek_date = end_of_week + datetime.timedelta(days=2) 
+                loop_counter = loop_counter + 1
+
+                calendar_week = self.pool.get('sms.calander.week').create(cr, uid, {'name':str(loop_counter),
+                                                                                    'start_date':beginning_of_week,
+                                                                                    'end_date':end_of_week,   
+                                                                                    'calender_seq_no':str(calendar_week_number),
+                                                                                    'year':dt_ye,
+                                                                                    'state':'Draft',                                                 
+                                                                                    })
+                _logger.info("Creating Calendar Week : " +str(calendar_week))                
+                
         return True
 
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
@@ -165,7 +190,6 @@ class sms_session(osv.osv):
         return result
      
     def start_new_session(self, cr, uid, ids, *args):
-        
         obj = self.browse(cr, uid, ids)
         if not obj[0].months_loaded:
              raise osv.except_osv(('Stop'), ('Please! First Load Session Months' ))
@@ -175,6 +199,7 @@ class sms_session(osv.osv):
                 sess = ''
                 for f in active_sessions:
                     rec = self.pool.get('sms.session').browse(cr, uid, f)
+                    self.pool.get('sms.session').load_session_weeks(cr, uid, f.id)
                     sess += "-"+rec.name
 #                 raise osv.except_osv(('Only 1 Session must be active at a time '), ('Active Session:'+sess))
             self.write(cr, uid, ids, {'state': 'Active'})
@@ -4703,11 +4728,11 @@ class sms_calander_week(osv.osv):
         return result
      
     def calculate_weeks(self, cr, uid, ids, context):   
-        d1 = datetime.strptime(rec.start_date, '%Y-%m-%d')
-        d2 = datetime.strptime(rec.end_date, '%Y-%m-%d')  
-        day1 = (d1 - timedelta(days=d1.weekday()))
-        day2 = (d2 - timedelta(days=d2.weekday()))
-        weeks =  (day2 - day1).days / 7
+#         d1 = datetime.strptime(rec.start_date, '%Y-%m-%d')
+#         d2 = datetime.strptime(rec.end_date, '%Y-%m-%d')  
+#         day1 = (d1 - timedelta(days=d1.weekday()))
+#         day2 = (d2 - timedelta(days=d2.weekday()))
+#         weeks =  (day2 - day1).days / 7
 #         for i in range(1,weeks):
 #             self.pool.get('sms.calander.week.lines').create(cr ,uid , {
 #                                                                        'name':"week-"+str(i),
@@ -4717,7 +4742,7 @@ class sms_calander_week(osv.osv):
 #                                                                        })
         #raise osv.except_osv(('d'), ('S....'))
 #         print (d2 - d1).days,"::::::::::::::", (d2 - d1).days/7
-#        self.write(cr ,uid ,ids,{'state':'Confirm'})
+        self.write(cr ,uid ,ids,{'state':'Confirm'})
         return True
     
     """This object contains the info about calander week. """
@@ -4727,7 +4752,7 @@ class sms_calander_week(osv.osv):
         'start_date' : fields.date('Start Date'),
         'end_date' : fields.date('End Date'),
         'calender_seq_no': fields.char('Solar Calendar Week Number'),
-        'year': fields.date('Year'),
+        'year': fields.integer('Year'),
         'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'State',required = True),
     }
     _defaults = {'state': lambda*a :'Draft'}    
