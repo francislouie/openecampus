@@ -222,11 +222,11 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
 
-    def sms_weekly_calendar(self, cr, uid, week_id):
+    def sms_weekly_calendar(self, cr, uid, state):
         result = []
         sql = """
                 SELECT id, name, state, start_date, end_date, calender_seq_no FROM sms_calander_week 
-                WHERE id = """+str(week_id)+""" 
+                WHERE state = '"""+str(state)+"""' 
                 ORDER BY id =""" 
                     
         cr.execute(sql)
