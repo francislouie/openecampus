@@ -225,7 +225,8 @@ class sms_collabrator(osv.osv):
     def sms_weekly_calendar(self, cr, uid, state):
         result = []
         sql = """
-                SELECT id, name, state, start_date, end_date, calender_seq_no FROM sms_calander_week 
+                SELECT id, name, state, start_date, end_date 
+                FROM sms_calander_week 
                 WHERE state = '"""+str(state)+"""' 
                 ORDER BY id""" 
         cr.execute(sql)
@@ -237,7 +238,7 @@ class sms_collabrator(osv.osv):
                         'state':rec[2],
                         'start_date':rec[3],
                         'end_date':rec[4],
-                        'calender_seq_no':rec[5],                        
+                        #'calender_seq_no':rec[5],                        
                         'return_status':1,
                         'return_desc':'Success'
                         }
