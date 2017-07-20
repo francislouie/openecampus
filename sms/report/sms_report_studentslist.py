@@ -94,7 +94,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
                             WHERE sms_student.fee_type = """+str(recfee_st.id)+"""
                             AND sms_student.state in ('Admitted','admission_cancel','drop_out','slc') 
                             AND sms_student.admitted_on BETWEEN '""" + this_form['start_date'] + """' AND '""" + this_form['end_date'] + """'"""
-
+            
             self.cr.execute(sql_checking)
             feestructure = self.cr.fetchone()
             
@@ -106,7 +106,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
             
         result.append(my_dict)
 #        sql = """SELECT id ,name ,state FROM sms_academiccalendar ORDER BY name"""
-        sql = """SELECT DISTINCT tab2.id, tab2.name, tab2.state, tab1.state, tab1.date_admission_confirmed 
+        sql = """SELECT DISTINCT tab2.id, tab2.name, tab2.state, tab1.state 
                 FROM student_admission_register as tab1
                 INNER JOIN sms_academiccalendar as tab2
                 ON tab1.student_class = tab2.id
