@@ -390,7 +390,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             """Late fee amount is not shown. to show it, make another columns on right side of others and mention it in separate column"""
             this_form = self.datas['form']
             cls_id = this_form['class_id']
-            order_by = this_form['order_by'] or 'name'
+            order_by = this_form['order_by'] or 'sms_student.name'
             fee_amount = float(0)
             sql_academics = """SELECT COALESCE(sum(fee_amount),'0'),sms_student.id,sms_student.name,registration_no,sms_student.state
                             ,(select name from sms_academiccalendar where id=current_class) from smsfee_studentfee
