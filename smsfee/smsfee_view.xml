@@ -494,7 +494,7 @@
 							<field name="subtype"/>
 							<field name="category"/>
 							<field name="refundable"/>
-							<field name="description" />
+							<field name="display_sequence" />
 						</group>
 						</group>
 				</sheet>	 	
@@ -510,6 +510,7 @@
 							<field name="name" />
 							<field name="description" />
 							<field name="subtype" />
+							
 				</tree>
             </field>
         </record>

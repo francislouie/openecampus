@@ -1390,6 +1390,16 @@ class sms_academiccalendar(osv.osv):
             stdids = self.pool.get('sms.academiccalendar.student').search(cr, uid, [('name','=',f.id),('state','=','Current')])
             res[f.id] = len(stdids)
         return res
+    def get_display_order(self, cr, uid, ids, name, args, context=None):
+        """This method retruns the sequnece of parent class of this record. that will be use to order the list record of acad cal"""
+        res = {}
+        for f in self.browse(cr, uid, ids, context):
+            if f.class_id.id:
+                sql = """SELECT sequence from sms_classes
+                         where id = """ + str(f.class_id.id)
+                cr.execute(sql)
+                seq = cr.fetchone()[0]
+        return seq
     
     def unlink(self, cr, uid, ids, context={}, check=True):
         for rec in self.browse(cr, uid, ids, context):
@@ -1398,7 +1408,7 @@ class sms_academiccalendar(osv.osv):
 
     _name = 'sms.academiccalendar'
     _description = "Crates new class in a new session."
-    _order = 'class_id'
+    _order = 'display_order,section_id'
     _columns = {
         'name':  fields.function(set_class_name, method=True, store = True ,string='Class',type='char'), 
         'acad_session_id': fields.many2one('sms.academics.session', 'Academic Session',domain="[('state','!=','Closed')]",required=True),
@@ -1422,6 +1432,7 @@ class sms_academiccalendar(osv.osv):
         'closed_by':fields.many2one('res.users', 'Closed By'),
         'helptxt':fields.text('Help', readonly = True),
         'pending_results':fields.function(pending_annual_results, string='Pending Annual Results', type='integer'),
+        'display_order':fields.function(get_display_order,store=True, string='display order', type='integer'),
         'exam_ids' :fields.one2many('sms.exam.datesheet', 'academiccalendar', 'Exam', readonly=True),
     } 
     _defaults = {

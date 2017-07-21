@@ -788,6 +788,7 @@ class smsfee_feetypes(osv.osv):
         'description': fields.char(string = 'Description',size = 100),
         'subtype': fields.selection([('Monthly_Fee','Monthly Fee'),('at_admission','Charged at The Time of Admission'),('Promotion_Fee','Promotion Fee'),('Annual_fee','Annual Fee'),('Refundable','Refundable'),('Other','Other')],'Repetition',required = True),
         'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],'Fee Category',required=True),
+        'display_sequence':fields.integer('Display Order'),
         'refundable':fields.boolean('Refundable')
     }
     _sql_constraints = [  
@@ -986,9 +987,18 @@ class smsfee_studentfee(osv.osv):
     ('Stationary', 'Portal'),
     ('Portal', 'Portal')]
     
+    def get_display_order(self, cr, uid, ids, name, args, context=None):
+        """This method retruns the sequnece of parent class of this record. that will be use to order the list record of acad cal"""
+        res = {}
+        for f in self.browse(cr, uid, ids, context):
+            if f.fee_type.id:
+                res[f.id] = f.fee_type.fee_type.display_sequence
+        return res
+    
     #smsfee_studentfee
     _name = 'smsfee.studentfee'
     _description = "Stores student fee record"
+    _order = 'display_order,due_month'
     _columns = {
         'name':fields.function(_set_std_fee, method=True,  string='Student Fee',type='char'),
         'receipt_no':fields.many2one('smsfee.receiptbook','Receipt No'),
@@ -1010,6 +1020,7 @@ class smsfee_studentfee(osv.osv):
         'discount': fields.integer('Discount'),
         'net_total': fields.integer('Balance'),  
         'reconcile':fields.boolean('Reconcile'), 
+        'display_order':fields.function(get_display_order,store=True, string='display order', type='integer'),
         'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
         #------------total payables---------------------------------
         'total_payable': fields.function(_get_total_payables,string = 'Total Payable',type = 'integer',method = True,store = True),
