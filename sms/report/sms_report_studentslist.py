@@ -149,6 +149,11 @@ class sms_report_studentslist(report_sxw.rml_parse):
     
     def get_student_biodata(self,form):
         
+        sql = """update sms_academiccalendar set display_order = (select sequence from sms_classes where
+             id = (select sms_academiccalendar.class_id))"""
+        self.cr.execute(sql)
+        self.cr.commit()
+        
         #------  To Populate admission confirmation date in student_admission_register object ------------------
         sql = """SELECT sms_student.id, sms_student.admitted_on, student_admission_register.id
                 FROM sms_student
@@ -157,6 +162,14 @@ class sms_report_studentslist(report_sxw.rml_parse):
                 """
         self.cr.execute(sql)
         studentrecs = self.cr.fetchall()
+        
+        # now reset order of smsfee_studentfee
+        fees = self.pool.get('smsfee.studentfee').search(self.cr, self.uid, [])
+        feerec = self.pool.get('smsfee.studentfee').browse(self.cr, self.uid,fees)
+        for thisfee in feerec:
+            if thisfee.fee_type is not None:
+                if thisfee.fee_type.fee_type is not None:
+                    self.pool.get('smsfee.studentfee').write(self.cr, self.uid, thisfee.id, {'display_order':thisfee.fee_type.fee_type.display_sequence})
         
         for rec in studentrecs:
             updating = self.pool.get('student.admission.register').write(self.cr, self.uid, rec[2], {'date_admission_confirmed':rec[1]})
