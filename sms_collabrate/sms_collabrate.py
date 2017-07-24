@@ -282,5 +282,48 @@ class sms_collabrator(osv.osv):
                         }
             result.append(my_dict)
         return result
+
+    def sms_exam_datesheet(self, cr, uid, class_id):
+        result = []
+        sql = """SELECT tab1.id, tab1.name, tab1.start_date, tab1.status, 
+                tab2.subject, tab4.name, tab2.invigilator, tab5.name_related, tab2.paper_date
+                FROM sms_exam_datesheet AS tab1
+                INNER JOIN sms_exam_datesheet_lines AS tab2
+                ON tab1.id = tab2.name
+                INNER JOIN sms_academiccalendar_subjects AS tab3
+                ON tab2.subject = tab3.id 
+                INNER JOIN sms_subject AS tab4
+                ON tab3.subject_id = tab4.id 
+                INNER JOIN hr_employee AS tab5
+                ON tab2.invigilator = tab5.id 
+                WHERE tab1.academiccalendar = """+str(class_id)+"""
+                AND tab1.status = 'Active'
+                ORDER BY tab2.subject""" 
+                
+        cr.execute(sql)
+        sql_recs = cr.fetchall()
+        if sql_recs:
+            for rec in sql_recs:
+                my_dict = {'id':rec[0],
+                            'exam_name':rec[1],
+                            'exam_start_date':rec[2],
+                            'exam_state':rec[3],
+                            'subject_id':rec[4],
+                            'subject_name':rec[5],
+                            'invigilator_id':rec[6],
+                            'invigilator_name':rec[7],
+                            'paper_date':rec[8],
+                            'return_status':1,
+                            'return_desc':'Success'
+                        }
+                result.append(my_dict)
+            print result
+        else:
+            my_dict = {
+                        'return_status':0,
+                        'return_desc':'No Record Found'
+                        }
+            result.append(my_dict)
+        return result  
     
 sms_collabrator()
