@@ -317,7 +317,57 @@ class sms_collabrator(osv.osv):
                             'return_desc':'Success'
                         }
                 result.append(my_dict)
-            print result
+        else:
+            my_dict = {
+                        'return_status':0,
+                        'return_desc':'No Record Found'
+                        }
+            result.append(my_dict)
+        return result  
+
+    def sms_exam_marksheet(self, cr, uid, student_id, class_id):
+        result = []
+        sql = """SELECT tab1.id, tab6.name, tab1.exam_status,  tab2.student_id, 
+                tab2.subject, tab5.name, tab1.obtained_marks, tab1.total_marks
+                FROM sms_exam_lines AS tab1
+                INNER JOIN sms_student_subject AS tab2
+                on tab1.student_subject = tab2.id
+                INNER JOIN sms_academiccalendar_student AS tab3
+                on tab2.student_id = tab3.std_id
+                INNER JOIN sms_academiccalendar_subjects AS tab4
+                on tab2.subject = tab4.id
+                INNER JOIN sms_subject AS tab5
+                on tab4.subject_id = tab5.id
+                INNER JOIN sms_exam_datesheet AS tab6
+                ON tab1.name = tab6.id
+                WHERE tab2.student_id = """+str(student_id)+"""
+                AND tab2.subject IN (SELECT DISTINCT tab2.subject 
+                FROM sms_exam_datesheet AS tab1
+                INNER JOIN sms_exam_datesheet_lines AS tab2
+                ON tab1.id = tab2.name
+                INNER JOIN sms_academiccalendar_subjects AS tab3
+                ON tab2.subject = tab3.id 
+                WHERE tab1.academiccalendar = """+str(class_id)+"""
+                AND tab1.status = 'Active'
+                ORDER BY tab2.subject)
+                ORDER BY tab2.student_id""" 
+                
+        cr.execute(sql)
+        sql_recs = cr.fetchall()
+        if sql_recs:
+            for rec in sql_recs:
+                my_dict = {'id':rec[0],
+                            'exam_name':rec[1],
+                            'student_attendance':rec[2],
+                            'student_id':rec[3],
+                            'subject_id':rec[4],
+                            'subject_name':rec[5],
+                            'obtained_marks':rec[6],
+                            'total_marks':rec[7],
+                            'return_status':1,
+                            'return_desc':'Success'
+                        }
+                result.append(my_dict)
         else:
             my_dict = {
                         'return_status':0,
