@@ -72,7 +72,7 @@ class sms_collabrator(osv.osv):
     
     def getstudent_subjects(self, cr, uid, student_id, aca_cal_id):
         result = []
-        acad_cal_std_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=', aca_cal_id),('std_id','=', student_id),('subject_status','in',['Current','Promoted'])])
+        acad_cal_std_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=', aca_cal_id),('std_id','=', student_id),('state','in',['Current','Promoted'])])
         if acad_cal_std_id:
             student_subj_id = self.pool.get('sms.student.subject').search(cr,uid,[('student','=', acad_cal_std_id),('subject_status','in',['Current','Pass'])])
             if student_subj_id:
