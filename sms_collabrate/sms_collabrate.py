@@ -189,6 +189,62 @@ class sms_collabrator(osv.osv):
             result.append(my_dict)
         return result
 
+    def stdfee_refundable(self, cr, uid, student_id):
+        result = []
+        sql = """
+                SELECT tab1.id, tab1.amount_received, tab1.amount_paid_back, 
+                tab1.state, tab1.receipt_no, tab2.category 
+                FROM smsfee_studentfee_refundable AS tab1 
+                INNER JOIN smsfee_studentfee AS tab2
+                ON tab1.student_fee_id = tab2.id
+                WHERE tab1.student_id = """+str(student_id)+""" 
+                ORDER BY tab1.id""" 
+                
+        cr.execute(sql)
+        sql_recs = cr.fetchall()
+        if sql_recs:
+            for rec in sql_recs:
+                if rec[2] == 'to_be_paid':
+                    state = 'To be Paid Back' 
+                elif rec[2] == 'paid_back':
+                    state = 'Paid To Student'
+                else:
+                    state = 'Adjusted'
+                if not rec[1]:
+                    amt_received = 0
+                else:
+                    amt_received = rec[1]
+                if not rec[2]:
+                    amt_paid = 0
+                else:
+                    amt_paid = rec[2]
+                if not rec[4]:
+                    receipt_no = 'Null'
+                else:
+                    receipt_no = rec[4]
+                if not rec[5]:
+                    fee_cat = 'Not Defined'
+                else:
+                    fee_cat = rec[5]
+                my_dict = {
+                            'id':rec[0],
+                            'amount_received':amt_received,
+                            'state':state,
+                            'amount_paid_back':amt_paid,
+                            'receipt_no':receipt_no,
+                            'fee_category':fee_cat,
+                            'return_status':1,
+                            'return_desc':'Success'
+                        }
+                result.append(my_dict)
+        else:
+            my_dict = {
+                        'return_status':0,
+                        'return_desc':'No Record Found'
+                        }
+            result.append(my_dict)
+        return result
+
     def stdfee_feebils(self, cr, uid, student_id, state, category):
         result = []
         receipt_ids = self.pool.get('smsfee.receiptbook').search(cr,uid, [('student_id','=', student_id),
