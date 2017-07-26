@@ -62,11 +62,48 @@ class sms_collabrator(osv.osv):
                         'contact_no_1':obj[0].phone,
                         'contact_no_2':obj[0].cell_no,
                         'email':obj[0].email,
+                        'transport_availed':obj[0].transport_availed,
                         'address':obj[0].cur_address,
                         'city':obj[0].cur_city,
                         'login_status':1
                     }
-        
+            result.append(my_dict)
+        return result
+
+    def getstudent_notifications(self, cr, uid, student_id):
+        result = []
+        sql = """
+                SELECT id, name ,state, body, 
+                FROM sms_mass 
+                WHERE student_id = """+str(student_id)+""" 
+                ORDER BY id""" 
+                
+        cr.execute(sql)
+        sql_recs = cr.fetchall()
+        if sql_recs:
+            for rec in sql_recs:
+                if not rec[1]:
+                    name = 'Null'
+                else:
+                    name = rec[1]
+                if not rec[3]:
+                    body = 'Empty'
+                else:
+                    body = rec[3]
+                my_dict = {
+                            'id':rec[0],
+                            'name':name,
+                            'state':rec[2],
+                            'body':body,
+                            'return_status':1,
+                            'return_desc':'Success'
+                        }
+                result.append(my_dict)
+        else:
+            my_dict = {
+                                'return_status':0,
+                                'return_desc':'No Active Class Found'
+                            }
             result.append(my_dict)
         return result
     
