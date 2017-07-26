@@ -9,19 +9,22 @@
 			<form string="SMS Mass" version="7.0">
 				<header>
 					<field name="state" widget="statusbar"/>
+					<button name="set_to_waiting" string="Set to Waiting" states="Draft" type="object" groups="" class="oe_highlight"/>
+					<button name="set_to_approve" string="Approve" states="Waiting" type="object" groups="" class="oe_highlight"/>
 				</header>
 				<sheet>
-					<group name="sms_mass.sendingBaseTable_main">
-						<field name="name"/>
-						<field name="subject"/>
+					<group name="sms_mass.sendingBaseTable_main" colspan="4">
+						<field name="name" attrs="{'readonly':[('state','=','Approved')]}"/>
+						<field name="subject" attrs="{'readonly':[('state','=','Approved')]}"/>
+						<field name="student_id" attrs="{'readonly':[('state','=','Approved')]}"/>
 						<!--<field name="sending_option"/>-->
 						<newline/>
 						<group col="4" colspan="2">
-							<field name="composed_date"/>
-							<field name="action_date"/>
+							<field name="composed_date" attrs="{'readonly':[('state','=','Approved')]}"/>
+							<field name="action_date" attrs="{'readonly':[('state','=','Approved')]}"/>
 						</group>
 						<newline/>
-						<field name="body"/>
+						<field name="body" attrs="{'readonly':[('state','=','Approved')]}" nolabel="1"/>
 					</group>
 				</sheet>	 	
 			</form>

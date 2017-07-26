@@ -5,6 +5,7 @@
     'category': 'Messages for Portal',
     'description': """This Module is used to save messages and feeds of students""",
     'website': 'http://www.inovtec.com.pk',
+    'depends':['sms'],
     'data': [
              'sms_mass_view.xml',
             ],
