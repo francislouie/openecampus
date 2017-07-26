@@ -28,6 +28,7 @@ class sms_collabrator(osv.osv):
                         'class_name':obj[0].current_class.name,
                         'pic':obj[0].image,
                         'std_id':obj[0].id,
+                        'transport_availed':obj[0].transport_availed,
                         'state':obj[0].state,
                         'login_status':1
                     }
