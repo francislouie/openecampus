@@ -74,11 +74,10 @@ class sms_collabrator(osv.osv):
     def getstudent_notifications(self, cr, uid, student_id):
         result = []
         sql = """
-                SELECT id, name ,state, body, 
+                SELECT id, name ,state, body 
                 FROM sms_mass 
                 WHERE student_id = """+str(student_id)+""" 
                 ORDER BY id""" 
-                
         cr.execute(sql)
         sql_recs = cr.fetchall()
         if sql_recs:
