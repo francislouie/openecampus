@@ -802,8 +802,13 @@ class smsfee_studentfee(osv.osv):
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         #*00*************create log for updation in student fee**************************
+        
+        if type(ids) is list:
+            _ids = ids[0]
+        else:
+            _ids = ids
         for k,v in vals.iteritems():
-            sql = """ select """ +str(k)+ """ from smsfee_studentfee where id ="""+str(ids)+ """
+            sql = """ select """ +str(k)+ """ from smsfee_studentfee where id ="""+str(_ids)+ """
             """
             cr.execute(sql)
             pre_val = cr.fetchone()[0]
@@ -994,7 +999,7 @@ class smsfee_studentfee(osv.osv):
             if f.fee_type.id:
                 res[f.id] = f.fee_type.fee_type.display_sequence
         return res
-    
+
     #smsfee_studentfee
     _name = 'smsfee.studentfee'
     _description = "Stores student fee record"
@@ -1651,8 +1656,8 @@ class smsfee_receiptbook(osv.osv):
                         'late_fee':0,
                         'total':unpaidfee.fee_amount}
                         self.pool.get('smsfee.receiptbook.lines').create(cr ,uid,feelinesdict)
-        return True 
-
+        return True
+     
     _order = 'id desc'
     #smsfee_receiptbook
     _name = 'smsfee.receiptbook'
@@ -1776,11 +1781,20 @@ class smsfee_receiptbook_lines(osv.osv):
         for f in self.browse(cr, uid, ids, context=context):
             result[f.id] = str(f.student_fee_id.name)
         return result
+
+    def get_display_order(self, cr, uid, ids, name, args, context=None):
+        """This method retruns the sequnece of parent class of this record. that will be use to order the list record of acad cal"""
+        res = {}
+        for f in self.browse(cr, uid, ids, context):
+            if f.fee_type.id:
+                res[f.id] = f.fee_type.fee_type.display_sequence
+        return res
     
-    #smsfee_receiptbook_lines
     _name = 'smsfee.receiptbook.lines'
     _rec_name = 'fee_name'
     _description = "This object store fee types"
+    _order = 'display_order,fee_month'
+    
     _columns = {
         'name': fields.many2one('sms.academiccalendar','Academic Calendar'),
         'fee_name': fields.function(_set_feename,string = 'Fee.',type = 'char',method = True),      
@@ -1795,6 +1809,7 @@ class smsfee_receiptbook_lines(osv.osv):
         'discount': fields.integer('Discount'),
         'net_total': fields.integer('Balance'),  
         'reconcile':fields.boolean('Reconcile',readonly = True), 
+        'display_order':fields.function(get_display_order, store=True, string='Display order', type='integer'),
     }
     _sql_constraints = [  
         ('Fee Exisits', 'unique (receipt_no)', 'Fee Receipt No Must be Unique!')
