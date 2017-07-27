@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+
+	<record model="ir.ui.view" id="view_sms_mass_form">
+		<field name="name">sms_mass.form</field>
+		<field name="model">sms.mass</field>
+		<field name="arch" type="xml">
+			<form string="SMS Mass" version="7.0">
+				<header>
+					<field name="state" widget="statusbar"/>
+					<button name="set_to_waiting" string="Set to Waiting" states="Draft" type="object" groups="" class="oe_highlight"/>
+					<button name="set_to_approve" string="Approve" states="Waiting" type="object" groups="" class="oe_highlight"/>
+				</header>
+				<sheet>
+					<group name="sms_mass.sendingBaseTable_main" colspan="4">
+						<field name="name" attrs="{'readonly':[('state','=','Approved')]}"/>
+						<field name="subject" attrs="{'readonly':[('state','=','Approved')]}"/>
+						<field name="student_id" attrs="{'readonly':[('state','=','Approved')]}"/>
+						<!--<field name="sending_option"/>-->
+						<newline/>
+						<group col="4" colspan="2">
+							<field name="composed_date" attrs="{'readonly':[('state','=','Approved')]}"/>
+							<field name="action_date" attrs="{'readonly':[('state','=','Approved')]}"/>
+						</group>
+						<newline/>
+						<field name="body" attrs="{'readonly':[('state','=','Approved')]}" nolabel="1"/>
+					</group>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_sms_mass_tree">
+		<field name="name">sms_mass.tree</field>
+		<field name="model">sms.mass</field>
+		<field name="arch" type="xml">
+			<tree string="SMS Mass">
+				<field name="name"/>
+				<field name="subject"/>
+				<!--<field name="sending_option"/>-->
+				<field name="composed_date"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_sms_mass_search" model="ir.ui.view">
+		<field name="name">sms_mass.search</field>
+		<field name="model">sms.mass</field>
+		<field name="arch" type="xml">
+			<search string="SMS Mass">
+				<field name="subject" string="Subject"/>
+				<!--<field name="sending_option"/>-->
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_sms_mass">
+		<field name="name">SMS Mass</field>
+		<field name="res_model">sms.mass</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="view_sms_mass_search"/>
+	</record>
+
+	<menuitem name="Portal Messages" id="sms_mass_config_id" sequence="6" parent="sms.menu_configuration_id"
+	groups=""/>
+
+	<menuitem name="SMS Mass" id="sms_mass_basetable_id" sequence="1" parent="sms_mass_config_id"
+	groups="" action="action_sms_mass"/>
+
+    </data>
+</openerp>
