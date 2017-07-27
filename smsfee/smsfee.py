@@ -393,6 +393,39 @@ class sms_student(osv.osv):
         'context': ctx,
         }
         return result 
+    
+    def total_outstanding_dues(self, cr, uid, student_id,fee_category):
+        """
+        This method returns total outstanding dues of a stduent in academics section only. 
+        No other function will be cereated on parser or any place to calculate dues of academics for a students, all methods in wizard report 
+        or in any place will call this method
+        This methods is called by
+        1: Set_payebl methods which is used in f.function on sms_student
+        2: Defaulter students list by passing students id
+        
+        Note: this method is also called for transport fee, but this is not inside transport module, we will check its working where tranport is 
+        not installed, if it works fine then the same method will be called by all other modules like hostel, mass_sms etc
+        """
+        if fee_category == 'Overall':
+            sql= """SELECT COALESCE(sum(fee_amount),'0') as fee_amount from smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where smsfee_studentfee.state = 'fee_unpaid'
+                            and smsfee_studentfee.student_id = """+str(student_id)
+        else:
+            sql= """SELECT COALESCE(sum(fee_amount),'0') as fee_amount from smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where smsfee_feetypes.category = '""" +fee_category+"""'
+                            and smsfee_studentfee.state = 'fee_unpaid'
+                            and smsfee_studentfee.student_id = """+str(student_id)
+                            
+        cr.execute(sql)
+        rec = cr.fetchone() 
+        return rec[0]
+        
     def set_paybles(self, cr, uid, ids, context={}, arg=None, obj=None):
         # temproray inner joins are used to get to fee cateogry of fee ttype, when fee strucre of student fee table is refined, one inner joiin will be removed
         result = {}
