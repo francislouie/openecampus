@@ -10,13 +10,15 @@
             <field name="arch" type="xml">
                 <form string="Print Defaulter students Reports" version="7.0">
                     <group>
+                    <newline/><field name="session" placeholder = "Academic Session" required="1"/>
 					<group >
-						<newline/><field name="session" placeholder = "Session"  required="1"/>
+						
                       	<newline/><field name="class_id" placeholder = "Classes" nolabel = "1" />
                     </group>
                     <group>
-						<field name="category" />
-						 <newline/><field name="order_by"/>
+						<field name="category" required="1" />
+						 <newline/><field name="order_by" required="1"/>
+						 <newline/><field name="show_phone_no"/>
                    </group>
 					</group>
                     <footer>

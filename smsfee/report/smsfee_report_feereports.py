@@ -393,48 +393,38 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             #if defaulter or is not set then order it by student name
             order_by = this_form['order_by'] or 'sms_student.name'
             fee_amount = float(0)
-            sql_academics = """SELECT COALESCE(sum(fee_amount),'0'),sms_student.id,sms_student.name,registration_no,sms_student.state
-                            ,(select name from sms_academiccalendar where id=current_class) from smsfee_studentfee
-                            inner join sms_student on sms_student.id = smsfee_studentfee.student_id
-                            inner join smsfee_classes_fees_lines 
-                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                            where smsfee_feetypes.category =  'Academics'
-                            and smsfee_studentfee.state = 'fee_unpaid'
-                            group by sms_student.id,sms_student.name,registration_no,current_class,sms_student.state
-                            order by """ +str(order_by)+"""
-                             """
+            sql_academics = """SELECT sms_student.id,sms_student.name,registration_no,sms_student.state
+                                ,sms_academiccalendar.name ,sms_academiccalendar.id from sms_academiccalendar
+                                inner join sms_student on sms_student.current_class = sms_academiccalendar.id
+                                where sms_academiccalendar.session_id = """+str(this_form['session'][0])+ """
+                                order by sms_academiccalendar.name,sms_student.name asc """
+                                                                     
+                            
+            print sql_academics
             self.cr.execute(sql_academics)
             rec = self.cr.fetchall() 
             i = 1    
             for student in rec:
-                mydict = {'sno':'SNO','student':student[2],'registration_no':student[3],'adm_state':student[4],'class_name':student[5],'father':'Father','fee_amount':student[0],'remarks':'Remarks','total':'TOTAL'}
-                mydict['fee_amount_academics'] = '{0:,d}'.format(student[0])#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
-            
-                sql_transport = """SELECT COALESCE(sum(fee_amount),'0')  from smsfee_studentfee
-                        inner join smsfee_classes_fees_lines 
-                        on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                        where smsfee_feetypes.category =  'Transport'
-                        and  smsfee_studentfee.student_id = """+str(student[1])+"""
-                        AND state = 'fee_unpaid'
-                         """
-                self.cr.execute(sql_transport)
-                rec = self.cr.fetchone()     
-                fee_amount2 = rec[0]
-                mydict['fee_amount_transport'] = '{0:,d}'.format(fee_amount2)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
-            
-                sql_total = """SELECT COALESCE(sum(fee_amount),'0')  from smsfee_studentfee
-                       inner join smsfee_classes_fees_lines 
-                        on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                        where   smsfee_studentfee.student_id = """+str(student[1])+"""
-                        AND state = 'fee_unpaid'
-                         """
-                self.cr.execute(sql_total)
-                rec = self.cr.fetchone()     
-                fee_amount3 = rec[0]
-                mydict['fee_amount_total'] = '{0:,d}'.format(fee_amount3)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                mydict = {'sno':'SNO','student':student[1],'registration_no':student[2],'adm_state':student[3],'class_name':student[4],'father':'Father','fee_amount':student[0],'remarks':'Remarks','total':'TOTAL'}
+                if this_form['category'] == 'Academics':
+                    
+                    amount_academics = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics')
+                    mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                    mydict['fee_amount_transport'] = '--'
+                    mydict['fee_amount_total'] = '{0:,d}'.format(amount_academics)
+                elif this_form['category'] == 'Transport':
+                    amount_transport = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Transport')
+                    mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                    mydict['fee_amount_academics'] = '--'
+                    mydict['fee_amount_total'] = '{0:,d}'.format(amount_transport)
+                elif this_form['category'] == 'All':
+                    amount_academics = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics')
+                    mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                    amount_transport = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Transport')
+                    mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                    amount_overall = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Overall')
+                    mydict['fee_amount_total'] = '{0:,d}'.format(amount_overall)
+                
                 result.append(mydict)
                 i = i + 1
                 
