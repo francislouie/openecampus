@@ -82,7 +82,7 @@
 	    <td><para style="para_heading">[[ r['fee_amount_academics'] ]]</para></td>
 	    <td><para style="para_heading">[[ r['fee_amount_transport'] ]]</para></td>
 	    <td><para style="para_heading">[[ r['fee_amount_total'] ]]</para></td>
-	    <td><para style="para_heading"></para></td>
+	    <td><para style="para_heading">[[ r['remarks'] ]]</para></td>
 	  </tr>
 	  </blockTable>
     </section>
