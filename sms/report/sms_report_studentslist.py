@@ -85,7 +85,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
         _logger.info("_______ %r out of_________", (fee_st))
         i = 1
         #-------------- Setting Fee Structure Label Table for Report -----------------------------        
-        my_dict = {'s_no':'#', 'acad_cal':'Class', 'state':'State', 'fs1':'', 'fs2':'', 'fs3':'', 'fs4':'', 'fs5':'', 'fs6':'','fs7':'','fs8':'', 'total_stds':'Total Students'}
+        my_dict = {'s_no':'#', 'acad_cal':'Class', 'state':'State', 'fs1':'', 'fs2':'', 'fs3':'', 'fs4':'', 'fs5':'', 'fs6':'', 'total_stds':'Total Students'}
         for fs in fee_st:
             recfee_st  = self.pool.get('sms.feestructure').browse(self.cr, self.uid, fs)
             sql_checking = """
@@ -119,7 +119,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
 
         #-------------- Getting All Classes -----------------------------        
         for cls in acad_cal:
-            my_dict = {'s_no':'', 'acad_cal':'', 'state':'', 'fs1':'', 'fs2':'', 'fs3':'','fs4':'','fs5':'', 'fs6':'','fs7':'','fs8':'', 'total_stds':''}            
+            my_dict = {'s_no':'', 'acad_cal':'', 'state':'', 'fs1':'', 'fs2':'', 'fs3':'','fs4':'','fs5':'', 'fs6':'', 'total_stds':''}            
             my_dict['s_no'] = j
             my_dict['acad_cal'] = cls[1]
             my_dict['state'] = cls[2]

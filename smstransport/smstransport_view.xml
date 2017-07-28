@@ -490,7 +490,6 @@
 	<field name="type">form</field>
 	<field name="arch" type="xml">
 		<data>
-			
 			<xpath expr="//page[@string='Fee Academics']" position="after">
 				<page string = "Transport Fee">
 				<group>

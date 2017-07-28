@@ -398,8 +398,6 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                                 inner join sms_student on sms_student.current_class = sms_academiccalendar.id
                                 where sms_academiccalendar.session_id = """+str(this_form['session'][0])+ """
                                 order by sms_academiccalendar.name,sms_student.name asc """
-                                                                     
-                            
             print sql_academics
             self.cr.execute(sql_academics)
             rec = self.cr.fetchall() 
@@ -407,7 +405,6 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             for student in rec:
                 mydict = {'sno':'SNO','student':student[1],'registration_no':student[2],'adm_state':student[3],'class_name':student[4],'father':'Father','fee_amount':student[0],'remarks':'Remarks','total':'TOTAL'}
                 if this_form['category'] == 'Academics':
-                    
                     amount_academics = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics')
                     mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
                     mydict['fee_amount_transport'] = '--'
