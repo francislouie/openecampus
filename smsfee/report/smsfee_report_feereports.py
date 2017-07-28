@@ -352,7 +352,6 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                                 inner join smsfee_classes_fees_lines 
                                 on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                                 inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                                
                                  where  smsfee_studentfee.student_id = """+str(student.id)+"""
                                  """ +str(category_filter)+"""
                                   and smsfee_studentfee.state = 'fee_paid'
@@ -389,42 +388,50 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             result = []
             """Late fee amount is not shown. to show it, make another columns on right side of others and mention it in separate column"""
             this_form = self.datas['form']
+            order_by = this_form['order_by']
+            contact_option = this_form['show_phone_no']
             cls_id = this_form['class_id']
-            #if defaulter or is not set then order it by student name
-            order_by = this_form['order_by'] or 'sms_student.name'
-            fee_amount = float(0)
-            sql_academics = """SELECT sms_student.id,sms_student.name,registration_no,sms_student.state
-                                ,sms_academiccalendar.name ,sms_academiccalendar.id from sms_academiccalendar
-                                inner join sms_student on sms_student.current_class = sms_academiccalendar.id
-                                where sms_academiccalendar.session_id = """+str(this_form['session'][0])+ """
-                                order by sms_academiccalendar.name,sms_student.name asc """
-            print sql_academics
+            if cls_id:
+                class_str = str(tuple(cls_id))
+                class_str = "AND sms_student.current_class in " + class_str.replace(',)', ')')
+                
+            sql_academics = """SELECT sms_student.id,sms_student.name, registration_no, sms_student.state
+                                ,sms_academiccalendar.name , sms_academiccalendar.id 
+                                FROM sms_academiccalendar
+                                INNER JOIN sms_student 
+                                ON sms_student.current_class = sms_academiccalendar.id
+                                WHERE sms_academiccalendar.session_id = """+str(this_form['session'][0])+ """
+                                """+ class_str + """ 
+                                ORDER BY """+str(order_by)+""""""
             self.cr.execute(sql_academics)
             rec = self.cr.fetchall() 
             i = 1    
             for student in rec:
-                mydict = {'sno':'SNO','student':student[1],'registration_no':student[2],'adm_state':student[3],'class_name':student[4],'father':'Father','fee_amount':student[0],'remarks':'Remarks','total':'TOTAL'}
+                if student[3] != 'Admitted':
+                    student_name = str(student[1])+'(*)'
+                else:
+                    student_name = str(student[1])
+                mydict = {'sno':'SNO','student':student_name,'registration_no':student[2],'adm_state':student[3],'class_name':student[4],'father':'Father','fee_amount':student[0],'remarks':'Remarks','total':'TOTAL'}
                 if this_form['category'] == 'Academics':
                     amount_academics = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics')
-                    mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                    mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
                     mydict['fee_amount_transport'] = '--'
                     mydict['fee_amount_total'] = '{0:,d}'.format(amount_academics)
                 elif this_form['category'] == 'Transport':
                     amount_transport = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Transport')
-                    mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                    mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
                     mydict['fee_amount_academics'] = '--'
                     mydict['fee_amount_total'] = '{0:,d}'.format(amount_transport)
                 elif this_form['category'] == 'All':
                     amount_academics = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics')
-                    mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                    mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
                     amount_transport = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Transport')
-                    mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to cureency format
+                    mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
                     amount_overall = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Overall')
                     mydict['fee_amount_total'] = '{0:,d}'.format(amount_overall)
-                
+                mydict['sno'] = i
                 result.append(mydict)
                 i = i + 1
-                
             return result
 #---------------------------------------------------------------------------------------------------------------------------------------------------
 
