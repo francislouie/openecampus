@@ -31,7 +31,7 @@
   <story>
 
     <section>
-		<blockTable colWidths="30.0,140.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0" style="Table21">
+		<blockTable colWidths="30.0,140.0,80.0,80.0,80.0,80.0,80.0,80.0,60.0" style="Table21">
 			<tr>
 				<para>[[repeatIn(get_admission_statistics(data['form']),'s')]]</para> 
 				<td><para style="para_1">[[(s['s_no'])]]</para></td>
@@ -42,8 +42,6 @@
 		       	<td><para style="para_1">[[(s['fs4'])]]</para></td>
 		       	<td><para style="para_1">[[(s['fs5'])]]</para></td>
 		       	<td><para style="para_1">[[(s['fs6'])]]</para></td>
-		       	<td><para style="para_1">[[(s['fs7'])]]</para></td>
-		       	<td><para style="para_1">[[(s['fs8'])]]</para></td>
 		       	<td><para style="para_1">[[(s['total_stds'])]]</para></td>
 			</tr>
 		</blockTable>
