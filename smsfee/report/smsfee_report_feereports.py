@@ -391,20 +391,26 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             order_by = this_form['order_by']
             contact_option = this_form['show_phone_no']
             cls_id = this_form['class_id']
+            
             if cls_id:
                 class_str = str(tuple(cls_id))
                 class_str = "AND sms_student.current_class in " + class_str.replace(',)', ')')
+            else:
+                class_str = ''
                 
-            sql_academics = """SELECT sms_student.id,sms_student.name, registration_no, sms_student.state
-                                ,sms_academiccalendar.name , sms_academiccalendar.id 
+            sql_academics = """ SELECT sms_student.id, sms_student.name, registration_no, sms_student.state
+                                ,sms_academiccalendar.name , sms_academiccalendar.id, sms_student.cell_no, 
+                                sms_student.phone 
                                 FROM sms_academiccalendar
                                 INNER JOIN sms_student 
                                 ON sms_student.current_class = sms_academiccalendar.id
                                 WHERE sms_academiccalendar.session_id = """+str(this_form['session'][0])+ """
                                 """+ class_str + """ 
                                 ORDER BY """+str(order_by)+""""""
+
             self.cr.execute(sql_academics)
-            rec = self.cr.fetchall() 
+            rec = self.cr.fetchall()
+             
             i = 1    
             for student in rec:
                 if student[3] != 'Admitted':
@@ -412,6 +418,15 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 else:
                     student_name = str(student[1])
                 mydict = {'sno':'SNO','student':student_name,'registration_no':student[2],'adm_state':student[3],'class_name':student[4],'father':'Father','fee_amount':student[0],'remarks':'Remarks','total':'TOTAL'}
+
+                if contact_option:
+                    if not student[6]:
+                        mydict['remarks'] = student[7]
+                    elif not student[7]:
+                        mydict['remarks'] = student[6]
+                    else:
+                        mydict['remarks'] = '--'
+                                   
                 if this_form['category'] == 'Academics':
                     amount_academics = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics')
                     mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
