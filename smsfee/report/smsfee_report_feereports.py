@@ -588,7 +588,8 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 fs = self.pool.get('sms.feestructure').browse(self.cr, self.uid,students_rec.fee_type.id).name
                 mydict['student'] = students_rec.name 
                 mydict['feestrc'] = fs
-                mydict['r_no'] = 'No:\t'+str(rec.name)
+                challan = rec.counter or str(rec.id)+"*****"
+                mydict['r_no'] = 'No:\t'+str(challan)
                 mydict['received_by'] = self.pool.get('res.users').browse(self.cr, self.uid,rec.fee_received_by.id).name
                 mydict['father'] = 'Father:\t'+str(students_rec.father_name)
                 
