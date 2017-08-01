@@ -127,7 +127,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
             k = 1
             my_dict['total_stds'] = 0
             
-            #-------------- Checking admitted students in the specified date range -----------------------------        
+            #-------------- Checking admitted students in the specified date range -----------------------------
+            count_per_fs = 0       
             for fs in fslist:
                 
                 sql = """SELECT COUNT(sms_student.id) 
@@ -143,8 +144,9 @@ class sms_report_studentslist(report_sxw.rml_parse):
                 row = self.cr.fetchone()
                 my_dict['fs'+str(k)] =  row[0]
                 my_dict['total_stds'] = my_dict['total_stds'] + row[0] 
-                k = k +1        
+                k = k +1
             result.append(my_dict)
+            
         return result
     
     def get_student_biodata(self,form):
