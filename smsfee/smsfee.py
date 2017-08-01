@@ -36,7 +36,8 @@ class res_company(osv.osv):
     'company_cfieldseven':fields.char('Field Seven', size=256),
     'company_cfieldeight':fields.char('Field Eight', size=256),
     'company_clogo':fields.binary('Challan Logo'),
-    'order_of_report':fields.selection([('by_name','By Name'),('by_registration_no','By Reg No')],'Order Of Report')
+    'order_of_report':fields.selection([('by_name','By Name'),('by_registration_no','By Reg No')],'Order Of Report'),
+    'campus_code':fields.char('Campus Code', size=64),
     }
     _defaults = {
                  'fee_report_type':'One_on_One',
