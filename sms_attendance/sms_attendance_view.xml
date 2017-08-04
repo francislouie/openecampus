@@ -91,7 +91,10 @@
             <field name="model">sms.class.attendance</field>
             <field name="arch" type="xml">
                 <search string="Search Student Class Attendance">
-                    <field name="name" string="Student"/>
+					<field name="class_id" string="Class"/>
+					<field name="class_teacher" string="Teacher"/>
+					<field name="attendance_date" string="Date of Attendance"/>
+					<field name="punched_by" string="Punched By"/>
                 </search>
             </field>
         </record>
