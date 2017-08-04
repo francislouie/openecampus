@@ -2,6 +2,44 @@
 <openerp>
     <data>
 
+	<!-- Inherited view of sms session -->
+	<record model="ir.ui.view" id="view_sms_attendance">
+		<field name="name">sms.session.formattendance</field>
+		<field name="model">sms.session</field>
+		<field name="inherit_id" ref="sms.view_session_form"/>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<notebook>
+				<page string="Attendance Settings" position="after">
+					<group  colspan="4" col="2">
+						<field name="attendace_punching"/>
+					</group>
+	         		<separator string="Leave Days / Off Days"/>
+					<field name="off_days" nolabel="1" context="{'name': active_id}">
+				        <tree string="Off Days Defination" editable="top">
+				          <field name="name" readonly="1"/>
+				          <field name="day_name"/>
+				          <field name="remarks"/>
+				        </tree>
+					</field>							
+				</page>	
+			</notebook>
+		</field>
+	</record>
+
+	<!-- Acadmeic Calendar Inherited View-->
+	<record model="ir.ui.view" id="inherit_view_sms_attendance_acad_calendar">
+		<field name="name">sms.academiccalendar.inheritattendance</field>
+		<field name="model">sms.academiccalendar</field>
+		<field name="inherit_id" ref="sms.view_session_classes_form"/>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<xpath expr = "//field[@name='class_teacher']" position="after">
+	            <field name="attendace_punching"/>
+			</xpath>
+		</field>
+	</record>
+
 	<!-- Student CLass Attendance -->
 		<record model="ir.ui.view" id="sms_class_attendance_form">
          <field name="name">sms.class.attendance.form</field>
@@ -12,37 +50,38 @@
 					<button name="mark_attendance" string="Proceed" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="submit_attendance" string="Submit" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<button name="cancel_attendance" string="Back" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,submit" readonly="1"  />
+					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Submit" readonly="1"  />
 				</header>
 				<group>
                    <group string="Class Attendance" col="4" colspan="4">
-						<field name="name" />
-						<field name="class_id" on_change="onchange_set_domain(class_id,attendance_date)" attrs="{'readonly':[('state','!=','Draft')] }" /> <!-- domain="[('state','=','active')]" />  -->
-						<field name="class_teacher" readonly="1" />
+						<field name="name"/>
+						<field name="class_id" on_change="onchange_set_domain(class_id,attendance_date)" attrs="{'readonly':[('state','!=','Draft')]}"/>
+						<field name="class_teacher" readonly="1"/>
 						<field name="attendance_date" on_change="onchange_set_domain(class_id,attendance_date)" attrs="{'readonly':[('state','!=','Draft')] }"/>
-						<field name="punched_by" readonly="1" /> 
+						<field name="punched_by" readonly="1" attrs="{'invisible':[('state','=','Draft')]}"/> 
 						<field name="state" readonly="1"/>
                    </group>
 				<newline/>
 				<notebook>
 					<page string="List Of Students">
-						<field name="child_id" attrs="{'readonly':[(('state','=','submit'))] }"/> />
+						<field name="child_id" attrs="{'readonly':[(('state','=','Submit'))]}"/>
 					</page>
 				</notebook>
 			    </group>  
 			  </form>
             </field>
         </record>
+
         <record model="ir.ui.view" id="sms_class_attendance_tree">
             <field name="name">sms.class.attendance.tree</field>
             <field name="model">sms.class.attendance</field>
             <field name="arch" type="xml">
-                <tree string="Student Class Attendance" >
-						<field name="class_id" />
-						<field name="class_teacher" />
-						<field name="attendance_date" />
-						<field name="punched_by" />
-						<field name="child_id" />
+                <tree string="Student Class Attendance">
+					<field name="class_id"/>
+					<field name="class_teacher"/>
+					<field name="attendance_date"/>
+					<field name="punched_by"/>
+					<field name="child_id"/>
                 </tree>
             </field>
         </record>
@@ -52,10 +91,14 @@
             <field name="model">sms.class.attendance</field>
             <field name="arch" type="xml">
                 <search string="Search Student Class Attendance">
-                    <field name="name" string="Student"/>
+					<field name="class_id" string="Class"/>
+					<field name="class_teacher" string="Teacher"/>
+					<field name="attendance_date" string="Date of Attendance"/>
+					<field name="punched_by" string="Punched By"/>
                 </search>
             </field>
         </record>
+
         <record model="ir.actions.act_window" id="action_sms_class_attendance">
             <field name="name">Mark Class Attendance</field>
             <field name="res_model">sms.class.attendance</field>
@@ -71,17 +114,14 @@
             <field name="model">sms.class.attendance.lines</field>
             <field name="arch" type="xml">
                 <tree string="Student Class Attendance" editable="top" >
-<!--						<field name="parent_id" readonly="1"/>   
-						<field name="student_class_id" readonly="1"/>    -->
-						<field name="student_name" readonly="1"/>
-						<field name="present" on_change="onchange_set_present(present)" />
-						<field name="absent" on_change="onchange_set_absent(absent)" />
-						<field name="leave" on_change="onchange_set_leave(leave)" />
-						<field name="state" readonly="1"/>
+					<field name="student_name" readonly="1"/>
+					<field name="present" on_change="onchange_set_present(present)"/>
+					<field name="absent" on_change="onchange_set_absent(absent)"/>
+					<field name="leave" on_change="onchange_set_leave(leave)"/>
+					<field name="state" readonly="1"/>
                 </tree>
             </field>
         </record>
 
-     
 	</data>
 </openerp>
