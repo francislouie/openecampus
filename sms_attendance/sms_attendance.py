@@ -6,6 +6,64 @@ import xlwt
 import xlrd
 from dateutil import parser
 
+class sms_session(osv.osv):
+    
+    """ This object is add Attendance Features to Sessions"""
+
+    def create(self, cr, uid, vals, context=None, check=True):
+        year_id = super(sms_session, self).create(cr, uid, vals, context)
+        for f in self.browse(cr, uid, [year_id], context=context):
+            for class_obj in f.acad_cals:
+                class_obj.attendace_punching = f.attendace_punching
+        return True
+
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        super(sms_session, self).write(cr, uid, ids, vals, context)
+        for f in self.browse(cr, uid, ids, context=context):
+            for class_obj in f.acad_cals:
+                class_obj.attendace_punching = f.attendace_punching
+        return True
+    
+    _name = 'sms.session'
+    _inherit = 'sms.session'
+    _columns = {
+                'off_days':fields.one2many('sms.offdays', 'name', 'OFF Days'),
+                'attendace_punching':fields.selection([('by_admin', 'Admin Staff'),
+                                                     ('by_faculty', 'Faculty')], 'Attendance Punching', 
+                                                      help='Describes the staff category who is going to punch attendance for this session'),
+            } 
+    _defaults = {
+                 'attendace_punching': 'by_admin'
+            }
+sms_session()
+
+class sms_offdays(osv.osv):
+
+    _name = 'sms.offdays'
+    _description = 'This objects holds off days for the school'
+    _columns = {
+                'name':fields.many2one('sms.session', 'Session Id'),
+                'day_name':fields.selection([('Sunday', 'Sunday'),
+                                             ('Friday', 'Friday'),
+                                             ('Saturday', 'Saturday')], 'Day off', help='Off Day for School'),
+                'remarks':fields.char('Remarks'),
+            }
+    _defaults = {}
+sms_offdays()
+
+class sms_academiccalendar(osv.osv):
+    
+    _name = 'sms.academiccalendar'
+    _inherit = 'sms.academiccalendar'
+    _columns = {
+                'attendace_punching':fields.selection([('by_admin', 'Admin Staff'),
+                                                     ('by_faculty', 'Faculty')], 'Attendance Punching', 
+                                                      help='Describes the staff category who is going to punch attendance for this session'),
+            } 
+    _defaults = {
+                 'attendace_punching': 'by_admin'
+            }
+sms_academiccalendar()
 
 class sms_class_attendance(osv.osv):
 

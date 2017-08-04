@@ -2,6 +2,44 @@
 <openerp>
     <data>
 
+	<!-- Inherited view of sms session -->
+	<record model="ir.ui.view" id="view_sms_attendance">
+		<field name="name">sms.session.formattendance</field>
+		<field name="model">sms.session</field>
+		<field name="inherit_id" ref="sms.view_session_form"/>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<notebook>
+				<page string="Attendance Settings" position="after">
+					<group  colspan="4" col="2">
+						<field name="attendace_punching"/>
+					</group>
+	         		<separator string="Leave Days / Off Days"/>
+					<field name="off_days" nolabel="1" context="{'name': active_id}">
+				        <tree string="Off Days Defination" editable="top">
+				          <field name="name" readonly="1"/>
+				          <field name="day_name"/>
+				          <field name="remarks"/>
+				        </tree>
+					</field>							
+				</page>	
+			</notebook>
+		</field>
+	</record>
+
+	<!-- Acadmeic Calendar Inherited View-->
+	<record model="ir.ui.view" id="inherit_view_sms_attendance_acad_calendar">
+		<field name="name">sms.academiccalendar.inheritattendance</field>
+		<field name="model">sms.academiccalendar</field>
+		<field name="inherit_id" ref="sms.view_session_classes_form"/>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<xpath expr = "//field[@name='class_teacher']" position="after">
+	            <field name="attendace_punching"/>
+			</xpath>
+		</field>
+	</record>
+
 	<!-- Student CLass Attendance -->
 		<record model="ir.ui.view" id="sms_class_attendance_form">
          <field name="name">sms.class.attendance.form</field>
