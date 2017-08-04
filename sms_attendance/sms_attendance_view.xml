@@ -50,7 +50,7 @@
 					<button name="mark_attendance" string="Proceed" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="submit_attendance" string="Submit" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<button name="cancel_attendance" string="Back" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,submit" readonly="1"  />
+					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Submit" readonly="1"  />
 				</header>
 				<group>
                    <group string="Class Attendance" col="4" colspan="4">
@@ -64,7 +64,7 @@
 				<newline/>
 				<notebook>
 					<page string="List Of Students">
-						<field name="child_id" attrs="{'readonly':[(('state','=','submit'))] }"/>
+						<field name="child_id" attrs="{'readonly':[(('state','=','Submit'))]}"/>
 					</page>
 				</notebook>
 			    </group>  
