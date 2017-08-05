@@ -1,10 +1,20 @@
 "id","name","model_id:id","group_id:id","perm_read","perm_write","perm_create","perm_unlink"
 
-"session_id","sms.session","sms.model_sms_session","group_sms_attendance_edit",1,1,1,0
+"session_id","sms.session","sms.model_sms_session","group_sms_attendance_edit",1,1,0,0
 "offday_id","sms.offdays","model_sms_offdays","group_sms_attendance_edit",1,1,1,0
 "student_id","sms.student","sms.model_sms_student","group_sms_attendance_edit",1,0,0,0
-"class_id","sms.academiccalendar","sms.model_sms_academiccalendar","group_sms_attendance_edit",1,0,0,0
+"class_id","sms.academiccalendar","sms.model_sms_academiccalendar","group_sms_attendance_edit",1,1,0,0
 "attendance_id","sms.class.attendance","model_sms_class_attendance","group_sms_attendance_edit",1,1,1,0
 "attendanceline_id","sms.class.attendance.lines","model_sms_class_attendance_lines","group_sms_attendance_edit",1,1,1,0
-"academic_student_id","sms.academiccalendar.student","sms.model_sms_academiccalendar_student","group_sms_attendance_edit",1,1,1,0
-"resuser_id","res.users","base.model_res_users","group_sms_attendance_edit",1,1,1,0
+"academic_student_id","sms.academiccalendar.student","sms.model_sms_academiccalendar_student","group_sms_attendance_edit",1,1,0,0
+"resuser_id","res.users","base.model_res_users","group_sms_attendance_edit",1,1,0,0
+
+"session_id","sms.session","sms.model_sms_session","group_sms_attendance_officer",1,1,0,0
+"offday_id","sms.offdays","model_sms_offdays","group_sms_attendance_officer",1,1,1,0
+"student_id","sms.student","sms.model_sms_student","group_sms_attendance_officer",1,0,0,0
+"class_id","sms.academiccalendar","sms.model_sms_academiccalendar","group_sms_attendance_officer",1,1,0,0
+"attendance_id","sms.class.attendance","model_sms_class_attendance","group_sms_attendance_officer",1,1,1,0
+"attendanceline_id","sms.class.attendance.lines","model_sms_class_attendance_lines","group_sms_attendance_officer",1,1,1,0
+"academic_student_id","sms.academiccalendar.student","sms.model_sms_academiccalendar_student","group_sms_attendance_officer",1,1,0,0
+"resuser_id","res.users","base.model_res_users","group_sms_attendance_officer",1,1,0,0
+

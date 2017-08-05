@@ -6,6 +6,10 @@
     <record id="group_sms_attendance_edit" model="res.groups">
         <field name="name">Attendance Editable Group</field>
     </record>
+
+    <record id="group_sms_attendance_officer" model="res.groups">
+        <field name="name">Attendance Officer</field>
+    </record>
     
 </data>
 </openerp>
