@@ -83,14 +83,16 @@ class sms_class_attendance(osv.osv):
                                                                     'student_class_id':acd_cal.id  ,
                                                                     })
         self.write(cr ,uid ,ids ,{'state':'waiting_approval' ,'class_teacher':rec.class_id.class_teacher.id })
-        return None
+        return True
+
+    def edit_attendance(self ,cr ,uid ,ids ,context):
+        self.write(cr ,uid ,ids ,{'state':'waiting_approval' , 'punched_by':uid})
+        return True
         
     def submit_attendance(self ,cr ,uid ,ids ,context):
         rec = self.browse(cr ,uid ,ids)[0]
         for a_lines in rec.child_id:
-            print a_lines.present,a_lines.absent,a_lines.leave
             if a_lines.present == False and a_lines.absent == False and a_lines.leave == False:
-                print "and"
                 self.pool.get('sms.class.attendance.lines').write(cr ,uid ,a_lines.id ,{'state':'Present' ,'present':True })
             elif a_lines.present == True and a_lines.absent == False and a_lines.leave == False:
                 self.pool.get('sms.class.attendance.lines').write(cr ,uid ,a_lines.id ,{'state':'Present'})

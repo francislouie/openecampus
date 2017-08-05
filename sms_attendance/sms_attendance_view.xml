@@ -50,7 +50,8 @@
 					<button name="mark_attendance" string="Proceed" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="submit_attendance" string="Submit" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<button name="cancel_attendance" string="Back" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Submit" readonly="1"  />
+					<button name="edit_attendance" string="Make Editable" states="Submit" type="object" class="oe_highlight" groups="sms_attendance.group_sms_attendance_edit"/>
+					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Submit" readonly="1"/>
 				</header>
 				<group>
                    <group string="Class Attendance" col="4" colspan="4">

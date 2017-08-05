@@ -8,6 +8,8 @@
     'images': [''],
     'depends' : ['base','account','account_accountant','sms'],
     'data': [
+             'security/sms_attendance_security.xml',
+             'security/ir.model.access.csv',
              'sms_attendance_view.xml',
              'sms_attendance_menu.xml',
             ],
