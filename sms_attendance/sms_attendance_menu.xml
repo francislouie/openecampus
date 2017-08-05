@@ -3,9 +3,14 @@
 	<data>
 	
 		<!-- Attendance -->
-		<menuitem id="menu_sms_attendance_top" name="Attendance"   groups="sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager" sequence="1"/>
-		<menuitem id="menu_attendance" name="Class Attendance" parent="menu_sms_attendance_top" sequence="1"  groups="sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager"/>
-		<menuitem id="menu_sms_class_attendance" parent="menu_attendance" sequence="1" action="action_sms_class_attendance"  groups="sms.group_sms_fee_manager,sms.group_sms_principal,sms.group_sms_admin,sms.group_sms_admission_manager"/>
+		<menuitem id="menu_sms_attendance_top" name="Attendance" 
+		groups="sms.group_sms_principal,sms.group_sms_admin,group_sms_attendance_edit,group_sms_attendance_officer" sequence="1"/>
+
+		<menuitem id="menu_attendance" name="Class Attendance" parent="menu_sms_attendance_top" sequence="1"
+		groups="sms.group_sms_principal,sms.group_sms_admin,group_sms_attendance_edit,group_sms_attendance_officer"/>
+
+		<menuitem id="menu_sms_class_attendance" parent="menu_attendance" sequence="1" action="action_sms_class_attendance"
+		groups="sms.group_sms_principal,sms.group_sms_admin,group_sms_attendance_edit,group_sms_attendance_officer"/>
 
 	</data>
 </openerp>

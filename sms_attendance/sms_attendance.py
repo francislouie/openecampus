@@ -67,6 +67,23 @@ sms_academiccalendar()
 
 class sms_class_attendance(osv.osv):
 
+    def create(self, cr, uid, vals, context=None, check=True):
+        record = super(osv.osv, self).create(cr, uid, vals, context)
+        for rec in self.browse(cr, uid, [record], context=context):
+            current_day = datetime.datetime.strptime(str(rec.attendance_date), '%Y-%m-%d').strftime('%A') 
+            for child_rec in rec.class_id.session_id.off_days:
+                #---------------------------------------------------------
+                if not child_rec.day_name:
+                    offday = 'Sunday'
+                else:
+                    offday = child_rec.day_name
+                #---------------------------------------------------------
+                if current_day == offday:
+                    raise osv.except_osv(('Permission Denied!'), ('Cannot punch date on Off Days'))
+                else:
+                    continue
+            return record
+        
     def cancel_attendance(self, cr, uid, ids, context):
         rec = self.browse(cr ,uid ,ids)[0]
         for attendance_lines in rec.child_id:
@@ -77,36 +94,36 @@ class sms_class_attendance(osv.osv):
     def mark_attendance(self, cr, uid, ids, context):
         rec = self.browse(cr ,uid ,ids)[0]
         for acd_cal in rec.class_id.acad_cal_students:
-            create_line = self.pool.get('sms.class.attendance.lines').create(cr ,uid ,{
-                                                                    'parent_id': rec.id ,
-                                                                    'student_name':acd_cal.std_id.id  ,
-                                                                    'student_class_id':acd_cal.id  ,
-                                                                    })
+            self.pool.get('sms.class.attendance.lines').create(cr ,uid ,{'parent_id': rec.id ,
+                                                                        'student_name':acd_cal.std_id.id  ,
+                                                                        'student_class_id':acd_cal.id  ,
+                                                                        })
         self.write(cr ,uid ,ids ,{'state':'waiting_approval' ,'class_teacher':rec.class_id.class_teacher.id })
-        return None
+        return True
+
+    def edit_attendance(self ,cr ,uid ,ids ,context):
+        self.write(cr ,uid ,ids ,{'state':'waiting_approval' , 'punched_by':uid})
+        return True
         
     def submit_attendance(self ,cr ,uid ,ids ,context):
         rec = self.browse(cr ,uid ,ids)[0]
         for a_lines in rec.child_id:
-            print a_lines.present,a_lines.absent,a_lines.leave
             if a_lines.present == False and a_lines.absent == False and a_lines.leave == False:
-                print "and"
                 self.pool.get('sms.class.attendance.lines').write(cr ,uid ,a_lines.id ,{'state':'Present' ,'present':True })
             elif a_lines.present == True and a_lines.absent == False and a_lines.leave == False:
                 self.pool.get('sms.class.attendance.lines').write(cr ,uid ,a_lines.id ,{'state':'Present'})
         self.write(cr ,uid ,ids ,{'state':'Submit' , 'punched_by':uid})
         return None
     
-    def onchange_set_domain(self,cr ,uid ,ids ,class_id ,attendance_date ,context=None):
+    def onchange_set_domain(self, cr, uid , ids, class_id, attendance_date, context=None):
         result = {}
-        rec = self.pool.get('sms.academiccalendar').browse(cr ,uid ,[class_id])[0]
-        current_day = datetime.datetime.now().strftime("%A")
-        if current_day != 'Sunday': 
+        if class_id:
+            rec = self.pool.get('sms.academiccalendar').browse(cr ,uid ,[class_id])[0]
             if attendance_date < rec.session_id.start_date or attendance_date > rec.session_id.end_date:
                 raise osv.except_osv(('Invalid Date'), ('Your date should be within session i.e from   '+str(rec.session_id.start_date)+' to '+str(rec.session_id.end_date) ))
             result['class_teacher'] = rec.class_teacher.id
         else:
-            raise osv.except_osv(('Denied !'), ('Cannot punch date on Sunday.' ))
+            result['class_teacher'] = None
         return {'value': result}
     
     def _user_get(self,cr,uid,context={}):
@@ -132,7 +149,8 @@ class sms_class_attendance(osv.osv):
         'state' : fields.selection([('Draft','Draft'),('waiting_approval','Waiting Approval'),('Submit','Submit')],'Status'),
     }
     _defaults = {'state': 'Draft',
-                 'punched_by':_user_get
+                 'punched_by':_user_get,
+                 'attendance_date':lambda *a: datetime.date.today().strftime('%Y-%m-%d'),
                  }  
     _sql_constraints = [('class_date', 'unique(attendance_date,class_id)', 'Attendance for the selected class has already been punched.')]
 
