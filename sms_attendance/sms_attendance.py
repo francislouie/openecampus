@@ -200,9 +200,9 @@ class sms_class_attendance_lines(osv.osv):
      #   'student_name' : fields.char('Student',size=256),
         'student_name' : fields.many2one('sms.student','Student'),
         'student_class_id' : fields.many2one('sms.academiccalendar.student','Student Class'),
-        'present' :fields.boolean('present'),
-        'absent' :fields.boolean('absent'),
-        'leave' :fields.boolean('leave'),
+        'present' :fields.boolean('Present'),
+        'absent' :fields.boolean('Absent'),
+        'leave' :fields.boolean('Leave'),
         'state' : fields.selection([('Draft','Draft'),('Present','Present'),('Absent','Absent'),('Leave','Leave')],'Status'),
     }
     _defaults = {'state': 'Present' , 'present': True}    

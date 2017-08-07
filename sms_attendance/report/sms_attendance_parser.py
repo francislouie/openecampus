@@ -17,6 +17,8 @@ class sms_attendance_parser(report_sxw.rml_parse):
             'get_today':self.get_today,
             'get_user_name':self.get_user_name,
             'get_blank_attendance_sheet':self.get_blank_attendance_sheet,
+            'get_filled_attendance_report_days':self.get_filled_attendance_report_days,
+            'get_filled_attendance_report_recs':self.get_filled_attendance_report_recs,
             })
         self.context = context
           
@@ -45,9 +47,77 @@ class sms_attendance_parser(report_sxw.rml_parse):
             result.append({'name':row[1],'father':row[2],'S.No':i})
             i += 1
         return result
+
+    def get_filled_attendance_report_days(self, data):
+        result = []
+        this_form = self.datas['form']
+        class_id = this_form['class_id'][0]
+        attendance_ids = tuple(self.pool.get('sms.class.attendance').search(self.cr, self.uid, [('class_id','=',class_id)]))
+        my_dict = {'date1':'', 'date2':'', 'date3':'', 'date4':'', 'date5':'', 'date6':'', 'date7':'','date8':'', 'date9':'', 'date10':''}
+        i = 1
+        for rec_id in attendance_ids: 
+            attendance_obj = self.pool.get('sms.class.attendance').browse(self.cr, self.uid, rec_id)
+            my_dict['date'+ str(i)] = attendance_obj.attendance_date
+            i +=1
+        result.append(my_dict)
+        return result
+
+    def get_filled_attendance_report_recs(self, data):
+        result = []
+        datelist = []
+        this_form = self.datas['form']
+        class_id = this_form['class_id'][0]
+        attendance_ids = self.pool.get('sms.class.attendance').search(self.cr, self.uid, [('class_id','=',class_id)])
+        attendance_objs = self.pool.get('sms.class.attendance').browse(self.cr, self.uid, attendance_ids)
+        for day in attendance_objs:
+            datelist.append(day.id)
+
+        student_sql = """SELECT name, father_name, registration_no
+                        FROM sms_student 
+                        WHERE current_class = """ + str(class_id) + """
+                        """     
+        self.cr.execute(student_sql)
+        studentslist = self.cr.fetchall()
+        if not studentslist:
+            return [{'s_no':'', 'student':'', 'date1':'', 'date2':'', 'date3':'', 'date4':'', 'date5':'', 'date6':'', 'date7':'','date8':'', 'date9':'', 'date10':''}]
+                        
+        k = 1
+        for student in studentslist:
+            my_dict = {'s_no':'', 'student':'', 'date1':'', 'date2':'', 'date3':'', 'date4':'', 'date5':'', 'date6':'', 'date7':'','date8':'', 'date9':'', 'date10':''}
+            my_dict['s_no'] = k
+            my_dict['student'] = student[0]
+            j = 1
+            for attend_id in datelist:
+                get_std_att = """SELECT sms_class_attendance_lines.state FROM sms_class_attendance_lines 
+                                  INNER JOIN sms_class_attendance
+                                   on sms_class_attendance.id = sms_class_attendance_lines.parent_id 
+                                   WHERE sms_class_attendance_lines.parent_id = """+str(attend_id)
+                self.cr.execute(get_std_att)
+                att_rows = self.cr.fetchone()
+                if att_rows:
+                    if att_rows[0] == 'Present':
+                        show_status = 'P'
+                       
+                    elif att_rows[0] == 'Absent':
+                        show_status = 'A'
+                       
+                    elif att_rows[0] == 'Leave':
+                        show_status = 'L'  
+                    my_dict['date'+str(j)] = show_status 
+                else:
+                    show_status = '--'                    
+                    my_dict['date'+str(j)] = show_status      
+                j += 1
+            k += 1 
+            result.append(my_dict)
+        return result
      
 report_sxw.report_sxw('report.smsattendance.blank.attendance.sheet',
                         'sms.academiccalendar',
                         'addons/sms_attendance/report/blank_attendance_sheet.rml', 
                         parser=sms_attendance_parser, header=None)
 
+report_sxw.report_sxw('report.smsattendance.filled.attendance.sheet',
+                        'sms.academiccalendar',
+                        'addons/sms_attendance/report/filled_attendance_report.rml', 
+                        parser=sms_attendance_parser, header=None)
