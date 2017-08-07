@@ -10,5 +10,13 @@
             string="Blank Attendance Sheet"
             />   
 
+		<report id="report_class_filled_attendance_report_id"
+            model="sms.academiccalendar"
+            name="smsattendance.filled.attendance.sheet"
+            multi="True"
+            rml="sms_attendance/report/filled_attendance_report.rml"
+            string="Filled Attendance Report"
+            />   
+
    </data>
 </openerp>
