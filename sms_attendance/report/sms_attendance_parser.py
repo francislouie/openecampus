@@ -31,23 +31,19 @@ class sms_attendance_parser(report_sxw.rml_parse):
     def get_blank_attendance_sheet(self, data):
         result = []
         this_form = self.datas['form']
-        print "-----",this_form['class_id']
-#        sql = """SELECT sms_student.id FROM sms_student
-#            INNER JOIN sms_academiccalendar
-#            ON sms_student.admitted_to_class = sms_academiccalendar.id
-#            INNER JOIN sms_classes
-#            ON sms_academiccalendar.class_id = sms_classes.id 
-#            WHERE sms_student.state != 'Draft'
-#            AND sms_student.state != 'admission_cancel'
-#            AND sms_student.state != 'drop_out'
-#            AND sms_student.state != 'deleted'
-#            AND registration_counter = 0
-#            AND sms_classes.category = '"""+class_cat+"""'
-#            AND sms_academiccalendar.session_id = """ + str(session_id) + """
-#            order by admitted_on, sms_student.name"""
-#            
-#        self.cr.execute(sql)
-#        rows = self.cr.fetchall()
+        class_id = this_form['class_id'][0]
+        sql = """SELECT tab1.id, tab1.name, tab1.father_name 
+                FROM sms_student as tab1
+                INNER JOIN sms_academiccalendar as tab2
+                ON tab1.current_class = tab2.id
+                WHERE tab2.id = """ + str(class_id) + """
+                order by tab1.name"""
+        self.cr.execute(sql)
+        rows = self.cr.fetchall()
+        i = 1
+        for row in rows:
+            result.append({'name':row[1],'father':row[2],'S.No':i})
+            i += 1
         return result
      
 report_sxw.report_sxw('report.smsattendance.blank.attendance.sheet',
