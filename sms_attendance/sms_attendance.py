@@ -141,9 +141,9 @@ class sms_class_attendance(osv.osv):
     _name = 'sms.class.attendance'
     _columns = {
         'name' : fields.function(_set_name, method=True, store=True, size=256, string='Name', type='char'),
-        'class_id' : fields.many2one('sms.academiccalendar',' Class' ,required=True),
-        'class_teacher' : fields.many2one('res.users',' Teacher Name' ),
-        'attendance_date' :fields.date('Date' ,required=True),
+        'class_id' : fields.many2one('sms.academiccalendar',' Class', required=True),
+        'class_teacher' : fields.many2one('hr.employee', 'Class Teacher'),
+        'attendance_date' :fields.date('Date', required=True),
         'punched_by' : fields.many2one('res.users','  Punched By'),
         'child_id' : fields.one2many('sms.class.attendance.lines','parent_id','Student Attendance'),
         'state' : fields.selection([('Draft','Draft'),('waiting_approval','Waiting Approval'),('Submit','Submit')],'Status'),

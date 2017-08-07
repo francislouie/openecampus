@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <document filename="blank_attendanceShett.pdf">
-  <template pageSize="(792.0,1150.0)" title="Blank Attendance Sheet" author="Martin Simon" allowSplitting="20">
+  <template pageSize="(792.0,1150.0)" title="Blank Attendance Sheet" author="Ghulam Masood" allowSplitting="20">
     <pageTemplate id="first">
       <frame id="first" x1="28.0" y1="10.0" width="738" height="1140"/>
     </pageTemplate>
@@ -10,20 +10,6 @@
       <blockAlignment value="LEFT"/>
       <blockValign value="TOP"/>
     </blockTableStyle>
-
-	<blockTableStyle id="Table6">
-      <blockAlignment value="LEFT"/>
-      <blockValign value="TOP"/>
-      <lineStyle kind="LINEABOVE" colorName="#000000" start="0,2" stop="0,2"/>
-	  <lineStyle kind="LINEABOVE" colorName="#000000" start="1,2" stop="1,2"/>
-	 <lineStyle kind="LINEABOVE" colorName="#000000" start="2,2" stop="2,2"/>
-    </blockTableStyle>
-
-	<blockTableStyle id="Table1">
-      <blockAlignment value="LEFT"/>
-      <blockValign value="TOP"/>
-    </blockTableStyle>
-    
     <blockTableStyle id="Table2">
 	    <blockAlignment value="LEFT"/>
 	    <blockValign value="TOP"/>
@@ -33,7 +19,6 @@
 		<blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
 		<blockBackground colorName="#e6e6e6" start="0,0" stop="-1,-1"/>
 	</blockTableStyle>
-
     <blockTableStyle id="Table3">
 	    <blockAlignment value="LEFT"/>
 	    <blockValign value="TOP"/>
@@ -55,10 +40,11 @@
     <images/>
   </stylesheet>
   <story>
+	<!--
     <blockTable colWidths="340.0,200.0,340.0" style="Table6">
       <tr>
 	  <td></td>
-      <td><para style="P20">INSTITUTE OF MANAGEMENT SCIENCES</para></td>
+      <td><para style="P20">International </para></td>
       <td></td>
       </tr>
 	<tr>
@@ -73,51 +59,43 @@
       </tr> <tr><td></td><td></td><td></td></tr>
 	 
     </blockTable>
-
-     <section>
-    <blockTable colWidths="30.0,161.0,161.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0"   repeatRows="1" style="Table2">
-       
-<tr>      <td><para style="P1">S.No</para></td>
-		  <td><para style="P1">Name</para></td>
-		  <td><para style="P1">Father</para></td>	
-          <td><para style="P1"></para></td>
-          <td><para style="P1"></para></td>
-		  <td><para style="P1"></para></td>
-          <td><para style="P1"></para></td>
-          <td><para style="P1"></para></td>
-          <td><para style="P1"></para></td>
-          <td><para style="P1"></para></td>
-          <td><para style="P1"></para></td>
-        </tr>
-      </blockTable>
-    </section>
+-->
     <section>
- 		<para style="P1">[[repeatIn(get_blank_attendance_sheet(data['form']),'s')]]</para>
-      <blockTable colWidths="30.0,161.0,161.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0"  repeatRows="1" style="Table3">
-        <tr>
-          <td><para style="P6"> [[(s['S.No'])]]</para></td>
-          <td><para style="P6">[[(s['name'])]]</para></td>
-          <td><para style="P6">[[(s['father'])]]</para></td>
-		  <td><para style="P6"></para></td>
-          <td><para style="P6"></para></td>
-		  <td><para style="P6"></para></td>
-          <td><para style="P6"></para></td>
-          <td><para style="P6"></para></td>
-          <td><para style="P6"></para></td>
-          <td><para style="P6"></para></td>
-          <td><para style="P6"></para></td>
-		</tr>
-      </blockTable>
-      </section>
+	    <blockTable colWidths="40.0,150.0,160.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0" repeatRows="1" style="Table2">
+			<tr>      
+				<td><para style="P1">S.No</para></td>
+				<td><para style="P1">Student Name</para></td>
+				<td><para style="P1">Father Name</para></td>	
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+			</tr>
+		</blockTable>
+	</section>
+    <section>
+		<para style="P1">[[repeatIn(get_blank_attendance_sheet(data['form']),'s')]]</para>
+			<blockTable colWidths="40.0,150.0,160.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0" repeatRows="1" style="Table3">
+				<tr>
+					<td><para style="P6"> [[(s['S.No'])]]</para></td>
+					<td><para style="P6">[[(s['name'])]]</para></td>
+					<td><para style="P6">[[(s['father'])]]</para></td>
+					<td><para style="P6"></para></td>
+					<td><para style="P6"></para></td>
+					<td><para style="P6"></para></td>
+					<td><para style="P6"></para></td>
+					<td><para style="P6"></para></td>
+					<td><para style="P6"></para></td>
+					<td><para style="P6"></para></td>
+					<td><para style="P6"></para></td>
+				</tr>
+			</blockTable>
+	</section>
   
-<blockTable colWidths="200.0,595" style="Table1">
-<tr>
-</tr>
-<tr>
-<td><para style="P41">Prepared By:[[get_user_info(data['form'])]] </para></td>
-<td><para style="P41"> Teacher Sign ______________ Date: ______________</para></td>
-</tr>
- </blockTable> 
   </story>
 	
 </document>
