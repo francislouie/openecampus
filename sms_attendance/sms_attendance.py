@@ -13,15 +13,16 @@ class sms_session(osv.osv):
     def create(self, cr, uid, vals, context=None, check=True):
         year_id = super(sms_session, self).create(cr, uid, vals, context)
         for f in self.browse(cr, uid, [year_id], context=context):
-            for class_obj in f.acad_cals:
-                class_obj.attendace_punching = f.attendace_punching
+            print "it works"
         return True
 
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-        super(sms_session, self).write(cr, uid, ids, vals, context)
-        for f in self.browse(cr, uid, ids, context=context):
-            for class_obj in f.acad_cals:
-                class_obj.attendace_punching = f.attendace_punching
+        if 'attendace_punching' in vals:
+            for f in self.browse(cr, uid, ids):
+                if 'attendace_punching' in vals:
+                    for class_obj in f.acad_cals:
+                        class_obj.attendace_punching = f.attendace_punching
+            super(sms_session, self).write(cr, uid, ids, vals, context)
         return True
     
     _name = 'sms.session'
