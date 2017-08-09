@@ -142,9 +142,9 @@ class sms_class_attendance(osv.osv):
     _name = 'sms.class.attendance'
     _columns = {
         'name' : fields.function(_set_name, method=True, store=True, size=256, string='Name', type='char'),
-        'class_id' : fields.many2one('sms.academiccalendar',' Class' ,required=True),
-        'class_teacher' : fields.many2one('res.users',' Teacher Name' ),
-        'attendance_date' :fields.date('Date' ,required=True),
+        'class_id' : fields.many2one('sms.academiccalendar',' Class', required=True),
+        'class_teacher' : fields.many2one('hr.employee', 'Class Teacher'),
+        'attendance_date' :fields.date('Date', required=True),
         'punched_by' : fields.many2one('res.users','  Punched By'),
         'child_id' : fields.one2many('sms.class.attendance.lines','parent_id','Student Attendance'),
         'state' : fields.selection([('Draft','Draft'),('waiting_approval','Waiting Approval'),('Submit','Submit')],'Status'),
@@ -201,9 +201,9 @@ class sms_class_attendance_lines(osv.osv):
      #   'student_name' : fields.char('Student',size=256),
         'student_name' : fields.many2one('sms.student','Student'),
         'student_class_id' : fields.many2one('sms.academiccalendar.student','Student Class'),
-        'present' :fields.boolean('present'),
-        'absent' :fields.boolean('absent'),
-        'leave' :fields.boolean('leave'),
+        'present' :fields.boolean('Present'),
+        'absent' :fields.boolean('Absent'),
+        'leave' :fields.boolean('Leave'),
         'state' : fields.selection([('Draft','Draft'),('Present','Present'),('Absent','Absent'),('Leave','Leave')],'Status'),
     }
     _defaults = {'state': 'Present' , 'present': True}    

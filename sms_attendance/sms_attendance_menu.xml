@@ -12,5 +12,14 @@
 		<menuitem id="menu_sms_class_attendance" parent="menu_attendance" sequence="1" action="action_sms_class_attendance"
 		groups="sms.group_sms_principal,sms.group_sms_admin,group_sms_attendance_edit,group_sms_attendance_officer"/>
 
+		<menuitem id="menu_attendance_reports_id" name="Reports" parent="menu_sms_attendance_top" sequence="2"
+		groups="sms.group_sms_principal,sms.group_sms_admin,group_sms_attendance_edit,group_sms_attendance_officer"/>
+
+		<menuitem id="menu_action_blank_attendance_sheet_id" parent="menu_attendance_reports_id" sequence="1" action="action_sms_blank_attendance_sheet"
+		groups="sms.group_sms_principal,sms.group_sms_director,sms.group_sms_admin,group_sms_attendance_edit,group_sms_attendance_officer"/>
+
+		<menuitem id="menu_action_filled_attendance_sheet_id" parent="menu_attendance_reports_id" sequence="2" action="action_sms_filled_attendance_sheet"
+		groups="sms.group_sms_principal,sms.group_sms_director,sms.group_sms_admin,group_sms_attendance_edit,group_sms_attendance_officer"/>
+
 	</data>
 </openerp>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		
+		<report id="report_class_blank_attendance_sheet_id"
+            model="sms.academiccalendar"
+            name="smsattendance.blank.attendance.sheet"
+            multi="True"
+            rml="sms_attendance/report/blank_attendance_sheet.rml"
+            string="Blank Attendance Sheet"
+            />   
+
+		<report id="report_class_filled_attendance_report_id"
+            model="sms.academiccalendar"
+            name="smsattendance.filled.attendance.sheet"
+            multi="True"
+            rml="sms_attendance/report/filled_attendance_report.rml"
+            string="Filled Attendance Report"
+            />   
+
+   </data>
+</openerp>

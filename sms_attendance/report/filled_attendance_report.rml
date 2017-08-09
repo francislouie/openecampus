@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<document filename="blank_attendanceShett.pdf">
+  <template pageSize="(792.0,1150.0)" title="Blank Attendance Sheet" author="Ghulam Masood" allowSplitting="20">
+    <pageTemplate id="first">
+      <frame id="first" x1="28.0" y1="10.0" width="738" height="1140"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <blockTableStyle id="Table3">
+	    <blockAlignment value="LEFT"/>
+	    <blockValign value="TOP"/>
+		<blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+	    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+	    <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
+		<blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+	<initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="para_1" fontName="Helvetica" fontSize="10.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P6" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P20" fontName="Helvetica" fontSize="8"    leading="9"  alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <images/>
+  </stylesheet>
+  <story>
+    <section>
+		<blockTable colWidths="35.0,140.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0" style="Table3">
+			<tr>
+				<para>[[repeatIn(get_filled_attendance_report_days(data['form']),'s')]]</para> 
+				<td><para style="para_1">#</para></td>
+		   	   	<td><para style="para_1">Student Name</para></td>
+		       	<td><para style="para_1">[[(s['date1'])]]</para></td>
+		       	<td><para style="para_1">[[(s['date2'])]]</para></td>
+		       	<td><para style="para_1">[[(s['date3'])]]</para></td>
+		       	<td><para style="para_1">[[(s['date4'])]]</para></td>
+		       	<td><para style="para_1">[[(s['date5'])]]</para></td>
+		       	<td><para style="para_1">[[(s['date6'])]]</para></td>
+		       	<td><para style="para_1">[[(s['date7'])]]</para></td>
+		       	<td><para style="para_1">[[(s['date8'])]]</para></td>
+		       	<td><para style="para_1">[[(s['date9'])]]</para></td>
+		       	<td><para style="para_1">[[(s['date10'])]]</para></td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="35.0,140.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0" style="Table3">
+			<tr>
+				<para>[[repeatIn(get_filled_attendance_report_recs(data['form']),'s')]]</para> 
+				<td><para style="para_1">[[(s['s_no'])]]</para></td>
+		   	   	<td><para style="para_1">[[(s['student'])]]</para></td>
+		       	<td><para style="P20">[[(s['date1'])]]</para></td>
+		       	<td><para style="P20">[[(s['date2'])]]</para></td>
+		       	<td><para style="P20">[[(s['date3'])]]</para></td>
+		       	<td><para style="P20">[[(s['date4'])]]</para></td>
+		       	<td><para style="P20">[[(s['date5'])]]</para></td>
+		       	<td><para style="P20">[[(s['date6'])]]</para></td>
+		       	<td><para style="P20">[[(s['date7'])]]</para></td>
+		       	<td><para style="P20">[[(s['date8'])]]</para></td>
+		       	<td><para style="P20">[[(s['date9'])]]</para></td>
+		       	<td><para style="P20">[[(s['date10'])]]</para></td>
+			</tr>
+		</blockTable>
+	</section>
+  </story>
+</document>
