@@ -946,9 +946,6 @@ class sms_student(osv.osv):
         'relative_relation':fields.char(string = "Relation", size=50),
         'relative_contact':fields.char(string = "Relative Contact #", size=50),
         'relative_addr':fields.char(string = "Relative Address", size=50),
-        'hide_exammarks_portal':fields.boolean('Donot Show Exam Marks?'),
-        'display_contacts_portal':fields.boolean('Display Student Contacts?'),
-        
         
         
         #*****************************************************************************************************
@@ -961,7 +958,6 @@ class sms_student(osv.osv):
         'entrytest_per':0.0,
         'cur_country': _set_default_country,
         'cur_city':'Peshawar',
-        'hide_exammarks_portal':False,
     }
     _sql_constraints = [('name_unique', 'unique (registration_no)', """ Student No must be Unique.""")]    
 

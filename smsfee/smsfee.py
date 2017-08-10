@@ -484,8 +484,14 @@ class sms_student(osv.osv):
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
-
-    }
+            'hide_exammarks_portal':fields.boolean('Donot Show Exam Marks?'),
+            'display_contacts_portal':fields.boolean('Display Student Contacts?'),
+            }
+    _defaults = {
+        'hide_exammarks_portal':lambda *a: False,
+        'display_contacts_portal':lambda *a: False,
+        }
+    
 sms_student()
 
 class smsfee_classes_fees(osv.osv):
