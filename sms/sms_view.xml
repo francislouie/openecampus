@@ -669,7 +669,7 @@
 						 				<field name="father_office_tel" />
 						 				<field name="father_office_mob" />
 										<field name="father_email" />
-										<field name="display_contacts_portal"/>
+										<field name="display_contacts_portal" />
 						          </group>
 									<group string="Mother's Profile">
 										<field name="mother_company"/>
