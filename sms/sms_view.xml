@@ -656,6 +656,7 @@
 								<field name="cur_address"   />
 								<field name="cur_city"/>
 								<field name="cur_country" required ="1" />
+								<field name="hide_exammarks_portal"/>
 			                  </group>
 							</group>
 						</page>  
@@ -668,6 +669,7 @@
 						 				<field name="father_office_tel" />
 						 				<field name="father_office_mob" />
 										<field name="father_email" />
+										<field name="display_contacts_portal"/>
 						          </group>
 									<group string="Mother's Profile">
 										<field name="mother_company"/>
