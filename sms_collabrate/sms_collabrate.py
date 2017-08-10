@@ -139,6 +139,10 @@ class sms_collabrator(osv.osv):
     
     def stdfee_history(self, cr, uid, student_id, aca_cal_id, category):
         result = []
+        get_portal_setting = """SELECT fee_display_portal from res_company"""
+        cr.execute(get_portal_setting)
+        sql_rec_ = cr.fetchone()
+        
         if category == 'Academics':
             sql = """
                     SELECT tab1.id, tab1.date_fee_charged, tab1.state, tab1.fee_amount, 
@@ -153,6 +157,7 @@ class sms_collabrator(osv.osv):
                     WHERE tab1.student_id ="""+str(student_id)+""" 
                     AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
                     AND tab3.category = 'Academics'
+                    AND tab1.state= '"""+str(sql_rec_[0])+"""'
                     ORDER BY tab1.state desc"""
                     
         elif category == 'Transport':
@@ -169,6 +174,7 @@ class sms_collabrator(osv.osv):
                     WHERE tab1.student_id ="""+str(student_id)+""" 
                     AND tab1.acad_cal_id ="""+str(aca_cal_id)+""" 
                     AND tab3.category = 'Transport'
+                    AND tab1.state= '"""+str(sql_rec_[0])+"""'
                     ORDER BY tab1.state desc"""
                     
         else:
@@ -184,10 +190,12 @@ class sms_collabrator(osv.osv):
                     ON tab1.fee_month = tab4.id
                     WHERE tab1.student_id ="""+str(student_id)+""" 
                     AND tab1.acad_cal_id ="""+str(aca_cal_id)+"""
+                    AND tab1.state= '"""+str(sql_rec_[0])+"""'
                     ORDER BY tab1.state desc""" 
-                    
+
         cr.execute(sql)
         sql_recs = cr.fetchall()
+        
         if sql_recs:
             for rec in sql_recs:
                 if rec[7] == 'Monthly_Fee':
@@ -228,56 +236,66 @@ class sms_collabrator(osv.osv):
 
     def stdfee_refundable(self, cr, uid, student_id):
         result = []
-        sql = """
-                SELECT tab1.id, tab1.amount_received, tab1.amount_paid_back, 
-                tab1.state, tab1.receipt_no, tab2.category 
-                FROM smsfee_studentfee_refundable AS tab1 
-                INNER JOIN smsfee_studentfee AS tab2
-                ON tab1.student_fee_id = tab2.id
-                WHERE tab1.student_id = """+str(student_id)+""" 
-                ORDER BY tab1.id""" 
-                
-        cr.execute(sql)
-        sql_recs = cr.fetchall()
-        if sql_recs:
-            for rec in sql_recs:
-                if rec[2] == 'to_be_paid':
-                    state = 'To be Paid Back' 
-                elif rec[2] == 'paid_back':
-                    state = 'Paid To Student'
-                else:
-                    state = 'Adjusted'
-                if not rec[1]:
-                    amt_received = 0
-                else:
-                    amt_received = rec[1]
-                if not rec[2]:
-                    amt_paid = 0
-                else:
-                    amt_paid = rec[2]
-                if not rec[4]:
-                    receipt_no = 'Null'
-                else:
-                    receipt_no = rec[4]
-                if not rec[5]:
-                    fee_cat = 'Not Defined'
-                else:
-                    fee_cat = rec[5]
+        get_portal_setting = """SELECT display_refundable from res_company"""
+        cr.execute(get_portal_setting)
+        sql_rec_ = cr.fetchone()
+        if sql_rec_[0] == True:
+            sql = """
+                    SELECT tab1.id, tab1.amount_received, tab1.amount_paid_back, 
+                    tab1.state, tab1.receipt_no, tab2.category 
+                    FROM smsfee_studentfee_refundable AS tab1 
+                    INNER JOIN smsfee_studentfee AS tab2
+                    ON tab1.student_fee_id = tab2.id
+                    WHERE tab1.student_id = """+str(student_id)+""" 
+                    ORDER BY tab1.id""" 
+            
+            cr.execute(sql)
+            sql_recs = cr.fetchall()
+            if sql_recs:
+                for rec in sql_recs:
+                    if rec[2] == 'to_be_paid':
+                        state = 'To be Paid Back' 
+                    elif rec[2] == 'paid_back':
+                        state = 'Paid To Student'
+                    else:
+                        state = 'Adjusted'
+                    if not rec[1]:
+                        amt_received = 0
+                    else:
+                        amt_received = rec[1]
+                    if not rec[2]:
+                        amt_paid = 0
+                    else:
+                        amt_paid = rec[2]
+                    if not rec[4]:
+                        receipt_no = 'Null'
+                    else:
+                        receipt_no = rec[4]
+                    if not rec[5]:
+                        fee_cat = 'Not Defined'
+                    else:
+                        fee_cat = rec[5]
+                    my_dict = {
+                                'id':rec[0],
+                                'amount_received':amt_received,
+                                'state':state,
+                                'amount_paid_back':amt_paid,
+                                'receipt_no':receipt_no,
+                                'fee_category':fee_cat,
+                                'return_status':1,
+                                'return_desc':'Success'
+                            }
+                    result.append(my_dict)
+            else:
                 my_dict = {
-                            'id':rec[0],
-                            'amount_received':amt_received,
-                            'state':state,
-                            'amount_paid_back':amt_paid,
-                            'receipt_no':receipt_no,
-                            'fee_category':fee_cat,
-                            'return_status':1,
-                            'return_desc':'Success'
-                        }
+                            'return_status':0,
+                            'return_desc':'No Record Found'
+                            }
                 result.append(my_dict)
         else:
             my_dict = {
                         'return_status':0,
-                        'return_desc':'No Record Found'
+                        'return_desc':'Fee Refundables Cannot Be Displayed Please Contact Office'
                         }
             result.append(my_dict)
         return result
@@ -322,6 +340,7 @@ class sms_collabrator(osv.osv):
                 FROM sms_calander_week 
                 WHERE state = '"""+str(state)+"""' 
                 ORDER BY id""" 
+                
         cr.execute(sql)
         sql_recs = cr.fetchall()
         if sql_recs:
@@ -331,7 +350,6 @@ class sms_collabrator(osv.osv):
                         'state':rec[2],
                         'start_date':rec[3],
                         'end_date':rec[4],
-                        #'calender_seq_no':rec[5],                        
                         'return_status':1,
                         'return_desc':'Success'
                         }
@@ -356,7 +374,7 @@ class sms_collabrator(osv.osv):
                 sms_academiccalendar_subjects.subject_id = sms_subject.id
                 WHERE sms_weekly_plan.week = """+str(week_id)+""" 
                 ORDER BY id""" 
-                
+
         cr.execute(sql)
         sql_recs = cr.fetchall()
         if sql_recs:

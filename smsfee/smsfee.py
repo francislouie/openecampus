@@ -38,9 +38,13 @@ class res_company(osv.osv):
     'company_clogo':fields.binary('Challan Logo'),
     'order_of_report':fields.selection([('by_name','By Name'),('by_registration_no','By Reg No')],'Order Of Report'),
     'campus_code':fields.char('Campus Code', size=64),
+    'fee_display_portal':fields.selection([('fee_unpaid','Un-Paid Fee'),('fee_paid','Paid Fee')],'Fee (Displayed on Portal)'),
+    'display_refundable':fields.boolean('Display Refundable Fee'),
     }
     _defaults = {
                  'fee_report_type':'One_on_One',
+                 'fee_display_portal':'fee_unpaid',
+                 'display_refundable': lambda*a : False,
                  }
 res_company()
 

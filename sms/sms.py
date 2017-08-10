@@ -4777,10 +4777,13 @@ class sms_weekly_plan(osv.osv):
         'week' : fields.many2one('sms.calander.week','Calender Week'),
         'filled_by' : fields.many2one('res.users','Filled by'),
         'work_guide' : fields.html('Weekly Plan'),
-        'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'state',required = True),
+        'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')], 'State', required = True),
     }
-    _defaults = {'filled_by': get_user,'state': lambda*a :'Draft'   }    
+    _defaults = {
+                 'filled_by': get_user,
+                 'state': lambda*a :'Draft'}    
     _sql_constraints = []
+    
 sms_weekly_plan()
 
 class project_transactional_log(osv.osv):
