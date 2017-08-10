@@ -295,7 +295,7 @@
 						</page>
 						<page string = "Edit or Add New Fee">
 						<group string = "Update, Delete or add new Fee" readonly ="1">		    	 		
-							<field  name="studen_fee_ids"     nolabel="1"  attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"   />
+							<field  name="studen_fee_ids" nolabel="1"  attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"   />
 						</group>
 						</page>
 						<page string = "Fee Bills">
@@ -313,10 +313,12 @@
 						</notebook>
 			    	</page>
 					<page string="Portal Settings">
+						<!-- 
 						<group colspan="4" col="2">
 							<field name="hide_exammarks_portal"/>
 							<field name="display_contacts_portal" />
 						</group>
+						-->
 					</page>
 			   </notebook>
 		      </field>
