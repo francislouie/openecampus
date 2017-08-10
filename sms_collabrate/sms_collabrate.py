@@ -66,6 +66,7 @@ class sms_collabrator(osv.osv):
                         'transport_availed':obj[0].transport_availed,
                         'address':obj[0].cur_address,
                         'city':obj[0].cur_city,
+                        'display_contact_info':obj[0].display_contacts_portal,
                         'login_status':1
                     }
             result.append(my_dict)
@@ -438,52 +439,62 @@ class sms_collabrator(osv.osv):
 
     def sms_exam_marksheet(self, cr, uid, student_id, class_id):
         result = []
-        sql = """SELECT tab1.id, tab6.name, tab1.exam_status,  tab2.student_id, 
-                tab2.subject, tab5.name, tab1.obtained_marks, tab1.total_marks
-                FROM sms_exam_lines AS tab1
-                INNER JOIN sms_student_subject AS tab2
-                on tab1.student_subject = tab2.id
-                INNER JOIN sms_academiccalendar_student AS tab3
-                on tab2.student_id = tab3.std_id
-                INNER JOIN sms_academiccalendar_subjects AS tab4
-                on tab2.subject = tab4.id
-                INNER JOIN sms_subject AS tab5
-                on tab4.subject_id = tab5.id
-                INNER JOIN sms_exam_datesheet AS tab6
-                ON tab1.name = tab6.id
-                WHERE tab2.student_id = """+str(student_id)+"""
-                AND tab2.subject IN (SELECT DISTINCT tab2.subject 
-                FROM sms_exam_datesheet AS tab1
-                INNER JOIN sms_exam_datesheet_lines AS tab2
-                ON tab1.id = tab2.name
-                INNER JOIN sms_academiccalendar_subjects AS tab3
-                ON tab2.subject = tab3.id 
-                WHERE tab1.academiccalendar = """+str(class_id)+"""
-                AND tab1.status = 'Active'
-                ORDER BY tab2.subject)
-                ORDER BY tab2.student_id""" 
-                
-        cr.execute(sql)
-        sql_recs = cr.fetchall()
-        if sql_recs:
-            for rec in sql_recs:
-                my_dict = {'id':rec[0],
-                            'exam_name':rec[1],
-                            'student_attendance':rec[2],
-                            'student_id':rec[3],
-                            'subject_id':rec[4],
-                            'subject_name':rec[5],
-                            'obtained_marks':rec[6],
-                            'total_marks':rec[7],
-                            'return_status':1,
-                            'return_desc':'Success'
-                        }
+        get_portal_setting = """SELECT hide_exammarks_portal FROM sms_student WHERE id= """+str(student_id)
+        cr.execute(get_portal_setting)
+        sql_rec_ = cr.fetchone()
+        if sql_rec_[0] == False or sql_rec_[0] == None:
+            sql = """SELECT tab1.id, tab6.name, tab1.exam_status,  tab2.student_id, 
+                    tab2.subject, tab5.name, tab1.obtained_marks, tab1.total_marks
+                    FROM sms_exam_lines AS tab1
+                    INNER JOIN sms_student_subject AS tab2
+                    on tab1.student_subject = tab2.id
+                    INNER JOIN sms_academiccalendar_student AS tab3
+                    on tab2.student_id = tab3.std_id
+                    INNER JOIN sms_academiccalendar_subjects AS tab4
+                    on tab2.subject = tab4.id
+                    INNER JOIN sms_subject AS tab5
+                    on tab4.subject_id = tab5.id
+                    INNER JOIN sms_exam_datesheet AS tab6
+                    ON tab1.name = tab6.id
+                    WHERE tab2.student_id = """+str(student_id)+"""
+                    AND tab2.subject IN (SELECT DISTINCT tab2.subject 
+                    FROM sms_exam_datesheet AS tab1
+                    INNER JOIN sms_exam_datesheet_lines AS tab2
+                    ON tab1.id = tab2.name
+                    INNER JOIN sms_academiccalendar_subjects AS tab3
+                    ON tab2.subject = tab3.id 
+                    WHERE tab1.academiccalendar = """+str(class_id)+"""
+                    AND tab1.status = 'Active'
+                    ORDER BY tab2.subject)
+                    ORDER BY tab2.student_id""" 
+                    
+            cr.execute(sql)
+            sql_recs = cr.fetchall()
+            if sql_recs:
+                for rec in sql_recs:
+                    my_dict = {'id':rec[0],
+                                'exam_name':rec[1],
+                                'student_attendance':rec[2],
+                                'student_id':rec[3],
+                                'subject_id':rec[4],
+                                'subject_name':rec[5],
+                                'obtained_marks':rec[6],
+                                'total_marks':rec[7],
+                                'return_status':1,
+                                'return_desc':'Success'
+                            }
+                    result.append(my_dict)
+            else:
+                my_dict = {
+                            'return_status':0,
+                            'return_desc':'No Record Found'
+                            }
                 result.append(my_dict)
         else:
             my_dict = {
-                        'return_status':0,
-                        'return_desc':'No Record Found'
-                        }
+                    'return_status':0,
+                    'return_desc':'Record Not found due to missing exams or defaulter list'
+                    }
             result.append(my_dict)
         return result  
     
