@@ -151,47 +151,48 @@ class sms_report_studentslist(report_sxw.rml_parse):
     
     def get_student_biodata(self,form):
         
-#         sql = """update sms_academiccalendar set display_order = (select sequence from sms_classes where
-#              id = (select sms_academiccalendar.class_id))"""
-#         self.cr.execute(sql)
-#         self.cr.commit()
-#         
-#         #------  To Populate admission confirmation date in student_admission_register object ------------------
-#         sql = """SELECT sms_student.id, sms_student.admitted_on, student_admission_register.id
-#                 FROM sms_student
-#                 INNER JOIN student_admission_register
-#                 ON sms_student.admission_form_no = student_admission_register.id
-#                 """
-#         self.cr.execute(sql)
-#         studentrecs = self.cr.fetchall()
-#         
-#         # now reset order of smsfee_studentfee
-#         fees = self.pool.get('smsfee.studentfee').search(self.cr, self.uid, [])
-#         feerec = self.pool.get('smsfee.studentfee').browse(self.cr, self.uid,fees)
-#         for thisfee in feerec:
-#             if thisfee.fee_type is not None:
-#                 if thisfee.fee_type.fee_type is not None:
-#                     self.pool.get('smsfee.studentfee').write(self.cr, self.uid, thisfee.id, {'display_order':thisfee.fee_type.fee_type.display_sequence})
-#         
-#         for rec in studentrecs:
-#             updating = self.pool.get('student.admission.register').write(self.cr, self.uid, rec[2], {'date_admission_confirmed':rec[1]})
-#             if updating:
-#                 print 'success'
+        sql = """update sms_academiccalendar set display_order = (select sequence from sms_classes where
+             id = (select sms_academiccalendar.class_id))"""
+        self.cr.execute(sql)
+        self.cr.commit()
+         
+        #------  To Populate admission confirmation date in student_admission_register object ------------------
+        sql = """SELECT sms_student.id, sms_student.admitted_on, student_admission_register.id
+                FROM sms_student
+                INNER JOIN student_admission_register
+                ON sms_student.admission_form_no = student_admission_register.id
+                """
+        self.cr.execute(sql)
+        studentrecs = self.cr.fetchall()
+         
+        # now reset order of smsfee_studentfee
+        fees = self.pool.get('smsfee.studentfee').search(self.cr, self.uid, [])
+        feerec = self.pool.get('smsfee.studentfee').browse(self.cr, self.uid,fees)
+        for thisfee in feerec:
+            if thisfee.fee_type is not None:
+                if thisfee.fee_type.fee_type is not None:
+                    self.pool.get('smsfee.studentfee').write(self.cr, self.uid, thisfee.id, {'display_order':thisfee.fee_type.fee_type.display_sequence})
+         
+        for rec in studentrecs:
+            updating = self.pool.get('student.admission.register').write(self.cr, self.uid, rec[2], {'date_admission_confirmed':rec[1]})
+            if updating:
+                print 'success'
         #-----------Update login Ids for students----------------------------
-        sql_query = """SELECT campus_code from res_company"""
-        self.cr.execute(sql_query)
-        campus_code = self.cr.fetchone()
-        student_ids = self.pool.get('sms.student').search(self.cr, self.uid, [])
-        srudent_recs = self.pool.get('sms.student').browse(self.cr, self.uid, student_ids)
-        for rec in srudent_recs:
-            registration_no = rec.registration_no
-            login_id = str(campus_code[0])+str(registration_no)
-            import random
-            random_pass = random.randrange(100, 1000)
-            password = str(random_pass)+str(registration_no)
-            update=self.pool.get('sms.student').write(self.cr, self.uid, rec.id, {'login_id':login_id, 'password':password})
-            if update:
-                print 'Done'
+#         sql_query = """SELECT campus_code from res_company"""
+#         self.cr.execute(sql_query)
+#         campus_code = self.cr.fetchone()
+#         student_ids = self.pool.get('sms.student').search(self.cr, self.uid, [])
+#         srudent_recs = self.pool.get('sms.student').browse(self.cr, self.uid, student_ids)
+#         for rec in srudent_recs:
+#             registration_no = rec.registration_no
+#             login_id = str(campus_code[0])+str(registration_no)
+#             import random
+#             random_pass = random.randrange(100, 1000)
+#             password = str(random_pass)+str(registration_no)
+#             update=self.pool.get('sms.student').write(self.cr, self.uid, rec.id, {'login_id':login_id, 'password':password})
+#             if update:
+#                 print 'Done'
+                
 #         temporary query to set students security fee
 #         sql0 = """SELECT smsfee_studentfee.id,student_id,receipt_no,paid_amount FROM smsfee_studentfee
 #               inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
@@ -201,7 +202,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
 #         feeids = self.cr.fetchall()
 #         if feeids:
 #             for booklines_rw in feeids:
-#             
+#              
 #                 addfee = self.pool.get('smsfee.studentfee.refundable').create(self.cr,self.uid,{
 #                                         'student_id':booklines_rw[1],
 #                                         'receipt_no':booklines_rw[2],
