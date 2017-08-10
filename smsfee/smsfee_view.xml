@@ -246,10 +246,7 @@
 				<h3><field name="fee_type"/></h3>
 				</xpath>
 			</field>
-
-
-		</record>
-
+			</record>
 
 			<record model="ir.ui.view" id="inherit_view_sms_student_form">
 		      <field name="name">sms.student.inherit2</field>
@@ -258,7 +255,7 @@
 		      <field name="type">form</field>
 		      <field name="arch" type="xml">
 		      <field name="classes_history" position="after">
-			  	</field>
+              </field>
 				<notebook>
 					<page string = "Fees Payments">
 						<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
@@ -315,6 +312,12 @@
 						</page>
 						</notebook>
 			    	</page>
+					<page string="Portal Settings">
+						<group colspan="4" col="2">
+							<field name="hide_exammarks_portal"/>
+							<field name="display_contacts_portal" />
+						</group>
+					</page>
 			   </notebook>
 		      </field>
 		    </record>
