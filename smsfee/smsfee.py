@@ -473,6 +473,8 @@ class sms_student(osv.osv):
     _inherit ='sms.student'
         
     _columns = {
+            'student_discount_ids': fields.one2many('smsfee.discount', 'student_id', 'Student Discount'),
+            'student_discount_given': fields.boolean('Give Discount'),
             'studen_fee_ids':fields.one2many('smsfee.studentfee', 'student_id','Student Fee'),
             'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
             'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
@@ -480,8 +482,11 @@ class sms_student(osv.osv):
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
-
     }
+
+_defaults = {
+    'student_discount_given': False,
+}
 sms_student()
 
 class smsfee_classes_fees(osv.osv):
@@ -713,6 +718,74 @@ class smsfee_classes_fees_lines(osv.osv):
     _sql_constraints = [('Class_fee_unique', 'unique (parent_fee_structure_id,fee_type)', """ Class Fee is already Defined Remove Duplication..""")]
 smsfee_classes_fees_lines()
 
+
+class smsfee_discounts(osv.osv):
+    
+    """ adds discounts for individual students based on  their fee structure """
+    
+    def create(self, cr, uid, vals, context=None, check=True):
+        # Calculate the acutal_fee and discounts again as readonly fields aren't
+        # stored in the database.
+        std_id = vals.get('student_id')
+        res = self.onchange_get_actual_fee(cr, uid, std_id, std_id, vals.get('fee_type'), context)
+        
+        acutal_fee = res.get('value').get('actual_fee')
+        discounted_fee = acutal_fee - (vals.get('discount') * acutal_fee/100)
+
+        vals.update({'actual_fee':acutal_fee})
+        vals.update({'discounted_fee':discounted_fee})
+
+        result = super(osv.osv, self).create(cr, uid, vals, context)
+        return result
+    
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        # Calculate the acutal_fee and discounts again as readonly fields aren't
+        # stored in the database.
+        std_id = vals.get('student_id')
+        res = self.onchange_get_actual_fee(cr, uid, std_id, std_id, vals.get('fee_type'), context)
+        
+        acutal_fee = res.get('value').get('actual_fee')
+        discounted_fee = acutal_fee - (vals.get('discount') * acutal_fee/100)
+
+        vals.update({'actual_fee':acutal_fee})
+        vals.update({'discounted_fee':discounted_fee})
+
+        result = super(osv.osv, self).write(cr, uid, ids, vals, context)
+        return result
+        
+    def onchange_get_actual_fee(self, cr, uid, ids, student_id, fee_type, context=None):
+        student = self.pool.get('sms.student').browse(cr ,uid , student_id)
+        cls_fee_id = self.pool.get('smsfee.classes.fees').search(cr ,uid ,[('fee_structure_id','=',student.fee_type.id ),('academic_cal_id','=',student.current_class.id)])
+        fee_id = self.pool.get('smsfee.classes.fees.lines').search(cr ,uid ,[('parent_fee_structure_id','=',cls_fee_id ),('fee_type','=',fee_type)])
+
+        # academiccalendar_id = self.pool.get('sms.student').browse()
+        # cls_fee = self.pool.get('smsfee.classes.fees.lines')
+        rec = self.pool.get('smsfee.classes.fees.lines').browse(cr ,uid ,fee_id[0])
+        val = {'actual_fee':rec.amount}
+        return {'value': val}
+
+    def onchange_get_discounted_fee(self, cr, uid, ids, discount, actual_amount):
+        val = {'discounted_fee': actual_amount - (discount * actual_amount/100)}
+        return {'value': val}
+    
+    _name = 'smsfee.discount'
+   
+    _description = "Gives discounts to the students"
+    _columns = {
+        'student_id': fields.many2one('sms.student', 'Student Id'),
+        'fee_type': fields.many2one('smsfee.feetypes','Fee Type',required = True),
+        'actual_fee': fields.float('Actual Fee'),
+        'discount': fields.float('Discount (%)'),
+        'discounted_fee':fields.float('Discounted Fee'),
+    }
+    _defaults = {
+        'actual_fee': 0,
+        'discount': 0,
+        'discounted_fee':0,
+        'student_id': lambda self, cr, uid, context: context.get('student_id', False),
+    }
+
+smsfee_discounts()
 
 
 class smsfee_classfees_register(osv.osv):
