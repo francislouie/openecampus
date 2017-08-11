@@ -948,9 +948,6 @@ class sms_student(osv.osv):
         'relative_addr':fields.char(string = "Relative Address", size=50),
         
         
-        
-        
-        
         #*****************************************************************************************************
         
     } 
@@ -960,7 +957,7 @@ class sms_student(osv.osv):
         'gender':_get_default_gender,
         'entrytest_per':0.0,
         'cur_country': _set_default_country,
-        'cur_city':'Peshawar'
+        'cur_city':'Peshawar',
     }
     _sql_constraints = [('name_unique', 'unique (registration_no)', """ Student No must be Unique.""")]    
 
@@ -4777,10 +4774,13 @@ class sms_weekly_plan(osv.osv):
         'week' : fields.many2one('sms.calander.week','Calender Week'),
         'filled_by' : fields.many2one('res.users','Filled by'),
         'work_guide' : fields.html('Weekly Plan'),
-        'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'state',required = True),
+        'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')], 'State', required = True),
     }
-    _defaults = {'filled_by': get_user,'state': lambda*a :'Draft'   }    
+    _defaults = {
+                 'filled_by': get_user,
+                 'state': lambda*a :'Draft'}    
     _sql_constraints = []
+    
 sms_weekly_plan()
 
 class project_transactional_log(osv.osv):

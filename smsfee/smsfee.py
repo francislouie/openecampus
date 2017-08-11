@@ -38,9 +38,13 @@ class res_company(osv.osv):
     'company_clogo':fields.binary('Challan Logo'),
     'order_of_report':fields.selection([('by_name','By Name'),('by_registration_no','By Reg No')],'Order Of Report'),
     'campus_code':fields.char('Campus Code', size=64),
+    'fee_display_portal':fields.selection([('fee_unpaid','Un-Paid Fee'),('fee_paid','Paid Fee')],'Fee (Displayed on Portal)'),
+    'display_refundable':fields.boolean('Display Refundable Fee'),
     }
     _defaults = {
                  'fee_report_type':'One_on_One',
+                 'fee_display_portal':'fee_unpaid',
+                 'display_refundable': lambda*a : False,
                  }
 res_company()
 
@@ -482,11 +486,14 @@ class sms_student(osv.osv):
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
-    }
-
-_defaults = {
-    'discount_given': False,
-}
+            'hide_exammarks_portal':fields.boolean('Donot Show Exam Marks?'),
+            'display_contacts_portal':fields.boolean('Display Student Contacts?'),
+            }
+    _defaults = {
+        'hide_exammarks_portal':lambda *a: False,
+        'display_contacts_portal':lambda *a: False,
+        'discount_given': False,
+        }
 sms_student()
 
 class smsfee_classes_fees(osv.osv):

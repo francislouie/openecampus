@@ -3155,8 +3155,8 @@
              </header>
 				<group>
                   <group string="Weekly Plan" col="4" colspan="4">
-					  <field name="subject"  on_change="onchange_get_teacher(teacher,subject)" attrs="{'readonly':[('state','=','Confirm')]}" />
-			          <field name="teacher" on_change="onchange_get_teacher(teacher,subject)" attrs="{'readonly':[('state','=','Confirm')]}" />
+					  <field name="subject"  on_change="onchange_get_teacher(teacher, subject)" attrs="{'readonly':[('state','=','Confirm')]}" />
+			          <field name="teacher" on_change="onchange_get_teacher(teacher, subject)" attrs="{'readonly':[('state','=','Confirm')]}" />
 			          <field name="week" attrs="{'readonly':[('state','=','Confirm')]}" />
 			          <field name="filled_by"  attrs="{'readonly':[('state','=','Confirm')]}" />
 					  <field name="state" readonly="1"/>
