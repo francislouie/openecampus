@@ -443,7 +443,7 @@ class sms_collabrator(osv.osv):
 
     def sms_exam_marksheet(self, cr, uid, student_id, class_id):
         result = []
-        get_portal_setting = """SELECT hide_exammarks_portal FROM sms_student WHERE id= """+str(student_id)
+        get_portal_setting = """SELECT exammark_prtal FROM sms_student WHERE id= """+str(student_id)
         cr.execute(get_portal_setting)
         sql_rec_ = cr.fetchone()
         if sql_rec_[0] == False or sql_rec_[0] == None:
