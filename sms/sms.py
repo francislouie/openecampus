@@ -175,6 +175,7 @@ class sms_session(osv.osv):
                     else:
                         close_admission = False
                     close_admission = self.pool.get('sms.academiccalendar').write(cr,uid,[acad_cal],{'admission_closed':close_admission})
+        self.pool.get('sms.session').load_session_weeks(cr, uid, ids[0])
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
         return True
     

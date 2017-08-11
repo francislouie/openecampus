@@ -178,38 +178,38 @@ class sms_report_studentslist(report_sxw.rml_parse):
             if updating:
                 print 'success'
         #-----------Update login Ids for students----------------------------
-#         sql_query = """SELECT campus_code from res_company"""
-#         self.cr.execute(sql_query)
-#         campus_code = self.cr.fetchone()
-#         student_ids = self.pool.get('sms.student').search(self.cr, self.uid, [])
-#         srudent_recs = self.pool.get('sms.student').browse(self.cr, self.uid, student_ids)
-#         for rec in srudent_recs:
-#             registration_no = rec.registration_no
-#             login_id = str(campus_code[0])+str(registration_no)
-#             import random
-#             random_pass = random.randrange(100, 1000)
-#             password = str(random_pass)+str(registration_no)
-#             update=self.pool.get('sms.student').write(self.cr, self.uid, rec.id, {'login_id':login_id, 'password':password})
-#             if update:
-#                 print 'Done'
+        sql_query = """SELECT campus_code from res_company"""
+        self.cr.execute(sql_query)
+        campus_code = self.cr.fetchone()
+        student_ids = self.pool.get('sms.student').search(self.cr, self.uid, [])
+        srudent_recs = self.pool.get('sms.student').browse(self.cr, self.uid, student_ids)
+        for rec in srudent_recs:
+            registration_no = rec.registration_no
+            login_id = str(campus_code[0])+str(registration_no)
+            import random
+            random_pass = random.randrange(100, 1000)
+            password = str(random_pass)+str(registration_no)
+            update=self.pool.get('sms.student').write(self.cr, self.uid, rec.id, {'login_id':login_id, 'password':password})
+            if update:
+                print 'Done'
                 
-#         temporary query to set students security fee
-#         sql0 = """SELECT smsfee_studentfee.id,student_id,receipt_no,paid_amount FROM smsfee_studentfee
-#               inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-#               inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-#             WHERE smsfee_feetypes.refundable = True  and smsfee_studentfee.state = 'fee_paid'"""
-#         self.cr.execute(sql0)
-#         feeids = self.cr.fetchall()
-#         if feeids:
-#             for booklines_rw in feeids:
-#              
-#                 addfee = self.pool.get('smsfee.studentfee.refundable').create(self.cr,self.uid,{
-#                                         'student_id':booklines_rw[1],
-#                                         'receipt_no':booklines_rw[2],
-#                                         'amount_received':booklines_rw[3],
-#                                         'amount_paid_back':0,
-#                                         'student_fee_id':booklines_rw[0],
-#                                         'state':'to_be_paid'})
+#        temporary query to set students security fee
+        sql0 = """SELECT smsfee_studentfee.id,student_id,receipt_no,paid_amount FROM smsfee_studentfee
+              inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+              inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+            WHERE smsfee_feetypes.refundable = True  and smsfee_studentfee.state = 'fee_paid'"""
+        self.cr.execute(sql0)
+        feeids = self.cr.fetchall()
+        if feeids:
+            for booklines_rw in feeids:
+              
+                addfee = self.pool.get('smsfee.studentfee.refundable').create(self.cr,self.uid,{
+                                        'student_id':booklines_rw[1],
+                                        'receipt_no':booklines_rw[2],
+                                        'amount_received':booklines_rw[3],
+                                        'amount_paid_back':0,
+                                        'student_fee_id':booklines_rw[0],
+                                        'state':'to_be_paid'})
         
         res = []
         s_no = 0        
