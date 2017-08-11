@@ -5,6 +5,7 @@
 *.*~
 *.po
 *.pyc
+base_quality_interrogation.py
 
 account/
 account_accountant/

@@ -85,7 +85,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
         _logger.info("_______ %r out of_________", (fee_st))
         i = 1
         #-------------- Setting Fee Structure Label Table for Report -----------------------------        
-        my_dict = {'s_no':'#', 'acad_cal':'Class', 'state':'State', 'fs1':'', 'fs2':'', 'fs3':'', 'fs4':'', 'fs5':'', 'fs6':'', 'total_stds':'Total Students'}
+        my_dict = {'s_no':'#', 'acad_cal':'Class', 'state':'State', 'fs1':'', 'fs2':'', 'fs3':'', 'fs4':'', 'fs5':'', 'fs6':'', 'withdrawals':'Withdrawals', 'total_stds':'Total Students'}
         for fs in fee_st:
             recfee_st  = self.pool.get('sms.feestructure').browse(self.cr, self.uid, fs)
             sql_checking = """
@@ -146,6 +146,19 @@ class sms_report_studentslist(report_sxw.rml_parse):
                 my_dict['total_stds'] = my_dict['total_stds'] + row[0] 
                 k = k +1
             result.append(my_dict)
+            
+            #------------ Withdrawals --------------#
+            sql = """SELECT COUNT(sms_student.id) 
+                    FROM sms_student
+                    INNER JOIN sms_academiccalendar_student 
+                    ON sms_student.id = sms_academiccalendar_student.std_id
+                    WHERE sms_student.current_class = """ + str(cls[0]) + """ 
+                    AND sms_student.state in ('Admitted','admission_cancel','drop_out','slc')
+                    AND sms_student.date_withdraw BETWEEN '""" + this_form['start_date'] + """' AND '""" + this_form['end_date'] + """'"""
+                    
+            self.cr.execute(sql)
+            row = self.cr.fetchone()
+            my_dict['withdrawals'] =  row[0]
             
         return result
     

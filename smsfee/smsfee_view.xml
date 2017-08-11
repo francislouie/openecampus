@@ -293,6 +293,25 @@
 							 </form>
 							 </field>
 						</page>
+
+
+						<page string = "Discounts">
+							<h3> <label for="discount_given" string="Give Discount"/><field name="discount_given"/></h3>
+							<field  name="discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('discount_given', '=', False)]}"  >
+							<tree editable = "top" >
+								<field name="student_id" invisible="1" />
+								<field name="fee_type" readonly ="0" 
+									on_change="onchange_get_actual_fee(student_id, fee_type, context)"/>
+								<field name="actual_fee" readonly ="1"/>
+								<field name="discount" readonly ="0" 
+									on_change="onchange_get_discounted_fee(discount, actual_fee)"/>
+								<field name="discounted_fee" readonly ="1"/>
+							 </tree>
+							 </field>
+						</page>
+
+
+
 						<page string = "Edit or Add New Fee">
 						<group string = "Update, Delete or add new Fee" readonly ="1">		    	 		
 							<field  name="studen_fee_ids" nolabel="1"  attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"   />
