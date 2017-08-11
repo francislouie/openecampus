@@ -314,7 +314,7 @@
 			    	</page>
 					<page string="Portal Settings">
 						<group colspan="4" col="2">
-							<field name="exammark_prtal"/>
+							<field name="exammark_prtal" string="Donnot Show Exam Detail"/>
 							<field name="disp_cntct_prtal" />
 						</group>
 					</page>
