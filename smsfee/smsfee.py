@@ -43,7 +43,6 @@ class res_company(osv.osv):
     }
     _defaults = {
                  'fee_report_type':'One_on_One',
-                 'fee_display_portal':'fee_unpaid',
                  'display_refundable': lambda*a : False,
                  }
 res_company()
