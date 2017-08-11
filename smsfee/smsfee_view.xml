@@ -321,32 +321,38 @@
 			<field name="model">sms.student</field>
 			<field name="inherit_id" ref="inherit_view_sms_student_form"/>
 			<field name="arch" type="xml">
-				<data>
-					<xpath expr = "//page[@string='Fee Refundable']" position="after">
-						<page string = "Discounts">
-							<h3> <label for="discount_given" string="Give Discount"/><field name="discount_given"/></h3>
-							<field  name="discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('discount_given', '=', False)]}"  >
-							<tree editable = "top" >
-								<field name="student_id" invisible="1" />
-								<field name="fee_type" readonly ="0" 
-									on_change="onchange_get_actual_fee(student_id, fee_type, context)"/>
-								<field name="actual_fee" readonly ="1"/>
-								<field name="discount" readonly ="0" 
-									on_change="onchange_get_discounted_fee(discount, actual_fee)"/>
-								<field name="discounted_fee" readonly ="1"/>
-							 </tree>
-							 </field>
-						</page>
-					</xpath>
-					<xpath expr = "//page[@string='Fees Payments']" position="after">
-						<page string="Portal Settings">
-							<group colspan="4" col="2">
-								<field name="exammark_prtal" string="Donnot Show Exam Detail"/>
-								<field name="disp_cntct_prtal" />
-							</group>
-						</page>
-					</xpath>
-				</data>
+				<xpath expr = "//page[@string='Fee Refundable']" position="after">
+					<page string = "Discounts">
+						<h3> <label for="discount_given" string="Give Discount"/><field name="discount_given"/></h3>
+						<field  name="discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('discount_given', '=', False)]}"  >
+						<tree editable = "top" >
+							<field name="student_id" invisible="1" />
+							<field name="fee_type" readonly ="0" 
+								on_change="onchange_get_actual_fee(student_id, fee_type, context)"/>
+							<field name="actual_fee" readonly ="1"/>
+							<field name="discount" readonly ="0" 
+								on_change="onchange_get_discounted_fee(discount, actual_fee)"/>
+							<field name="discounted_fee" readonly ="1"/>
+						 </tree>
+						 </field>
+					</page>
+				</xpath>
+			</field>
+			</record>
+
+			<record model="ir.ui.view" id = "sms_student_ih_ihrt_customtwo">
+			<field name="name">sms.student.inherit_fee_second</field>	
+			<field name="model">sms.student</field>
+			<field name="inherit_id" ref="sms.view_student_form"/>
+			<field name="arch" type="xml">
+				<xpath expr = "//page[@string='Academics']" position="after">
+					<page string="Portal Settings">
+						<group colspan="4" col="2">
+							<field name="exammark_prtal" string="Donnot Show Exam Detail"/>
+							<field name="disp_cntct_prtal" />
+						</group>
+					</page>
+				</xpath>
 			</field>
 			</record>
 
