@@ -66,7 +66,7 @@ class sms_collabrator(osv.osv):
                         'transport_availed':obj[0].transport_availed,
                         'address':obj[0].cur_address,
                         'city':obj[0].cur_city,
-                        'display_contact_info':obj[0].display_contacts_portal,
+                        'display_contact_info':obj[0].disp_cntct_prtal,
                         'login_status':1
                     }
             result.append(my_dict)
@@ -439,7 +439,7 @@ class sms_collabrator(osv.osv):
 
     def sms_exam_marksheet(self, cr, uid, student_id, class_id):
         result = []
-        get_portal_setting = """SELECT hide_exammarks_portal FROM sms_student WHERE id= """+str(student_id)
+        get_portal_setting = """SELECT exammark_prtal FROM sms_student WHERE id= """+str(student_id)
         cr.execute(get_portal_setting)
         sql_rec_ = cr.fetchone()
         if sql_rec_[0] == False or sql_rec_[0] == None:
