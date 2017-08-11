@@ -332,12 +332,10 @@
 						</notebook>
 			    	</page>
 					<page string="Portal Settings">
-						<!-- 
 						<group colspan="4" col="2">
-							<field name="hide_exammarks_portal"/>
-							<field name="display_contacts_portal" />
+							<field name="exammark_prtal" string="Donnot Show Exam Detail"/>
+							<field name="disp_cntct_prtal" />
 						</group>
-						-->
 					</page>
 			   </notebook>
 		      </field>

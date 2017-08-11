@@ -43,7 +43,6 @@ class res_company(osv.osv):
     }
     _defaults = {
                  'fee_report_type':'One_on_One',
-                 'fee_display_portal':'fee_unpaid',
                  'display_refundable': lambda*a : False,
                  }
 res_company()
@@ -485,13 +484,11 @@ class sms_student(osv.osv):
             'fee_bills':fields.one2many('smsfee.receiptbook', 'student_id','Fee Bills' ),
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),
+            'disp_cntct_prtal':fields.boolean('Display Student Contacts?'),
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
-            'hide_exammarks_portal':fields.boolean('Donot Show Exam Marks?'),
-            'display_contacts_portal':fields.boolean('Display Student Contacts?'),
+            'exammark_prtal':fields.boolean('Show Exam Marks?'),
             }
     _defaults = {
-        'hide_exammarks_portal':lambda *a: False,
-        'display_contacts_portal':lambda *a: False,
         'discount_given': False,
         }
 sms_student()
