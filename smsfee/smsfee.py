@@ -473,8 +473,8 @@ class sms_student(osv.osv):
     _inherit ='sms.student'
         
     _columns = {
-            'student_discount_ids': fields.one2many('smsfee.discount', 'student_id', 'Student Discount'),
-            'student_discount_given': fields.boolean('Give Discount'),
+            'discount_ids': fields.one2many('smsfee.discount', 'student_id', 'Student Discount'),
+            'discount_given': fields.boolean('Give Discount'),
             'studen_fee_ids':fields.one2many('smsfee.studentfee', 'student_id','Student Fee'),
             'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
             'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
@@ -485,7 +485,7 @@ class sms_student(osv.osv):
     }
 
 _defaults = {
-    'student_discount_given': False,
+    'discount_given': False,
 }
 sms_student()
 
@@ -758,9 +758,11 @@ class smsfee_discounts(osv.osv):
         cls_fee_id = self.pool.get('smsfee.classes.fees').search(cr ,uid ,[('fee_structure_id','=',student.fee_type.id ),('academic_cal_id','=',student.current_class.id)])
         fee_id = self.pool.get('smsfee.classes.fees.lines').search(cr ,uid ,[('parent_fee_structure_id','=',cls_fee_id ),('fee_type','=',fee_type)])
 
-        # academiccalendar_id = self.pool.get('sms.student').browse()
-        # cls_fee = self.pool.get('smsfee.classes.fees.lines')
-        rec = self.pool.get('smsfee.classes.fees.lines').browse(cr ,uid ,fee_id[0])
+        actual_fee = 0
+        if (fee_id):
+            rec = self.pool.get('smsfee.classes.fees.lines').browse(cr ,uid ,fee_id[0])
+            actual_fee = rec.amount
+
         val = {'actual_fee':rec.amount}
         return {'value': val}
 
@@ -982,6 +984,18 @@ class smsfee_studentfee(osv.osv):
             #month is registered in current month against a student, this case due month for all fees will be current month to avoid fine,
             fee_month = month
             due_month = month
+
+            fee_amount = fee_type_row.amount
+            
+            # If discount is given to the student, update the fee_amount
+            student = self.pool.get('sms.student').browse(cr ,uid , std_id)
+            if (student.discount_given):
+                discount_fee_ids = self.pool.get('smsfee.discount').search(cr ,uid ,[('student_id','=',std_id),('fee_type','=',fee_type_row.id)])
+                if (discount_fee_ids):
+                    discount_fee = self.pool.get('smsfee.discount').browse(cr,uid, discount_fee_ids[0])
+                    fee_amount = discount_fee.discounted_fee
+
+
             fee_dcit= {
                         'student_id': std_id,
                         'acad_cal_id': acad_cal,
@@ -990,10 +1004,10 @@ class smsfee_studentfee(osv.osv):
                         'due_month': due_month,
                         'fee_month': fee_month,
                         'paid_amount':0,
-                        'fee_amount': fee_type_row.amount,  
+                        'fee_amount': fee_amount,  
                         'late_fee':0,
                         'discount':0,
-                        'total_amount':fee_type_row.amount + 0, 
+                        'total_amount':fee_amount + 0, 
                         'reconcile':False,
                         'state':'fee_unpaid'
                      }

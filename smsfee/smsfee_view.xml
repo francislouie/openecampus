@@ -292,8 +292,8 @@
 
 
 						<page string = "Discounts">
-							<h3> <label for="student_discount_given" string="Give Discount"/><field name="student_discount_given"/></h3>
-							<field  name="student_discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('student_discount_given', '=', False)]}"  >
+							<h3> <label for="discount_given" string="Give Discount"/><field name="discount_given"/></h3>
+							<field  name="discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('discount_given', '=', False)]}"  >
 							<tree editable = "top" >
 								<field name="student_id" invisible="1" />
 								<field name="fee_type" readonly ="0" 
