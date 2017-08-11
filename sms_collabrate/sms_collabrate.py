@@ -19,6 +19,9 @@ class sms_collabrator(osv.osv):
         result = []
         student_id = self.pool.get('sms.student').search(cr,uid,[('login_id','=',login),('password','=',pwd), ('state','=','Admitted')])
         if student_id:
+            get_campus_code = """SELECT campus_code FROM res_company"""
+            cr.execute(get_campus_code)
+            sql_rec_ = cr.fetchone()
             obj = self.pool.get('sms.student').browse(cr, uid, student_id)
             my_dict = {
                         'registration_no':obj[0].registration_no,
@@ -29,6 +32,7 @@ class sms_collabrator(osv.osv):
                         'pic':obj[0].image,
                         'std_id':obj[0].id,
                         'transport_availed':obj[0].transport_availed,
+                        'campus_code':sql_rec_[0],
                         'state':obj[0].state,
                         'login_status':1
                     }
@@ -439,7 +443,7 @@ class sms_collabrator(osv.osv):
 
     def sms_exam_marksheet(self, cr, uid, student_id, class_id):
         result = []
-        get_portal_setting = """SELECT exammark_prtal FROM sms_student WHERE id= """+str(student_id)
+        get_portal_setting = """SELECT hide_exammarks_portal FROM sms_student WHERE id= """+str(student_id)
         cr.execute(get_portal_setting)
         sql_rec_ = cr.fetchone()
         if sql_rec_[0] == False or sql_rec_[0] == None:
