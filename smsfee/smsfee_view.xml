@@ -296,8 +296,20 @@
 
 
 						<page string = "Discounts">
-							<h3> <label for="discount_given" string="Give Discount"/><field name="discount_given"/></h3>
-							<field  name="discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('discount_given', '=', False)]}"  >
+							<group>
+								<group>					
+								<div class="oe_title">
+									<label for="discount_given"/>
+									<field name="discount_given"/>
+								</div>
+								<div class="oe_title">
+									<label for="discount_reason"/>
+									<field name="discount_reason" attrs="{'invisible':[('discount_given', '=', False)]}"/>
+								</div>
+								</group>
+							</group>
+							<group>			    	 		
+								<field  name="discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('discount_given', '=', False)]}"  >
 							<tree editable = "top" >
 								<field name="student_id" invisible="1" />
 								<field name="fee_type" readonly ="0" 
@@ -308,6 +320,7 @@
 								<field name="discounted_fee" readonly ="1"/>
 							 </tree>
 							 </field>
+							</group>
 						</page>
 
 
