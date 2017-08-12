@@ -744,16 +744,20 @@ class smsfee_discounts(osv.osv):
         return result
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-        # Calculate the acutal_fee and discounts again as readonly fields aren't
-        # stored in the database.
-        std_id = vals.get('student_id')
-        res = self.onchange_get_actual_fee(cr, uid, std_id, std_id, vals.get('fee_type'), context)
-        
-        acutal_fee = res.get('value').get('actual_fee')
-        discounted_fee = acutal_fee - (vals.get('discount') * acutal_fee/100)
+        # # Calculate the acutal_fee and discounts again as readonly fields aren't
+        # # stored in the database.
+        # if type(ids) is list:
+        #     _ids = ids[0]
+        # else:
+        #     _ids = ids
 
-        vals.update({'actual_fee':acutal_fee})
-        vals.update({'discounted_fee':discounted_fee})
+        # res = self.onchange_get_actual_fee(cr, uid, _ids, _ids, vals.get('fee_type'), context)
+        
+        # acutal_fee = res.get('value').get('actual_fee')
+        # discounted_fee = acutal_fee - (vals.get('discount') * acutal_fee/100)
+
+        # vals.update({'actual_fee':acutal_fee})
+        # vals.update({'discounted_fee':discounted_fee})
 
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
         return result
@@ -768,10 +772,18 @@ class smsfee_discounts(osv.osv):
             rec = self.pool.get('smsfee.classes.fees.lines').browse(cr ,uid ,fee_id[0])
             actual_fee = rec.amount
 
-        val = {'actual_fee':rec.amount}
+        val = {'actual_fee':actual_fee}
         return {'value': val}
 
     def onchange_get_discounted_fee(self, cr, uid, ids, discount, actual_amount):
+        if discount > 100 or discount < 0:
+            warning = {
+                       'title': 'Warning!',
+                       'message' : 'Discount should be between 0 and 100'
+                      }
+            
+            return {'warning': warning}
+
         val = {'discounted_fee': actual_amount - (discount * actual_amount/100)}
         return {'value': val}
     
