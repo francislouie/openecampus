@@ -792,6 +792,8 @@ class smsfee_discounts(osv.osv):
         'student_id': lambda self, cr, uid, context: context.get('student_id', False),
     }
 
+    _sql_constraints = [('fee_type_unique', 'unique (student_id,fee_type)', """ Fee type is already Defined Remove Duplication..""")]
+
 smsfee_discounts()
 
 
