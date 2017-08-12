@@ -19,6 +19,9 @@ class sms_collabrator(osv.osv):
         result = []
         student_id = self.pool.get('sms.student').search(cr,uid,[('login_id','=',login),('password','=',pwd), ('state','=','Admitted')])
         if student_id:
+            get_campus_code = """SELECT campus_code FROM res_company"""
+            cr.execute(get_campus_code)
+            sql_rec_ = cr.fetchone()
             obj = self.pool.get('sms.student').browse(cr, uid, student_id)
             my_dict = {
                         'registration_no':obj[0].registration_no,
@@ -29,6 +32,7 @@ class sms_collabrator(osv.osv):
                         'pic':obj[0].image,
                         'std_id':obj[0].id,
                         'transport_availed':obj[0].transport_availed,
+                        'campus_code':sql_rec_[0],
                         'state':obj[0].state,
                         'login_status':1
                     }

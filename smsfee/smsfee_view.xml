@@ -274,6 +274,7 @@
 								<field name="view_academics_fee"     nolabel="1"/>
 							</group>
 						</page>
+						
 						<page string = "Fee Refundable">
 						<field  name="refundable_fee_ids"     nolabel="1" widget="one2many_list"   >
 							<tree editable = "top" >
@@ -293,7 +294,6 @@
 							 </form>
 							 </field>
 						</page>
-
 
 						<page string = "Discounts">
 							<group>
@@ -323,8 +323,6 @@
 							</group>
 						</page>
 
-
-
 						<page string = "Edit or Add New Fee">
 						<group string = "Update, Delete or add new Fee" readonly ="1">		    	 		
 							<field  name="studen_fee_ids" nolabel="1"  attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"   />
@@ -344,15 +342,26 @@
 						</page>
 						</notebook>
 			    	</page>
+			   </notebook>
+		      </field>
+		    </record>
+
+			<record model="ir.ui.view" id = "sms_student_ih_ihrt_customtwo">
+			<field name="name">sms.student.inherit_fee_second</field>	
+			<field name="model">sms.student</field>
+			<field name="inherit_id" ref="sms.view_student_form"/>
+			<field name="arch" type="xml">
+				<xpath expr = "//page[@string='Academics']" position="after">
 					<page string="Portal Settings">
 						<group colspan="4" col="2">
 							<field name="exammark_prtal" string="Donnot Show Exam Detail"/>
 							<field name="disp_cntct_prtal" />
 						</group>
 					</page>
-			   </notebook>
-		      </field>
-		    </record>
+				</xpath>
+			</field>
+			</record>
+
 		<!-- sms.Classes Fee-->
 
     <!-- Tree class fee types (new design) apread as one2many to smsfee.classes.fee-->
