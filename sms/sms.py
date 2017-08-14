@@ -87,9 +87,9 @@ class sms_academics_session(osv.osv):
             start_date = f.start_date
             end_date = f.end_date
            
-            s_year = int(datetime.datetime.strptime(str(f.start_date), '%Y-%m-%d').strftime('%Y'))
-            e_year = int(datetime.datetime.strptime(str(f.end_date), '%Y-%m-%d').strftime('%Y'))
-            result[f.id] = str(s_year) + "-" + str(e_year)
+            s_year = str(datetime.datetime.strptime(str(f.start_date), '%Y-%m-%d').strftime('%Y'))
+            e_year = str(datetime.datetime.strptime(str(f.end_date), '%Y-%m-%d').strftime('%Y'))[2:]
+            result[f.id] =f.subcate+"("+str(s_year) + "-" + str(e_year)+")"
         return result
     
     
@@ -105,9 +105,10 @@ class sms_academics_session(osv.osv):
         'date_closed':fields.date('Closed On',readonly = True),
         'closed_by':fields.many2one('res.users','Closed By',readonly = True),
         'state': fields.selection([('Draft', 'Draft'),('Active', 'Active'),('Closed', 'Closed')], 'State', readonly = True),
+        'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
     } 
     _defaults = {  'state': 'Draft','name':'New Academic Session'}
-    _sql_constraints = [('name_unique', 'unique (name)', """ Academic Session Must be Unique.""")]
+    _sql_constraints = [('name_unique', 'unique (name,subcate)', """ Academic Session Must be Unique.""")]
 sms_academics_session()
 
 class sms_session(osv.osv):
@@ -230,12 +231,15 @@ class sms_session(osv.osv):
                    month_yr = months.split('#')
                    month = month_yr[0]
                    year = month_yr[1]
-                   
-                   create = self.pool.get('sms.session.months').create(cr,uid,{
-                            'session_id':m.id,
-                            'session_month_id':month,
-                            'session_year':year,                                                    
-                            })
+                   monthh = self.pool.get('sms.month').search(cr, uid, [('code','=',str(month).zfill(2))])
+                   if monthh:
+                       create = self.pool.get('sms.session.months').create(cr,uid,{
+                                'session_id':m.id,
+                                'session_month_id':monthh[0],
+                                'session_year':year,                                                    
+                                })
+                   else:
+                       raise osv.except_osv(('sms.month '), ('It seems that months are not loaded by default while installing this module. Goto the sms.mponth form and create calendar months manually.' ))
             self.write(cr, uid, ids, {'months_loaded': 'True'})
         return True
     
@@ -1170,9 +1174,13 @@ class student_guardian_contact(osv.Model):
     }
 student_guardian_contact()
 
-class sms_academiccalendar(osv.osv):
+class sms_academiccalendar(osv.osv): 
     """This object combines sms.session,sms.classes,sms.classes section to form a new class in a new session with unique class section no."""
     
+    def create(self, cr, uid, vals, context=None, check=True):
+        new_ = super(sms_academiccalendar, self).create(cr, uid, vals, context)
+        return new_
+         
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         super(osv.osv, self).write(cr, uid, ids, vals)
         for f in self.browse(cr, uid, ids):
@@ -1389,6 +1397,7 @@ class sms_academiccalendar(osv.osv):
             res[f.id] = len(stdids)
         return res
     def get_display_order(self, cr, uid, ids, name, args, context=None):
+        seq = 1
         """This method retruns the sequnece of parent class of this record. that will be use to order the list record of acad cal"""
         res = {}
         for f in self.browse(cr, uid, ids, context):
@@ -1396,7 +1405,7 @@ class sms_academiccalendar(osv.osv):
                 sql = """SELECT sequence from sms_classes
                          where id = """ + str(f.class_id.id)
                 cr.execute(sql)
-                seq = cr.fetchone()[0]
+                seq = int(cr.fetchone()[0])
         return seq
     
     def unlink(self, cr, uid, ids, context={}, check=True):
@@ -1406,7 +1415,7 @@ class sms_academiccalendar(osv.osv):
 
     _name = 'sms.academiccalendar'
     _description = "Crates new class in a new session."
-    _order = 'display_order,section_id'
+    #_order = 'display_order,section_id'
     _columns = {
         'name':  fields.function(set_class_name, method=True, store = True ,string='Class',type='char'), 
         'acad_session_id': fields.many2one('sms.academics.session', 'Academic Session',domain="[('state','!=','Closed')]",required=True),
@@ -1430,7 +1439,7 @@ class sms_academiccalendar(osv.osv):
         'closed_by':fields.many2one('res.users', 'Closed By'),
         'helptxt':fields.text('Help', readonly = True),
         'pending_results':fields.function(pending_annual_results, string='Pending Annual Results', type='integer'),
-        'display_order':fields.function(get_display_order,store=True, string='display order', type='integer'),
+        #'display_order':fields.function(get_display_order,store=True, string='display order', type='integer'),
         'exam_ids' :fields.one2many('sms.exam.datesheet', 'academiccalendar', 'Exam', readonly=True),
     } 
     _defaults = {

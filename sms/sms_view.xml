@@ -18,6 +18,7 @@
 						<p style = "color:blue;">An Academic Session may have multiple years, depends on start and end date of an academic session</p>
 							<group>
 							<group string="" >
+								 <field name="subcate" />
 								<field name="start_date" />
 								<field name="date_started" readonly ="1"/>
 								<field name="started_by" readonly ="1"/>
@@ -601,7 +602,6 @@
          <field name="arch" type="xml">
             <form string="Student" version="7.0">
 			<header>
-			<button name="%(action_admit_student)d" string="Admit" states="Draft" type="action" class="oe_highlight" groups=""/>
 			<button name="action_admit_student" string="Admit(Beta)" states="Draft" type="action" class="oe_highlight" groups=""/>
 			
 			<button name="%(action_readmit_student)d" string="Re-admit" states="admission_cancel,drop_out,slc" type="action" class="oe_highlight" groups=""/>
@@ -1153,9 +1153,7 @@
              <button name="start_class" string="Start Class" states="Draft" type="object" class="oe_highlight" groups="" confirm="Are you sure to start this class?"/>
 			 <button name="load_subjects" string="Load Class  Subjects" attrs="{'invisible':[('subjects_loaded','=',True)]}" states="Draft"   type="object" class="oe_highlight" groups=""/>
 			 <button name="%(report_studentsclass_list_id)d" string="Print Class List"  states="Draft,Active,Complete" type="action" icon="gtk-print"/>
-			 <!--
-			 <button name="load_timetable" string="Load Timetable" states="subjects_loaded" type="object" class="oe_highlight" groups=""/>
-			 -->
+			 
 			 <!--
 			 <button name="load_students_from_excel" string="Load Students" states="subjects_loaded" type="object" class="oe_highlight" groups=""/>
 			 -->
@@ -1167,7 +1165,7 @@
 				<group>
 					<field name="acad_session_id" on_change="onchange_academic_session(acad_session_id)" attrs="{'readonly':[('state','IN',['Active','Complete'])]}"  widget="selection"  />
 					<field name="session_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}"  />
-					<field name="class_id"   widget="selection" attrs="{'readonly':[('state','IN',['Active','Complete'])]}" />
+					<field name="class_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}" />
 					<field name="class_teacher" attrs="{'readonly':[('state','IN',['Complete'])]}"/>
 				</group>
 				<group>
@@ -1192,7 +1190,7 @@
 					<field name="closed_by"   readonly = "1"/>
                 </group>	
 				<group string="">
-					<field name="subjects_loaded" readonly = "1"/>
+					<field name="subjects_loaded"/>
 					<field name="fee_defined"/>
 					<field name="timetable_created" readonly = "1"/>
 					<field name="pending_results" attrs="{'invisible':[('state','!=','Complete')]}"/>
@@ -2949,7 +2947,6 @@
 					<button name="load_fee_subjects" string="1.Proceed With Admission" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="cancel_admisssion_registration" string="Go Back" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
 					<button name="admit_student" string="2. Confirm This Admission" states="waiting_approval" type="object" class="oe_highlight" groups=""/>
-					<button name="%(action_admit_student)d" string="Help" states="Draft,waiting_approval" type="action" class="oe_highlight" groups=""/>
 					<field name="state" widget="statusbar" statusbar_visible="Draft,waiting_approval,Confirm" readonly="1"  />
 					
 				</header>
@@ -3457,10 +3454,6 @@
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
     </record>
- 
-<menuitem id="menu_sms_change_std_class_new_id" parent="menu_sms_exam_results_id" sequence="" groups="" action="action_sms_student_change_class_new"/>
-
-
 
 <!-- ********************************  -->
      
