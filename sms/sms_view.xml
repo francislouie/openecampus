@@ -2963,7 +2963,9 @@
 						  <field name="fee_structure"  required="1" attrs="{'readonly':[('state','!=','Draft')]}" />
 						  <field name="form_no" readonly="1" attrs="{'invisible':[('state','=','Draft')]}" />
 						  <field name="admission_mode"/>
-              <field name="is_migrated" readonly="1" />
+              <field name="transfer_type" attrs="{'invisible':[('admission_mode','!=','transfer_in')]}" />
+              <field name="transfer_campus" attrs="{'invisible':[('admission_mode','!=','transfer_in')]}" />
+              <field name="transfer_fee" attrs="{'invisible':[('admission_mode','!=','transfer_in')]}" />
 						  <field name="date_admission_confirmed" readonly="1"/>
                    </group>
 				   <newline/>
@@ -3270,7 +3272,7 @@
 				<sheet>
 					<group>
 	                  <group string="Student Transferring In"  col="4" colspan="4">
-				          <field name="branch_name"/>
+				          <field name="name"/>
 				          <field name="address"  />
 						  <field name="phone"/>
 						  <field name="cell_no"/>
@@ -3290,7 +3292,7 @@
             <field name="model">sms.transfer.in</field>
             <field name="arch" type="xml">
                 <tree string="Transactional Log">
-			          <field name="branch_name"/>
+			          <field name="name"/>
 			          <field name="address"  />
 					  <field name="phone"/>
 					  <field name="cell_no"/>
@@ -3334,7 +3336,7 @@
 
 <!-- ************** sms_transfer_in_out ************* sms.action_view_sms_wizard_student_transfer_in -->
 
-		<record model="ir.ui.view" id="view_sms_transfer_in_out_form">
+		<!-- <record model="ir.ui.view" id="view_sms_transfer_in_out_form">
          <field name="name">sms.transfer.in.out.form</field>
          <field name="model">sms.transfer.in.out</field>
          <field name="arch" type="xml">
@@ -3367,9 +3369,9 @@
 				</sheet>  
 			  </form>
             </field>
-        </record>
+        </record> -->
 
-        <record model="ir.ui.view" id="view_sms_transfer_in_out_tree">
+        <!-- <record model="ir.ui.view" id="view_sms_transfer_in_out_tree">
             <field name="name">sms.transfer.in.out.tree</field>
             <field name="model">sms.transfer.in.out</field>
             <field name="arch" type="xml">
@@ -3383,15 +3385,15 @@
 					  <field name="transfer_out_reason" />
                 </tree>
             </field>
-        </record>
+        </record> -->
 
-        <record model="ir.actions.act_window" id="action_sms_transfer_in_out">
+        <!-- <record model="ir.actions.act_window" id="action_sms_transfer_in_out">
             <field name="name">Students Transfer In Out</field>
             <field name="res_model">sms.transfer.in.out</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-        </record>
+        </record> -->
 
 
 

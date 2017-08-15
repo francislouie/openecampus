@@ -4684,6 +4684,11 @@ class student_admission_register(osv.osv):
         'nationality':fields.many2one('res.country','Nationality'),
         'admission_mode': fields.selection([('new_admission', 'New Admission'),('transfer_in', 'Transfer In'), ('migrated', 'Migrated')], 'Admission Mode'),
         'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Confirm', 'Confirm')], 'State', readonly = True),
+        #*********************transer in************************************
+        'transfer_no': fields.char('Transfer No' ,readonly = True),
+        'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type',required = True),
+        'transfer_campus': fields.many2one('sms.transfer.in', 'Campus'),
+        'transfer_fee': fields.float('Transfer Fee'),        
         #*********************personal info************************************88
         'gender': fields.selection([('Male', 'Male'),('Female', 'Female')], 'Gender'),
         'birthday': fields.date("Date of Birth"),
@@ -4864,7 +4869,7 @@ class sms_transfer_in(osv.osv):
     _name = "sms.transfer.in"
     _description = "maintains info about students tranfer in"
     _columns = {
-        'branch_name': fields.char('Branch Name',size=300),
+        'name': fields.char('Branch Name',size=300),
         'address': fields.char('Address'),
         'phone': fields.char('Phone'),
         'cell_no': fields.char('Cell No'),
@@ -4879,50 +4884,50 @@ class sms_transfer_in(osv.osv):
 sms_transfer_in()
 
 
-class sms_transfer_in_out(osv.osv):
+# class sms_transfer_in_out(osv.osv):
 
-    def create(self, cr, uid, vals, context=None, check=True):
-        #-----------------create number according to transfer mode-------------------------------------
-        sql = """Select COALESCE(count(*),'0') from sms_transfer_in_out
-                Where transfer_mode = '"""+str(vals['transfer_mode'])+"""'
-              """ 
-        cr.execute(sql)
-        transfer_no = cr.fetchone()[0] + 1
-        vals['Transfer_no'] = 'OUT -'+str(transfer_no)
-        if vals['transfer_mode'] == 'transfer_in':
-            vals['Transfer_no'] = 'IN -'+str(transfer_no)
-        #-------------------------------------------------------------------------------
-        result = super(osv.osv, self).create(cr, uid, vals, context)
-        return result
+#     def create(self, cr, uid, vals, context=None, check=True):
+#         #-----------------create number according to transfer mode-------------------------------------
+#         sql = """Select COALESCE(count(*),'0') from sms_transfer_in_out
+#                 Where transfer_mode = '"""+str(vals['transfer_mode'])+"""'
+#               """ 
+#         cr.execute(sql)
+#         transfer_no = cr.fetchone()[0] + 1
+#         vals['Transfer_no'] = 'OUT -'+str(transfer_no)
+#         if vals['transfer_mode'] == 'transfer_in':
+#             vals['Transfer_no'] = 'IN -'+str(transfer_no)
+#         #-------------------------------------------------------------------------------
+#         result = super(osv.osv, self).create(cr, uid, vals, context)
+#         return result
 
-    def onchange_student(self, cr, uid, ids, student_id):
-        result = {}
-        acad_cal = self.pool.get('sms.student').browse(cr,uid,student_id).current_class.id
-        result['acd_cal'] = acad_cal
-        return {'value': result} 
+#     def onchange_student(self, cr, uid, ids, student_id):
+#         result = {}
+#         acad_cal = self.pool.get('sms.student').browse(cr,uid,student_id).current_class.id
+#         result['acd_cal'] = acad_cal
+#         return {'value': result} 
 
-    _order = 'id desc' 
-    _name = "sms.transfer.in.out"
-    _description = "maintains info about students tranfer in out"
-    _columns = {
-        'transfer_mode':fields.selection([('transfer_in','Transfer In'),('transfer_out','Transfer Out')],'Transfer Mode',required = True),
-        'Transfer_no': fields.char('Transfer No' ,readonly = True),
+#     _order = 'id desc' 
+#     _name = "sms.transfer.in.out"
+#     _description = "maintains info about students tranfer in out"
+#     _columns = {
+#         'transfer_mode':fields.selection([('transfer_in','Transfer In'),('transfer_out','Transfer Out')],'Transfer Mode',required = True),
+#         'Transfer_no': fields.char('Transfer No' ,readonly = True),
         
         
-        'student_id': fields.many2one('sms.student','Student Name'  ),
-        'acd_cal': fields.many2one('sms.academiccalendar','Student Class' ),
+#         'student_id': fields.many2one('sms.student','Student Name'  ),
+#         'acd_cal': fields.many2one('sms.academiccalendar','Student Class' ),
         
         
-        'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type',required = True),
-        'allow_defaulter_student': fields.boolean('Allow Defaulter Student'),
-        'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'State',readonly = True),
-        'transfer_out_reason': fields.text('Reason Of Transfer'),
+#         'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type',required = True),
+#         'allow_defaulter_student': fields.boolean('Allow Defaulter Student'),
+#         'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')],'State',readonly = True),
+#         'transfer_out_reason': fields.text('Reason Of Transfer'),
               
-    }
-    _defaults = {'state':'Draft',}      
-    _sql_constraints = []
+#     }
+#     _defaults = {'state':'Draft',}      
+#     _sql_constraints = []
 
-sms_transfer_in_out()
+# sms_transfer_in_out()
 
 class sms_change_student_class_new(osv.osv):
     
