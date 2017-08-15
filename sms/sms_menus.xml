@@ -194,7 +194,7 @@
 <!-- Stduent Transfer-->
 	<menuitem id="menu_transfer_id" name="Student Tranfers" parent="menu_sms_root" sequence="5" groups="group_sms_director,group_sms_principal,group_sms_admin,group_sms_admission_officer,group_sms_admission_manager"/>
 	<menuitem id="menu_transfer_in_id" parent="menu_transfer_id" sequence="1" action="action_sms_transfer_in" groups="group_sms_director,group_sms_principal,group_sms_admission_officer,group_sms_admin,group_sms_admission_manager" />
-	<menuitem id="menu_transfer_in_out_id" parent="menu_transfer_id" sequence="1" action="action_sms_transfer_in_out" groups="group_sms_director,group_sms_principal,group_sms_admission_officer,group_sms_admin,group_sms_admission_manager" />
+	<!-- <menuitem id="menu_transfer_in_out_id" parent="menu_transfer_id" sequence="1" action="action_sms_transfer_in_out" groups="group_sms_director,group_sms_principal,group_sms_admission_officer,group_sms_admin,group_sms_admission_manager" /> -->
 	
 
 
