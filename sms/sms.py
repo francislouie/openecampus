@@ -2205,6 +2205,7 @@ class sms_academiccalendar_student(osv.osv):
                 return 
     
     _name = 'sms.academiccalendar.student'
+    """Stores information about student and class registration """ 
     _description = "registers new student in new class.."
     _columns = {
         'name': fields.many2one('sms.academiccalendar', 'Class',required=True),  
