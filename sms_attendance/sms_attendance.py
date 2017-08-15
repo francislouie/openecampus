@@ -26,8 +26,6 @@ class sms_session(osv.osv):
 
     def create(self, cr, uid, vals, context=None, check=True):
         year_id = super(sms_session, self).create(cr, uid, vals, context)
-        for f in self.browse(cr, uid, [year_id], context=context):
-            print "it works",f
         return True
 
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):

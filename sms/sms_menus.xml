@@ -74,15 +74,6 @@
 	<menuitem id="menu_default_acad_cal" parent="general_setting_id" sequence ="2" 
 	groups="group_sms_admin" action="action_default_acad_cal"/>
 
-	<menuitem id="menu_sms_timetable" parent="menu_timetable_head_id" sequence="" 
-	groups="group_sms_principal,group_sms_admin,group_sms_director" action="action_sms_timetable" />
-
-	<menuitem id="menu_move_swap_wizard" name="" parent="menu_timetable_head_id"  sequence="" action="action_view_sms_move_swap_timetable" 
-	groups="group_sms_principal,group_sms_admin,group_sms_director"/>
-
-	<menuitem id="menu_timetable_entry_wizard" name="" parent="menu_timetable_head_id"  sequence="" action="action_view_sms_timetable_entry_wizard" 
-	groups="group_sms_principal,group_sms_admin,group_sms_director"/>
-	
 	<!--Genral Setting-->
 	<menuitem name="General" id="general_setting_id" parent="menu_configuration_id" sequence="4"  groups="group_sms_director,group_sms_admin,group_sms_admission_manager"/>
     <menuitem id="menu_class_group" parent="general_setting_id" sequence ="2" groups="group_sms_admin,group_sms_director,group_sms_admission_manager" action="action_cls_grps"/>
