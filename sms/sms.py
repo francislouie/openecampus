@@ -4682,6 +4682,7 @@ class student_admission_register(osv.osv):
         'subject_ids' : fields.one2many('admission.register.subjects','parent_id','Student Subjects'),
         'form_no' : fields.integer('Form No'),
         'nationality':fields.many2one('res.country','Nationality'),
+        'admission_mode': fields.selection([('new_admission', 'New Admission'),('transfer_in', 'Transfer In'), ('migrated', 'Migrated')], 'Admission Mode'),
         'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Confirm', 'Confirm')], 'State', readonly = True),
         #*********************personal info************************************88
         'gender': fields.selection([('Male', 'Male'),('Female', 'Female')], 'Gender'),
@@ -4705,7 +4706,11 @@ class student_admission_register(osv.osv):
         'date_admission_confirmed':fields.date('Admission Confirmed On'),
     } 
     _sql_constraints = [('Student_Admission', 'unique (name,student_class,state)', """ Student Admission for this class already exists.""")]
-    _defaults = {  'state': lambda*a :'Draft','cur_country': _set_default_country, 'gender':_get_default_gender,}
+    _defaults = {  
+        'state': lambda * a :'Draft',
+        'cur_country': _set_default_country, 
+        'gender':_get_default_gender,
+        'admission_mode': 'new_admission',}
         
 student_admission_register()
   

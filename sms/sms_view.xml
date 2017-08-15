@@ -2962,7 +2962,8 @@
 						  <field name="group" attrs="{'readonly':[('state','!=','Draft')]}" />
 						  <field name="fee_structure"  required="1" attrs="{'readonly':[('state','!=','Draft')]}" />
 						  <field name="form_no" readonly="1" attrs="{'invisible':[('state','=','Draft')]}" />
-						  <field name="is_migrated" readonly="1" />
+						  <field name="admission_mode"/>
+              <field name="is_migrated" readonly="1" />
 						  <field name="date_admission_confirmed" readonly="1"/>
                    </group>
 				   <newline/>
@@ -3324,7 +3325,7 @@
  Transactional Log -->
 
         <record model="ir.actions.act_window" id="action_sms_transfer_in">
-            <field name="name">Students Transfer In</field>
+            <field name="name">Other Branches</field>
             <field name="res_model">sms.transfer.in</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
