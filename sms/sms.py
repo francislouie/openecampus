@@ -4870,8 +4870,8 @@ class sms_transfer_in(osv.osv):
         'cell_no': fields.char('Cell No'),
         'email':fields.char('Email'),
         'fax':fields.char('Fax'),
-        'institute_head':fields.many2one('res.users','Head Of The Institute'),
-        'printcipal_name':fields.many2one('res.users','Printcipal Name'),
+        'institute_head':fields.char('Head Of The Institute'),
+        'printcipal_name':fields.char('Printcipal Name'),
     }
     _defaults = {}    
     _sql_constraints = []
