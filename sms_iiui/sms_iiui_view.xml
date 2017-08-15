@@ -2,16 +2,5 @@
 <openerp>
     <data>
 
-		<record model="ir.ui.view" id="view_sms_admission_regisgter_iiui_id">
-	      <field name="name">student.admission.register.iiui.form</field>
-	      <field name="model">student.admission.register</field>
-	      <field name="inherit_id" ref="sms.sms_student_admission_register_form"/>
-		  <field name = "arch" type = "xml">
-			<xpath expr = "//field[@name ='form_no']" position = "after">
-				<field name="admission_mode"/>
-			</xpath>
-     	  </field>
-	    </record>
-
 	</data>
 </openerp>
