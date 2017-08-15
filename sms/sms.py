@@ -196,15 +196,15 @@ class sms_session(osv.osv):
         if not obj[0].months_loaded:
              raise osv.except_osv(('Stop'), ('Please! First Load Session Months' ))
         else:
+            self.write(cr, uid, ids, {'state': 'Active'})
             active_sessions = self.pool.get('sms.session').search(cr, uid, [('state','=','Active')])
             if active_sessions:
                 sess = ''
                 for f in active_sessions:
                     rec = self.pool.get('sms.session').browse(cr, uid, f)
-                    self.pool.get('sms.session').load_session_weeks(cr, uid, f.id)
-                    sess += "-"+rec.name
+                    self.pool.get('sms.session').load_session_weeks(cr, uid, rec.id)
+                    sess += " - " +rec.name
 #                 raise osv.except_osv(('Only 1 Session must be active at a time '), ('Active Session:'+sess))
-            self.write(cr, uid, ids, {'state': 'Active'})
         return True
     
     def load_session_months(self, cr, uid, ids, *args):
