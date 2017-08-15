@@ -1247,19 +1247,12 @@ class smsfee_std_withdraw(osv.osv):
   
         return 
             
-    def onchange_student(self, cr, uid,ids,std):
+    def onchange_student(self, cr, uid, ids, std, context=None):
         result = {}
-        print "std##########:",std
-        if std:
-             std_rec = self.pool.get('sms.student').browse(cr, uid, std)
-             print "formid::",ids
-             std_fs = std_rec.fee_type.name
-             father_name = std_rec.father_name
-             print "father::",father_name
-             result['fee_structure'] = std_fs
-#              result['father_name'] = father_name
-# #              update_lines = self.pool.get('smsfee.receiptbook').write(cr, uid, ids, {'father_name':father_name})
-             print "result:::",result
+        std_rec = self.pool.get('sms.student').browse(cr, uid, std)
+        result['fee_structure'] = std_rec.fee_type.name
+        result['father_name'] = std_rec.father_name
+
         return {'value':result}
         
 #         fee_ids = self.pool.get('sms.studentfee').search(cr, uid, [('student_id','=', std)], context=context)
@@ -1284,10 +1277,18 @@ class smsfee_std_withdraw(osv.osv):
              result[f.id] = ftyp
         return result
     
+    def on_change_registration_no(self, cr, uid, ids, registration_no, context=None):
+        result = {}
+        rec = self.pool.get('sms.student').search(cr, uid, [('registration_no','=',registration_no)])
+        student = self.pool.get('sms.student').browse(cr, uid, rec[0])
+        result["student_id"] =  student.id
+        return {'value' : result}
+
     _name = 'smsfee.std.withdraw'
     _description = "This object store fee types"
     _columns = {
-        'name': fields.function(_set_req_no,string = 'Request No.',type = 'char',method = True,store = True),      
+        'name': fields.function(_set_req_no,string = 'Request No.',type = 'char',method = True,store = True),   
+        'registration_no': fields.char('Registration No'),
         'request_date': fields.date('Date'),
         'request_by': fields.many2one('res.users','Decision By'),
         'decision_date': fields.date('Date'),

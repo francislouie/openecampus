@@ -678,22 +678,23 @@
 			</header>
 			<sheet><group string ="Student Withdrawl">
 					<group>
-						<field name="student_class_id" domain="[('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"  required ="1" />
-						<field name="student_id" domain="[('current_class','=',student_class_id),('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+						<field name="registration_no" on_change="on_change_registration_no(registration_no)"/>
+						<field name="student_id" on_change="onchange_student(student_id)" domain="[('current_class','=',student_class_id),('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
 						<field name="father_name"  readonly ="1" />
 						<field name="fee_structure"  readonly ="1" />
 							
 						<field name="request_type"/>
 					</group>
 		     		<group string ="">
+		     			<field name="student_class_id" domain="[('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"  required ="1" />
 						<field name="name"  readonly ="1" />
-						<field name="request_date" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+						<field name="request_date" required="1" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
 						<field name="state"  readonly ="1" />
 					</group>
 					</group>
 					<notebook>
         				    <page string="Reason " >
-							<field name="reason_withdraw" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"  />
+							<field name="reason_withdraw" required="1" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"  />
 							</page>
 							<page string="Fee" >
 							<field name="select_return_fee_ids" attrs="{'invisible':[('request_type','IN',['Withdraw','slc'])],'required':[('request_type','IN',['Admission_Cancel'])]}"  />
