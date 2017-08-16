@@ -1282,6 +1282,7 @@ class smsfee_std_withdraw(osv.osv):
         rec = self.pool.get('sms.student').search(cr, uid, [('registration_no','=',registration_no)])
         student = self.pool.get('sms.student').browse(cr, uid, rec[0])
         result["student_id"] =  student.id
+        result["student_class_id"] = student.current_class.id
         return {'value' : result}
 
     _name = 'smsfee.std.withdraw'
@@ -1298,7 +1299,10 @@ class smsfee_std_withdraw(osv.osv):
         'student_id': fields.many2one('sms.student','Student',required = True),
         'father_name': fields.char(string = 'Father',size = 100,readonly = True),
         'reason_withdraw':fields.text('Reason Withdraw'),
-        'request_type':fields.selection([('Withdraw','Withdraw'),('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),('slc','School Leaving Certificate')],'Request Type'),
+        'request_type':fields.selection([('Withdraw','Withdraw'),('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),('slc','School Leaving Certificate'), ('transfer_out','Transfer Out')],'Request Type'),
+        'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type',required = True),
+        'transfer_campus': fields.many2one('sms.transfer.in', 'Campus'),
+        'transfer_fee': fields.float('Transfer Fee'),
         'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Approved', 'Approved'),('Rejected', 'Rejected')], 'State', readonly = True, help='State'),
         'select_return_fee_ids': fields.many2many('smsfee.studentfee', 'return_std_fee_rel', 'withdraw_req_id', 'student_fee_id','Fee To Return', domain="[('student_id','=',student_id)]"),
         

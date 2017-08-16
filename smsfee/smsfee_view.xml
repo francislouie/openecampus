@@ -684,12 +684,15 @@
 						<field name="fee_structure"  readonly ="1" />
 							
 						<field name="request_type"/>
+						<field name="transfer_campus" attrs="{'invisible':[('request_type','!=','transfer_out')]}" />
 					</group>
 		     		<group string ="">
 		     			<field name="student_class_id" domain="[('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"  required ="1" />
 						<field name="name"  readonly ="1" />
 						<field name="request_date" required="1" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
 						<field name="state"  readonly ="1" />
+					    <field name="transfer_type" attrs="{'invisible':[('request_type','!=','transfer_out')]}" />
+              			<field name="transfer_fee" attrs="{'invisible':[('request_type','!=','transfer_out')]}" />
 					</group>
 					</group>
 					<notebook>
