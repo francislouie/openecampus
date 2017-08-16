@@ -125,4 +125,12 @@
 "113","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_admission_officer",1,1,1,0
 "114","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_fee_manager",1,1,1,0
 "115","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_fee_officer",1,1,1,0
-"1165","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_officers_exams",1,0,0,0
+"116","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_officers_exams",1,0,0,0
+
+"117","smsfee.discount","model_smsfee_discount","sms.group_sms_officers_exams",1,1,1,0
+"118","smsfee.discount","model_smsfee_discount","sms.group_sms_fee_manager",1,1,1,0
+"119","smsfee.discount","model_smsfee_discount","sms.group_sms_fee_officer",1,1,1,0
+"121","smsfee.discount","model_smsfee_discount","sms.group_sms_director",1,1,1,0
+"122","smsfee.discount","model_smsfee_discount","sms.group_sms_principal",1,1,1,0
+"123","smsfee.discount","model_smsfee_discount","sms.group_sms_admin",1,1,1,0
+"124","smsfee.discount","model_smsfee_discount","sms.group_sms_admission_manager",1,1,1,0
