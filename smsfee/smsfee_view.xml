@@ -678,21 +678,27 @@
 			</header>
 			<sheet><group string ="Student Withdrawl">
 					<group>
-						<field name="registration_no" on_change="on_change_registration_no(registration_no)"/>
+						<field name="registration_no" on_change="on_change_registration_no(registration_no)" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"/>
+						<field name="student_class_id" domain="[('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"  required ="1" />
 						<field name="student_id" on_change="onchange_student(student_id)" domain="[('current_class','=',student_class_id),('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
-						<field name="father_name"  readonly ="1" />
-						<field name="fee_structure"  readonly ="1" />
-							
-						<field name="request_type"/>
-						<field name="transfer_campus" attrs="{'invisible':[('request_type','!=','transfer_out')]}" />
+						<field name="father_name"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+						<field name="fee_structure"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+						
+						<field name="total_dues" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"/>
+						
 					</group>
 		     		<group string ="">
-		     			<field name="student_class_id" domain="[('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"  required ="1" />
+		     			
 						<field name="name"  readonly ="1" />
 						<field name="request_date" required="1" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
 						<field name="state"  readonly ="1" />
-					    <field name="transfer_type" attrs="{'invisible':[('request_type','!=','transfer_out')]}" />
-              			<field name="transfer_fee" attrs="{'invisible':[('request_type','!=','transfer_out')]}" />
+						<field name="request_type" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"/>
+					    <field name="transfer_type" attrs="{'invisible':[('request_type','!=','transfer_out')],
+					    	'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+              			<field name="transfer_campus" attrs="{'invisible':[('request_type','!=','transfer_out')],
+					    	'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+              			<field name="transfer_fee" attrs="{'invisible':[('request_type','!=','transfer_out')],
+					    	'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
 					</group>
 					</group>
 					<notebook>

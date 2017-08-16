@@ -1283,6 +1283,7 @@ class smsfee_std_withdraw(osv.osv):
         student = self.pool.get('sms.student').browse(cr, uid, rec[0])
         result["student_id"] =  student.id
         result["student_class_id"] = student.current_class.id
+        result['total_dues'] = student.total_paybles + student.total_paybles_transport
         return {'value' : result}
 
     _name = 'smsfee.std.withdraw'
@@ -1303,6 +1304,7 @@ class smsfee_std_withdraw(osv.osv):
         'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type',required = True),
         'transfer_campus': fields.many2one('sms.transfer.in', 'Campus'),
         'transfer_fee': fields.float('Transfer Fee'),
+        'total_dues': fields.float('Total Dues'),
         'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Approved', 'Approved'),('Rejected', 'Rejected')], 'State', readonly = True, help='State'),
         'select_return_fee_ids': fields.many2many('smsfee.studentfee', 'return_std_fee_rel', 'withdraw_req_id', 'student_fee_id','Fee To Return', domain="[('student_id','=',student_id)]"),
         
