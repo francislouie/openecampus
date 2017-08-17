@@ -1396,6 +1396,7 @@ class sms_academiccalendar(osv.osv):
             stdids = self.pool.get('sms.academiccalendar.student').search(cr, uid, [('name','=',f.id),('state','=','Current')])
             res[f.id] = len(stdids)
         return res
+    
     def get_display_order(self, cr, uid, ids, name, args, context=None):
         seq = 1
         """This method retruns the sequnece of parent class of this record. that will be use to order the list record of acad cal"""
@@ -1412,6 +1413,67 @@ class sms_academiccalendar(osv.osv):
         for rec in self.browse(cr, uid, ids, context):
             result = super(osv.osv, self).unlink(cr, uid, ids, context=context)
         return result 
+
+    def get_withdrawn_students(self, cr, uid, class_id):
+        if class_id:
+            student_ids = []
+            sql = """SELECT std_id from sms_academiccalendar_student
+                     where name =""" +str(class_id)+"""
+                     AND state = 'Current'"""
+            cr.execute(sql)
+            records = cr.fetchall()
+            for rec in records:
+                student_ids.append(rec[0])
+            return student_ids
+        else:
+            return None 
+         
+    def withdrawn_students_information(self, cr, uid, ids, name, args, context=None):
+        """This method will return students withdrawn from a class"""
+        res = {}
+        for f in self.browse(cr, uid, ids, context):
+            if f.class_id.id:
+                sql = """SELECT count(id) from sms_academiccalendar_student
+                         where name =""" + str(f.class_id.id) +"""
+                         AND state = 'Withdraw'"""
+                cr.execute(sql)
+                res[f.id] = cr.fetchone()[0]
+        return res
+    
+    def active_students_information(self, cr, uid, ids, name, args, context=None):
+        """This method will return students withdrawn from a class"""
+        res = {}
+        for f in self.browse(cr, uid, ids, context):
+            if f.class_id.id:
+                sql = """SELECT count(id) from sms_academiccalendar_student
+                         where name =""" + str(f.class_id.id) +"""
+                         AND state = 'Current' """
+                cr.execute(sql)
+                res[f.id] = cr.fetchone()[0]
+        return res
+
+    def promoted_students_information(self, cr, uid, ids, name, args, context=None):
+        """This method will return students withdrawn from a class"""
+        res = {}
+        for f in self.browse(cr, uid, ids, context):
+            if f.class_id.id:
+                sql = """SELECT count(id) from sms_academiccalendar_student
+                         where name =""" + str(f.class_id.id) +"""
+                         AND state = 'Promoted' """
+                cr.execute(sql)
+                res[f.id] = cr.fetchone()[0]
+        return res
+
+    def total_students_information(self, cr, uid, ids, name, args, context=None):
+        """This method will return students withdrawn from a class"""
+        res = {}
+        for f in self.browse(cr, uid, ids, context):
+            if f.class_id.id:
+                sql = """SELECT count(id) from sms_student
+                         where current_class =""" + str(f.class_id.id)
+                cr.execute(sql)
+                res[f.id] = cr.fetchone()[0]
+        return res
 
     _name = 'sms.academiccalendar'
     _description = "Crates new class in a new session."
@@ -1439,6 +1501,10 @@ class sms_academiccalendar(osv.osv):
         'closed_by':fields.many2one('res.users', 'Closed By'),
         'helptxt':fields.text('Help', readonly = True),
         'pending_results':fields.function(pending_annual_results, string='Pending Annual Results', type='integer'),
+        'withdrawn_students':fields.function(withdrawn_students_information, method=True, string='With Drawn Students', type='integer', store=True),
+        'active_students':fields.function(active_students_information, method=True, string='Active Students', type='integer', store=True),
+        'promoted_students':fields.function(promoted_students_information, method=True, string='Promoted Students', type='integer', store=True),
+        'total_students':fields.function(total_students_information, string='Total Students', method=True, type='integer', store=True),
         #'display_order':fields.function(get_display_order,store=True, string='display order', type='integer'),
         'exam_ids' :fields.one2many('sms.exam.datesheet', 'academiccalendar', 'Exam', readonly=True),
     } 
@@ -2029,12 +2095,6 @@ class sms_academiccalendar_student(osv.osv):
     """This object registers a student within a class in a session """
     
     def enroll_student_in_class(self, cr, uid, ids,fs, fee_start_month,class_of_admin,enrolment_type):
-            
-        print "student",ids
-        print "fs",fs
-        print "start m",fee_start_month
-        print "class of admission",class_of_admin
-
         #step1: Register student to class
         acad_cal_obj = self.pool.get('sms.academiccalendar').browse(cr,uid,class_of_admin)
         std_cal_id = self.pool.get('sms.academiccalendar.student').create(cr,uid,{
@@ -2082,22 +2142,16 @@ class sms_academiccalendar_student(osv.osv):
                                 AND smsfee_feetypes.subtype IN('Promotion_Fee','Monthly_Fee','Annual_fee')
                                 """
                 
-                
-                
                 cr.execute(sqlfee1)
                 fees_ids = cr.fetchall() 
-                print "this class fees,fees_ids",fees_ids   
                 if fees_ids:
                     late_fee = 0
                     fee_month = ''
                     for idds in fees_ids:
-                        print "generic fee_type ",fs
                         obj = self.pool.get('smsfee.classes.fees').browse(cr,uid,idds[0])
                         if idds[2] == 'Monthly_Fee':
-                            print "calling method"
                             insert_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_fee(cr,uid,ids,std_cal_id,class_of_admin,fee_start_month,idds[0])
                         else:
-                            print "executing else"  
                             crate_fee = self.pool.get('smsfee.studentfee').create(cr,uid,{
                             'student_id': ids,
                             'acad_cal_id': class_of_admin,
@@ -2114,15 +2168,13 @@ class sms_academiccalendar_student(osv.osv):
                             'state':'fee_unpaid'
                             })
                     else:
-                          msg = 'Fee May be defined but not set for New Class:'       
-#              
-        
+                        msg = 'Fee May be defined but not set for New Class:'       
         return True  
     
     
     
     
-    def _set_admission_no(self, cr, uid, ids,acad_cal_id):
+    def _set_admission_no(self, cr, uid, ids, acad_cal_id):
         
         #for the time set as according to forward college
         # to make it genuin uncomment the following code the method is woring fine, need to simplify it
@@ -2166,39 +2218,38 @@ class sms_academiccalendar_student(osv.osv):
                 if reg_obj.first == 'Category':
                     admin_no = str(cls_cat[:1])
                 elif reg_obj.first == 'Year':
-                   admin_no = str(year)
+                    admin_no = str(year)
                 elif reg_obj.first == 'Month':
-                   admin_no = str(month)
+                    admin_no = str(month)
                 elif reg_obj.first == 'Counter': 
                     admin_no = str(new_stds)
                 
                 if reg_obj.second == 'Category':
                     admin_no = admin_no +  reg_obj.separator_1 + str(cls_cat[:1])
                 elif reg_obj.second == 'Year':
-                   admin_no = admin_no +  reg_obj.separator_1 + str(year)
+                    admin_no = admin_no +  reg_obj.separator_1 + str(year)
                 elif reg_obj.second == 'Month':
-                   admin_no = admin_no +  reg_obj.separator_1 + str(month)
+                    admin_no = admin_no +  reg_obj.separator_1 + str(month)
                 elif reg_obj.second == 'Counter':
                     admin_no = admin_no +  reg_obj.separator_1 + str(new_stds)
                 
                 if reg_obj.third == 'Category':
                     admin_no = admin_no + reg_obj.separator_2 + str(cls_cat[:1])
                 elif reg_obj.third == 'Year':
-                   admin_no = admin_no + reg_obj.separator_2 + str(year)
+                    admin_no = admin_no + reg_obj.separator_2 + str(year)
                 elif reg_obj.third == 'Month':
-                   admin_no = admin_no + reg_obj.separator_2 + str(month)
+                    admin_no = admin_no + reg_obj.separator_2 + str(month)
                 elif reg_obj.third == 'Counter':
                     admin_no = admin_no + reg_obj.separator_2 + str(new_stds)
     
                 if reg_obj.fourth == 'Category':
                     admin_no = admin_no + reg_obj.separator_3 + str(cls_cat[:1])
                 elif reg_obj.fourth == 'Year':
-                   admin_no = admin_no + reg_obj.separator_3 + str(year)
+                    admin_no = admin_no + reg_obj.separator_3 + str(year)
                 elif reg_obj.fourth == 'Month':
-                   admin_no = admin_no + reg_obj.separator_3 + str(month)
+                    admin_no = admin_no + reg_obj.separator_3 + str(month)
                 elif reg_obj.fourth == 'Counter':
                     admin_no = admin_no + reg_obj.separator_3 + str(new_stds)
-                print "new reg no,",admin_no
                 return str(admin_no)
             else:
                 raise osv.except_osv(('Format Missing'),('Please Define a Registration No Format for this institute'))
