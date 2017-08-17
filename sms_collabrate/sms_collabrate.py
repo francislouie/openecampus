@@ -329,6 +329,7 @@ class sms_collabrator(osv.osv):
                             'total_paybles':this_recipt.total_paybles,
                             'total_paid_amount':this_recipt.total_paid_amount,
                             'due_date':'2017-01-01',
+                            'state':this_recipt.state,
                             'challan_cat':this_recipt.challan_cat,
                             'return_status':1,
                             'return_desc':'Success'
