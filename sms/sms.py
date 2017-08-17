@@ -1419,7 +1419,7 @@ class sms_academiccalendar(osv.osv):
             student_ids = []
             sql = """SELECT std_id from sms_academiccalendar_student
                      where name =""" +str(class_id)+"""
-                     AND state = 'Current'"""
+                     AND state = 'Withdraw'"""
             cr.execute(sql)
             records = cr.fetchall()
             for rec in records:
