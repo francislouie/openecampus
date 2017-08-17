@@ -1413,7 +1413,21 @@ class sms_academiccalendar(osv.osv):
         for rec in self.browse(cr, uid, ids, context):
             result = super(osv.osv, self).unlink(cr, uid, ids, context=context)
         return result 
-    
+
+    def get_withdrawn_students(self, cr, uid, class_id):
+        if class_id:
+            student_ids = []
+            sql = """SELECT std_id from sms_academiccalendar_student
+                     where name =""" +str(class_id)+"""
+                     AND state = 'Current'"""
+            cr.execute(sql)
+            records = cr.fetchall()
+            for rec in records:
+                student_ids.append(rec[0])
+            return student_ids
+        else:
+            return None 
+         
     def withdrawn_students_information(self, cr, uid, ids, name, args, context=None):
         """This method will return students withdrawn from a class"""
         res = {}

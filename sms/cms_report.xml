@@ -75,6 +75,13 @@
             rml="sms/report/rml_studentsbiodata.rml"
             string="Student Biodata"/>
             
+ 		<!--print withdrawn students-->
+		<report id="report_withdraw_student_id"
+            model="sms.student"
+            name="sms.withdrawn.student.details"
+            multi="True"
+            rml="sms/report/rml_withdrawnstudentsdata.rml"
+            string="With Drawn Student Information"/>
            
        <!--print students security cards-->
 		<report id="report_student_temp-securitycards_id"
