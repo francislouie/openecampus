@@ -147,7 +147,7 @@
       	</tr>	
       	<tr>
 		      <td><para style="P10">Printed By:</para></td>
-		      <td><para style="P10">Administrator</para></td>
+		      <td><para style="P10">[[(r['printed_by'])]]</para></td>
 			  	<td><para style="P10"> </para></td>
 			  	<td><para style="P10">Sign:</para></td>
 			  	<td><para style="P10">________________</para></td>

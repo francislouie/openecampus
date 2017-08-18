@@ -164,6 +164,7 @@ class sms_attendance_parser(report_sxw.rml_parse):
         final_dict.update({'total_leaves': total_leaves})
 
         final_dict.update({'date_printed': datetime.now().strftime('%d-%m-%Y')})
+        final_dict.update({'printed_by': self.pool.get('res.users').browse(self.cr,self.uid,self.uid).name})
 
         result.append(final_dict)
         return result
