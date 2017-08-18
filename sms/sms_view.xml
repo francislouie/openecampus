@@ -1199,10 +1199,10 @@
 			<page string="Students">
 			<separator string="Student Strength"/>
 			<group col="4" colspan="2">
-				<field name="withdrawn_students" readonly="1"/>
-				<field name="active_students" readonly="1"/>
-				<field name="promoted_students" readonly="1"/>
 				<field name="total_students" readonly="1"/>
+				<field name="withdrawn_students" readonly="1"/>
+				<field name="promoted_students" readonly="1"/>
+				<field name="active_students" readonly="1"/>
 			</group>
 			<field name="acad_cal_students" widget="one2many_list" readonly="1">
 				<tree delete="false">
