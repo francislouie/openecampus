@@ -1250,7 +1250,7 @@ class sms_academiccalendar(osv.osv):
                 session = obj.acad_session_id.name
                 section = obj.section_id.name
                 string = str(cls)+' - '+str(section)+' ('+str(session)+')'
-                sql = """sms_academiccalendar set name = """+str(string)+"""where id = """+str(f.id)
+                sql = """sms_academiccalendar set name = """+str(string)+"""where id = """+str(obj.id)
                 cr.execute(sql)
             return result
     
@@ -1262,16 +1262,6 @@ class sms_academiccalendar(osv.osv):
             return {'value': result}
         else:
             return {}
-    
-    def update_class_strength(self, cr, uid, ids, name, args, context=None):
-        result = {}
-        acad_cal = self.browse(cr, uid,ids)
-        for f in acad_cal:
-            sql = """select count(*) from sms_academiccalendar_student where "name" = """+str(f.id)+"""AND state in ('Current','Promoted','Fail')"""
-            cr.execute(sql)
-            cnt = cr.fetchone()
-            result[f.id] = cnt[0]
-        return result   
     
     def change_student_class(self, cr, uid, ids,class_id,new_class_id,new_fs,f_start_month,xx):
         ftlist = []
@@ -1435,7 +1425,7 @@ class sms_academiccalendar(osv.osv):
             if f.class_id.id:
                 sql = """SELECT count(id) from sms_academiccalendar_student
                          where name =""" + str(f.class_id.id) +"""
-                         AND state = 'Withdraw'"""
+                         AND state in ('Withdraw','Suspended','Demoted','section_changed','Conditionally_Promoted','class_changed')"""
                 cr.execute(sql)
                 res[f.id] = cr.fetchone()[0]
         return res
@@ -1479,7 +1469,7 @@ class sms_academiccalendar(osv.osv):
     _description = "Crates new class in a new session."
     #_order = 'display_order,section_id'
     _columns = {
-        'name':  fields.function(set_class_name, method=True, store = True ,string='Class',type='char'), 
+        'name':  fields.function(set_class_name, method=True, store = True, string='Class', type='char'), 
         'acad_session_id': fields.many2one('sms.academics.session', 'Academic Session',domain="[('state','!=','Closed')]",required=True),
         'session_id': fields.many2one('sms.session', 'Session Year',domain="[('state','!=','Previous'),('academic_session_id','=',acad_session_id)]",required=True),
         'class_id': fields.many2one('sms.classes', 'Class',required=True), 
@@ -1487,7 +1477,7 @@ class sms_academiccalendar(osv.osv):
         'group_id': fields.many2one('sms.group', 'Groups', required=True),
         'class_teacher': fields.many2one('hr.employee', 'Class Teacher',required=True),
         'max_stds': fields.integer('Max Students'),
-        'cur_strength':fields.function(update_class_strength, method=True, string='Current Strength',type='char'),
+        'cur_strength':fields.function(active_students_information, method=True, string='Current Strength',type='char'),
         'acad_cal_students': fields.one2many('sms.academiccalendar.student','name','Students'),
         'assigned_subjects': fields.one2many('sms.academiccalendar.subjects','academic_calendar','Subjects'),
         'subjects_loaded':fields.boolean('Subject Loaded'),
