@@ -51,6 +51,10 @@ class sms_collabrator(osv.osv):
         student_id = self.pool.get('sms.student').search(cr,uid,[('id','=', student_id), ('state','=','Admitted')])
         if student_id:
             obj = self.pool.get('sms.student').browse(cr, uid, student_id)
+            if obj[0].disp_cntct_prtal == False or obj[0].disp_cntct_prtal == None:
+                disp_cntct_prtal = 0
+            else:
+                disp_cntct_prtal = 1
             my_dict = {
                         'registration_no':obj[0].registration_no,
                         'stdname':obj[0].name,
@@ -70,7 +74,7 @@ class sms_collabrator(osv.osv):
                         'transport_availed':obj[0].transport_availed,
                         'address':obj[0].cur_address,
                         'city':obj[0].cur_city,
-                        'display_contact_info':obj[0].disp_cntct_prtal,
+                        'display_contact_info':disp_cntct_prtal,
                         'login_status':1
                     }
             result.append(my_dict)
@@ -325,6 +329,7 @@ class sms_collabrator(osv.osv):
                             'total_paybles':this_recipt.total_paybles,
                             'total_paid_amount':this_recipt.total_paid_amount,
                             'due_date':'2017-01-01',
+                            'state':this_recipt.state,
                             'challan_cat':this_recipt.challan_cat,
                             'return_status':1,
                             'return_desc':'Success'

@@ -16,6 +16,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
             'get_admission_statistics': self.get_admission_statistics,
             'print_students_class_list':self.print_students_class_list,
             'get_student_biodata' : self.get_student_biodata,
+            'get_withdrawn_student_info':self.get_withdrawn_student_info,
             'print_student_se_passes':self.print_student_se_passes,
             'get_date_range':self.get_date_range,
         })
@@ -53,6 +54,27 @@ class sms_report_studentslist(report_sxw.rml_parse):
             mydict['phone'] = row[5]
             i = i + 1
             result.append(mydict)
+        return result
+
+    def get_withdrawn_student_info(self,form):                                                         
+        result = []
+        this_form = self.datas['form']
+        acad_cal = this_form['acad_cal'][0]
+        get_student_ids = self.pool.get('sms.academiccalendar').get_withdrawn_students(self.cr, self.uid, acad_cal)
+        if get_student_ids:
+            i = 1
+            for student in get_student_ids:
+                mydict = {'s_no':'', 'name':'', 'class':'', 'admission_date':'', 'withdraw_date':'','withdraw_by':'', 'approved_by':''}
+                student_obj = self.pool.get('sms.student').browse(self.cr, self.uid, student)
+                mydict['s_no'] = i
+                mydict['name'] = student_obj.name
+                mydict['class'] = student_obj.current_class.name
+                mydict['admission_date'] = student_obj.admitted_on
+                mydict['withdraw_date'] = student_obj.date_withdraw
+                mydict['withdraw_by'] = student_obj.withdraw_by.name
+                mydict['approved_by'] = ''
+                i += 1
+                result.append(mydict)
         return result
   
     def print_students_class_list(self,form):                                                         
@@ -191,20 +213,20 @@ class sms_report_studentslist(report_sxw.rml_parse):
             if updating:
                 print 'success'
         #-----------Update login Ids for students----------------------------
-        sql_query = """SELECT campus_code from res_company"""
-        self.cr.execute(sql_query)
-        campus_code = self.cr.fetchone()
-        student_ids = self.pool.get('sms.student').search(self.cr, self.uid, [])
-        srudent_recs = self.pool.get('sms.student').browse(self.cr, self.uid, student_ids)
-        for rec in srudent_recs:
-            registration_no = rec.registration_no
-            login_id = str(campus_code[0])+str(registration_no)
-            import random
-            random_pass = random.randrange(100, 1000)
-            password = str(random_pass)+str(registration_no)
-            update=self.pool.get('sms.student').write(self.cr, self.uid, rec.id, {'login_id':login_id, 'password':password})
-            if update:
-                print 'Done'
+#         sql_query = """SELECT campus_code from res_company"""
+#         self.cr.execute(sql_query)
+#         campus_code = self.cr.fetchone()
+#         student_ids = self.pool.get('sms.student').search(self.cr, self.uid, [])
+#         srudent_recs = self.pool.get('sms.student').browse(self.cr, self.uid, student_ids)
+#         for rec in srudent_recs:
+#             registration_no = rec.registration_no
+#             login_id = str(campus_code[0])+str(registration_no)
+#             import random
+#             random_pass = random.randrange(100, 1000)
+#             password = str(random_pass)+str(registration_no)
+#             update=self.pool.get('sms.student').write(self.cr, self.uid, rec.id, {'login_id':login_id, 'password':password})
+#             if update:
+#                 print 'Done'
                 
 #        temporary query to set students security fee
         sql0 = """SELECT smsfee_studentfee.id,student_id,receipt_no,paid_amount FROM smsfee_studentfee
@@ -347,10 +369,11 @@ class sms_report_studentslist(report_sxw.rml_parse):
                 result.append(my_dict)
             return result
 
-report_sxw.report_sxw('report.sms.studentslist.name', 'sms.student', 'addons/sms/rml_studentslist.rml',parser = sms_report_studentslist, header='external')
-report_sxw.report_sxw('report.sms.class.list.name', 'sms.student', 'addons/sms/rml_student_class_list.rml',parser = sms_report_studentslist, header='external')
-report_sxw.report_sxw('report.sms.std_admission_statistics.name', 'sms.student', 'addons/sms/rml_std_admission_statistics.rml',parser = sms_report_studentslist, header=False)
-report_sxw.report_sxw('report.sms.students.biodata', 'sms.student', 'addons/sms/rml_studentsbiodata.rml',parser = sms_report_studentslist, header='external')
+report_sxw.report_sxw('report.sms.studentslist.name', 'sms.student', 'addons/sms/rml_studentslist.rml',parser=sms_report_studentslist, header='external')
+report_sxw.report_sxw('report.sms.class.list.name', 'sms.student', 'addons/sms/rml_student_class_list.rml',parser=sms_report_studentslist, header='external')
+report_sxw.report_sxw('report.sms.std_admission_statistics.name', 'sms.student', 'addons/sms/rml_std_admission_statistics.rml',parser=sms_report_studentslist, header=False)
+report_sxw.report_sxw('report.sms.students.biodata', 'sms.student', 'addons/sms/rml_studentsbiodata.rml',parser=sms_report_studentslist, header='external')
 report_sxw.report_sxw('report.sms_students_securuty_cards_name', 'sms.student', 'addons/sms/report/rml_student_remp_sec_cards.rml',parser=sms_report_studentslist, header=False)
+report_sxw.report_sxw('report.sms.withdrawn.student.details', 'sms.student', 'addons/sms/report/rml_withdrawnstudentsdata.rml',parser=sms_report_studentslist, header='external')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

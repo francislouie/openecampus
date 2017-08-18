@@ -442,7 +442,7 @@
 				<notebook>
 					<page string ="Transport Fee Details">
 						<button name="%(action_student_transprotfee_collect_id)d" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-						<button name="%(action_singlestudent_unpaidtransportfee_receipt_id)d" string="Transport Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+						<!--<button name="%(action_singlestudent_unpaidtransportfee_receipt_id)d" string="Transport Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>-->
 						<field name="transport_fee_payment_ids" nolabel="1" attrs=""/>
 					</page>
 				</notebook>
