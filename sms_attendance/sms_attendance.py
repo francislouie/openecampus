@@ -66,6 +66,28 @@ sms_offdays()
 
 class sms_academiccalendar(osv.osv):
     
+    def get_class_attendance(self, cr, uid, ids, class_id, date):
+        sql = """SELECT 
+                COALESCE(sum(CASE WHEN present THEN 1 ELSE 0 END),0) as present, 
+                COALESCE(sum(CASE WHEN absent THEN 1 ELSE 0 END),0) as absent, 
+                COALESCE(sum(CASE WHEN leave THEN 1 ELSE 0 END),0) as leave
+                FROM sms_class_attendance_lines AS l, sms_class_attendance AS a
+                where a.id = l.parent_id 
+                and a.class_id = %s
+                and a.attendance_date =  %s 
+                """
+
+        args = [class_id, date]
+        cr.execute(sql, args)
+        rec = cr.fetchone()
+
+        result = {}
+        result.update({'present': rec[0]})
+        result.update({'absent': rec[1]})
+        result.update({'leave': rec[2]})
+
+        return result
+
     _name = 'sms.academiccalendar'
     _inherit = 'sms.academiccalendar'
     _columns = {

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<!-- Daily Attendance Report-->
+        <record id="view_sms_daily_attendance_sheet" model="ir.ui.view">
+            <field name="name">Daily Attendance Report</field>
+            <field name="model">class.print_daily_attendance_sheet</field>
+            <field name="arch" type="xml">
+                <form string="Daily Attendance Report" version="7.0">
+					<group colspan="4">
+						<field name="session_id" requried="1"/>
+                        <field name="date" requried="1"/>
+                    </group>
+
+                    <footer>
+                        <button string="Print" name="print_daily_attendance_list" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+          </record>
+
+        <record id="action_sms_daily_attendance_sheet" model="ir.actions.act_window">
+            <field name="name">Daily Attendance Report</field>
+            <field name="res_model">class.print_daily_attendance_sheet</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_sms_daily_attendance_sheet"/>
+           <field name="target">new</field>
+        </record>
+
+</data>
+</openerp>
