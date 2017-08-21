@@ -1827,7 +1827,7 @@ class smsfee_receiptbook(osv.osv):
          'state':'Draft',
          'payment_method': 'Cash',
          'total_paid_amount': 0.0,
-         'receipt_date':lambda *a: time.strftime('%Y-%m-%d'),
+         'receipt_date':lambda *a: time.strftime('%d/%m/%Y'),
     }
 smsfee_receiptbook()
 
