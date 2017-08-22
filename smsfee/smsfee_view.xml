@@ -754,8 +754,8 @@
 					<field name="challan_type" readonly="1"/>
 					</group>
 		     		<group string ="">
-						<field name="receipt_date" invisible="1" required ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"/>
-						<field name="receipt_date_view" readonly="1" />
+						<field name="receipt_date" required ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"  invisible="1"/>
+						<field name="receipt_date_view" readonly="1"/>
 						<field name="payment_method" readonly = "1" required ="1"/>	
 						<field name="manual_recpt_no"  />								
 					</group>
@@ -812,7 +812,8 @@
 					<field name="counter"/>
 					<field name="student_id" domain="[('current_class','=',name)]" />
 					<field name="std_reg_no"/>
-					<field name="receipt_date"/>
+					<field name="receipt_date_view"/>
+					<!--<field name="receipt_date"/>-->
 					<field name="state"/>
 					<field name="challan_cat"/>
 					<field name="total_paybles"/>
