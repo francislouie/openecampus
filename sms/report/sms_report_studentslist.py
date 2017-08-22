@@ -247,14 +247,19 @@ class sms_report_studentslist(report_sxw.rml_parse):
                                         'state':'to_be_paid'})
         
         res = []
-        s_no = 0        
+        s_no = 0
+        print "-------",form['acad_cal'][0]        
         _ids = self.pool.get('sms.academiccalendar.student').search(self.cr ,self.uid ,[('name','=',form['acad_cal'][0])])
         std_t = tuple(_ids)
+        print "------",std_t
         sql = """SELECT std_id FROM sms_academiccalendar_student
             WHERE id IN """+str(std_t)+""" """
         self.cr.execute(sql)
+        
         info = self.cr.fetchall()
-
+        print info
+        
+        print alpha
         for row in info:
             rec = self.pool.get('sms.student').browse(self.cr ,self.uid ,row[0])
             

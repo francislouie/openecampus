@@ -745,7 +745,6 @@
 				<h2><field name="student_id" nolabel ="1" readonly ="1"/><field name="student_class_id" readonly ="1"   /></h2>
 				<h4><field name="fee_structure"  readonly ="1" /></h4>
 				</group>
-				
 			</group>
 			<group >
 					<group>
@@ -755,10 +754,10 @@
 					<field name="challan_type" readonly="1"/>
 					</group>
 		     		<group string ="">
-						
-							<field name="receipt_date" required ="1"  attrs="{'readonly':[('state','IN',['Paid'])]}"  />
-							<field name="payment_method" readonly = "1"  required ="1" />	
-							<field name="manual_recpt_no"  />								
+						<field name="receipt_date" invisible="1" required ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"/>
+						<field name="receipt_date_view" readonly="1" />
+						<field name="payment_method" readonly = "1" required ="1"/>	
+						<field name="manual_recpt_no"  />								
 					</group>
 					</group>
 					<notebook>
