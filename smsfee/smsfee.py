@@ -1402,8 +1402,8 @@ class smsfee_receiptbook(osv.osv):
         return result
      
     def unlink(self, cr, uid, ids, context=None):
-         result = super(osv.osv, self).unlink(cr, uid, ids, context)
-         return result 
+        result = super(osv.osv, self).unlink(cr, uid, ids, context)
+        return result 
     
     def unlink_lines(self, cr, uid, ids, *args):
         line_pool = self.pool.get('smsfee.receiptbook.lines')
@@ -1458,7 +1458,15 @@ class smsfee_receiptbook(osv.osv):
         return
     
     def confirm_fee_received(self, cr, uid, ids, context=None):
-        #
+        #-----------Populate the Date Fee Record For view purpose ----------
+        sql =   """SELECT id, receipt_date FROM smsfee_receiptbook"""
+        cr.execute(sql)
+        dates_updated = cr.fetchall()
+        for rec in dates_updated:
+            date_convt = datetime.datetime.strptime(rec[1] , '%Y-%m-%d')
+            date_str = str(date_convt.strftime('%d/%m/%Y'))
+            self.pool.get('smsfee.receiptbook').write(cr, uid, rec[0], {'receipt_date_view':date_str})
+        #-------------------------------------------------------------------
         self.onchange_student(cr, uid, ids, None)
         rec = self.browse(cr, uid, ids, context)
         if rec[0].student_class_id.name == None:
@@ -1818,6 +1826,7 @@ class smsfee_receiptbook(osv.osv):
         'late_fee' : fields.float('Late Fee'),
         'std_reg_no': fields.related('student_id','registration_no',type='char',relation='sms.student', string='Registration Number', readonly=True),
         'challan_type':fields.selection([('Full','Full'),('Partial','Partial')],'Challan Type'),
+        'receipt_date_view':fields.char('Date', readonly =True, size=64),
     }
     _sql_constraints = [  
         #('Fee Exisits', 'unique (name)', 'Fee Receipt No Must be Unique!')

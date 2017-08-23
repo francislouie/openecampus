@@ -734,7 +734,7 @@
 		</field>
 	</record>
 
-	<!-- Acadmeic Calendar Inherited View-->
+	<!-- Acadmeic Calendar Inherited View
 	<record model="ir.ui.view" id="inherit_view_sms_transport_acad_calendar">
 		<field name="name">sms.academiccalendar.inherit</field>
 		<field name="model">sms.academiccalendar</field>
@@ -747,7 +747,8 @@
 					<button name="%(action_fee_receipts_2)d" string="Transport Fee Receipts"  states="Draft,Active" type="action" icon="gtk-print"/>
 				</header>
 			</field>
-	</record>
+	</record>	
+	-->
 
 	<!-- Inherited res company for challan print settings -->
 	<record model="ir.ui.view" id="view_cms_company_form112">
