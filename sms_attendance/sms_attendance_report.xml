@@ -18,5 +18,12 @@
             string="Filled Attendance Report"
             />   
 
+        <report id="report_class_daily_attendance_report_id"
+            model="sms.academiccalendar"
+            name="smsattendance.daily.attendance.sheet"
+            multi="True"
+            rml="sms_attendance/report/daily_attendance_report.rml"
+            string="Daily Attendance Report"
+            />
    </data>
 </openerp>

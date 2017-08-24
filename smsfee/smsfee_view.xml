@@ -274,20 +274,7 @@
 								<field name="view_academics_fee"     nolabel="1"/>
 							</group>
 						</page>
-						<page string = "Discounts">
-							<h3> <label for="discount_given" string="Give Discount"/><field name="discount_given"/></h3>
-							<field  name="discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('discount_given', '=', False)]}"  >
-							<tree editable = "top" >
-								<field name="student_id" invisible="1" />
-								<field name="fee_type" readonly ="0" 
-									on_change="onchange_get_actual_fee(student_id, fee_type, context)"/>
-								<field name="actual_fee" readonly ="1"/>
-								<field name="discount" readonly ="0" 
-									on_change="onchange_get_discounted_fee(discount, actual_fee)"/>
-								<field name="discounted_fee" readonly ="1"/>
-							 </tree>
-							 </field>
-						</page>
+						
 						<page string = "Fee Refundable">
 						<field  name="refundable_fee_ids"     nolabel="1" widget="one2many_list"   >
 							<tree editable = "top" >
@@ -307,6 +294,35 @@
 							 </form>
 							 </field>
 						</page>
+
+						<page string = "Discounts">
+							<group>
+								<group>					
+								<div class="oe_title">
+									<label for="discount_given"/>
+									<field name="discount_given"/>
+								</div>
+								<div class="oe_title">
+									<label for="discount_reason"/>
+									<field name="discount_reason" attrs="{'invisible':[('discount_given', '=', False)]}"/>
+								</div>
+								</group>
+							</group>
+							<group>			    	 		
+								<field  name="discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('discount_given', '=', False)]}"  >
+							<tree editable = "top" >
+								<field name="student_id" invisible="1" />
+								<field name="fee_type" readonly ="0" 
+									on_change="onchange_get_actual_fee(student_id, fee_type, context)"/>
+								<field name="actual_fee" readonly ="0"/>
+								<field name="discount" readonly ="0" 
+									on_change="onchange_get_discounted_fee(discount, actual_fee, context)"/>
+								<field name="discounted_fee" readonly ="0"/>
+							 </tree>
+							 </field>
+							</group>
+						</page>
+
 						<page string = "Edit or Add New Fee">
 						<group string = "Update, Delete or add new Fee" readonly ="1">		    	 		
 							<field  name="studen_fee_ids" nolabel="1"  attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"   />
@@ -662,22 +678,32 @@
 			</header>
 			<sheet><group string ="Student Withdrawl">
 					<group>
+						<field name="registration_no" on_change="on_change_registration_no(registration_no)" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"/>
 						<field name="student_class_id" domain="[('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"  required ="1" />
-						<field name="student_id" domain="[('current_class','=',student_class_id),('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
-						<field name="father_name"  readonly ="1" />
-						<field name="fee_structure"  readonly ="1" />
-							
-						<field name="request_type"/>
+						<field name="student_id" on_change="onchange_student(student_id)" domain="[('current_class','=',student_class_id),('state','!=','Draft')]"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+						<field name="father_name"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+						<field name="fee_structure"  attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+						
+						<field name="total_dues" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"/>
+						
 					</group>
 		     		<group string ="">
+		     			
 						<field name="name"  readonly ="1" />
-						<field name="request_date" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+						<field name="request_date" required="1" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
 						<field name="state"  readonly ="1" />
+						<field name="request_type" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"/>
+					    <field name="transfer_type" attrs="{'invisible':[('request_type','!=','transfer_out')],
+					    	'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+              			<field name="transfer_campus" attrs="{'invisible':[('request_type','!=','transfer_out')],
+					    	'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+              			<field name="transfer_fee" attrs="{'invisible':[('request_type','!=','transfer_out')],
+					    	'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
 					</group>
 					</group>
 					<notebook>
         				    <page string="Reason " >
-							<field name="reason_withdraw" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"  />
+							<field name="reason_withdraw" required="1" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"  />
 							</page>
 							<page string="Fee" >
 							<field name="select_return_fee_ids" attrs="{'invisible':[('request_type','IN',['Withdraw','slc'])],'required':[('request_type','IN',['Admission_Cancel'])]}"  />

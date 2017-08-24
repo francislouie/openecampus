@@ -19,6 +19,7 @@ class sms_attendance_parser(report_sxw.rml_parse):
             'get_blank_attendance_sheet':self.get_blank_attendance_sheet,
             'get_filled_attendance_report_days':self.get_filled_attendance_report_days,
             'get_filled_attendance_report_recs':self.get_filled_attendance_report_recs,
+            'get_daily_attendance_report':self.get_daily_attendance_report,
             })
         self.context = context
           
@@ -112,6 +113,66 @@ class sms_attendance_parser(report_sxw.rml_parse):
             result.append(my_dict)
         return result
      
+    def get_daily_attendance_report(self, data):
+        result = []
+        final_dict = {}
+        this_form = self.datas['form']
+        session_id = this_form['session_id'][0]
+        date_str = this_form['date']
+
+        date = datetime.strptime(str(date_str), '%Y-%m-%d')
+
+        session_obj = self.pool.get('sms.session').browse(self.cr, self.uid, session_id)
+
+        final_dict.update({'date': date.strftime('%d-%m-%Y')})
+        final_dict.update({'day': date.strftime('%A')})
+        final_dict.update({'session': session_obj.academic_session_id.name})
+        academiccalendar_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('session_id','=',session_id)])
+        academiccalendar_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, academiccalendar_ids)
+        
+        total_students = 0
+        total_presents = 0
+        total_absents = 0
+        total_leaves = 0
+        attendances = []
+        for i, k in enumerate(academiccalendar_obj):
+            my_dict = {'s_no':'', 'class':'', 'section':'', 'total_students':'', 'present':'', 'absent':'', 'leave':''}
+            my_dict['s_no'] = i + 1
+            my_dict['class'] = k.class_id.name
+            my_dict['section'] = k.section_id.name
+            my_dict['class_students'] = k.cur_strength
+            
+
+            class_attendance = k.get_class_attendance(k.id, date.date())
+            
+            total_students += k.cur_strength
+            total_presents += class_attendance['present']
+            total_absents += class_attendance['absent']
+            total_leaves += class_attendance['leave']
+
+            my_dict['present'] = class_attendance['present']
+            my_dict['absent'] = class_attendance['absent']
+            my_dict['leave'] = class_attendance['leave']
+
+            attendances.append(my_dict)
+
+        final_dict.update({'attendances': attendances})
+
+        final_dict.update({'total_students': total_students})
+        final_dict.update({'total_presents': total_presents})
+        final_dict.update({'total_absents': total_absents})
+        final_dict.update({'total_leaves': total_leaves})
+
+        final_dict.update({'date_printed': datetime.now().strftime('%d-%m-%Y')})
+        final_dict.update({'printed_by': self.pool.get('res.users').browse(self.cr,self.uid,self.uid).name})
+
+        result.append(final_dict)
+        return result
+        
+        # for i in academiccalendar_ids:
+        #     result.append({'class':"Aadam",'section':date,'s_no':i})
+        # return result
+
 report_sxw.report_sxw('report.smsattendance.blank.attendance.sheet',
                         'sms.academiccalendar',
                         'addons/sms_attendance/report/blank_attendance_sheet.rml', 
@@ -120,4 +181,9 @@ report_sxw.report_sxw('report.smsattendance.blank.attendance.sheet',
 report_sxw.report_sxw('report.smsattendance.filled.attendance.sheet',
                         'sms.academiccalendar',
                         'addons/sms_attendance/report/filled_attendance_report.rml', 
+                        parser=sms_attendance_parser, header=None)
+
+report_sxw.report_sxw('report.smsattendance.daily.attendance.sheet',
+                        'sms.academiccalendar',
+                        'addons/sms_attendance/report/daily_attendance_report.rml', 
                         parser=sms_attendance_parser, header=None)

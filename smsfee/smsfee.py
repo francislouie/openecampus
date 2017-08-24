@@ -478,6 +478,7 @@ class sms_student(osv.osv):
     _columns = {
             'discount_ids': fields.one2many('smsfee.discount', 'student_id', 'Student Discount'),
             'discount_given': fields.boolean('Give Discount'),
+            'discount_reason': fields.char(string='Reason of Discount', size=100, required=True),
             'studen_fee_ids':fields.one2many('smsfee.studentfee', 'student_id','Student Fee'),
             'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
             'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
@@ -728,32 +729,10 @@ class smsfee_discounts(osv.osv):
     """ adds discounts for individual students based on  their fee structure """
     
     def create(self, cr, uid, vals, context=None, check=True):
-        # Calculate the acutal_fee and discounts again as readonly fields aren't
-        # stored in the database.
-        std_id = vals.get('student_id')
-        res = self.onchange_get_actual_fee(cr, uid, std_id, std_id, vals.get('fee_type'), context)
-        
-        acutal_fee = res.get('value').get('actual_fee')
-        discounted_fee = acutal_fee - (vals.get('discount') * acutal_fee/100)
-
-        vals.update({'actual_fee':acutal_fee})
-        vals.update({'discounted_fee':discounted_fee})
-
         result = super(osv.osv, self).create(cr, uid, vals, context)
         return result
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-        # Calculate the acutal_fee and discounts again as readonly fields aren't
-        # stored in the database.
-        std_id = vals.get('student_id')
-        res = self.onchange_get_actual_fee(cr, uid, std_id, std_id, vals.get('fee_type'), context)
-        
-        acutal_fee = res.get('value').get('actual_fee')
-        discounted_fee = acutal_fee - (vals.get('discount') * acutal_fee/100)
-
-        vals.update({'actual_fee':acutal_fee})
-        vals.update({'discounted_fee':discounted_fee})
-
         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
         return result
         
@@ -767,19 +746,30 @@ class smsfee_discounts(osv.osv):
             rec = self.pool.get('smsfee.classes.fees.lines').browse(cr ,uid ,fee_id[0])
             actual_fee = rec.amount
 
-        val = {'actual_fee':rec.amount}
+        val = {'actual_fee':actual_fee}
         return {'value': val}
 
-    def onchange_get_discounted_fee(self, cr, uid, ids, discount, actual_amount):
-        val = {'discounted_fee': actual_amount - (discount * actual_amount/100)}
+    def onchange_get_discounted_fee(self, cr, uid, ids, discount, actual_amount, context=None):
+        if discount > 100 or discount < 0:
+            warning = {
+                       'title': 'Warning!',
+                       'message' : 'Discount should be between 0 and 100'
+                      }
+            
+            return {'warning': warning}
+
+        discounted_fee = actual_amount - (discount * actual_amount/100)
+
+        val = {'discounted_fee': discounted_fee}
         return {'value': val}
+
     
     _name = 'smsfee.discount'
    
     _description = "Gives discounts to the students"
     _columns = {
         'student_id': fields.many2one('sms.student', 'Student Id'),
-        'fee_type': fields.many2one('smsfee.feetypes','Fee Type',required = True),
+        'fee_type': fields.many2one('smsfee.feetypes','Fee Type',required=True),
         'actual_fee': fields.float('Actual Fee'),
         'discount': fields.float('Discount (%)'),
         'discounted_fee':fields.float('Discounted Fee'),
@@ -790,6 +780,8 @@ class smsfee_discounts(osv.osv):
         'discounted_fee':0,
         'student_id': lambda self, cr, uid, context: context.get('student_id', False),
     }
+
+    _sql_constraints = [('fee_type_unique', 'unique (student_id,fee_type)', """ Fee type is already Defined Remove Duplication..""")]
 
 smsfee_discounts()
 
@@ -1255,19 +1247,12 @@ class smsfee_std_withdraw(osv.osv):
   
         return 
             
-    def onchange_student(self, cr, uid,ids,std):
+    def onchange_student(self, cr, uid, ids, std, context=None):
         result = {}
-        print "std##########:",std
-        if std:
-             std_rec = self.pool.get('sms.student').browse(cr, uid, std)
-             print "formid::",ids
-             std_fs = std_rec.fee_type.name
-             father_name = std_rec.father_name
-             print "father::",father_name
-             result['fee_structure'] = std_fs
-#              result['father_name'] = father_name
-# #              update_lines = self.pool.get('smsfee.receiptbook').write(cr, uid, ids, {'father_name':father_name})
-             print "result:::",result
+        std_rec = self.pool.get('sms.student').browse(cr, uid, std)
+        result['fee_structure'] = std_rec.fee_type.name
+        result['father_name'] = std_rec.father_name
+
         return {'value':result}
         
 #         fee_ids = self.pool.get('sms.studentfee').search(cr, uid, [('student_id','=', std)], context=context)
@@ -1292,10 +1277,20 @@ class smsfee_std_withdraw(osv.osv):
              result[f.id] = ftyp
         return result
     
+    def on_change_registration_no(self, cr, uid, ids, registration_no, context=None):
+        result = {}
+        rec = self.pool.get('sms.student').search(cr, uid, [('registration_no','=',registration_no)])
+        student = self.pool.get('sms.student').browse(cr, uid, rec[0])
+        result["student_id"] =  student.id
+        result["student_class_id"] = student.current_class.id
+        result['total_dues'] = student.total_paybles + student.total_paybles_transport
+        return {'value' : result}
+
     _name = 'smsfee.std.withdraw'
     _description = "This object store fee types"
     _columns = {
-        'name': fields.function(_set_req_no,string = 'Request No.',type = 'char',method = True,store = True),      
+        'name': fields.function(_set_req_no,string = 'Request No.',type = 'char',method = True,store = True),   
+        'registration_no': fields.char('Registration No'),
         'request_date': fields.date('Date'),
         'request_by': fields.many2one('res.users','Decision By'),
         'decision_date': fields.date('Date'),
@@ -1305,7 +1300,11 @@ class smsfee_std_withdraw(osv.osv):
         'student_id': fields.many2one('sms.student','Student',required = True),
         'father_name': fields.char(string = 'Father',size = 100,readonly = True),
         'reason_withdraw':fields.text('Reason Withdraw'),
-        'request_type':fields.selection([('Withdraw','Withdraw'),('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),('slc','School Leaving Certificate')],'Request Type'),
+        'request_type':fields.selection([('Withdraw','Withdraw'),('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),('slc','School Leaving Certificate'), ('transfer_out','Transfer Out')],'Request Type'),
+        'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type',required = True),
+        'transfer_campus': fields.many2one('sms.transfer.in', 'Campus'),
+        'transfer_fee': fields.float('Transfer Fee'),
+        'total_dues': fields.float('Total Dues'),
         'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Approved', 'Approved'),('Rejected', 'Rejected')], 'State', readonly = True, help='State'),
         'select_return_fee_ids': fields.many2many('smsfee.studentfee', 'return_std_fee_rel', 'withdraw_req_id', 'student_fee_id','Fee To Return', domain="[('student_id','=',student_id)]"),
         
