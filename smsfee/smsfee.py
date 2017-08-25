@@ -478,7 +478,7 @@ class sms_student(osv.osv):
     _columns = {
             'discount_ids': fields.one2many('smsfee.discount', 'student_id', 'Student Discount'),
             'discount_given': fields.boolean('Give Discount'),
-            'discount_reason': fields.char(string='Reason of Discount', size=100, required=True),
+            'discount_reason': fields.char(string='Reason of Discount', size=100),
             'studen_fee_ids':fields.one2many('smsfee.studentfee', 'student_id','Student Fee'),
             'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
             'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
