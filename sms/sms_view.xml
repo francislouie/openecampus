@@ -1179,6 +1179,7 @@
 				  	<field name="cur_strength" invisible="1"/>
 					<field name="max_stds" />
 					<field name="admission_closed"/>
+					<field name="class_session"/>
 				</group>
 				<group>
 					<field name="date_started"  readonly = "1"/>
