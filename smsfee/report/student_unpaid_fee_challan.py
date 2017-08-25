@@ -183,7 +183,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         info_dict['reg_no'] = stdrec.registration_no 
         info_dict['name'] = stdrec.name 
         info_dict['father_name'] = stdrec.father_name
-        info_dict['class'] = stdrec.current_class.name
+        info_dict['class'] = stdrec.current_class.class_id.name + " - " + stdrec.current_class.section_id.name + " " + stdrec.current_class.class_session
         fee_month = self.datas['form']['due_date']
         due_date = datetime.strptime(fee_month, '%Y-%m-%d')
         str_date = due_date.strftime('%b %Y')

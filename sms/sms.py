@@ -1453,7 +1453,15 @@ class sms_academiccalendar(osv.osv):
                 cr.execute(sql)
                 res[f.id] = cr.fetchone()[0]
         return res
-
+    
+    def get_class_session_detail(self, cr, uid, ids, name, args, context=None):
+        res = {}
+        for rec in self.browse(cr, uid, ids, context):
+            start_date = datetime.datetime.strptime(rec.session_id.start_date , '%Y-%m-%d')
+            end_date = datetime.datetime.strptime(rec.session_id.end_date , '%Y-%m-%d')
+            res[rec.id] = "("+str(start_date.year)+" - "+str(end_date.year)+")" 
+        return res
+    
     def total_students_information(self, cr, uid, ids, name, args, context=None):
         """This method will return students withdrawn from a class"""
         res = {}
@@ -1497,6 +1505,7 @@ class sms_academiccalendar(osv.osv):
         'total_students':fields.function(total_students_information, string='Total Students', method=True, type='integer', store=True),
         #'display_order':fields.function(get_display_order,store=True, string='display order', type='integer'),
         'exam_ids' :fields.one2many('sms.exam.datesheet', 'academiccalendar', 'Exam', readonly=True),
+        'class_session':fields.function(get_class_session_detail, method=True, string='Session', store=True, type='char'),
     } 
     _defaults = {
         'max_stds': 40,
