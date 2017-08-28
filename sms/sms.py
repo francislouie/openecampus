@@ -4736,7 +4736,7 @@ class student_admission_register(osv.osv):
         'state': fields.selection([('Draft', 'Draft'),('waiting_approval', 'Waiting Approval'),('Confirm', 'Confirm')], 'State', readonly = True),
         #*********************transer in************************************
         'transfer_no': fields.char('Transfer No' ,readonly = True),
-        'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type',required = True),
+        'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type'),
         'transfer_campus': fields.many2one('sms.transfer.in', 'Campus'),
         'transfer_fee': fields.float('Transfer Fee'),        
         #*********************personal info************************************88
