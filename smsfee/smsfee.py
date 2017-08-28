@@ -973,7 +973,6 @@ class smsfee_studentfee(osv.osv):
            admin
            """
            
-           
         fee_already_exists =  self.pool.get('smsfee.studentfee').search(cr, uid,[('acad_cal_id', '=', acad_cal), ('student_id', '=', std_id), ('fee_type', '=', fee_type_row.id), ('due_month', '=', month)])
         if not fee_already_exists:
             # at this stage is assued that fee month and dues month are same for all cases, due month may change in exceptional cases, i.e when fee of all prevoius
@@ -985,12 +984,12 @@ class smsfee_studentfee(osv.osv):
             
             # If discount is given to the student, update the fee_amount
             student = self.pool.get('sms.student').browse(cr ,uid , std_id)
-            if (student.discount_given):
+            print student.id
+            if student.discount_given:
                 discount_fee_ids = self.pool.get('smsfee.discount').search(cr ,uid ,[('student_id','=',std_id),('fee_type','=',fee_type_row.id)])
-                if (discount_fee_ids):
+                if discount_fee_ids:
                     discount_fee = self.pool.get('smsfee.discount').browse(cr,uid, discount_fee_ids[0])
                     fee_amount = discount_fee.discounted_fee
-
 
             fee_dcit= {
                         'student_id': std_id,

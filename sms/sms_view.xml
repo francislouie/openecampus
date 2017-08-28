@@ -2615,8 +2615,8 @@
           <group>
           <field name="name" on_change="onchange_student(name)" />
            <field name="father_name"/>
-           <field name="current_class" on_change="onchange_acad_cal(current_class)"/>
-          <field name="new_class"/>
+           <field name="current_class" />
+          <field name="new_class" on_change="onchange_acad_cal(new_class)"/>
 		  <field name="fee_str" />	
 		  <field name="fee_starting_month" />	
          </group>
