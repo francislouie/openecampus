@@ -212,21 +212,22 @@ class sms_report_studentslist(report_sxw.rml_parse):
             updating = self.pool.get('student.admission.register').write(self.cr, self.uid, rec[2], {'date_admission_confirmed':rec[1]})
             if updating:
                 print 'success'
+                
         #-----------Update login Ids for students----------------------------
-#         sql_query = """SELECT campus_code from res_company"""
-#         self.cr.execute(sql_query)
-#         campus_code = self.cr.fetchone()
-#         student_ids = self.pool.get('sms.student').search(self.cr, self.uid, [])
-#         srudent_recs = self.pool.get('sms.student').browse(self.cr, self.uid, student_ids)
-#         for rec in srudent_recs:
-#             registration_no = rec.registration_no
-#             login_id = str(campus_code[0])+str(registration_no)
-#             import random
-#             random_pass = random.randrange(100, 1000)
-#             password = str(random_pass)+str(registration_no)
-#             update=self.pool.get('sms.student').write(self.cr, self.uid, rec.id, {'login_id':login_id, 'password':password})
-#             if update:
-#                 print 'Done'
+        sql_query = """SELECT campus_code from res_company"""
+        self.cr.execute(sql_query)
+        campus_code = self.cr.fetchone()
+        student_ids = self.pool.get('sms.student').search(self.cr, self.uid, [])
+        srudent_recs = self.pool.get('sms.student').browse(self.cr, self.uid, student_ids)
+        for rec in srudent_recs:
+            registration_no = rec.registration_no
+            login_id = str(campus_code[0])+str(registration_no)
+            import random
+            random_pass = random.randrange(100, 1000)
+            password = str(random_pass)+str(registration_no)
+            update=self.pool.get('sms.student').write(self.cr, self.uid, rec.id, {'login_id':login_id, 'password':password})
+            if update:
+                print 'Done'
                 
 #        temporary query to set students security fee
         sql0 = """SELECT smsfee_studentfee.id,student_id,receipt_no,paid_amount FROM smsfee_studentfee

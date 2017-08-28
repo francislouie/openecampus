@@ -874,9 +874,9 @@ class sms_student(osv.osv):
         'permanent_address': fields.char(string = "Street", size=32),
         'permanent_city': fields.char(string = "City", size=32), 
         'permanent_country': fields.many2one('res.country', 'Country'), 
-        'domocile': fields.char(string = "Domicile", size=32),
-        'login_id': fields.char(string = "Login ID", size=32),
-        'password': fields.char(string = "password", size=32), 
+        'domocile': fields.char(string="Domicile", size=32),
+        'login_id': fields.char(string="Login", size=64),
+        'password': fields.char(string="Password", size=64), 
         'login_active': fields.boolean('Active'),
         'fee_type':  fields.many2one('sms.feestructure', 'Fee Structure'),
         'admission_form_no':  fields.many2one('student.admission.register', 'Computer Form No.'),
@@ -2177,7 +2177,8 @@ class sms_academiccalendar_student(osv.osv):
         
         #for the time set as according to forward college
         # to make it genuin uncomment the following code the method is woring fine, need to simplify it
-        rec = self.pool.get('sms.academiccalendar.student').browse(cr,uid,ids)
+        rec = self.pool.get('sms.academiccalendar.student').browse(cr, uid, ids)
+        
         acad_cal = acad_cal_id
         cls_cat = rec.name.class_id.category
         session_id = self.pool.get('sms.academiccalendar').browse(cr,uid,acad_cal).session_id.id
@@ -4527,6 +4528,14 @@ class student_admission_register(osv.osv):
                 admission_no = f.registration_no
             else:
                 admission_no = self.pool.get('sms.academiccalendar.student')._set_admission_no(cr ,uid ,student_id ,f.student_class.id)
+            #----------- Applying Password and login id to newly admitted student ------------------------
+            sql_query = """SELECT campus_code from res_company"""
+            cr.execute(sql_query)
+            campus_code = cr.fetchone()
+            login_id = str(campus_code[0])+str(admission_no)
+            import random
+            random_pass = random.randrange(100, 1000)
+            password = str(random_pass)+str(admission_no)
             self.pool.get('sms.student').write(cr, uid, student_id , {
                                             'registration_no':admission_no,
                                             'fee_starting_month':None,
@@ -4535,7 +4544,9 @@ class student_admission_register(osv.osv):
                                             'current_state': 'Current',
                                             'admitted_to_class':f.student_class.id,
                                             'admitted_on':datetime.date.today(),
-                                            'current_class':f.student_class.id})
+                                            'current_class':f.student_class.id,
+                                            'login_id':login_id,
+                                            'password':password})
        
         #Step 3----confirm student registraion with classsubjects---------
         register_subjects =self.confirm_student_subjects(cr ,uid ,std_cal_id,student_id,f.id)
@@ -4668,13 +4679,10 @@ class student_admission_register(osv.osv):
     
     def onchange_set_domain(self,cr ,uid ,ids ,student_class ,context=None):
         vals = {}
-        
         acad_cal_obj = self.pool.get('sms.academiccalendar').browse(cr,uid,student_class)
         vals['group'] = acad_cal_obj.group_id.id
-            
         return {'domain': {'group':[('id','=',acad_cal_obj.group_id.id ) ]},'value': vals}
                     
-
     def _set_default_country(self, cr, uid, context={}):
         contry = self.pool.get('res.country').search(cr, uid, [('name','=','Pakistan')])
         if contry:
@@ -4692,7 +4700,6 @@ class student_admission_register(osv.osv):
     def onchange_form_no(self,cr ,uid ,ids ,name ,context=None):
         val = {}
         rec = self.pool.get('sms.student').browse(cr ,uid ,name)
-            
         val['gender'] = rec.gender
         val['birthday'] = rec.birthday
         val['blood_grp'] = rec.blood_grp
@@ -4710,7 +4717,6 @@ class student_admission_register(osv.osv):
         val['permanent_country'] = rec.permanent_country
         val['permanent_country'] = rec.permanent_country.id
         val['domocile'] = rec.domocile
-        
         #-----------------calculate form value----------------------------
         sql = """ select count (*) from student_admission_register"""
         cr.execute(sql)
