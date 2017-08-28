@@ -2970,13 +2970,12 @@
 						  <field name="fee_structure"  required="1" attrs="{'readonly':[('state','!=','Draft')]}" />
 						  <field name="form_no" readonly="1" attrs="{'invisible':[('state','=','Draft')]}" />
 						  <field name="admission_mode"/>
-              <field name="transfer_type" attrs="{'invisible':[('admission_mode','!=','transfer_in')]}" />
-              <field name="transfer_campus" attrs="{'invisible':[('admission_mode','!=','transfer_in')]}" />
-              <field name="transfer_fee" attrs="{'invisible':[('admission_mode','!=','transfer_in')]}" />
+			              <field name="transfer_type" attrs="{'required':[('admission_mode','=','transfer_in')],'invisible':[('admission_mode','!=','transfer_in')]}" />
+			              <field name="transfer_campus" attrs="{'invisible':[('admission_mode','!=','transfer_in')]}" />
+			              <field name="transfer_fee" attrs="{'invisible':[('admission_mode','!=','transfer_in')]}" />
 						  <field name="date_admission_confirmed" readonly="1"/>
                    </group>
 				   <newline/>
-					
 					<notebook>
 						<page string="Contact Information"  attrs="{'readonly':[('state','=','Confirm')]}">
 						 <group>
