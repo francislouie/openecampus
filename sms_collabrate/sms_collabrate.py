@@ -86,9 +86,11 @@ class sms_collabrator(osv.osv):
                 SELECT id, name ,state, body 
                 FROM sms_mass 
                 WHERE student_id = """+str(student_id)+""" 
+                AND state = 'Approved'
                 ORDER BY id""" 
         cr.execute(sql)
         sql_recs = cr.fetchall()
+        print sql_recs
         if sql_recs:
             for rec in sql_recs:
                 if not rec[1]:
