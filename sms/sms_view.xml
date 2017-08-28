@@ -623,7 +623,11 @@
 			<h1><field name="name" placeholder="Student Name" /></h1>
 			<h2><field name="current_class" placeholder="current_class" /></h2>
 			</div>
-			<field name="registration_no" widget="" placeholder="" groups=""/> 
+			<group col="6" colspan="2">
+				<field name="registration_no" widget="" placeholder="" groups=""/>
+				<field name="login_id" readonly="1"/>
+				<field name="password" readonly="1"/>
+			</group> 
 			<div class="oe_right oe_button_box" name="button_box">
 			<!-- Put here related buttons -->
 			</div>
@@ -2628,7 +2632,6 @@
         </form>
       </field>
     </record>
-    
     
     <record model="ir.ui.view" id="sms_change_std_cls_tree">
       <field name="name">Change Students Class</field>
