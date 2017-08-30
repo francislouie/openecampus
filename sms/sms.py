@@ -1468,8 +1468,8 @@ class sms_academiccalendar(osv.osv):
         res = {}
         for f in self.browse(cr, uid, ids, context):
             if f.class_id.id:
-                sql = """SELECT count(id) from sms_student
-                         where current_class =""" + str(f.id)
+                sql = """SELECT count(std_id) FROM sms_academiccalendar_student
+                         WHERE name =""" + str(f.id)
                 cr.execute(sql)
                 res[f.id] = cr.fetchone()[0]
         return res
