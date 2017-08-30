@@ -2610,8 +2610,6 @@
       <field name="type">form</field>
       <field name="arch" type="xml">
         <form string="Student Change Class">
-          
-          
           <group>
           <field name="name" on_change="onchange_student(name)" />
            <field name="father_name"/>
@@ -2625,10 +2623,7 @@
 		  <field name="session"/> 
 		  <field name="changed_by"/>
 		  <field name="date_changed"/>
-         
-         
 		  </group>
-		  
         </form>
       </field>
     </record>

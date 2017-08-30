@@ -7,24 +7,88 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
         super(smsfee_report_open_challan, self).__init__(cr, uid, name, context)
         self.result_temp=[]
-        self.localcontext.update({
-                'get_today':self.get_today,
-                'get_challans':self.get_challans,
-                'get_user_name':self.get_user_name,
-                'get_vertical_lines': self.get_vertical_lines,
-                'get_vertical_lines_total': self.get_vertical_lines_total,
-                'get_banks':self.get_banks,
-                'get_banks_2':self.get_banks_2,
-                'get_challan_number':self.get_challan_number,
-                'get_candidate_info':self.get_candidate_info,
-                'get_on_accounts':self.get_on_accounts,
-                'get_total_amount':self.get_total_amount,
-                'get_amount_in_words':self.get_amount_in_words,
-                'get_class_group':self.get_class_group,
-                'get_due_date':self.get_due_date,
-        })
+        self.localcontext.update( {
+            'get_today':self.get_today,
+            'get_challans':self.get_challans,
+            'get_user_name':self.get_user_name,
+            'get_vertical_lines': self.get_vertical_lines,
+            'get_vertical_lines_total': self.get_vertical_lines_total,
+            'get_challan_number':self.get_challan_number,
+            'get_candidate_info':self.get_candidate_info,
+            'get_on_accounts':self.get_on_accounts,
+            'get_total_amount':self.get_total_amount,
+            'get_amount_in_words':self.get_amount_in_words,
+            'get_due_date':self.get_due_date,
+            'get_class_group':self.get_class_group,
+            'get_challan_logo':self.get_challan_logo,
+            'get_challan_header_lineone':self.get_challan_header_lineone,
+            'get_challan_header_linetwo':self.get_challan_header_linetwo,
+            'get_challan_header_linethree':self.get_challan_header_linethree,
+            'get_challan_footer_one':self.get_challan_footer_one,
+            'get_challan_footer_two':self.get_challan_footer_two,
+         })
         self.context = context
         
+    def get_challan_logo(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            logo = rec.company_clogo
+        return logo
+
+    def get_challan_header_lineone(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            fieldone = rec.company_cfieldone
+        return fieldone
+
+    def get_challan_header_linetwo(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            fieldtwo = rec.company_cfieldtwo
+        return fieldtwo
+    
+    def get_challan_header_linethree(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            fieldthree = rec.company_cfieldthree
+        return fieldthree
+    
+    def get_challan_footer_one(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            footerone = rec.company_cfieldfour
+        return footerone
+    
+    def get_challan_footer_two(self):
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        for rec in company_recs:
+            footertwo = rec.company_cfieldfive
+        return footertwo
+     
     def get_today(self):
         today = time.strftime('%d-%m-%Y')
         return today 
@@ -33,7 +97,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         due_date = self.datas['form']['due_date']
         due_date = datetime.strptime(due_date, '%Y-%m-%d').strftime('%d/%m/%Y')
         return due_date 
-
+     
     def get_class_group(self, data):
         challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=', self.datas['form']['challan_id'][0])])
         challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
