@@ -1424,7 +1424,7 @@ class sms_academiccalendar(osv.osv):
         for f in self.browse(cr, uid, ids, context):
             if f.class_id.id:
                 sql = """SELECT count(id) from sms_academiccalendar_student
-                         where name =""" + str(f.class_id.id) +"""
+                         where name =""" + str(f.id) +"""
                          AND state in ('Withdraw','Suspended','Demoted','section_changed','Conditionally_Promoted','class_changed')"""
                 cr.execute(sql)
                 res[f.id] = cr.fetchone()[0]
@@ -1436,10 +1436,11 @@ class sms_academiccalendar(osv.osv):
         for f in self.browse(cr, uid, ids, context):
             if f.class_id.id:
                 sql = """SELECT count(id) from sms_academiccalendar_student
-                         where name =""" + str(f.class_id.id) +"""
-                         AND state = 'Current' """
+                         where name =""" + str(f.id) +"""
+                         AND state = 'Current'"""
                 cr.execute(sql)
-                res[f.id] = cr.fetchone()[0]
+                result = cr.fetchone()[0]
+                res[f.id] = result
         return res
 
     def promoted_students_information(self, cr, uid, ids, name, args, context=None):
@@ -1448,7 +1449,7 @@ class sms_academiccalendar(osv.osv):
         for f in self.browse(cr, uid, ids, context):
             if f.class_id.id:
                 sql = """SELECT count(id) from sms_academiccalendar_student
-                         where name =""" + str(f.class_id.id) +"""
+                         where name =""" + str(f.id) +"""
                          AND state = 'Promoted' """
                 cr.execute(sql)
                 res[f.id] = cr.fetchone()[0]
@@ -1468,7 +1469,7 @@ class sms_academiccalendar(osv.osv):
         for f in self.browse(cr, uid, ids, context):
             if f.class_id.id:
                 sql = """SELECT count(id) from sms_student
-                         where current_class =""" + str(f.class_id.id)
+                         where current_class =""" + str(f.id)
                 cr.execute(sql)
                 res[f.id] = cr.fetchone()[0]
         return res
