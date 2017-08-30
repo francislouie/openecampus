@@ -134,3 +134,5 @@
 "122","smsfee.discount","model_smsfee_discount","sms.group_sms_principal",1,1,1,0
 "123","smsfee.discount","model_smsfee_discount","sms.group_sms_admin",1,1,1,0
 "124","smsfee.discount","model_smsfee_discount","sms.group_sms_admission_manager",1,1,1,0
+"125","res.users","base.model_res_users","sms.group_sms_fee_manager",1,0,0,0
+"126","res.users","base.model_res_users","sms.group_sms_fee_officer",1,0,0,0
