@@ -23,13 +23,17 @@ class sms_collabrator(osv.osv):
             cr.execute(get_campus_code)
             sql_rec_ = cr.fetchone()
             obj = self.pool.get('sms.student').browse(cr, uid, student_id)
+            if obj[0].image:
+                pic = obj[0].image
+            else:
+                pic = 'pic-not-av'
             my_dict = {
                         'registration_no':obj[0].registration_no,
                         'stdname':obj[0].name,
                         'fathername':obj[0].father_name,
                         'class_id':obj[0].current_class.id,
                         'class_name':obj[0].current_class.name,
-                        'pic':obj[0].image,
+                        'pic':pic,
                         'std_id':obj[0].id,
                         'transport_availed':obj[0].transport_availed,
                         'campus_code':sql_rec_[0],
@@ -55,13 +59,17 @@ class sms_collabrator(osv.osv):
                 disp_cntct_prtal = 0
             else:
                 disp_cntct_prtal = 1
+            if obj[0].image:
+                pic = obj[0].image
+            else:
+                pic = 'pic-not-av'
             my_dict = {
                         'registration_no':obj[0].registration_no,
                         'stdname':obj[0].name,
                         'fathername':obj[0].father_name,
                         'class_id':obj[0].current_class.id,
                         'class_name':obj[0].current_class.name,
-                        'pic':obj[0].image,
+                        'pic':pic,
                         'std_id':obj[0].id,
                         'state':obj[0].state,
                         'blood_group':obj[0].blood_grp,
