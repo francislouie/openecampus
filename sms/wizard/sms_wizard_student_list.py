@@ -11,7 +11,8 @@ class sms_student_list(osv.osv_memory):
                                              ('check_admissions','3.Check Admissions Statistics'),
                                              ('biodata','4. Student Biodata'),
                                              ('security_cards','5. Students Security Cards'),
-                                             ('withdrawn_students','6. Withdrawn Students')], 'List Type', required=True),
+                                             ('withdrawn_students','6. Withdrawn Students'),
+                                             ('students_strength','7. Student Strength Report')], 'List Type', required=True),
               'start_date': fields.date('Start Date'),
               'student_ids':fields.many2many('sms.student','sms_student_cards_rel', 'student_id', 'card_id', 'Students'),
               'end_date':fields.date('End Date'),
@@ -34,6 +35,8 @@ class sms_student_list(osv.osv_memory):
             report = 'sms.students.biodata'
         elif listtype == 'withdrawn_students':
             report = 'sms.withdrawn.student.details'
+        elif listtype == 'students_strength':
+            report = 'sms.student.strength.report'
         else:
             student_cal_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',thisform['acad_cal'].id)])
             if not student_cal_ids:

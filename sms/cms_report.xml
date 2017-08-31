@@ -82,6 +82,14 @@
             multi="True"
             rml="sms/report/rml_withdrawnstudentsdata.rml"
             string="With Drawn Student Information"/>
+
+ 		<!--print student strength report-->
+		<report id="report_student_strength_id"
+            model="sms.academiccalendar"
+            name="sms.student.strength.report"
+            multi="True"
+            rml="sms/report/rml_studentstrength.rml"
+            string="Student Strength Report"/>
            
        <!--print students security cards-->
 		<report id="report_student_temp-securitycards_id"

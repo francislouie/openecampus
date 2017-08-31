@@ -18,6 +18,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
             'get_student_biodata' : self.get_student_biodata,
             'get_withdrawn_student_info':self.get_withdrawn_student_info,
             'print_student_se_passes':self.print_student_se_passes,
+            'get_student_strength':self.get_student_strength,            
             'get_date_range':self.get_date_range,
         })
         self.base_amount = 0.00
@@ -53,6 +54,21 @@ class sms_report_studentslist(report_sxw.rml_parse):
             mydict['Cellno'] = row[4]
             mydict['phone'] = row[5]
             i = i + 1
+            result.append(mydict)
+        return result
+
+    def get_student_strength(self, form):                                                         
+        result = []
+        class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','=','Active')])
+        class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_ids)
+        i = 1
+        for class_obj in class_objs:
+            mydict = {'s_no':'', 'class':'', 'strength':'', 'max_stds':''}
+            mydict['s_no']  = i
+            mydict['class']     = class_obj.name
+            mydict['strength']  = class_obj.cur_strength
+            mydict['max_stds']  = class_obj.max_stds 
+            i += 1
             result.append(mydict)
         return result
 
@@ -376,5 +392,6 @@ report_sxw.report_sxw('report.sms.std_admission_statistics.name', 'sms.student',
 report_sxw.report_sxw('report.sms.students.biodata', 'sms.student', 'addons/sms/rml_studentsbiodata.rml',parser=sms_report_studentslist, header='external')
 report_sxw.report_sxw('report.sms_students_securuty_cards_name', 'sms.student', 'addons/sms/report/rml_student_remp_sec_cards.rml',parser=sms_report_studentslist, header=False)
 report_sxw.report_sxw('report.sms.withdrawn.student.details', 'sms.student', 'addons/sms/report/rml_withdrawnstudentsdata.rml',parser=sms_report_studentslist, header='external')
+report_sxw.report_sxw('report.sms.student.strength.report', 'sms.academiccalendar', 'addons/sms/report/rml_studentstrength.rml',parser=sms_report_studentslist, header='external')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
