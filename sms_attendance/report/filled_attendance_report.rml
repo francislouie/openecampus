@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <document filename="blank_attendanceShett.pdf">
-  <template pageSize="(792.0,1150.0)" title="Blank Attendance Sheet" author="Ghulam Masood" allowSplitting="20">
+  <template pageSize="(792.0,920.0)" title="Crossovered Analytic" author="Ghulam Masood" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="28.0" y1="10.0" width="738" height="1140"/>
+      <frame id="first" x1="26.0" y1="10.0" width="780" height="880"/>
     </pageTemplate>
   </template>
   <stylesheet>
     <blockTableStyle id="Table3">
-	    <blockAlignment value="LEFT"/>
+	    <blockAlignment value="CENTER"/>
 	    <blockValign value="TOP"/>
 		<blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
 	    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
@@ -19,12 +19,25 @@
     </initialize>
     <paraStyle name="para_1" fontName="Helvetica" fontSize="10.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P6" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P20" fontName="Helvetica" fontSize="8"    leading="9"  alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P20" fontName="Helvetica" fontSize="8" leading="9" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+	<paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="LEFT" color="#FFFFFF" spaceBefore="3.0" spaceAfter="3.0"/>
+    <paraStyle name="form_heading" fontName="Helvetica-Bold" fontSize="14.0" leading="5" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
     <images/>
   </stylesheet>
   <story>
     <section>
-		<blockTable colWidths="35.0,140.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0" style="Table3">
+		<blockTable colWidths="540.0" style="">
+			<tr>
+			<td><para style="form_heading">[[ class_name(data['form'])]]</para></td>
+			</tr>
+			<tr>
+				<td><para style="white">.</para></td>
+			</tr>
+			<tr>
+				<td><para style="white">.</para></td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="35.0,110.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0" style="Table3">
 			<tr>
 				<para>[[repeatIn(get_filled_attendance_report_days(data['form']),'s')]]</para> 
 				<td><para style="para_1">#</para></td>
@@ -36,26 +49,20 @@
 		       	<td><para style="para_1">[[(s['date5'])]]</para></td>
 		       	<td><para style="para_1">[[(s['date6'])]]</para></td>
 		       	<td><para style="para_1">[[(s['date7'])]]</para></td>
-		       	<td><para style="para_1">[[(s['date8'])]]</para></td>
-		       	<td><para style="para_1">[[(s['date9'])]]</para></td>
-		       	<td><para style="para_1">[[(s['date10'])]]</para></td>
 			</tr>
 		</blockTable>
-		<blockTable colWidths="35.0,140.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0" style="Table3">
+		<blockTable colWidths="35.0,110.0,60.0,60.0,60.0,60.0,60.0,60.0,60.0" style="Table3">
 			<tr>
-				<para>[[repeatIn(get_filled_attendance_report_recs(data['form']),'s')]]</para> 
-				<td><para style="para_1">[[(s['s_no'])]]</para></td>
-		   	   	<td><para style="para_1">[[(s['student'])]]</para></td>
-		       	<td><para style="P20">[[(s['date1'])]]</para></td>
-		       	<td><para style="P20">[[(s['date2'])]]</para></td>
-		       	<td><para style="P20">[[(s['date3'])]]</para></td>
-		       	<td><para style="P20">[[(s['date4'])]]</para></td>
-		       	<td><para style="P20">[[(s['date5'])]]</para></td>
-		       	<td><para style="P20">[[(s['date6'])]]</para></td>
-		       	<td><para style="P20">[[(s['date7'])]]</para></td>
-		       	<td><para style="P20">[[(s['date8'])]]</para></td>
-		       	<td><para style="P20">[[(s['date9'])]]</para></td>
-		       	<td><para style="P20">[[(s['date10'])]]</para></td>
+				<para>[[repeatIn(get_filled_attendance_report_recs(data['form']),'r')]]</para> 
+				<td><para style="para_1">[[(r['s_no'])]]</para></td>
+		   	   	<td><para style="para_1">[[(r['student'])]]</para></td>
+		       	<td><para style="P20"><font color="Black">[[ (r['date1'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date1'])]]</font></para></td>
+		       	<td><para style="P20"><font color="Black">[[ (r['date2'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date2'])]]</font></para></td>
+		       	<td><para style="P20"><font color="Black">[[ (r['date3'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date3'])]]</font></para></td>
+		       	<td><para style="P20"><font color="Black">[[ (r['date4'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date4'])]]</font></para></td>
+		       	<td><para style="P20"><font color="Black">[[ (r['date5'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date5'])]]</font></para></td>
+		       	<td><para style="P20"><font color="Black">[[ (r['date6'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date6'])]]</font></para></td>
+		       	<td><para style="P20"><font color="Black">[[ (r['date7'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date7'])]]</font></para></td>
 			</tr>
 		</blockTable>
 	</section>

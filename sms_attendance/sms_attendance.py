@@ -233,7 +233,7 @@ class sms_class_attendance_lines(osv.osv):
     _columns = {
         'parent_id' : fields.many2one('sms.class.attendance','Class Attendance'),
      #   'student_name' : fields.char('Student',size=256),
-        'student_name' : fields.many2one('sms.student','Student'),
+        'student_name' : fields.many2one('sms.student','Student', required=True),
         'student_class_id' : fields.many2one('sms.academiccalendar.student','Student Class'),
         'present' :fields.boolean('Present'),
         'absent' :fields.boolean('Absent'),
