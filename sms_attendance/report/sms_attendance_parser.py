@@ -196,7 +196,7 @@ class sms_attendance_parser(report_sxw.rml_parse):
 report_sxw.report_sxw('report.smsattendance.blank.attendance.sheet',
                         'sms.academiccalendar',
                         'addons/sms_attendance/report/blank_attendance_sheet.rml', 
-                        parser=sms_attendance_parser, header=None)
+                        parser=sms_attendance_parser, header='external')
 
 report_sxw.report_sxw('report.smsattendance.filled.attendance.sheet',
                         'sms.academiccalendar',
