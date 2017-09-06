@@ -30,7 +30,11 @@ class sms_report_studentslist(report_sxw.rml_parse):
         return string
     
     def class_name(self, form): 
-        return self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,form['acad_cal'][0] ).name
+        if form['class_form']:
+            acad_cal = form['class_id'][0]
+        else:
+            acad_cal = form['acad_cal'][0]
+        return self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, acad_cal).name
     
     def get_student_contacts(self, data):                                                         
         result = []
@@ -93,14 +97,17 @@ class sms_report_studentslist(report_sxw.rml_parse):
                 result.append(mydict)
         return result
   
-    def print_students_class_list(self,form):                                                         
+    def print_students_class_list(self, form):                                                         
         result = []
+        if form['class_form']:
+            acad_cal = form['class_id'][0]
+        else:
+            acad_cal = form['acad_cal'][0]
         students = """SELECT registration_no,name,father_name,birthday,cell_no,phone
-                          FROM sms_student WHERE current_class ="""+str(form['acad_cal'][0])+"""
+                          FROM sms_student WHERE current_class ="""+str(acad_cal)+"""
                           AND state not in('admission_cancel','drop_out','deleted','slc') ORDER BY name"""
         self.cr.execute(students)
         rows = self.cr.fetchall() 
-        
         i = 1
         for row in rows:
             mydict = {'sno':'','admsn_no':'','student':'','father':''}
