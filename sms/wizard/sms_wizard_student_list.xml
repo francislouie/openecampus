@@ -21,6 +21,7 @@
 							<newline/><field name="end_date"  attrs="{ 'required':[('list_type','in',['check_admissions','security_cards'])] , 'invisible':[('list_type','in',['contact_list','class_list'])] }"/>
 						</group>
 						<newline/><group><field name="export_to_excel"/></group>
+						<newline/><field name="class_form" invisible="1"/>
                     <footer>
                         <button string="Print" name="print_list" type="object" class="oe_highlight"/>
                         or

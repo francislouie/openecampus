@@ -1156,7 +1156,7 @@
  			 <header>
              <button name="start_class" string="Start Class" states="Draft" type="object" class="oe_highlight" groups="" confirm="Are you sure to start this class?"/>
 			 <button name="load_subjects" string="Load Class  Subjects" attrs="{'invisible':[('subjects_loaded','=',True)]}" states="Draft"   type="object" class="oe_highlight" groups=""/>
-			 <button name="%(report_studentsclass_list_id)d" string="Print Class List"  states="Draft,Active,Complete" type="action" icon="gtk-print"/>
+			 <button name="%(action_print_class_list)d" string="Print Class List"  states="Draft,Active,Complete" type="action" icon="gtk-print"/>
 			 <!--
 			 <button name="load_students_from_excel" string="Load Students" states="subjects_loaded" type="object" class="oe_highlight" groups=""/>
 			 -->

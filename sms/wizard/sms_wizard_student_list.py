@@ -17,9 +17,12 @@ class sms_student_list(osv.osv_memory):
               'student_ids':fields.many2many('sms.student','sms_student_cards_rel', 'student_id', 'card_id', 'Students'),
               'end_date':fields.date('End Date'),
               'card_display_message':fields.char('Display Text'),
-              'export_to_excel':fields.boolean('Save As MS Excel File')
+              'export_to_excel':fields.boolean('Save As MS Excel File'),
+              'class_form': fields.boolean('Class View'),
              }
     _defaults = { 'list_type': 'check_admissions',
+                 'class_form': False
+                 
            }
 
     def print_list(self, cr, uid, ids, data):
