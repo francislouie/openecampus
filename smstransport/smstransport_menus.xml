@@ -2,72 +2,73 @@
 <openerp>
 <data>
 
-	<menuitem name="Transport" id="sms_transport_root_id" sequence="5" groups="sms.group_sms_admin,sms.group_sms_director"/>
+	<menuitem name="Transport" id="sms_transport_root_id" sequence="5" 
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager"/>
 
 	<menuitem name="Transport Configuration" id="sms_transport_configuration_id" sequence = "6" parent="sms.menu_configuration_id"
-	groups="sms.group_sms_admin,sms.group_sms_director"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager"/>
 
 	<menuitem name="Routes" id="sms_transport_location_id" sequence = "2" parent="sms_transport_configuration_id"
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_location"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_transport_location"/>
 
 	<menuitem name="Destinations" id="sms_transport_route_id" sequence = "3" parent="sms_transport_configuration_id"
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_route"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_transport_route"/>
 
 	<menuitem name="Shifts" id="sms_transport_shift_id" sequence = "4" parent="sms_transport_configuration_id"
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_shift"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_transport_shift"/>
 
 	<menuitem name="Vehicles" id="sms_transport_vechiles_id" sequence = "5" parent="sms_transport_configuration_id"
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_vehcile"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_transport_vehcile"/>
 
 	<menuitem name="Transport Challans" id="smstransport_fee_head_id" parent="sms_transport_root_id" sequence="10" 
-	groups="sms.group_sms_admin,sms.group_sms_director" />
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" />
 
 	<menuitem id="menu_transportfee_open_challans_id" parent="smstransport_fee_head_id" sequence="11" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="smsfee.action_receiptbook_open_id_transport"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="smsfee.action_receiptbook_open_id_transport"/>
 
 	<menuitem id="menu_transportfee_waaitingapproval_challans_id" parent="smstransport_fee_head_id" sequence="13" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="smsfee.action_receiptbook_tobeaproved_id_transport"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="smsfee.action_receiptbook_tobeaproved_id_transport"/>
 	
 	<menuitem id="menu_transportfee_paid_challans_id" parent="smstransport_fee_head_id" sequence="14" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="smsfee.action_receiptbook_paid_id_transposrt"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="smsfee.action_receiptbook_paid_id_transposrt"/>
 
 	<menuitem id="menu_transportfee_cancelled_challans_id" parent="smstransport_fee_head_id" sequence="15" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="smsfee.action_receiptbook_cancel_id_transport"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="smsfee.action_receiptbook_cancel_id_transport"/>
 
 	<menuitem id="menu_transportfee_searchchallans_id" parent="smstransport_fee_head_id" sequence="16" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="smsfee.action_receiptbook_search_id_transport"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="smsfee.action_receiptbook_search_id_transport"/>
 
 	<!-- challans of old transport fee book, will be removed later on -->
 	<menuitem id="menu_transportfee_searchchallans_id" parent="smstransport_fee_head_id" sequence="16" 
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_feechallan_search_id_old"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_transport_feechallan_search_id_old"/>
 	
 	<!-- -->
 	<menuitem name="Fee Settings" id="sms_transport_fee_config_id" sequence = "5" parent="sms_transport_root_id"
-	groups="sms.group_sms_admin,sms.group_sms_director"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager"/>
 
 	<menuitem name="Registrations" id="sms_transport_registration_id" sequence = "1" parent="sms_transport_root_id"
-	groups="sms.group_sms_admin,sms.group_sms_director"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager"/>
 
 	<menuitem name="New Registration" id="sms_transport_regis_id" sequence = "2" parent="sms_transport_registration_id"
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_registration_new"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_transport_registration_new"/>
 
 	<menuitem name="Registered Students" id="sms_transport_registered_regis_id" sequence = "3" parent="sms_transport_registration_id"
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_registration_registered"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_transport_registration_registered"/>
 
 	<menuitem name="Unregistered Students" id="sms_transport_unregistered_regis_id" sequence = "4" parent="sms_transport_registration_id"
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_registration_unregistered"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_transport_registration_unregistered"/>
 
 	<menuitem name="Fee Structure" id="sms_transport_fee_strucure_id" sequence = "6" parent="sms_transport_fee_config_id"
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_fee_structure"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_transport_fee_structure"/>
 
 	<menuitem name="Reports" id="sms_transport_reports_id" sequence = "7" parent="sms_transport_root_id"
-	groups="sms.group_sms_admin,sms.group_sms_director"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager"/>
 
 	<menuitem name="Registered Students List" id="sms_transport_registered_students_id" sequence = "8" parent="sms_transport_reports_id"
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_transport_registered_persons"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_transport_registered_persons"/>
 
 	<menuitem name="Import Data" id="sms_transport_datamigration_id" sequence = "9" parent="sms_transport_reports_id"
-	groups="sms.group_sms_admin,sms.group_sms_director" action="action_data_migration"/>
+	groups="sms.group_sms_admin,sms.group_sms_director,group_sms_transport_manager" action="action_data_migration"/>
 
 
 </data>
