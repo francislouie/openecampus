@@ -274,7 +274,6 @@
 								<field name="view_academics_fee"     nolabel="1"/>
 							</group>
 						</page>
-						
 						<page string = "Fee Refundable">
 						<field  name="refundable_fee_ids"     nolabel="1" widget="one2many_list"   >
 							<tree editable = "top" >
@@ -294,8 +293,7 @@
 							 </form>
 							 </field>
 						</page>
-
-						<page string = "Discounts">
+						<page string="Discounts" groups="sms.group_sms_fee_officer,sms.group_sms_director,sms.group_sms_admin,sms.group_sms_fee_manager">
 							<group>
 								<group>					
 								<div class="oe_title">
@@ -322,8 +320,7 @@
 							 </field>
 							</group>
 						</page>
-
-						<page string = "Edit or Add New Fee">
+						<page string = "Edit or Add New Fee" groups="sms.group_sms_fee_officer,sms.group_sms_director,sms.group_sms_admin,sms.group_sms_fee_manager">
 						<group string = "Update, Delete or add new Fee" readonly ="1">		    	 		
 							<field  name="studen_fee_ids" nolabel="1"  attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"   />
 						</group>
