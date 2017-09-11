@@ -54,7 +54,7 @@ class readmit_student(osv.osv_memory):
          'name':_get_student_class,
            }
    
-    def onchange_fee_staring_month(self, cr, uid, ids, fee_starting_month,fee_str,acad_cal, context=None):
+    def onchange_fee_staring_month(self, cr, uid, ids, fee_starting_month, fee_str, acad_cal, context=None):
         result = {}
         string = ''
         current_month = int(datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%m'))
@@ -78,11 +78,10 @@ class readmit_student(osv.osv_memory):
    
     def onchange_acad_cal(self, cr, uid, ids, acad_cal):
         result = {}
-        acad_cal_obj = self.pool.get('sms.academiccalendar').browse(cr,uid,acad_cal)
+        acad_cal_obj = self.pool.get('sms.academiccalendar').browse(cr, uid, acad_cal)
         acad_session_id = acad_cal_obj.acad_session_id.id
         result['academic_session'] = acad_session_id
         return {'value': result}
-   
    
     def onchange_academic_session(self, cr, uid, ids, ac_session, context=None):
         result = {}
