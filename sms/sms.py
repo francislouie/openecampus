@@ -951,8 +951,8 @@ class sms_student(osv.osv):
         'relative_relation':fields.char(string = "Relation", size=50),
         'relative_contact':fields.char(string = "Relative Contact #", size=50),
         'relative_addr':fields.char(string = "Relative Address", size=50),
-        
-        
+        'attachment': fields.binary('Attachments'),
+        'reason_withdraw': fields.text('With-Drawl Reason'),        
         #*****************************************************************************************************
         
     } 

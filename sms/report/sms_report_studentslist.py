@@ -63,7 +63,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
 
     def get_student_strength(self, form):                                                         
         result = []
-        class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','=','Active')])
+        class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','=','Active')], order='name')
         class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_ids)
         i = 1
         for class_obj in class_objs:

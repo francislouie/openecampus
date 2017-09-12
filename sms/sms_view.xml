@@ -693,29 +693,34 @@
 						          </group>
 								</group>
 						</page>
+						<page string="Attach Files">
+							<group>
+								<field name="attachment"/>
+							</group>
+						</page>
 				   </notebook>
 			   </page>
 				<page string="Admission information">
 				 <group>
                     <group string="Admission">
-                   	<field name="entrytest_per"/>
-					<field name="admitted_to_class"/>
-				   	<field name="desired_class"/>
-					<field name="admitted_on"/>
-					<field name="admission_form_no"/>
-					<field name="fee_starting_month" invisible="1"/>
-					<field name="board_reg_no"/>
+	                   	<field name="entrytest_per"/>
+						<field name="admitted_to_class"/>
+					   	<field name="desired_class"/>
+						<field name="admitted_on"/>
+						<field name="admission_form_no"/>
+						<field name="fee_starting_month" invisible="1"/>
+						<field name="board_reg_no"/>
 				    </group> 
                     <group string="Previous">
-				    <field name="previous_school" />
-				    <field name="reason_leaving"/>	
-					<field name="current_state" invisible="1"/>	
-					<field name="is_loged_user_admin" invisible="1"/>	
-					
+					    <field name="previous_school" />
+					    <field name="reason_leaving"/>	
+						<field name="current_state" invisible="1"/>	
+						<field name="is_loged_user_admin" invisible="1"/>	
 				    </group> 
-				</group>  
+				</group>
+                <separator string="With Drawl Information" colspan="4"/>
+				<field name="reason_withdraw" nolabel="1"/>
 			    </page>
-				
 				<page string="Academics">
 				   <field name="classes_history"/>
 				   <field name="reg_nos"/>	
@@ -724,12 +729,10 @@
 				   <field name="active_subjects" domain="[('subject_status','=','Current')]" />
 			    </page>
 				</notebook>
-								
 				<notebook>
 				<page string="Achievements">
                     <field name="achievements_ids" nolabel="1" colspan="4"/> 
                  </page>
-				
 				<page string="Certificate">
                     <field name="certificate_ids" nolabel="1" colspan="4"/> 
                  </page>
@@ -746,18 +749,18 @@
                     <field name="family_contact_ids" nolabel="1" colspan="4"/> 
                   </page>
 						<page string="Medical">
-                            		<field name="blood_grp"/>
-									<group string="Does the applicant have any Disabilities?" col="6" colspan="4">
-									<field name="eye"/>
-                                    <field name="ear"/>
-                                    <field name="nose_throat"/>
-                                    <field name="respiratory"/>
-                                    <field name="cardiovascular"/>
-                                    <field name="neurological"/>
-                                    <field name="muskoskeletal"/>
-                                    <field name="dermatological"/>
-                                    <field name="blood_pressure"/>
-                                </group>
+                    		<field name="blood_grp"/>
+							<group string="Does the applicant have any Disabilities?" col="6" colspan="4">
+								<field name="eye"/>
+                                <field name="ear"/>
+                                <field name="nose_throat"/>
+                                <field name="respiratory"/>
+                                <field name="cardiovascular"/>
+                                <field name="neurological"/>
+                                <field name="muskoskeletal"/>
+                                <field name="dermatological"/>
+                                <field name="blood_pressure"/>
+                            </group>
                             <separator string="Notes" colspan="4"/>
                             <group col="6" colspan="4">
                                 <field name="medical_comment" placeholder="Notes About Medical.." nolabel="1"/>
@@ -3008,8 +3011,6 @@
 						<page string="Subjects"  attrs="{'invisible':[('state','not in',['waiting_approval','Confirm'] )],'readonly':[('state','=','Confirm')]}" >
 					  		<field name="subject_ids" colspan="6"  />
 						</page>
-						
-						
 					</notebook>
 			    </group>  
 				</sheet>
