@@ -2302,40 +2302,29 @@ class sms_academiccalendar_subjects(osv.osv):
         return result
 
     def unlink(self, cr, uid, ids, context={}, check=True):
-        
         #-------------------------------------------------
         rec = self.browse(cr ,uid ,ids)[0]
         check_delete = rec.allow_delete
-        if check_delete == True :
+        if check_delete == True:
             acad_cal_id = rec.academic_calendar.id
-            
-            dsheet_id = self.pool.get('sms.exam.datesheet').search(cr,uid,[('academiccalendar','=',acad_cal_id),('status','=','Active')])
+            dsheet_id = self.pool.get('sms.exam.datesheet').search(cr, uid, [('academiccalendar','=',acad_cal_id),('status','=','Active')])
             acd_cal_stu_ids =  self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('name','=',acad_cal_id),('state','=','Current')])
             tota_stu = len(acd_cal_stu_ids)
-    
-            if  dsheet_id:
-    
-                subj_datesheet =  self.pool.get('sms.exam.datesheet.lines').search(cr,uid,[('name','in',dsheet_id),('subject','=',ids)])
-                self.pool.get('sms.exam.datesheet.lines').unlink(cr ,uid ,subj_datesheet)
-                
-    
-                if acd_cal_stu_ids :
-                    stud_subj_id = self.pool.get('sms.student.subject').search(cr ,uid ,[('student','=',acd_cal_stu_ids),('subject','=',ids)])
+            if dsheet_id:
+                subj_datesheet = self.pool.get('sms.exam.datesheet.lines').search(cr, uid, [('name','in',dsheet_id),('subject','=',ids)])
+                self.pool.get('sms.exam.datesheet.lines').unlink(cr , uid, subj_datesheet)
+            if acd_cal_stu_ids :
+                stud_subj_id = self.pool.get('sms.student.subject').search(cr ,uid ,[('student','in',acd_cal_stu_ids),('subject','in',ids)])
                 if stud_subj_id:
                     rec_stud_subj = self.pool.get('sms.student.subject').browse(cr ,uid ,stud_subj_id)
-                     
-                    
-                    
                     for acd_stu in rec_stud_subj:
                         self.pool.get('sms.student.subject').unlink(cr ,uid ,acd_stu.id)
-                    
-                for rec in self.browse(cr, uid, ids, context):
-                    super(osv.osv, self).unlink(cr, uid, ids, context)            
+            for rec in self.browse(cr, uid, ids, context):
+                super(osv.osv, self).unlink(cr, uid, ids, context)            
                         
-                    
-           # raise osv.except_osv(('SSSTTTOOOPPP'),('........'))
+        # raise osv.except_osv(('SSSTTTOOOPPP'),('........'))
         else:
-             raise osv.except_osv(('Subject Remission Denied'),('This subject that you are trying to remove is assigned to students first check the allow delete checkbox of subject '))
+            raise osv.except_osv(('Subject Remission Denied'),('This subject that you are trying to remove is assigned to students first check the allow delete checkbox of subject '))
         return None
             
     def create(self, cr, uid, vals, context=None, check=True):
@@ -2401,7 +2390,7 @@ class sms_academiccalendar_subjects(osv.osv):
         'state': 'Draft',
         'allow_delete' : False,
     }
-    _sql_constraints = [('name_unique', 'unique (subject_id,academic_calendar)', """Subject Already Added to Class. """)]     
+    _sql_constraints = [('name_unique', 'unique (subject_id, academic_calendar)', """Subject Already Added to Class. """)]     
     
 
 class sms_student_subject(osv.osv):
