@@ -1476,7 +1476,7 @@ class sms_academiccalendar(osv.osv):
 
     _name = 'sms.academiccalendar'
     _description = "Crates new class in a new session."
-    #_order = 'display_order,section_id'
+    _order = 'disp_order, section_id'
     _columns = {
         'name':  fields.function(set_class_name, method=True, store = True, string='Class', type='char'), 
         'acad_session_id': fields.many2one('sms.academics.session', 'Academic Session',domain="[('state','!=','Closed')]",required=True),
@@ -1504,7 +1504,8 @@ class sms_academiccalendar(osv.osv):
         'active_students':fields.function(active_students_information, method=True, string='Active Students', type='integer', store=True),
         'promoted_students':fields.function(promoted_students_information, method=True, string='Promoted Students', type='integer', store=True),
         'total_students':fields.function(total_students_information, string='Total Students', method=True, type='integer', store=True),
-        #'display_order':fields.function(get_display_order,store=True, string='display order', type='integer'),
+#        'display_order':fields.function(get_display_order,store=True, string='display order', type='integer'),
+        'disp_order':fields.related('class_id', 'sequence', type='integer', relation='sms.academiccalendar', string='Order', store=True),
         'exam_ids' :fields.one2many('sms.exam.datesheet', 'academiccalendar', 'Exam', readonly=True),
         'class_session':fields.function(get_class_session_detail, method=True, string='Session', store=True, type='char'),
     } 

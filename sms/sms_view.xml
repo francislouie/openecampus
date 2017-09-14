@@ -1177,6 +1177,7 @@
 				<group>
 					<field name="section_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}" domain="[('active','=',1)]"/>
 					<field name="group_id"/>
+					<field name="disp_order" invisible="1"/>
 				</group>
 			</group>
 			<notebook>
