@@ -66,16 +66,30 @@ class sms_report_studentslist(report_sxw.rml_parse):
         class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','=','Active')], order='disp_order, section_id')
         class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_ids)
         i = 1
+        total_cur_strength = 0
+        total_allowed_students = 0        
         for class_obj in class_objs:
-            mydict = {'s_no':'', 'class':'', 'strength':'', 'max_stds':''}
+            mydict = {'s_no':'', 'class':'', 'strength':'', 'max_stds':'', 'draft_std':'', 'wait_approv':''}
+            draft_stds = self.pool.get('sms.academiccalendar').count_students_admission_draft(self.cr, self.uid, class_obj.id)
+            wait_approv_stds = self.pool.get('sms.academiccalendar').count_students_admission_wait_approval(self.cr, self.uid, class_obj.id)
             mydict['s_no']  = i
             mydict['class']     = class_obj.name
+            total_cur_strength = total_cur_strength + class_obj.cur_strength + draft_stds + wait_approv_stds  
             mydict['strength']  = class_obj.cur_strength
-            mydict['max_stds']  = class_obj.max_stds 
+            total_allowed_students = total_allowed_students + class_obj.max_stds            
+            mydict['max_stds']  = class_obj.max_stds
+            mydict['draft_std'] = draft_stds
+            mydict['wait_approv'] = wait_approv_stds
             i += 1
             result.append(mydict)
+            
+        mydict = {'s_no':'', 'class':'', 'strength':'', 'max_stds':'', 'draft_std':'', 'wait_approv':''}
+        mydict['class']     = 'Total Students'
+        mydict['strength'] = total_cur_strength
+        mydict['max_stds'] = total_allowed_students
+        result.append(mydict)
         return result
-
+    
     def get_withdrawn_student_info(self,form):                                                         
         result = []
         this_form = self.datas['form']
