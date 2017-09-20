@@ -1141,14 +1141,16 @@ class smsfee_studentfee(osv.osv):
         'discount': fields.integer('Discount'),
         'net_total': fields.integer('Balance'),  
         'reconcile':fields.boolean('Reconcile'), 
-        'display_order':fields.function(get_display_order,store=True, string='display order', type='integer'),
+        'display_order':fields.function(get_display_order, store=True, string='display order', type='integer'),
         'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
+        'class_changed':fields.boolean('Class Changed'),
         #------------total payables---------------------------------
         'total_payable': fields.function(_get_total_payables,string = 'Total Payable',type = 'integer',method = True,store = True),
     }
      
     _defaults = {
         'reconcile': False,
+        'class_changed':False,
         'student_id': lambda self, cr, uid, context: context.get('student_id', False),
     }
 smsfee_studentfee()

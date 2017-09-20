@@ -16,7 +16,7 @@
 						<newline/><field name="student_ids" attrs="{'invisible':[('list_type','!=','security_cards')], 'required':[('list_type','=','security_cards')]}" domain="[('current_class','=',acad_cal)]"/>
 						</group>
 						<newline/>
-						<group  attrs="{'invisible':[('list_type','in',['contact_list','class_list','students_strength'])]}">              			
+						<group attrs="{'invisible':[('list_type','in',['contact_list','class_list','students_strength'])]}">              			
 							<newline/><field name="start_date"  attrs="{ 'required':[('list_type','in',['check_admissions','security_cards'])] , 'invisible':[('list_type','in',['contact_list','class_list'])] }"/>
 							<newline/><field name="end_date"  attrs="{ 'required':[('list_type','in',['check_admissions','security_cards'])] , 'invisible':[('list_type','in',['contact_list','class_list'])] }"/>
 						</group>

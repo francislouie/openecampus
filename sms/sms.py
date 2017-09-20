@@ -1443,6 +1443,28 @@ class sms_academiccalendar(osv.osv):
                 res[f.id] = result
         return res
 
+    def count_students_admission_draft(self, cr, uid, class_id):
+        
+        """This method returns students in draft state for the specified class"""
+        res = {}
+        sql = """SELECT COUNT(*) from student_admission_register
+                 where student_class =""" +str(class_id)+"""
+                 AND state = 'Draft'"""
+        cr.execute(sql)
+        res = cr.fetchone()[0]
+        return res
+
+    def count_students_admission_wait_approval(self, cr, uid, class_id):
+        
+        """This method returns students in Waiting state for the specified class"""
+        res = {}
+        sql = """SELECT COUNT(*) from student_admission_register
+                 where student_class =""" +str(class_id)+"""
+                 AND state = 'waiting_approval'"""
+        cr.execute(sql)
+        res = cr.fetchone()[0]
+        return res
+
     def promoted_students_information(self, cr, uid, ids, name, args, context=None):
         """This method will return students withdrawn from a class"""
         res = {}
@@ -4192,10 +4214,14 @@ class sms_change_student_class(osv.osv):
         #--------------------------------------------------------------------------------------------------------------
         #Step 2: Delete records from studentfee
         current_class = self.pool.get('sms.student').browse(cr,uid,vals['name']).current_class.id
-        sql3 = """DELETE FROM smsfee_studentfee WHERE student_id = """+str(vals['name'])+"""
-                  AND acad_cal_id = """ +str(current_class)
-        cr.execute(sql3)
-        delete_rbook = cr.commit()
+#         sql3 = """UPDATE smsfee_studentfee SET class_changed = True WHERE student_id = """+str(vals['name'])+"""
+#                   AND acad_cal_id = """ +str(current_class)
+#         sql3 = """DELETE FROM smsfee_studentfee WHERE student_id = """+str(vals['name'])+"""
+#                   AND acad_cal_id = """ +str(current_class)
+#         cr.execute(sql3)
+#         delete_rbook = cr.commit()
+        #--------------------------------------------------------------------------------------------------------------
+        #-------Leaving Step 2 Commented Because Fee is not to be delete from students---------------------------------
         #--------------------------------------------------------------------------------------------------------------
         #step3: Delet student subjects
         acad_cal_student_id = self.pool.get('sms.academiccalendar.student').search(cr, uid, [('std_id','=', vals['name']),('name','=', current_class),('state','=', 'Current')])
@@ -4227,15 +4253,13 @@ class sms_change_student_class(osv.osv):
         record_id = super(osv.osv, self).create(cr, uid, vals, context) 
         return record_id
     
-    def onchange_student(self, cr, uid,ids,std):
+    def onchange_student(self, cr, uid, ids, std):
         result = {}
         if std:
              std_rec = self.pool.get('sms.student').browse(cr, uid, std)
              result['fee_str'] = std_rec.fee_type.id
              result['father_name'] = std_rec.father_name
              result['current_class'] = std_rec.current_class.id
-# #              update_lines = self.pool.get('smsfee.receiptbook').write(cr, uid, ids, {'father_name':father_name})
-             print "result:::",result
         return {'value':result}
     
     def chang_student_class(self, cr, uid,ids,std):
@@ -4245,7 +4269,6 @@ class sms_change_student_class(osv.osv):
              result['fee_str'] = std_rec.fee_type.id
              result['father_name'] = std_rec.father_name
              result['current_class'] = std_rec.current_class.id
-# #              update_lines = self.pool.get('smsfee.receiptbook').write(cr, uid, ids, {'father_name':father_name})
         return {'value':result}
     
     def onchange_acad_cal(self, cr, uid, ids, acad_cal):
@@ -4263,7 +4286,7 @@ class sms_change_student_class(osv.osv):
     _descpription = "Manage Student Change Class"
 
     _columns = { 
-        'name':fields.many2one('sms.student','Student',domain="[('state','=','Admitted')]", required=True),
+        'name':fields.many2one('sms.student', 'Student', required=True),
         'father_name': fields.char('Father Name',size=25, readonly=True),
         'current_class':fields.many2one('sms.academiccalendar','Current Class', readonly=True),
         'academic_session': fields.many2one('sms.academics.session', 'Academic Session', domain="[]", help="Student will be admitted belongs to selected session",readonly = True),

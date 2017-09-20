@@ -636,6 +636,7 @@
 					<field name="paid_amount"/>
 					<field name="state"/>
 					<field name="category" invisible ="1"/>
+					<!--<field name="class_changed"/>-->
 			    </tree>
             </field>
         </record>
