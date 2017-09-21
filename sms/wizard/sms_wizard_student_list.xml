@@ -20,8 +20,15 @@
 							<newline/><field name="start_date"  attrs="{ 'required':[('list_type','in',['check_admissions','security_cards'])] , 'invisible':[('list_type','in',['contact_list','class_list'])] }"/>
 							<newline/><field name="end_date"  attrs="{ 'required':[('list_type','in',['check_admissions','security_cards'])] , 'invisible':[('list_type','in',['contact_list','class_list'])] }"/>
 						</group>
-						<newline/><group><field name="export_to_excel"/></group>
+						<newline/>
+							<group attrs="{'invisible':[('list_type','!=','students_strength')]}">
+							<field name="export_to_excel"/>
+							</group>
 						<newline/><field name="class_form" invisible="1"/>
+						<newline/>
+						<group attrs="{'invisible':[('list_type','!=','students_strength')]}">
+						<field name="display_draft_waitapprov"/>
+						</group>
                     <footer>
                         <button string="Print" name="print_list" type="object" class="oe_highlight"/>
                         or
