@@ -21,7 +21,7 @@
 							<newline/><field name="end_date"  attrs="{ 'required':[('list_type','in',['check_admissions','security_cards'])] , 'invisible':[('list_type','in',['contact_list','class_list'])] }"/>
 						</group>
 						<newline/>
-							<group attrs="{'invisible':[('list_type','!=','students_strength')]}">
+							<group attrs="{'invisible':[('list_type','=','students_strength')]}">
 							<field name="export_to_excel"/>
 							</group>
 						<newline/><field name="class_form" invisible="1"/>
