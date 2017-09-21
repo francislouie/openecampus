@@ -36,24 +36,18 @@
 				<td><para style="white">.</para></td>
 			</tr>
 		</blockTable>
-		<blockTable colWidths="40.0,200.0,80.0,80.0,80.0,80.0" repeatRows="1" style="Table2">
+		<blockTable colWidths="40.0,400.0,100.0" repeatRows="1" style="Table2">
 			<tr>
 				<td><para style="para_1">S.No</para></td>
 				<td><para style="para_1">Class</para></td>
 				<td><para style="para_1">Current Strength</para></td>
-				<td><para style="para_1">Draft Students</para></td>
-				<td><para style="para_1">Waiting Approval Strength</para></td>
-				<td><para style="para_1">Maximum Strength</para></td>
 			</tr>
 		</blockTable>
-		<blockTable colWidths="40.0,200.0,80.0,80.0,80.0,80.0" style="Table21">
+		<blockTable colWidths="40.0,400.0,100.0" style="Table21">
 			<tr>[[repeatIn(get_student_strength(data['form']),'r')]]
 				<td><para style="para_2">[[ r['s_no'] ]]</para></td>
 				<td><para style="para_2">[[ r['class'] ]]</para></td>
 				<td><para style="para_2">[[ r['strength'] ]]</para></td>
-				<td><para style="para_2">[[ r['draft_std'] ]]</para></td>
-				<td><para style="para_2">[[ r['wait_approv'] ]]</para></td>
-				<td><para style="para_2">[[ r['max_stds'] ]]</para></td>
 			</tr>
 		</blockTable>
 		<blockTable colWidths="540.0" style="">
@@ -66,7 +60,7 @@
 				<td><para style="white">.</para></td>
 			</tr>
 		</blockTable>
-		<para style="para_2">The total sum of current students shows sum of all stdudents in Draft, Waiting Approval and Current State</para>
+		<para style="para_2">[[ get_student_strength_message(data['form'])]]</para>
 	</section>
 </story>
 </document>
