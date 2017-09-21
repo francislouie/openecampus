@@ -21,6 +21,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
             'get_student_strength':self.get_student_strength,            
             'get_date_range':self.get_date_range,
             'get_student_strength_message':self.get_student_strength_message,
+            'get_classwise_detailed_fee':self.get_classwise_detailed_fee
         })
         self.base_amount = 0.00
     
@@ -143,6 +144,10 @@ class sms_report_studentslist(report_sxw.rml_parse):
             result.append(mydict)
         return result
 
+    def get_classwise_detailed_fee(self, form):
+        result = []
+        return 'Testing Repot Call' 
+    
     def get_date_range(self, form): 
         return "Admissions From: "+str(form['start_date'])+" To: "+str(form['end_date'])
     
@@ -419,6 +424,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
 
 report_sxw.report_sxw('report.sms.studentslist.name', 'sms.student', 'addons/sms/rml_studentslist.rml',parser=sms_report_studentslist, header='external')
 report_sxw.report_sxw('report.sms.class.list.name', 'sms.student', 'addons/sms/rml_student_class_list.rml',parser=sms_report_studentslist, header='external')
+report_sxw.report_sxw('report.sms.classwise.detailed.fee.report', 'smsfee.studentfee', 'addons/sms/rml_classwise_detailed_fee.rml',parser=sms_report_studentslist, header=False)
 report_sxw.report_sxw('report.sms.std_admission_statistics.name', 'sms.student', 'addons/sms/rml_std_admission_statistics.rml',parser=sms_report_studentslist, header=False)
 report_sxw.report_sxw('report.sms.students.biodata', 'sms.student', 'addons/sms/rml_studentsbiodata.rml',parser=sms_report_studentslist, header='external')
 report_sxw.report_sxw('report.sms_students_securuty_cards_name', 'sms.student', 'addons/sms/report/rml_student_remp_sec_cards.rml',parser=sms_report_studentslist, header=False)
