@@ -1186,7 +1186,7 @@
 			 <group>
 				<group>
 				  	<field name="cur_strength" invisible="1"/>
-					<field name="max_stds" />
+					<field name="max_stds" invisible="1"/>
 					<field name="admission_closed"/>
 					<field name="class_session"/>
 				</group>
