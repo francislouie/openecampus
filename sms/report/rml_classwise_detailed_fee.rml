@@ -11,7 +11,7 @@
     <blockValign value="TOP"/>
 	<blockTopPadding length="8.0" start="0,0" stop="-1,-1"/>
     <blockBottomPadding length="13.0" start="0,0" stop="-1,-1"/>
-    <lineStyle kind="GRID" colorName="#FFFFFF" start="0,0" stop="-1,-1"/>
+    <lineStyle kind="GRID" colorName="#808080" start="0,0" stop="-1,-1"/>
 	</blockTableStyle>
 	<blockTableStyle id="Table21">
     <blockAlignment value="CENTER"/>
@@ -30,20 +30,42 @@
   </stylesheet>
   <story>
 
-	<blockTable colWidths="40.0,100.0,100.0,80.0,80.0,100.0,100.0" repeatRows="1" style="Table21">
+	<blockTable colWidths="40.0,120.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0" repeatRows="1" style="Table21">
 		<tr>
 			<td><para style="para_2">S.No</para></td>
 			<td><para style="para_2">Name</para></td>
-			<td><para style="para_2">Class</para></td>
-			<td><para style="para_2">Admission Date</para></td>
-			<td><para style="para_2">Withdrawn Date</para></td>
-			<td><para style="para_2">Withdrawn By</para></td>
-			<td><para style="para_2">Approved By</para></td>
+			<td><para style="para_2">Jan</para></td>
+			<td><para style="para_2">Feb</para></td>
+			<td><para style="para_2">Mar</para></td>
+			<td><para style="para_2">Apr</para></td>
+			<td><para style="para_2">May</para></td>
+			<td><para style="para_2">June</para></td>
+			<td><para style="para_2">July</para></td>
+			<td><para style="para_2">Aug</para></td>
+			<td><para style="para_2">Sep</para></td>
+			<td><para style="para_2">Oct</para></td>
+			<td><para style="para_2">Nov</para></td>
+			<td><para style="para_2">Dec</para></td>
 		</tr>
 	</blockTable>
-	<!--<para>[[ repeatIn(get_withdrawn_student_info(data['form']),'r') ]]</para>-->
-	<para style="para_2">[[ get_classwise_detailed_fee(data['form'])]]</para>
-
+	<blockTable colWidths="40.0,120.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0" style="Table2">
+		<tr><para style="para_2">[[ repeatIn(get_classwise_detailed_fee(data['form']),'r') ]]</para>
+			<td><para style="para_2">[[ r['s_no'] ]]</para></td>
+			<td><para style="para_2">[[ r['name'] ]]</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+			<td><para style="para_2">.</para></td>
+		</tr>
+	</blockTable>
 	<!--
 	<blockTable colWidths="40.0,100.0,100.0,80.0,80.0,100.0,100.0" style="Table21">
 		<tr>[[ repeatIn(get_withdrawn_student_info(data['form']),'r') ]]

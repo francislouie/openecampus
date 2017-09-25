@@ -146,7 +146,21 @@ class sms_report_studentslist(report_sxw.rml_parse):
 
     def get_classwise_detailed_fee(self, form):
         result = []
-        return 'Testing Repot Call' 
+        acad_cal = form['class_id'][0]
+        students = """SELECT name FROM sms_student 
+                        WHERE current_class ="""+str(acad_cal)+"""
+                        AND state in ('Admitted') ORDER BY name"""
+        print students
+        self.cr.execute(students)
+        rows = self.cr.fetchall() 
+        i = 1
+        for row in rows:
+            mydict = {'s_no':'','name':''}
+            mydict['s_no'] = i
+            mydict['name'] = row[0]
+            i = i + 1
+            result.append(mydict)
+        return result
     
     def get_date_range(self, form): 
         return "Admissions From: "+str(form['start_date'])+" To: "+str(form['end_date'])
