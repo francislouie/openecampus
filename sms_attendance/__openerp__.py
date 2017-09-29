@@ -13,6 +13,7 @@
              'wizard/sms_attendance_blank_attendancesheet.xml',
              'wizard/sms_attendance_filled_attendancesheet.xml',
              'wizard/sms_attendance_daily_attendancesheet.xml',
+             'wizard/sms_attendance_weekly_attendancesheet.xml',
              'sms_attendance_view.xml',
              'sms_attendance_report.xml',             
              'sms_attendance_menu.xml',

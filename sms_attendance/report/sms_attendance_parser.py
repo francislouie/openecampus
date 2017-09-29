@@ -207,3 +207,8 @@ report_sxw.report_sxw('report.smsattendance.daily.attendance.sheet',
                         'sms.academiccalendar',
                         'addons/sms_attendance/report/daily_attendance_report.rml', 
                         parser=sms_attendance_parser, header=None)
+
+report_sxw.report_sxw('report.smsattendance.weekly.attendance.sheet',
+                        'sms.academiccalendar',
+                        'addons/sms_attendance/report/weekly_attendance_report.rml', 
+                        parser=sms_attendance_parser, header=None)
