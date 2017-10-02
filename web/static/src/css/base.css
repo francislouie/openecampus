@@ -301,7 +301,7 @@
   border-radius: 0 0 2px 2px;
 }
 .openerp.ui-dialog .oe_about a {
-  color: #7C7BAD;
+  color: #FEAC34;
 }
 .openerp.ui-dialog .oe_about a:hover {
   text-decoration: underline;
@@ -333,7 +333,7 @@
   border-radius: 0 0 2px 2px;
 }
 .openerp.ui-dialog .oe_about .oe_bottom a {
-  color: #eee;
+  color: #FEAC34;
 }
 .openerp.ui-dialog.oe_act_window .ui-dialog-content {
   padding: 0px;
