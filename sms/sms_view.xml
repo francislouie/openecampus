@@ -1177,6 +1177,7 @@
 				<group>
 					<field name="section_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}" domain="[('active','=',1)]"/>
 					<field name="group_id"/>
+					<field name="disp_order" invisible="1"/>
 				</group>
 			</group>
 			<notebook>
@@ -2614,7 +2615,7 @@
       <field name="arch" type="xml">
         <form string="Student Change Class">
           <group>
-          <field name="name" on_change="onchange_student(name)" />
+          <field name="name" on_change="onchange_student(name)"/>
            <field name="father_name"/>
            <field name="current_class" />
           <field name="new_class" on_change="onchange_acad_cal(new_class)"/>
@@ -3420,7 +3421,7 @@
 
 			<group>
 --	          <group>
-		          <field name="name" on_change="onchange_student(name)" attrs="{'readonly':[('state','!=','Draft')]}" />
+		          <field name="name" on_change="onchange_student(name)" attrs="{'readonly':[('state','!=','Draft')]}"/>
 		          <field name="current_class" on_change="onchange_acad_cal(current_class)"/>
 		          <field name="fee_str" />
 				  <field name="changed_by"/>

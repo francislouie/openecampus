@@ -26,7 +26,7 @@
     </initialize>
     <paraStyle name="para_1" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
 	<paraStyle name="para_2" fontName="Helvetica" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
-	<paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="LEFT" color="#FFFFFF" spaceBefore="3.0" spaceAfter="3.0"/>
+	<paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="LEFT" color="#ffffff" spaceBefore="3.0" spaceAfter="3.0"/>
     <images/>
   </stylesheet>
   <story>
@@ -36,22 +36,31 @@
 				<td><para style="white">.</para></td>
 			</tr>
 		</blockTable>
-		<blockTable colWidths="40.0,200.0,150.0,150.0" repeatRows="1" style="Table2">
+		<blockTable colWidths="40.0,400.0,100.0" repeatRows="1" style="Table2">
 			<tr>
 				<td><para style="para_1">S.No</para></td>
 				<td><para style="para_1">Class</para></td>
 				<td><para style="para_1">Current Strength</para></td>
-				<td><para style="para_1">Maximum Strength</para></td>
 			</tr>
 		</blockTable>
-		<blockTable colWidths="40.0,200.0,150.0,150.0" style="Table21">
+		<blockTable colWidths="40.0,400.0,100.0" style="Table21">
 			<tr>[[repeatIn(get_student_strength(data['form']),'r')]]
 				<td><para style="para_2">[[ r['s_no'] ]]</para></td>
 				<td><para style="para_2">[[ r['class'] ]]</para></td>
 				<td><para style="para_2">[[ r['strength'] ]]</para></td>
-				<td><para style="para_2">[[ r['max_stds'] ]]</para></td>
 			</tr>
 		</blockTable>
+		<blockTable colWidths="540.0" style="">
+			<tr>
+				<td><para style="white">.</para></td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="540.0" style="">
+			<tr>
+				<td><para style="white">.</para></td>
+			</tr>
+		</blockTable>
+		<para style="para_2">[[ get_student_strength_message(data['form'])]]</para>
 	</section>
 </story>
 </document>

@@ -20,6 +20,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
             'print_student_se_passes':self.print_student_se_passes,
             'get_student_strength':self.get_student_strength,            
             'get_date_range':self.get_date_range,
+            'get_student_strength_message':self.get_student_strength_message,
         })
         self.base_amount = 0.00
     
@@ -61,21 +62,44 @@ class sms_report_studentslist(report_sxw.rml_parse):
             result.append(mydict)
         return result
 
+    def get_student_strength_message(self, form):                                                         
+        this_form = self.datas['form']
+        draft_boolean = this_form['display_draft_waitapprov']
+        if draft_boolean is True:
+            return 'The total sum of current students shows sum of all stdudents in Draft, Waiting Approval and Current State'
+        else:
+            return ''
+
     def get_student_strength(self, form):                                                         
         result = []
-        class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','=','Active')], order='name')
+        this_form = self.datas['form']
+        draft_boolean = this_form['display_draft_waitapprov']
+        class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','=','Active')], order='disp_order, section_id')
         class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_ids)
         i = 1
+        total_cur_strength = 0
+        total_allowed_students = 0        
         for class_obj in class_objs:
-            mydict = {'s_no':'', 'class':'', 'strength':'', 'max_stds':''}
+            mydict = {'s_no':'', 'class':'', 'strength':''}
+            draft_stds = self.pool.get('sms.academiccalendar').count_students_admission_draft(self.cr, self.uid, class_obj.id)
+            wait_approv_stds = self.pool.get('sms.academiccalendar').count_students_admission_wait_approval(self.cr, self.uid, class_obj.id)
             mydict['s_no']  = i
             mydict['class']     = class_obj.name
+            if draft_boolean is True:
+                total_cur_strength = total_cur_strength + class_obj.cur_strength + draft_stds + wait_approv_stds  
+            else:
+                total_cur_strength = total_cur_strength + class_obj.cur_strength
             mydict['strength']  = class_obj.cur_strength
-            mydict['max_stds']  = class_obj.max_stds 
+            total_allowed_students = total_allowed_students + class_obj.max_stds            
             i += 1
             result.append(mydict)
+            
+        mydict = {'s_no':'', 'class':'', 'strength':''}
+        mydict['class']     = 'Total Students'
+        mydict['strength']  = total_cur_strength
+        result.append(mydict)
         return result
-
+    
     def get_withdrawn_student_info(self,form):                                                         
         result = []
         this_form = self.datas['form']
