@@ -757,7 +757,7 @@
 			<button name="load_std_fee" string="1. Show Student Fees" states="Draft" type="object"  class="oe_highlight" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_fee_officer,sms.group_sms_director" />
 			<button name="send_for_approval" string="1. Receive Fee (Send For Approval)" states="fee_calculated" type="object" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_fee_officer,sms.group_sms_director" class="oe_highlight" />
 			<button name="confirm_fee_received" string="2. Approve(Receive Fee)" confirm = "Receive Fee with given amount?" states="Waiting_Approval" type="object" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_director"  class="button_ok" />
-			<button name="send_back_for_correction" string="2. Send Back For Correction" confirm = "If you think this challans needs correction, send it back to your account officer" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_director"  states="waiting_approval" type="object" class="button_back_to_statement"   />
+			<button name="send_back_for_correction" string="2. Send Back For Correction" confirm = "If you think this Fee Bill needs correction, send it back to your account officer" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_director"  states="waiting_approval" type="object" class="button_back_to_statement"   />
 			<button name="cancel_fee_bill" string="[X]Cancel This Fee Bill" confirm = "Are you sure Cancel Fee bill?" states="Waiting_Approval,fee_calculated" type="object" class="button_close_statement" />
 			<button name="%(action_singlestudent_fee_openchallan_id)d" string="Print" states="fee_calculated,Cancel" type="action" class="oe_link" groups=""/>
 			<button name="%(print_paid_fee_receipt_id)d" string="Print Receipt" states="Paid" type="action" class="oe_highlight" groups=""/>
@@ -786,24 +786,28 @@
 					</group>
 					<notebook>
         				    <page string="Fee Received" attrs="{'readonly':[('receive_whole_amount','=',1)]}" >
-							<field name="receiptbook_lines_ids" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
+							<field name="receiptbook_lines_ids" attrs="{'readonly':[('state','IN',['Waiting_Approval','Paid'])]}"  />
 							</page>
 							
 							<page string="Accounting Enteries" >
 								<group>
 									<group>
-										<field name="vouchered"/>
-										<field name="vouchered_by"/>
+										<field name="fee_received_by"/>
+										<field name="fee_approved_by"/>
+										<field name="challan_cancel_by" attrs="{'invisible':[('state','NOT IN',['Cancel'])]}"/>
 									</group>							
 									<group>
-										<field name="voucher_date"/>
-										<field name="voucher_no"/>
+										<field name="receipt_date"/>
+										<field name="approve_date"/>
+										<field name="cancel_date" attrs="{'invisible':[('state','NOT IN',['Cancel'])]}"/>
 									</group>
 								</group>
 							</page>
 							<page string="Note" >
+							<group>
 							<p><h2>Need correction?</h2> <button name="request_for_adjustment" string="Ask For Fee Adjustment"  states="Paid" type="object"  class="oe_highlight" /></p>
 							<field name="id" stribg = "File#"/>
+							</group>
 							</page>
 							<!--<page string="Fee Adjustment" attrs="{'invisible':[('state','NOT IN',['Request_Adjustment','Adjusted'])]}" >
 							<field name="receipt_book_idd" nolabel ="1" attrs="{'readonly':[('state','NOT IN',['Request_Adjustment'])]}"  />
@@ -820,9 +824,7 @@
 				 <h2><label for="challan_cat" string="Category"/><field name="challan_cat" readonly ="1"/></h2>
 				</group>
 				
-					<group string ="">
-							<field name="fee_received_by"  readonly ="1" />
-					</group>
+					
 		</sheet>	 	
               </form>
             </field>

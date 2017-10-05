@@ -1440,12 +1440,15 @@
          <field name="arch" type="xml">
             <form string="Student Subjects" version="7.0">
 			<sheet>
+			<group>
 			<h2><field name="student_id" readonly = "1"/></h2>
 			<h3><field name="name"/></h3>
-			<field name="student"/>  
+			<group>
+			<field name="student"/> 
 			<field name="subject"/>
 			<field name="subject_status"/>
-
+			</group>
+			</group>
 			<notebook>
             <page string="Results">
 			  <group string="Examination">
@@ -2526,7 +2529,15 @@
         </tree>
       </field>
     </record>
-    
+    <!-- the same promotion object is used for changing student class, action is defined here` -->
+ <record model="ir.actions.act_window" id="action_sms_change_student_class">
+      <field name="name">Change Students Class</field>
+      <field name="res_model">sms.student.class.promotion</field>
+		<field name="domain">[('action','=','change_students_class')]</field>
+      <field name="view_type">form</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
     <!-- END NEWsms.Class.promotion --> 
  
 	<!-- sms.student.promotion -->
@@ -2608,26 +2619,28 @@
 
 <!-- Change student class -->
     
-     <record model="ir.ui.view" id="sms_student_change_section_form">
+     <record model="ir.ui.view" id="sms_student_change_classss_form">
       <field name="name">Student Change Section</field>
-      <field name="model">sms.change.student.class</field>
+      <field name="model">sms.change.student.class</field> 
       <field name="type">form</field>
       <field name="arch" type="xml">
         <form string="Student Change Class">
-          <group>
-          <field name="name" on_change="onchange_student(name)"/>
-           <field name="father_name"/>
-           <field name="current_class" />
-          <field name="new_class" on_change="onchange_acad_cal(new_class)"/>
-		  <field name="fee_str" />	
-		  <field name="fee_starting_month" />	
-         </group>
-         <group>
-		  <field name="academic_session"/>
-		  <field name="session"/> 
-		  <field name="changed_by"/>
-		  <field name="date_changed"/>
-		  </group>
+		<group  string = "Change Student Class" attrs="{'readonly':[('state','!=','Draft')]}">
+	          <group>
+	           <field name="name" on_change="onchange_student(name)"/>
+	           <field name="current_class" />
+				<field name="session"/> 
+	         </group>
+	         <group>
+				 <field name="father_name"/>
+				 <field name="new_class" on_change="onchange_acad_cal(new_class)"/>
+				  <field name="academic_session"/>
+			</group>
+			<group>
+			  <field name="changed_by"/>
+			  <field name="date_changed"/>
+			 </group>
+		 </group>
         </form>
       </field>
     </record>

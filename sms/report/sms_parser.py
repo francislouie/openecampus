@@ -295,7 +295,8 @@ class crossovered_analytic(report_sxw.rml_parse):
             where sms_student_subject.subject = """ + str(subject_id) + """ 
             and sms_academiccalendar_student.name = """ + str(academiccalendar_id) + """
             and sms_student.state = 'Admitted'
-            and sms_academiccalendar_student.state not in( 'Suspended')
+            and sms_academiccalendar_student.state not in('Suspended')
+            and sms_student_subject.subject_status not in('Suspended')
             ORDER BY sms_student.name, sms_student.father_name"""
         
         self.cr.execute(students_sql)
@@ -341,6 +342,7 @@ class crossovered_analytic(report_sxw.rml_parse):
             and sms_academiccalendar_student.name = """ + str(academiccalendar_id) + """
             and sms_student.state = 'Admitted'
             and sms_academiccalendar_student.state not in( 'Suspended')
+            and sms_student_subject.subject_status not in('Suspended')
             ORDER BY subject_status, sms_student.name, sms_student.father_name"""
         
         print students_sql
@@ -390,6 +392,7 @@ class crossovered_analytic(report_sxw.rml_parse):
                 on sms_student_subject.id = sms_exam_lines.student_subject
                 where sms_academiccalendar_student.name = """ + str(academiccalendar_id) + """
                 and sms_student.state = 'Admitted'
+                and sms_student_subject.subject_status not in('Suspended')
                 and sms_exam_lines.name =  """ + str(exam_type) + """
                 group by sms_student.name, sms_student.father_name, sms_student.registration_no, sms_student.id
                 order by """ + order_by + """, sms_student.name, sms_student.father_name"""    
@@ -449,6 +452,7 @@ class crossovered_analytic(report_sxw.rml_parse):
                 on sms_student_subject.id = sms_exam_lines.student_subject
                 where sms_academiccalendar_student.name = """ + str(academiccalendar_id) + """
                 and sms_student.state = 'Admitted'
+                and sms_student_subject.subject_status not in('Suspended')
                 and sms_exam_lines.name =  """ + str(exam_type) + """
                 group by sms_student.name, sms_student.father_name, sms_student.registration_no, sms_student.id, sms_academiccalendar_student.id
                 order by """ + order_by + """, sms_student.name, sms_student.father_name"""    

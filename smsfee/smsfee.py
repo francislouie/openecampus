@@ -1466,7 +1466,7 @@ class smsfee_receiptbook(osv.osv):
         for rec in dates_updated:
             date_convt = datetime.datetime.strptime(rec[1] , '%Y-%m-%d')
             date_str = str(date_convt.strftime('%d/%m/%Y'))
-            self.pool.get('smsfee.receiptbook').write(cr, uid, rec[0], {'receipt_date_view':date_str})
+            self.pool.get('smsfee.receiptbook').write(cr, uid, rec[0], {'receipt_date_view':date_str}) 
         #-------------------------------------------------------------------
         self.onchange_student(cr, uid, ids, None)
         rec = self.browse(cr, uid, ids, context)
@@ -1482,32 +1482,32 @@ class smsfee_receiptbook(osv.osv):
             paymethod = f.payment_method
             receipt_date = f.receipt_date
                 
-        user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
-        if user.company_id.enable_fm:
-            print "enabled fm:"
-            fee_income_acc = user.company_id.student_fee_income_acc
-            fee_expense_acc = user.company_id.student_fee_expense_acc
-            fee_journal = user.company_id.fee_journal
-            period_id = self.pool.get('account.move')._get_period(cr, uid, context)
-            if paymethod=='Cash':
-                fee_reception_acc = user.company_id.fee_reception_account_cash
-                if not fee_reception_acc:
-                    raise osv.except_osv(('Cash Account'), ('No Account is defined for Payment method:Cash'))
-            elif paymethod=='Bank':
-                fee_reception_acc = user.company_id.fee_reception_account_bank
-                if not fee_reception_acc:
-                    raise osv.except_osv(('Bank Account'), ('No Account is defined for Payment method:Bank'))
-            
-            if not fee_income_acc:
-                raise osv.except_osv(('Accounts'), ('Please define Fee Income Account'))
-            if not fee_expense_acc:
-                raise osv.except_osv(('Accounts'), ('Please define Fee Expense Account'))
-            if not fee_journal:
-                raise osv.except_osv(('Accounts'), ('Please Define A Fee Journal'))
-            if not period_id:
-                raise osv.except_osv(('Financial Period'), ('Financial Period is not defined in Fiscal Year.'))
-        
-        
+#         user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+#         if user.company_id.enable_fm:
+#             print "enabled fm:"
+#             fee_income_acc = user.company_id.student_fee_income_acc
+#             fee_expense_acc = user.company_id.student_fee_expense_acc
+#             fee_journal = user.company_id.fee_journal
+#             period_id = self.pool.get('account.move')._get_period(cr, uid, context)
+#             if paymethod=='Cash':
+#                 fee_reception_acc = user.company_id.fee_reception_account_cash
+#                 if not fee_reception_acc:
+#                     raise osv.except_osv(('Cash Account'), ('No Account is defined for Payment method:Cash'))
+#             elif paymethod=='Bank':
+#                 fee_reception_acc = user.company_id.fee_reception_account_bank
+#                 if not fee_reception_acc:
+#                     raise osv.except_osv(('Bank Account'), ('No Account is defined for Payment method:Bank'))
+#             
+#             if not fee_income_acc:
+#                 raise osv.except_osv(('Accounts'), ('Please define Fee Income Account'))
+#             if not fee_expense_acc:
+#                 raise osv.except_osv(('Accounts'), ('Please define Fee Expense Account'))
+#             if not fee_journal:
+#                 raise osv.except_osv(('Accounts'), ('Please Define A Fee Journal'))
+#             if not period_id:
+#                 raise osv.except_osv(('Financial Period'), ('Financial Period is not defined in Fiscal Year.'))
+#         
+#         
         
         search_lines_id = self.pool.get('smsfee.receiptbook.lines').search(cr, uid, [('receipt_book_id','=',ids[0])], context=context)
         lines_obj = self.pool.get('smsfee.receiptbook.lines').browse(cr, uid, search_lines_id)
@@ -1534,48 +1534,49 @@ class smsfee_receiptbook(osv.osv):
              
         if generate_receipt:
             update_receiptbook = self.write(cr, uid, ids[0],{
-                           'fee_received_by':uid,
+                           'fee_approved_by':uid,
+                           'approve_date':datetime.date.today(),
                            'total_paid_amount':total_paid_amount +float(f.late_fee) ,
                            'state':'Paid',
                            })
-            if user.company_id.enable_fm:
-                account_move_dict= {
-                                'ref':'Income:Student Fee:',
-                                'journal_id':fee_journal.id,
-                                'type':'journal_voucher',
-                                'narration':'Pay/'+str(ids[0]) +'--'+ receipt_date}
-                
-                move_id=self.pool.get('account.move').create(cr, uid, account_move_dict, context)
-                account_move_line_dict=[
-                    {
-                         'name': 'Fee Received:'+stdname,
-                         'debit':0.00,
-                         'credit':total_paid_amount,
-                         'account_id':fee_income_acc.id,
-                         'move_id':move_id,
-                         'journal_id':fee_journal.id,
-                         'period_id':period_id
-                     },
-                    {
-                         'name': 'Fee Received:'+stdname,
-                         'debit':total_paid_amount,
-                         'credit':0.00,
-                         'account_id':fee_reception_acc.id,
-                         'move_id':move_id,
-                         'journal_id':fee_journal.id,
-                         'period_id':period_id
-                     }]
-                context.update({'journal_id': fee_journal.id, 'period_id': period_id})
-                for move in account_move_line_dict:
-                    print "move:",move
-                    result=self.pool.get('account.move.line').create(cr, uid, move, context)
-                    
-                update_receiptbook2 = self.write(cr, uid, ids[0],{
-                       'vouchered':True,
-                       'vouchered_by':uid,
-                       'voucher_date':datetime.date.today(),
-                       'voucher_no':move_id
-                       })
+#             if user.company_id.enable_fm:
+#                 account_move_dict= {
+#                                 'ref':'Income:Student Fee:',
+#                                 'journal_id':fee_journal.id,
+#                                 'type':'journal_voucher',
+#                                 'narration':'Pay/'+str(ids[0]) +'--'+ receipt_date}
+#                 
+#                 move_id=self.pool.get('account.move').create(cr, uid, account_move_dict, context)
+#                 account_move_line_dict=[
+#                     {
+#                          'name': 'Fee Received:'+stdname,
+#                          'debit':0.00,
+#                          'credit':total_paid_amount,
+#                          'account_id':fee_income_acc.id,
+#                          'move_id':move_id,
+#                          'journal_id':fee_journal.id,
+#                          'period_id':period_id
+#                      },
+#                     {
+#                          'name': 'Fee Received:'+stdname,
+#                          'debit':total_paid_amount,
+#                          'credit':0.00,
+#                          'account_id':fee_reception_acc.id,
+#                          'move_id':move_id,
+#                          'journal_id':fee_journal.id,
+#                          'period_id':period_id
+#                      }]
+#                 context.update({'journal_id': fee_journal.id, 'period_id': period_id})
+#                 for move in account_move_line_dict:
+#                     print "move:",move
+#                     result=self.pool.get('account.move.line').create(cr, uid, move, context)
+#                     
+#                 update_receiptbook2 = self.write(cr, uid, ids[0],{
+#                        'vouchered':True,
+#                        'vouchered_by':uid,
+#                        'voucher_date':datetime.date.today(),
+#                        'voucher_no':move_id
+#                        })
             search_booklines = self.pool.get('smsfee.receiptbook.lines').search(cr, uid, [('receipt_book_id','=',ids[0])], context=context) 
             print "serarched ids to delete ",search_booklines
             if search_booklines:
@@ -1649,8 +1650,8 @@ class smsfee_receiptbook(osv.osv):
         rec =  self.browse(cr, uid, ids)
         return rec.id
     
-    def send_for_approval(self, cr, uid, ids, context=None):
-        self.write(cr, uid, ids[0], {'state':'Waiting_Approval'})
+    def send_for_approval(self, cr, uid, ids, context=None): 
+        self.write(cr, uid, ids[0], {'state':'Waiting_Approval','fee_received_by':uid})
         return
     
     def send_back_for_correction(self, cr, uid, ids, context=None):

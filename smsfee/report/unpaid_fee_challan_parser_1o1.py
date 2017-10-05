@@ -18,6 +18,10 @@ result_acc=[]
    class wise, other parsers that prints class wise challans, should be rmeoved """
 
 class unpaid_fee_challan_parser(report_sxw.rml_parse):
+    #this will be the only challans parsser called for
+    # acadimc fee, transport fee and other 
+    # currently called for clasess wside fees for trasport and academics
+    # later on will be adjusted to call the same parser for sing student challan prrintg both in academcis and transport 
  
     def __init__(self, cr, uid, name, context):
  
@@ -46,13 +50,16 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         self.context = context
 
     def get_challan_logo(self):
-        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #this will return instute logo on challan
+        #another same method will return transport or academics logo, will be added soon
+        logo = 'No Logo'
+        company_id = self.pool.get('res.company').search(self.cr, self.uid,[])
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
-        if len(rescompany_id)>1:
+        if len(company_id)>1:
             return ''
-        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
-        for rec in company_recs:
-            logo = rec.company_clogo
+        elif len(company_id) == 1:
+            company_recs = self.pool.get('res.company').browse(self.cr, self.uid, company_id)[0]
+            logo = company_recs.logo
         return logo
 
     def get_challan_header_lineone(self):
@@ -123,6 +130,9 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return group  
      
     def get_challans(self, data):
+        #currentlty this parser is set to call for whole class challans orinting
+        #both transport and acadmics
+        #later on this will be set to call this parser for single students also, both academics challans and transprot challans (3-10-2017)
         
         challan_list = []
         ###########print challan at the time of admission for paying fee (it is before admitting student)
@@ -151,7 +161,14 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             challan_list.append(challan_dict)                     
         else:
             cls_id = self.datas['form']['class_id'][0]
-            challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=',cls_id),('state','=','fee_calculated')]) 
+            if self.datas['form']['category'] == 'Academics':
+                challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=','Academics'),('student_class_id','=',cls_id),('state','=','fee_calculated')]) 
+            elif self.datas['form']['category'] == 'Transport':
+                rml = ''
+                challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=','Transport'),('student_class_id','=',cls_id),('state','=','fee_calculated')])
+            else:
+                #means if no category is selected then print challans for acdameics fee
+                challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=','Academics'),('student_class_id','=',cls_id),('state','=','fee_calculated')])
             if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
@@ -243,4 +260,5 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return_value=str(amt_en).replace('Cent','Paisa')
         return return_value
      
+
 report_sxw.report_sxw('report.smsfee_print_one_student_per_page', 'smsfee.classfees.register', 'addons/smsfee/smsfee_unpaid_receipts_report_1o1.rml',parser = unpaid_fee_challan_parser, header=None)

@@ -27,7 +27,7 @@ class fee_defaulters(osv.osv_memory):
     _description = "Prints defaulter list"
     _columns = {
               "session": fields.many2one('sms.session', 'Session', help="Select A session , you can also print reprts from previous session."),
-              "class_id": fields.many2many('sms.academiccalendar','sms_academiccalendar_class_fee', 'thisobj_id', 'academiccalendar_id','Class', domain="[('session_id','=',session),('fee_defined','=',1)]"),
+              "class_id": fields.many2many('sms.academiccalendar','sms_academiccalendar_class_fee', 'thisobj_id', 'academiccalendar_id','Class', domain="[('session_id','=',session)]"),
               'report_type': fields.selection([('summary','Print Summary (Donot show monthly Details'),('detailed','Detailed Report')],'Options'),
               'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('All','All Fee Categories')],'Fee Category'),
               'order_by':fields.selection([('sms_student.name','Student Name'),('sms_student.registration_no','Registration No'),('sms_student.state','Admission Status')],'Order By'),

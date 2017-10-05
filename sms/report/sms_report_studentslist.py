@@ -73,8 +73,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
     def get_student_strength(self, form):                                                         
         result = []
         this_form = self.datas['form']
-        draft_boolean = this_form['display_draft_waitapprov']
-        class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','=','Active')], order='disp_order, section_id')
+#         draft_boolean = this_form['display_draft_waitapprov']
+        class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','in',['Active','Draft'])], order='disp_order, section_id')
         class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_ids)
         i = 1
         total_cur_strength = 0
@@ -85,10 +85,10 @@ class sms_report_studentslist(report_sxw.rml_parse):
             wait_approv_stds = self.pool.get('sms.academiccalendar').count_students_admission_wait_approval(self.cr, self.uid, class_obj.id)
             mydict['s_no']  = i
             mydict['class']     = class_obj.name
-            if draft_boolean is True:
-                total_cur_strength = total_cur_strength + class_obj.cur_strength + draft_stds + wait_approv_stds  
-            else:
-                total_cur_strength = total_cur_strength + class_obj.cur_strength
+#             if draft_boolean is True:
+#                 total_cur_strength = total_cur_strength + class_obj.cur_strength + draft_stds + wait_approv_stds  
+#             else:
+#                 total_cur_strength = total_cur_strength + class_obj.cur_strength
             mydict['strength']  = class_obj.cur_strength
             total_allowed_students = total_allowed_students + class_obj.max_stds            
             i += 1
@@ -394,7 +394,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
                     if rec.image:
                         picture = rec.image
                     else:
-                        picture = 'No Picture'
+                        picture = None
                       
                     my_dict['id' + str((i%2)+1)] = i
                     my_dict['name' + str((i%2)+1)] = rec.name

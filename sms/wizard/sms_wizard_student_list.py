@@ -21,7 +21,7 @@ class sms_student_list(osv.osv_memory):
               'class_form': fields.boolean('Class View'),
               'display_draft_waitapprov':fields.boolean('Display Draft and Waiting'),
              }
-    _defaults = { 'list_type': 'check_admissions',
+    _defaults = { 'list_type': 'students_strength',
                  'class_form': False
                  
            }
