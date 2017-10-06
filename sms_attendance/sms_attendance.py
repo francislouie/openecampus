@@ -82,6 +82,7 @@ class sms_academiccalendar(osv.osv):
         rec = cr.fetchone()
 
         result = {}
+        result.update({'total': rec[0] + rec[1] + rec[2]})
         result.update({'present': rec[0]})
         result.update({'absent': rec[1]})
         result.update({'leave': rec[2]})

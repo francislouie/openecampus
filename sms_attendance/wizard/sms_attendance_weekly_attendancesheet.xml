@@ -10,7 +10,7 @@
                 <form string="Weekly Attendance Report" version="7.0">
 					<group colspan="4">
 						<field name="session_id" requried="1"/>
-                        <field name="week" requried="1"/>
+                        <field name="week_id" requried="1"/>
                     </group>
 
                     <footer>
