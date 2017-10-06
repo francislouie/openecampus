@@ -26,12 +26,12 @@
             string="Daily Attendance Report"
             />
 
-        <report id="report_class_weekly_attendance_report_id"
+        <!-- <report id="report_class_weekly_attendance_report_id"
             model="sms.academiccalendar"
             name="smsattendance.weekly.attendance.sheet"
             multi="True"
             rml="sms_attendance/report/weekly_attendance_report.rml"
             string="Weekly Attendance Report"
-            />
+            /> -->
    </data>
 </openerp>

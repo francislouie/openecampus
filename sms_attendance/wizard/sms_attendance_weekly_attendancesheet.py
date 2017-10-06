@@ -15,17 +15,18 @@ class class_print_weekly_attendance_sheet(osv.osv_memory):
     
     def print_weekly_attendance_list(self, cr, uid, ids, context=None):
         report = 'smsattendance.weekly.attendance.sheet'
-        datas = {
-            'ids': [],
-            'active_ids': '',
-            'model': 'class.print_weekly_attendance_sheet',
-            'form': self.read(cr, uid, ids)[0]
-            }
+        datas = self.read(cr, uid, ids)[0]
+        week = datas['week']
+        session = datas['session_id']
+
+        week_id = week[0]
+        session_id = session[0]
         
         return {
-            'type': 'ir.actions.report.xml',
-            'report_name':report,
-            'datas': datas
+            'type': 'json',
+            'datas': datas,
+            'week_id': week_id,
+            'session_id': session_id
             }
        
 class_print_weekly_attendance_sheet()
