@@ -22,6 +22,14 @@ class class_print_weekly_attendance_sheet(osv.osv_memory):
         week_id = week[0]
         session_id = session[0]
 
+        attendances = self.get_weekly_attendance_data(cr, uid, ids, week_id, session_id, context)
+        
+        return {
+            'type': 'json',
+            'attendances': attendances,
+            }
+
+    def get_weekly_attendance_data(self, cr, uid, ids, week_id, session_id, context=None):
         academiccalendar_ids = self.pool.get('sms.academiccalendar').search(cr, uid, [('session_id','=',session_id)])
         academiccalendar_obj = self.pool.get('sms.academiccalendar').browse(cr, uid, academiccalendar_ids)
 
@@ -53,10 +61,7 @@ class class_print_weekly_attendance_sheet(osv.osv_memory):
             
             my_dict['days'] = days
             attendances.append(my_dict)
-        
-        return {
-            'type': 'json',
-            'attendances': attendances,
-            }
+
+        return attendances
        
 class_print_weekly_attendance_sheet()
