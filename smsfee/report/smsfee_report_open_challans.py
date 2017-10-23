@@ -40,13 +40,17 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         return logo
 
     def get_challan_header_lineone(self):
+        
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
         if len(rescompany_id)>1:
             return ''
         company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
-        for rec in company_recs:
-            fieldone = rec.company_cfieldone
+        if self.datas['form']['category']== 'Academics':
+            fieldone = company_recs.company_cfieldone
+        elif self.datas['form']['category'] == 'Transport':
+            fieldone = company_recs.company_cfieldone_trans
+        print "returning line 1.............................................:",fieldone
         return fieldone
 
     def get_challan_header_linetwo(self):

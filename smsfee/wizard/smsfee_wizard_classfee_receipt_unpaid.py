@@ -1,3 +1,8 @@
+#this is the final wizard code used to create academics and transporet challans
+#currently this is used for generation of class wise challans
+# will soon be used for indivudual sutdents challans from student form, both for academics and transport or any other
+#last udpate: 18oct
+
 from openerp.osv import fields, osv
 import datetime
 import logging
@@ -21,7 +26,8 @@ class class_fee_receipts_unpaid(osv.osv_memory):
     _defaults = {'class_id':_get_class,'amount_after_due_date':200,'category':'Academics'}
     
     def create_unpaid_challans(self, cr, uid, class_id,category):
-        # create unpaid challans for category academic
+        # create unpaid challans for category academic when called for academics, or crete for transp[ort when called for transpoert
+        
         _logger.warning("Deprecated, usle c............................................................................")
         student_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',class_id[0]),('state','=','Current')])
         if student_ids:

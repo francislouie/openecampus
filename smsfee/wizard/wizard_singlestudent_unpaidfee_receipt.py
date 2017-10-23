@@ -2,22 +2,15 @@ from openerp.osv import fields, osv
 import logging
 _logger = logging.getLogger(__name__)
 
-class open_challns_wizardlines(osv.osv_memory):
-    _name = 'open.challns.wizardlines'
-    _rec_name = 'challno'
-    _columns = {
-        'challno': fields.char('Bill No'),
-        'amount': fields.float('Amount'),
-        'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category'),
-        'status_after_print':fields.selection([('Open','Open'),('Cancel','Will be Cancel')],'Fee Bill Future'),
-        'wizard_id': fields.many2one('class.singlestudent_fee_receipt_openchallans', 'Parent'),
-    }
-    _defaults = {}
-
 class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
+    """
+    This wizard is used to print sinlge student challans for academics and transport, this wizard called a parser that generated academics and trnsport
+    challans for single student and whole class. Please note that in this case that parser will print challans for single students
+    --Last Updated: 23 OCT 17 By Shahid
+      
     
-    """this wizard is used to print single student fee challan both for transport and cademics, from 14 may 2017 """
-    
+    """
+            
     def _get_student(self, cr, uid, ids):
         obj = self.browse(cr, uid, ids['active_id'])
         std_id =  obj.id
@@ -70,7 +63,6 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
               'student_id': fields.many2one('sms.student', 'Student', domain="[('state','=','Admitted')]", help="Student"),
               'due_date': fields.date('Due Date', required=True),
               'amount_after_due_date': fields.integer('Fine After Due Date'),
-              'exiting_challan_ids': fields.one2many('open.challns.wizardlines','wizard_id', 'Existing Bills'),
               'fee_receiving_type':fields.selection([('Full','Full'),('Partial','Partial')], 'Challan Type'),
               'unpaidfee_months_id':fields.many2many('sms.session.months', 'singlestd_partialchallan_sessionmonths', 'thisobj_id','months_id', 'Month'),
                }
@@ -92,24 +84,16 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
     def print_singlestudent_unpaidfee_report(self, cr, uid, ids, data):
         thisform = self.read(cr, uid, ids)[0]
         selected_months = thisform['unpaidfee_months_id']
-        if thisform['category'] == 'Academics':
+        category = thisform['category']
+        #--------------------------------------------------------------------------
+        if thisform['fee_receiving_type'] == 'Full':
+            self.create_unpaid_challans(cr, uid, thisform['student_id'], category, 'Full', None)
+        elif thisform['fee_receiving_type'] == 'Partial':
+            self.create_unpaid_challans(cr, uid, thisform['student_id'], category, 'Partial', selected_months)
+        #--------------------------------------------------------------------------
+        report = 'smsfee_print_one_student_per_page'
             #--------------------------------------------------------------------------
-            if thisform['fee_receiving_type'] == 'Full':
-                self.create_unpaid_challans(cr, uid, thisform['student_id'], 'Academics', 'Full', None)
-            elif thisform['fee_receiving_type'] == 'Partial':
-                self.create_unpaid_challans(cr, uid, thisform['student_id'], 'Academics', 'Partial', selected_months)
-            #--------------------------------------------------------------------------
-            report = 'smsfee_stu_unpaidfee_receipt_name'
-            #--------------------------------------------------------------------------
-        elif thisform['category'] == 'Transport':
-            #--------------------------------------------------------------------------
-            if thisform['fee_receiving_type'] == 'Full':
-                self.create_unpaid_challans(cr, uid, thisform['student_id'], 'Transport', 'Full', None)
-            elif thisform['fee_receiving_type'] == 'Partial':
-                self.create_unpaid_challans(cr, uid, thisform['student_id'], 'Transport', 'Partial', selected_months)
-            #--------------------------------------------------------------------------
-            report = 'smstransport_stu_unpaidtransportfee_receipt'
-            #--------------------------------------------------------------------------
+       
         datas = {
              'ids': [],
              'active_ids': '',
