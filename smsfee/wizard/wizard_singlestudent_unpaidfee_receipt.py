@@ -37,24 +37,6 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
                 result.append(rec[0])
         return result
 
-#     def _get_existing_challans(self, cr, uid, ids):
-#         result = []
-#         mydict={}
-#         obj = self.browse(cr, uid, ids['active_id'])
-#         unpaid_challan_ids = self.pool.get('smsfee.receiptbook').search(cr, uid, [('student_id','=',obj.id),('state','=','fee_calculated')])
-#         unpaid_challan_objs = self.pool.get('smsfee.receiptbook').browse(cr, uid, unpaid_challan_ids)
-#         for unpaidfee_id in unpaid_challan_objs:
-#             if unpaidfee_id.challan_cat == obj.category:
-#                 printstatus = 'Cancel'
-#             else:
-#                 printstatus = 'Open'
-#             printstatus = '12'
-#             mydict['challno'] = unpaidfee_id.counter
-#             mydict['amount']=unpaidfee_id.total_paybles,
-#             mydict['category']=unpaidfee_id.challan_cat,
-#             mydict['status_after_print']=printstatus
-#             result.append(mydict)
-#         return result
         
     _name = "class.singlestudent_unpaidfee_receipt"
     _description = "Single Student's Unpaid Fee Receipt"

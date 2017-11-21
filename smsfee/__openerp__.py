@@ -1,10 +1,10 @@
 {
     'name': 'SMS Fee',
     'version': '1.0',
-    'author': 'Inovtec Solutions',
+    'author': 'Cyme Business Technologies',
     'category': 'SMS Fee Management',
-    'description': """This Module is used for fee management for Compas ManagmentS ystem.""",
-    'website': 'http://www.inovtec.com.pk',
+    'description': """This Module is used for fee management for Campus ManagmentS Solutions.""",
+    'website': 'http://www.cyme.com.pk',
     'images': [''],
     'depends' : ['base','account','account_accountant','sms'],
     'data': [
@@ -19,6 +19,7 @@
              'wizard/wizard_singlestudent_unpaidfee_receipt.xml',
              'wizard/wizard_student_fee_collect.xml',
              'wizard/wizard_student_advancefee_collect.xml',
+             # 'wizard/sms_wizard_detailed_fee_report_msexcel.xml',
              #'wizard/smsfee_wizard_student_feetype_list_view.xml',
              'smsfee_report.xml',
              'smsfee_view.xml',

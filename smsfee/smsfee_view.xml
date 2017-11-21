@@ -778,7 +778,7 @@
 					</group>
 		     		<group string ="">
 						<field name="receipt_date" required ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"/>
-						<field name="receipt_date_view" readonly="1" invisible="1"/>
+						<field name="payment_date" readonly="1"/>
 						<field name="payment_method" readonly = "1" required ="1"/>	
 						<field name="manual_recpt_no"  />								
 					</group>
@@ -796,7 +796,7 @@
 										<field name="challan_cancel_by" attrs="{'invisible':[('state','NOT IN',['Cancel'])]}"/>
 									</group>							
 									<group>
-										<field name="receipt_date"/>
+										<field name="date_receivd_onsystem"/>
 										<field name="approve_date"/>
 										<field name="cancel_date" attrs="{'invisible':[('state','NOT IN',['Cancel'])]}"/>
 									</group>
@@ -805,7 +805,7 @@
 							<page string="Note" >
 							<group>
 							<p><h2>Need correction?</h2> <button name="request_for_adjustment" string="Ask For Fee Adjustment"  states="Paid" type="object"  class="oe_highlight" /></p>
-							<field name="id" stribg = "File#"/>
+							<field name="id" string = "File#"/>
 							</group>
 							</page>
 							<!--<page string="Fee Adjustment" attrs="{'invisible':[('state','NOT IN',['Request_Adjustment','Adjusted'])]}" >
@@ -837,8 +837,8 @@
 					<field name="counter"/>
 					<field name="student_id" domain="[('current_class','=',name)]" />
 					<field name="std_reg_no"/>
-					<field name="receipt_date_view"/>
-					<!--<field name="receipt_date"/>-->
+					<field name="payment_date"/>
+					<field name="receipt_date"/>
 					<field name="state"/>
 					<field name="challan_cat"/>
 					<field name="total_paybles"/>

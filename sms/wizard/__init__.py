@@ -27,5 +27,6 @@ import sms_wizard_class_subject_list
 import sms_classlist
 import sms_wizard_student_transfer_in
 
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

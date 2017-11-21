@@ -185,7 +185,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             challan_list.append(challan_dict)                     
         else:
            #check if printed via student form
-            if self.datas['form']['student_id']:
+            if 'student_id' in self.datas['form']:
                #challan is being printed via student form, canlcel all other challans of this sutdent
                challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_id','=',self.datas['form']['student_id'][0]),('state','=','fee_calculated')])
             else:

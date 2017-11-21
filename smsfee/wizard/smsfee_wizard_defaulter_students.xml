@@ -8,7 +8,7 @@
             <field name="name">fee.defaulters.form</field>
             <field name="model">fee.defaulters</field>
             <field name="arch" type="xml">
-                <form string="Print Defaulter students Reports" version="7.0">
+                <form string="Students Fee Analysis" version="7.0">
 					
 					
                     <group>
@@ -17,7 +17,6 @@
 						<field name="category" required="1"/>
 	                    </group>
 	                    <group>
-							
 							 <newline/><field name="order_by" required="1"/>
 							 <newline/><field name="show_phone_no"/>
 	                   </group>
@@ -28,8 +27,9 @@
 	                      	<field name="class_id" placeholder="Classes" nolabel="1"/>
 	                    </group>
                     <footer>
-                        <button string="Print Summary" name="print_defaulter_summary" type="object" class="oe_highlight"/>
-                        <button string="Print Detailed Report" name="print_defaulter_detailed" type="object" class="oe_highlight"/>
+                        <button string="Defaulter Sutdents Summary" name="print_defaulter_summary" type="object" class="oe_highlight"/>
+                        <button string="Defaulter Students Details" name="print_defaulter_detailed" type="object" class="oe_highlight"/>
+                        <button string="Detailed Fee Register" name="print_fee_analysis_ms_excel" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>

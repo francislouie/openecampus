@@ -1415,6 +1415,7 @@ class smsfee_receiptbook(osv.osv):
     
     def load_std_fee(self, cr, uid, ids, context=None):
         for f in self.browse(cr, uid, ids, context):
+            
             brows =   self.browse(cr, uid, ids, context)
             unlink = self.unlink_lines(cr, uid,ids[0],None)
             student = brows[0].student_id.id
@@ -1459,15 +1460,7 @@ class smsfee_receiptbook(osv.osv):
         return
     
     def confirm_fee_received(self, cr, uid, ids, context=None):
-        #-----------Populate the Date Fee Record For view purpose ----------
-        sql =   """SELECT id, receipt_date FROM smsfee_receiptbook"""
-        cr.execute(sql)
-        dates_updated = cr.fetchall()
-        for rec in dates_updated:
-            date_convt = datetime.datetime.strptime(rec[1] , '%Y-%m-%d')
-            date_str = str(date_convt.strftime('%d/%m/%Y'))
-            self.pool.get('smsfee.receiptbook').write(cr, uid, rec[0], {'receipt_date_view':date_str}) 
-        #-------------------------------------------------------------------
+        
         self.onchange_student(cr, uid, ids, None)
         rec = self.browse(cr, uid, ids, context)
         if rec[0].student_class_id.name == None:
@@ -1651,7 +1644,9 @@ class smsfee_receiptbook(osv.osv):
         return rec.id
     
     def send_for_approval(self, cr, uid, ids, context=None): 
-        self.write(cr, uid, ids[0], {'state':'Waiting_Approval','fee_received_by':uid})
+        for f in self.browse(cr, uid, ids, context):
+            #-------------------------------------------------------------------
+            self.write(cr, uid, ids[0], {'state':'Waiting_Approval','fee_received_by':uid,'date_receivd_onsystem':datetime.datetime.now()})
         return
     
     def send_back_for_correction(self, cr, uid, ids, context=None):
@@ -1674,6 +1669,17 @@ class smsfee_receiptbook(osv.osv):
             cr.execute(sql)
             amount = float(cr.fetchone()[0])
             result[f.id] = amount
+        return result
+    
+    def change_date_format(self, cr, uid, ids, context={}, arg=None, obj=None):
+        #this mehod is temporarily added, this converted date formate for payment date entered by
+        #user when sending challans for approvals
+        result = {}
+        records =  self.browse(cr, uid, ids, context)
+#         for f in records:
+#             date_convt = datetime.datetime.strptime(str(f.receipt_date) , '%Y-%m-%d')
+#             date_str = str(date_convt.strftime('%d/%m/%Y'))
+#             result[f.id] = str(f.receipt_date)
         return result
     
     def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
@@ -1768,7 +1774,6 @@ class smsfee_receiptbook(osv.osv):
     _columns = {
         'name': fields.char('Bill No', readonly =True,size=15), 
         'counter': fields.char('Bill No.', readonly =True,size=15),    
-        'receipt_date': fields.date('Date'),
         'challan_cat':fields.selection([('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],'Fee Category',readonly=True),
         'session_id':fields.many2one('sms.academics.session', 'Session'),
         'fee_structure': fields.char(string = 'Fee Structure',size = 100),
@@ -1784,7 +1789,6 @@ class smsfee_receiptbook(osv.osv):
         'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
         'fee_approved_by': fields.many2one('res.users', 'Approved By'),
-        'approve_date': fields.datetime('Date Approved',readonly=True),
         'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),
         'cancel_date': fields.datetime('Cancel Date',readonly=True),
         #fields related to adjustment
@@ -1797,7 +1801,10 @@ class smsfee_receiptbook(osv.osv):
         'late_fee' : fields.float('Late Fee'),
         'std_reg_no': fields.related('student_id','registration_no',type='char',relation='sms.student', string='Registration Number', readonly=True),
         'challan_type':fields.selection([('Full','Full'),('Partial','Partial')],'Challan Type'),
-        'receipt_date_view':fields.char('Date', readonly =True, size=64),
+        'receipt_date': fields.date('Payment Date'),
+        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='date', method =True),
+        'date_receivd_onsystem':fields.datetime('Received on', readonly =True),
+        'approve_date': fields.datetime('Date Approved',readonly=True),
     }
     _sql_constraints = [  
         #('Fee Exisits', 'unique (name)', 'Fee Receipt No Must be Unique!')
@@ -1806,7 +1813,7 @@ class smsfee_receiptbook(osv.osv):
          'state':'Draft',
          'payment_method': 'Cash',
          'total_paid_amount': 0.0,
-         'receipt_date':lambda *a: time.strftime('%Y-%m-%d'),
+         'receipt_date':lambda *a: time.strftime('%d-%m-%Y'),
     }
 smsfee_receiptbook()
 
@@ -2457,7 +2464,7 @@ class smsfee_return_paid_fee(osv.osv):
         for f in rec:
             stdname = self.pool.get('sms.student').browse(cr, uid, f.student_id.id).name
             paymethod = f.payment_method
-            receipt_date = f.receipt_date
+            receipt_date = f.payment_date
                 
         user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
         if user.company_id.enable_fm:
