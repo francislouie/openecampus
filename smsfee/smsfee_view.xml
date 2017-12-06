@@ -690,9 +690,10 @@
 						<field name="name"  readonly ="1" />
 						<field name="request_date" required="1" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
 						<field name="state"  readonly ="1" />
-						<field name="request_type" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"/>
+						<field name="request_type" required="1" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"/>
 					    <field name="transfer_type" attrs="{'invisible':[('request_type','!=','transfer_out')],
-					    	'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+                                                            'required':[('request_type','=','transfer_out')],
+					    	                                'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
               			<field name="transfer_campus" attrs="{'invisible':[('request_type','!=','transfer_out')],
 					    	'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
               			<field name="transfer_fee" attrs="{'invisible':[('request_type','!=','transfer_out')],

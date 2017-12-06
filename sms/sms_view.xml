@@ -610,7 +610,7 @@
 			<button name="%(report_admission_form_filled_id)d" string="Admission Form" states="Draft,Admitted" type="action" class="oe_highlight" groups=""/>
 -->
 			<button name="promote_std" string="Promote" states="admitted" type="object" class="oe_highlight" groups=""/>
-			<button name="%(action_withdraw_student)d" string="Withdraw" states="Admitted" type="action" class="oe_highlight" groups=""/>
+			<!--<button name="%(action_withdraw_student)d" string="Withdraw" states="Admitted" type="action" class="oe_highlight" groups=""/>-->
 			<button name="%(action_demote_student)d" string="Demote" states="Admitted" type="action" confirm = "Use this wizard Carefully, thiw wizard enables you to bring a student back to his previous class." class="oe_highlight" groups=""/>
     		<button name="admisssion_registration" string="Admit(Beta)" states="Draft" type="object" class="oe_highlight" groups=""/>
 				

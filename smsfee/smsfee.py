@@ -118,6 +118,7 @@ class sms_session_months(osv.osv):
                                        if this_ft.fee_type.subtype == 'Monthly_Fee': 
                                            for this_student in students_ids:
                                                #call method to add this fee to student
+                                         
                                                call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student, cur_cls.id, this_ft, f.id)
                                                
                     #Update fee register object for this month 
@@ -147,6 +148,7 @@ class sms_session_months(osv.osv):
                         inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
                                WHERE fee_month = """+str(f.id)+ """ and state = 'fee_unpaid' AND smsfee_feetypes.category='Academics'"""
                 print "sql:",sql1
+         
                 cr.execute(sql1)
                 row1 = cr.fetchone()
                 print "..111....", row1[0]
@@ -159,6 +161,7 @@ class sms_session_months(osv.osv):
                                WHERE fee_month = """+str(f.id)+ """ and state = 'fee_paid' AND smsfee_feetypes.category='Academics'"""
                 cr.execute(sql2)
                 row2 = cr.fetchone()
+              
                 print "..sql2....", sql2
                 result[f.id]['month_collected_amout'] = float(row2[0])
                 
@@ -460,9 +463,11 @@ class sms_student(osv.osv):
         """This was clients requirements to show academis and transport ,and hostel etc fee separately, we made this method to use in 
            each module, this will be called by relavent columns to show fee history of one module only, here this method shows fee
            hisotry for academics only """
+      
         records = self.browse(cr,uid,ids)
         res = {}
         for f in records:
+      
             sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
                        inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                         inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
@@ -470,6 +475,8 @@ class sms_student(osv.osv):
             cr.execute(sql)
             res[f.id] = [x[0] for x in cr.fetchall()]
 #         raise osv.except_osv((res), (sql))
+          
+            print"this is the id",res
         return res
     #sms_student    
     _name = 'sms.student'
@@ -959,6 +966,7 @@ class smsfee_studentfee(osv.osv):
         AND acad_cal_std_id="""+str(acad_std_id)+"""AND net_total > 0 AND state= 'fee_unpaid'"""
         cr.execute(sql)
         bal = cr.fetchone()
+        print "get student total paybles",bal
         return bal[0]
     
     def insert_student_monthly_non_monthlyfee(self, cr, uid, std_id, acad_cal, fee_type_row, month):
@@ -972,26 +980,40 @@ class smsfee_studentfee(osv.osv):
            
            admin
            """
-        
+        print "Student_Id",std_id
+        print "Current student class",acad_cal
+        print "Fee Type",fee_type_row
+        print "current Month",month
+          
+       
         fee_already_exists =  self.pool.get('smsfee.studentfee').search(cr, uid,[('acad_cal_id', '=', acad_cal), ('student_id', '=', std_id), ('fee_type', '=', fee_type_row.id), ('due_month', '=', month)])
+        print "Fee Exists_____________",fee_already_exists
         if not fee_already_exists:
+            print"Under the if condition "
             # at this stage is assued that fee month and dues month are same for all cases, due month may change in exceptional cases, i.e when fee of all prevoius
             #month is registered in current month against a student, this case due month for all fees will be current month to avoid fine,
             fee_month = month
             due_month = month
 
             fee_amount = fee_type_row.amount
+         
             
             # If discount is given to the student, update the fee_amount
             sql = """SELECT discount_given FROM sms_student WHERE id ="""+str(std_id)+""""""
             cr.execute(sql)
-            discount_given = cr.fetchone()
+            discount_given = cr.fetchone()[0]
+
             if discount_given is True:
-                discount_fee_ids = self.pool.get('smsfee.discount').search(cr ,uid ,[('student_id','=',std_id),('fee_type','=',fee_type_row.id)])
+              
+                discount_fee_ids = self.pool.get('smsfee.discount').search(cr ,uid ,[('student_id','=',std_id),('fee_type','=',fee_type_row.fee_type.id)])
+          
                 if discount_fee_ids:
+
                     discount_fee = self.pool.get('smsfee.discount').browse(cr,uid, discount_fee_ids[0])
                     fee_amount = discount_fee.discounted_fee
-
+                    full_amount = discount_fee.discounted_fee
+                    print "Student id and discounted fee",str(std_id),fee_amount
+                    print "Student id and Full fee",str(std_id),full_amount
             fee_dcit= {
                         'student_id': std_id,
                         'acad_cal_id': acad_cal,
@@ -1007,11 +1029,17 @@ class smsfee_studentfee(osv.osv):
                         'reconcile':False,
                         'state':'fee_unpaid'
                      }
+           
             create_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit) 
+          
             if create_fee:
+        
                 return True
             else:
-                return False  
+                return False
+        else:
+                print"False False False False False False False False False False False False"
+                return False      
     
     def add_fee_student(self ,cr ,uid ,ids ,context):
         acd_cal_stu_id = self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('name','=',context['acd_cal_id']),('std_id','=',context['student_id'] )])
@@ -1032,7 +1060,7 @@ class smsfee_studentfee(osv.osv):
                         studentfee_id = self.pool.get('smsfee.studentfee').create(cr,uid,{
                         'student_id': context['student_id'],
                         'acad_cal_id': int(context['acd_cal_id']),               
-                        'acad_cal_std_id': acd_cal_stu_id[0],
+                        'acad_cal_st  print"False False False False False False False False False False False False"d_id': acd_cal_stu_id[0],
                         'fee_type': class_fee_id , 
                         'generic_fee_type':fee_type_id,
                         'date_fee_charged':datetime.date.today(),

@@ -386,7 +386,7 @@
 			<search string="Search Students">
 				<field name="employee_id" string="Employee"/>
 				<field name="student_id" string="Student"/>
-				<field name="current_vehcile" string="Vehcile"/>
+                <field name="transport_route" string="Route"/>
 			</search>
 		</field>
 	</record>

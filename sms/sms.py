@@ -132,7 +132,7 @@ class sms_session(osv.osv):
             end_date = datetime.datetime.strptime(rec.end_date, '%Y-%m-%d')  
             weeks = rrule.rrule(rrule.WEEKLY, dtstart=start_date, until=end_date)
             total_weeks = weeks.count()
-#            print "====",start_date.ctime()
+#            print "===sms.session.months=",start_date.ctime()
             loop_counter = 0
             firstweek_date = start_date
             while (loop_counter<=total_weeks):
@@ -893,7 +893,7 @@ class sms_student(osv.osv):
         'date_withdraw':fields.date('Date Withdraw'),
         'withdraw_by':fields.many2one('res.users','Withdraw By'),
         'date_readmitted':fields.date('Date Withdraw'),
-        'state': fields.selection([('Draft', 'Draft'),('Withdraw','Withdraw'),('Admitted', 'Admitted'),('admission_cancel','Admission Cancel'),('drop_out', 'Drop Out'),('deleted', 'deleted'),('slc', 'School Leaving Certificate')], 'State', readonly = True),       
+        'state': fields.selection([('Draft', 'Draft'),('Withdraw','Withdraw'),('Admitted', 'Admitted'),('admission_cancel','Admission Cancel'),('drop_out', 'Drop Out'),('deleted', 'deleted'),('slc', 'School Leaving Certificate'),('transfer_out', 'transfer_out')], 'State', readonly = True),       
         'image': fields.binary("Photo", help="This field holds the image used as photo for the student, limited to 1024x1024px."),
         'current_state': fields.selection([('Current', 'Current'),('Failed', 'Failed')], 'Current Class State', readonly = True),
         'image': fields.binary("Photo", help="This field holds the image used as photo for the student, limited to 1024x1024px."),

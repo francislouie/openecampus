@@ -46,6 +46,8 @@ class update_fee_register(osv.osv_memory):
     
     
     def update_feeregister(self, cr, uid, ids, data):
+        
+        raise osv.except_osv(('sssdsdsdsd'),('Please Define a Fee For Selected Class'))
         result = []
         for f in self.browse(cr, uid, ids):
             action = f.action
