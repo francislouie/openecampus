@@ -18,6 +18,10 @@ result_acc=[]
    class wise, other parsers that prints class wise challans, should be rmeoved """
 
 class unpaid_fee_challan_parser(report_sxw.rml_parse):
+    #this will be the only challans parsser called for
+    # acadimc fee, transport fee and other 
+    # currently called for clasess wside fees for trasport and academics
+    # later on will be adjusted to call the same parser for sing student challan prrintg both in academcis and transport 
  
     def __init__(self, cr, uid, name, context):
  
@@ -42,28 +46,47 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             'get_challan_header_linethree':self.get_challan_header_linethree,
             'get_challan_footer_one':self.get_challan_footer_one,
             'get_challan_footer_two':self.get_challan_footer_two,
+            'get_department_logo':self.get_department_logo,
          })
         self.context = context
 
     def get_challan_logo(self):
+        #this will return instute logo on challan
+        #another same method will return transport or academics logo, will be added soon
+        logo = 'No Logo'
+        company_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(company_id)>1:
+            return ''
+        elif len(company_id) == 1:
+            company_recs = self.pool.get('res.company').browse(self.cr, self.uid, company_id)[0]
+            logo = company_recs.logo
+        return logo
+
+    def get_department_logo(self):
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
         if len(rescompany_id)>1:
             return ''
         company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
-        for rec in company_recs:
-            logo = rec.company_clogo
+        if self.datas['form']['category']== 'Academics':
+            logo = None
+        elif self.datas['form']['category'] == 'Transport':
+            logo = company_recs[0].company_clogo_trans
         return logo
 
     def get_challan_header_lineone(self):
+        
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
         if len(rescompany_id)>1:
             return ''
         company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
-        for rec in company_recs:
-            fieldone = rec.company_cfieldone
-        return fieldone
+        if self.datas['form']['category']== 'Academics':
+            line1 = company_recs[0].company_cfieldone
+        elif self.datas['form']['category'] == 'Transport':
+            line1 = company_recs[0].company_cfieldone_trans
+        return line1
 
     def get_challan_header_linetwo(self):
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
@@ -71,9 +94,11 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         if len(rescompany_id)>1:
             return ''
         company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
-        for rec in company_recs:
-            fieldtwo = rec.company_cfieldtwo
-        return fieldtwo
+        if self.datas['form']['category']== 'Academics':
+            line2 = company_recs[0].company_cfieldtwo
+        elif self.datas['form']['category'] == 'Transport':
+            lin2 = company_recs[0].company_cfieldtwo_trans
+        return line2
     
     def get_challan_header_linethree(self):
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
@@ -81,9 +106,11 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         if len(rescompany_id)>1:
             return ''
         company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
-        for rec in company_recs:
-            fieldthree = rec.company_cfieldthree
-        return fieldthree
+        if self.datas['form']['category']== 'Academics':
+            line3 = company_recs[0].company_cfieldthree
+        elif self.datas['form']['category'] == 'Transport':
+            line3 = company_recs[0].company_cfieldthree_trans
+        return line3
     
     def get_challan_footer_one(self):
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
@@ -91,9 +118,11 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         if len(rescompany_id)>1:
             return ''
         company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
-        for rec in company_recs:
-            footerone = rec.company_cfieldfour
-        return footerone
+        if self.datas['form']['category']== 'Academics':
+            line4 = company_recs[0].company_cfieldfour
+        elif self.datas['form']['category'] == 'Transport':
+            line4 = company_recs[0].company_cfieldfour_trans
+        return line4
     
     def get_challan_footer_two(self):
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
@@ -101,9 +130,11 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         if len(rescompany_id)>1:
             return ''
         company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
-        for rec in company_recs:
-            footertwo = rec.company_cfieldfive
-        return footertwo
+        if self.datas['form']['category']== 'Academics':
+            line5 = company_recs[0].company_cfieldfive
+        elif self.datas['form']['category'] == 'Transport':
+            line5 = company_recs[0].company_cfieldfive_trans
+        return line5
      
     def get_today(self):
         today = time.strftime('%d-%m-%Y')
@@ -123,6 +154,9 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return group  
      
     def get_challans(self, data):
+        #currentlty this parser is set to call for whole class challans orinting
+        #both transport and acadmics
+        #later on this will be set to call this parser for single students also, both academics challans and transprot challans (3-10-2017)
         
         challan_list = []
         ###########print challan at the time of admission for paying fee (it is before admitting student)
@@ -150,8 +184,15 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             challan_dict['amount_in_words'] = return_value
             challan_list.append(challan_dict)                     
         else:
-            cls_id = self.datas['form']['class_id'][0]
-            challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=',cls_id),('state','=','fee_calculated')]) 
+           #check if printed via student form
+            if 'student_id' in self.datas['form']:
+               #challan is being printed via student form, canlcel all other challans of this sutdent
+               challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_id','=',self.datas['form']['student_id'][0]),('state','=','fee_calculated')])
+            else:
+               print "we are not printing via student form "
+               cls_id = self.datas['form']['class_id'][0]
+               challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_class_id','=',cls_id),('state','=','fee_calculated')])
+            
             if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
@@ -243,4 +284,5 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return_value=str(amt_en).replace('Cent','Paisa')
         return return_value
      
+
 report_sxw.report_sxw('report.smsfee_print_one_student_per_page', 'smsfee.classfees.register', 'addons/smsfee/smsfee_unpaid_receipts_report_1o1.rml',parser = unpaid_fee_challan_parser, header=None)

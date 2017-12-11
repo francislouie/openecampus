@@ -2,7 +2,7 @@
 <openerp>
     <data>
 
-    <!-- This Wizard print all kinds of challans for single student, remove other wizards that are working for single student -->
+    <!-- This Wizard print all kinds of challans for single student, remove other wizards that are working for single student 21 oct 17 -->
 
         <record id="view_singlestudent_unpaidfee_receipt" model="ir.ui.view">
             <field name="name">class.singlestudent_unpaidfee_receipt_form</field>
@@ -16,32 +16,23 @@
 						<group colspan="4" col="8">
 							 <field name="due_date"   colspan="2"/>
 							 <field name="amount_after_due_date"  colspan="2"/>
-							 <field name="category"  colspan="2" />
+							 
 					    </group>
 	                </group>    
-					<newline/>
-                    <div><label for="fee_receiving_type" string="Challan Type"/>
-                    <h2><field name="fee_receiving_type" colspan="4" required="1"/></h2>
-                    </div>
-				    <group attrs="{'invisible':[('fee_receiving_type', '!=', 'Full')]}">
-				    		<field name="exiting_challan_ids" widget="one2many_list"  nolabel="1">
-							<tree string="Existing Unpaid Bills">
-								<field name="challno"/>
-								<field name="amount"/>
-								<field name="category"/>
-								<field name="status_after_print"/>
-							 </tree>
-						</field>
-				    </group>
+					<group colspan="4" col="8">
+					<field name="category"  colspan="4" required="1" />
+                    <field name="fee_receiving_type"  colspan="4" required="1"/>
+                    </group>
 				    <group attrs="{'invisible':[('fee_receiving_type', '!=', 'Partial')]}">
 			    		<field name="unpaidfee_months_id" widget="many2many_tags"  nolabel="1"/>
 				    </group>
+				    
                    <group>
 	                    <ol>
-	                    <li><p>From here you can print Academics and Transport Fee bills separately, just select Fee bill category from above selections box</p></li>
-	                    <li><p>You can print Partial Fee Bill if student dont want to pay all fees</p></li>
-	                    <li><p>To Cancel a challan, goto <strong>Open Challans</strong> under <strong>Fee Management</strong> menu.</p></li>
-	                    <li><p><font color = "red">Generating New Fee Challan will cancel all previous unpaid challans</font></p></li>
+	                    <li><p>Print Academics and Transport Fee bills separately, just select Fee bill category from  selections box.</p></li>
+	                    <li><p>You can print Partial Fee Bill if student dont want to pay whole fee at once.</p></li>
+	                    <li><p>To Cancel a Fee Bill, goto <strong>Open Fee Bills</strong> under <strong>Fee Management</strong> menu.</p></li>
+	                    <li><p><font color = "red">Generating New Fee Fee Bills will cancel all previous unpaid Fee Bills</font></p></li>
 	                    </ol>
 	                    </group>
                     

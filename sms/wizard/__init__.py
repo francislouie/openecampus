@@ -22,11 +22,11 @@ import sms_wizard_demote_student
 import sms_wizard_datesheet_list
 import sms_wizard_certificate_form
 import sms_wizard_readmit_student
-import custom_sale_client_installements_reports
 import sms_hr_attendance_load_csv
 import sms_wizard_class_subject_list
 import sms_classlist
 import sms_wizard_student_transfer_in
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

@@ -871,6 +871,7 @@ class sms_session_months(osv.osv):
     
     """ This object is inherited to Apply Transport Fees on Students """
     def update_monthly_feeregister_transport(self, cr, uid, ids, name):
+        print "UPdate monthly fee Register is called"
         """This method now getting transport fee from smsfee classes fees lines, but when the fee structure is change for smsfee_studentfee
            then it will directly pick the transport fee id from smsfee_feetypes while its amount will be picked from rout or destination , 
            the transport fee str is also not necesarry to be defined for every session and every rout
@@ -885,6 +886,7 @@ class sms_session_months(osv.osv):
                                     where smsfee_feetypes.category =  'Transport'"""
             cr.execute(sql)
             feetypid = cr.fetchone()[0]
+            print"Fee type id-----",feetypid
             if not feetypid:
                 raise osv.except_osv(('Transport Fee Not Found'),('Transport fee is not defined in any class, Goto fee management of any class and add transport under any fee structure.'))
             ftrow = self.pool.get('smsfee.classes.fees.lines').browse(cr,uid,feetypid)  

@@ -252,7 +252,7 @@ instance.web.CrashManager = instance.web.Class.extend({
         // yes, exception handling is shitty
         if (error.code === 300 && error.data && error.data.type == "client_exception" && error.data.debug.match("SessionExpiredException")) {
             this.show_warning({type: "Session Expired", data: {
-                fault_code: _t("Your OpenERP session expired. Please refresh the current web page.")
+                fault_code: _t("Your CYME Campus session expired. Please Login Again.")
             }});
             return;
         }
@@ -274,7 +274,7 @@ instance.web.CrashManager = instance.web.Class.extend({
             return;
         }
         instance.web.dialog($('<div>' + QWeb.render('CrashManager.warning', {error: error}) + '</div>'), {
-            title: "OpenERP " + _.str.capitalize(error.type),
+            title: "CYME " + _.str.capitalize(error.type),
             buttons: [
                 {text: _t("Ok"), click: function() { $(this).dialog("close"); }}
             ]
@@ -289,7 +289,7 @@ instance.web.CrashManager = instance.web.Class.extend({
             $(this).dialog("close");
         };
         var dialog = new instance.web.Dialog(this, {
-            title: "OpenERP " + _.str.capitalize(error.type),
+            title: "CYME " + _.str.capitalize(error.type),
             width: '80%',
             height: '50%',
             min_width: '800px',
@@ -1278,7 +1278,7 @@ instance.web.WebClient = instance.web.Client.extend({
     set_title: function(title) {
         title = _.str.clean(title);
         var sep = _.isEmpty(title) ? '' : ' - ';
-        document.title = title + sep + 'OpenERP';
+        document.title = title + sep + 'CYME';
     },
     show_common: function() {
         var self = this;

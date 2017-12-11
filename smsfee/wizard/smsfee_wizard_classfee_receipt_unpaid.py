@@ -1,3 +1,8 @@
+#this is the final wizard code used to create academics and transporet challans
+#currently this is used for generation of class wise challans
+# will soon be used for indivudual sutdents challans from student form, both for academics and transport or any other
+#last udpate: 18oct
+
 from openerp.osv import fields, osv
 import datetime
 import logging
@@ -15,13 +20,14 @@ class class_fee_receipts_unpaid(osv.osv_memory):
     _columns = {
               "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
               'due_date': fields.date('Due Date', required=True),
-              'amount_after_due_date': fields.integer('Payment After Due Date'),
-               'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category'),
+              'amount_after_due_date': fields.integer('Fine After Due Date'),
+               'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category',required=True),
                }
-    _defaults = {'class_id':_get_class}
+    _defaults = {'class_id':_get_class,'amount_after_due_date':200,'category':'Academics'}
     
     def create_unpaid_challans(self, cr, uid, class_id,category):
-        # create unpaid challans for category academic
+        # create unpaid challans for category academic when called for academics, or crete for transp[ort when called for transpoert
+        
         _logger.warning("Deprecated, usle c............................................................................")
         student_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',class_id[0]),('state','=','Current')])
         if student_ids:
@@ -70,13 +76,18 @@ class class_fee_receipts_unpaid(osv.osv_memory):
                 }
             
         if thisform['category'] == 'Transport':
+            #then also called the parser of academics challan 
+            #comenting the code that calls parser of transport module
+            #becuase one parser will be called by all challan single student or whole class, transport or academics, all will call same parser
             if checking_challan == 'print_three_on_one':  
-                report = 'smstransport_print_three_student_per_page'
+                #report = 'smstransport_print_three_student_per_page'
+                report = 'smsfee_print_three_student_per_page' #here parser of academics also called for transport, threee students one page
                 thisform = self.read(cr, uid, ids)[0]
                 self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')
         
             elif checking_challan == 'print_one_on_one':  
-                report = 'smstransport_print_one_student_per_page'
+                #report = 'smstransport_print_one_student_per_page'
+                report = 'smsfee_print_one_student_per_page'
                 thisform = self.read(cr, uid, ids)[0]
                 self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')  
             

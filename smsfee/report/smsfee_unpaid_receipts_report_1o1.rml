@@ -1,3 +1,6 @@
+ <!--this is the actual rml currently used for classwise fee bills, transport and academcs, later on will be used for individual student
+   last updated 19 0ct 17-->
+
 <document filename="test.pdf">
   	<template pageSize="(878.0,600.0)" title="Test" author="BaharAli" allowSplitting="20">
 	<pageTemplate id="first">
@@ -11,11 +14,14 @@
 			<drawString x="112" y="585">[[get_class_group(data)]]</drawString>
 			<drawString x="420" y="585">[[get_class_group(data)]]</drawString>
 			<drawString x="720" y="585">[[get_class_group(data)]]</drawString>
-
+			<!-- Institute logo-->
 			<image x="002" y="545" height="50.0" width="45.0">[[get_challan_logo()]]</image>
 			<image x="300" y="545" height="50.0" width="45.0">[[get_challan_logo()]]</image>
 			<image x="590" y="545" height="50.0" width="45.0">[[get_challan_logo()]]</image>
-			
+			<!-- internal department logo-->
+			<image x="245" y="545" height="50.0" width="45.0">[[get_department_logo()]]</image>
+			<image x="535" y="545" height="50.0" width="45.0">[[get_department_logo()]]</image>
+			<image x="820" y="545" height="50.0" width="45.0">[[get_department_logo()]]</image>
 			<setFont name="Helvetica-Bold" size="7"/>
             <!--<drawString x="50" y="575">[[company.name]] Khyber Campus</drawString>-->
             <drawString x="50" y="575">[[get_challan_header_lineone()]]</drawString>
