@@ -11,7 +11,9 @@ import datetime
 
 class sms_collabrator(osv.osv):
     
-    """ Servers as bridge among sms and external apps """
+    """ Servers as bridge among sms and external apps
+    
+        this is a test changed to see how git works """
     _name = 'sms.collabrator'
     _columns = {}
            
