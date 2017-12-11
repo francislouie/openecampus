@@ -1,7 +1,7 @@
 {
     'name': 'SMS Fee',
     'version': '1.0',
-    'author': 'Cyme Business Technologies',
+    'author': 'Cyme Business Technologies,Peshawar',
     'category': 'SMS Fee Management',
     'description': """This Module is used for fee management for Campus ManagmentS Solutions.""",
     'website': 'http://www.cyme.com.pk',

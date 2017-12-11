@@ -4269,7 +4269,7 @@ hr_employee()
 class hr_attendance(osv.osv):
     """This object is used to add fields in employee"""
     _name = 'hr.attendance'
-    _inherit ='hr.employee'
+    _inherit ='hr.attendance'
         
     _columns = {
         'action': fields.selection([('sign_in','sign_out'),('sign_out','sign_out')]),
