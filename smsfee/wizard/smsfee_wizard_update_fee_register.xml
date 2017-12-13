@@ -9,20 +9,12 @@
             <field name="model">update.fee.register</field>
             <field name="arch" type="xml">
                 <tree string="Partner to Remind">
-                   <field name="updated_till"  />
-  							 <field name="action"  />
- 							 <field name="update_upto" />
-							 <field name="fee_type"  />
-							  <field name="updated_till"  />
-  							 <field name="action"  />
- 							 <field name="update_upto" />
-							 <field name="fee_type"  />
-							  <field name="updated_till"  />
-  							 <field name="action"  />
- 							 <field name="update_upto" />
-							 <field name="fee_type"  />
-							  
-                                   </tree>
+                   <field name="commenced_classes"  />
+  							 <field name="total_present"  />
+ 							 <field name="total_absent" />
+							 <field name="total_leaves"  />
+							  <field name="percent"  />
+                </tree>
             </field>
            </record>
 

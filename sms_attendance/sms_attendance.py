@@ -244,14 +244,11 @@ class sms_class_attendance_lines(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             attendance_date = f.parent_id.attendance_date
+            
             print "attendance date level 1",attendance_date
             if f.parent_id.id:
-                print "class date found",attendance_date
-                attendance_date = datetime.datetime.strptime(str(attendance_date), '%Y-%m-%d').strftime('%Y-%m-%d')
-            else:
-                print "date is null,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",attendance_date
-            print "calss date found",attendance_date
-            result[f.id] = attendance_date
+                attendance_date = datetime.datetime.strptime(str(attendance_date), '%Y-%m-%d').strftime('%d-%m-%Y')
+            result[f.id] = str(attendance_date)
         return result
     """This object serves as a tree view for sms_student_admission_register for fee purpose """
     _name = 'sms.class.attendance.lines'
@@ -264,7 +261,7 @@ class sms_class_attendance_lines(osv.osv):
         'absent' :fields.boolean('Absent'),
         'leave' :fields.boolean('Leave'),
         'state' : fields.selection([('Draft','Draft'),('Present','Present'),('Absent','Absent'),('Leave','Leave')],'Status'),
-        'class_date' : fields.function(get_class_date, method=True, string='Class Date', type='date'),#jsut for display purpose
+        'class_date' : fields.function(get_class_date, method=True, string='Class Date', type='char',size=50),#jsut for display purpose
     }
     _defaults = {'state': 'Present' , 'present': True}    
     

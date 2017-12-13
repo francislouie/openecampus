@@ -41,6 +41,17 @@
 						 <field name="class_date"/>
 						 <field name="state"/>
 				</tree>
+				<form editable = "0">
+								<field name="student_name" readonly ="1"/>
+								<field name="student_class_id" readonly ="1"/>
+								<field name="class_date" readonly ="1"/>
+								<field name="parent_id" readonly ="1"/>
+								<field name="present" readonly ="1"/>
+								<field name="absent" readonly ="1"/>
+								<field name="leave" readonly ="1"/>
+								<field name="state" readonly ="1"/>
+								<field name="id" string = "Code" />
+							 </form>
 				</field>
 			</page>
 			</xpath>
@@ -60,6 +71,22 @@
 		</field>
 	</record>
 
+
+	 <!-- Attendance  Calendar  View -->
+
+        <record id="view_class_attendance_calendar" model="ir.ui.view">
+            <field name="name">sms.class.attendance.calendar</field>
+            <field name="model">sms.class.attendance</field>
+            <field eval="2" name="priority"/>
+            <field name="arch" type="xml">
+                <calendar color="class_id" date_start="attendance_date" date_stop="attendance_date" string="Event Organization">
+                    <field name="class_id"/>
+					 <field name="class_id"/>
+                    <field name="attendance_date"/>
+                </calendar>
+            </field>
+        </record>
+
 	<!-- Student CLass Attendance -->
 		<record model="ir.ui.view" id="sms_class_attendance_form">
          <field name="name">sms.class.attendance.form</field>
@@ -76,11 +103,10 @@
 				<group>
                    <group string="Class Attendance" col="4" colspan="4">
 						<field name="name"/>
-						<field name="class_id" on_change="onchange_set_domain(class_id,attendance_date)" attrs="{'readonly':[('state','!=','Draft')]}"/>
+						<field name="class_id" on_change="onchange_set_domain(class_id,attendance_date)" attrs="{'readonly':[('state','!=','Draft')]}" domain="[('state','!=','Complete')]" />
 						<field name="class_teacher" readonly="1"/>
 						<field name="attendance_date" on_change="onchange_set_domain(class_id,attendance_date)" attrs="{'readonly':[('state','!=','Draft')] }"/>
 						<field name="punched_by" readonly="1" attrs="{'invisible':[('state','=','Draft')]}"/> 
-						<field name="state" readonly="1"/>
                    </group>
 				<newline/>
 				<notebook>
@@ -102,7 +128,7 @@
 					<field name="class_teacher"/>
 					<field name="attendance_date"/>
 					<field name="punched_by"/>
-					<field name="child_id"/>
+					<field name="id" string = "File No." />
                 </tree>
             </field>
         </record>
@@ -111,7 +137,7 @@
             <field name="name">sms.class.attendance.search</field>
             <field name="model">sms.class.attendance</field>
             <field name="arch" type="xml">
-                <search string="Search Student Class Attendance">
+                <search string="Search Student Attendance">
 					<field name="class_id" string="Class"/>
 					<field name="class_teacher" string="Teacher"/>
 					<field name="attendance_date" string="Date of Attendance"/>
@@ -125,7 +151,7 @@
             <field name="res_model">sms.class.attendance</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
+            <field name="view_mode">calendar,tree,form</field>
             <field name="context">{'search_default_draft': 1}</field>
             <field name="search_view_id" ref="view_sms_class_attendance_search"/>
         </record>
