@@ -1798,6 +1798,7 @@ class smsfee_receiptbook(osv.osv):
     _order = 'id desc'
     #smsfee_receiptbook
     _name = 'smsfee.receiptbook'
+    _inherit = ['mail.thread']
     _description = "This object store fee types"
     _columns = {
         'name': fields.char('Bill No', readonly =True,size=15), 
@@ -1814,7 +1815,7 @@ class smsfee_receiptbook(osv.osv):
         'total_paid_amount':fields.float('Paid Amount',readonly = True),
         'note_at_receive': fields.text('Note'),
         'receive_whole_amount': fields.boolean('Receive Whole Amount'),
-        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
+        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True,track_visibility='onchange', help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
         'fee_approved_by': fields.many2one('res.users', 'Approved By'),
         'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),

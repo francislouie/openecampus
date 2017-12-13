@@ -850,16 +850,17 @@ class sms_student(osv.osv):
            
     _name = 'sms.student'
     _description = "This object store generic classes"
+    _inherit = ['mail.thread']
     _columns = {
-        'name': fields.char(string = "Student", required = True, size=32),
+        'name': fields.char(string = "Student", required = True, size=32,track_visibility='onchange'),
         'is_loged_user_admin':fields.function(_is_current_user_admin, string='Is Admin Task', type='boolean'),
         'relatives': fields.one2many('sms.student.relation', 'student_id', 'Relatives'),
         'registration_counter': fields.function(set_registration_counter, method=True,  string='Registration Counter',type='integer', store=True),
-        'registration_no': fields.char(string = "Registration No.", size=32),
+        'registration_no': fields.char(string = "Registration No.", size=32,track_visibility='onchange'),
         'gender': fields.selection([('Male', 'Male'),('Female', 'Female')], 'Gender'),
         'birthday': fields.date("Date of Birth"),
         'blood_grp': fields.selection([('A+', 'A+'),('A-', 'A-'),('B+', 'B+'),('B-', 'B-'),('AB+', 'AB+'),('AB-', 'AB-'),('O+', 'O+'),('O-', 'O-')], 'Blood Group'),
-        'father_name': fields.char(string = "Father", size=32),
+        'father_name': fields.char(string = "Father", size=32,track_visibility='onchange'),
         'father_occupation': fields.char(string = "Father Occupation", size=32),
         'father_nic': fields.char(string = "Father NIC", size=32),
         'religion': fields.char(string = "Religion", size=32),

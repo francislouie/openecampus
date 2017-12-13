@@ -100,6 +100,19 @@ class sms_academiccalendar(osv.osv):
             }
 sms_academiccalendar()
 
+####
+class sms_student(osv.osv):
+    
+    _name = 'sms.student'
+    _inherit = 'sms.student'
+    _columns = {
+                'attendance_status_ids' : fields.one2many('sms.class.attendance.lines','student_name','Student Attendance'),
+            } 
+ 
+sms_student()
+###
+
+
 class sms_class_attendance(osv.osv):
 
     def create(self, cr, uid, vals, context=None, check=True):
@@ -227,7 +240,19 @@ class sms_class_attendance_lines(osv.osv):
 #     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):                
 #         raise osv.except_osv(('Not Allowed'), ('S..................s.'))
 #         return
-    
+    def get_class_date(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            attendance_date = f.parent_id.attendance_date
+            print "attendance date level 1",attendance_date
+            if f.parent_id.id:
+                print "class date found",attendance_date
+                attendance_date = datetime.datetime.strptime(str(attendance_date), '%Y-%m-%d').strftime('%Y-%m-%d')
+            else:
+                print "date is null,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",attendance_date
+            print "calss date found",attendance_date
+            result[f.id] = attendance_date
+        return result
     """This object serves as a tree view for sms_student_admission_register for fee purpose """
     _name = 'sms.class.attendance.lines'
     _columns = {
@@ -239,6 +264,7 @@ class sms_class_attendance_lines(osv.osv):
         'absent' :fields.boolean('Absent'),
         'leave' :fields.boolean('Leave'),
         'state' : fields.selection([('Draft','Draft'),('Present','Present'),('Absent','Absent'),('Leave','Leave')],'Status'),
+        'class_date' : fields.function(get_class_date, method=True, string='Class Date', type='date'),#jsut for display purpose
     }
     _defaults = {'state': 'Present' , 'present': True}    
     

@@ -27,6 +27,26 @@
 		</field>
 	</record>
 
+	<!-- Student form Inherited View -->
+	<record model="ir.ui.view" id="inherit_viewstudent_form">
+		<field name="name">sms.student.inheritattendance</field>
+		<field name="model">sms.student</field>
+		<field name="inherit_id" ref="sms.view_student_form"/>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<xpath expr = "//page[@string='Classes Details']" position="after">
+	        <page string = "Attendace">    
+				<field name="attendance_status_ids" widget="one2many_list" readonly="1">
+				<tree colors="red:state =='Absents';blue:state=='Leave'">
+						 <field name="class_date"/>
+						 <field name="state"/>
+				</tree>
+				</field>
+			</page>
+			</xpath>
+		</field>
+	</record>
+	
 	<!-- Acadmeic Calendar Inherited View-->
 	<record model="ir.ui.view" id="inherit_view_sms_attendance_acad_calendar">
 		<field name="name">sms.academiccalendar.inheritattendance</field>
