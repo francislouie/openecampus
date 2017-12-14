@@ -36,31 +36,50 @@
 				<td><para style="white">.</para></td>
 			</tr>
 		</blockTable>
-		<blockTable colWidths="40.0,400.0,100.0" repeatRows="1" style="Table2">
+		<blockTable colWidths="40.0,260.0,80.0,80.0,80.0" repeatRows="1" style="Table2">
 			<tr>
 				<td><para style="para_1">S.No</para></td>
 				<td><para style="para_1">Class</para></td>
-				<td><para style="para_1">Current Strength</para></td>
+				<td><para style="para_1">Pending Admits</para></td>
+				<td><para style="para_1">Admited</para></td>
+				<td><para style="para_1">Total</para></td>
 			</tr>
 		</blockTable>
-		<blockTable colWidths="40.0,400.0,100.0" style="Table21">
+		<blockTable colWidths="40.0,260.0,80.0,80.0,80.0" style="Table21">
 			<tr>[[repeatIn(get_student_strength(data['form']),'r')]]
 				<td><para style="para_2">[[ r['s_no'] ]]</para></td>
 				<td><para style="para_2">[[ r['class'] ]]</para></td>
+				<td><para style="para_2">[[ r['pendingadmits'] ]]</para></td>
+				<td><para style="para_2">[[ r['admited'] ]]</para></td>
 				<td><para style="para_2">[[ r['strength'] ]]</para></td>
+			
 			</tr>
 		</blockTable>
+		
+		<blockTable colWidths="200.0,240.0,100.0" style="">
+			<tr>
+				<td><para style="white">.</para></td>
+			</tr>
+			 <tr>
+			 <td><para style="P1">[[ get_user_name(data['form'])]]</para></td>
+			 <td><para style="white">.</para></td>
+			 <td><para style="P1">[[ get_today(data['form'])]]</para></td>
+			     
+			 </tr>
+		</blockTable>
+		
 		<blockTable colWidths="540.0" style="">
 			<tr>
 				<td><para style="white">.</para></td>
 			</tr>
 		</blockTable>
-		<blockTable colWidths="540.0" style="">
-			<tr>
-				<td><para style="white">.</para></td>
-			</tr>
-		</blockTable>
+		
 		<para style="para_2">[[ get_student_strength_message(data['form'])]]</para>
+		
+		
+		
+		
+		
 	</section>
 </story>
 </document>
