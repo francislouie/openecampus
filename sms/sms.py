@@ -13,7 +13,7 @@ import datetime
 _logger = logging.getLogger(__name__)
 
 class res_company(osv.osv):
-    """This object is used to add fields in company ."""
+    """This object is used to add fields in company . This is test chanes done from bibal computer"""
     _name = 'res.company'
     _inherit ='res.company' 
     _columns = {
