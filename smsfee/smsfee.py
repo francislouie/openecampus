@@ -1022,7 +1022,8 @@ class smsfee_studentfee(osv.osv):
                         'due_month': due_month,
                         'fee_month': fee_month,
                         'paid_amount':0,
-                        'fee_amount': fee_amount,  
+                        'fee_amount': fee_amount, 
+                        'generic_fee_type':fee_type_row.fee_type.id, 
                         'late_fee':0,
                         'discount':0,
                         'total_amount':fee_amount + 0, 
@@ -1136,7 +1137,7 @@ class smsfee_studentfee(osv.osv):
     ('Stationary', 'Portal'),
     ('Portal', 'Portal')]
     
-    def get_display_order(self, cr, uid, ids, name, args, context=None):
+    def get_fee_display_order(self, cr, uid, ids, name, args, context=None):
         """This method retruns the sequnece of parent class of this record. that will be use to order the list record of acad cal"""
         res = {}
         for f in self.browse(cr, uid, ids, context):
@@ -1169,7 +1170,7 @@ class smsfee_studentfee(osv.osv):
         'discount': fields.integer('Discount'),
         'net_total': fields.integer('Balance'),  
         'reconcile':fields.boolean('Reconcile'), 
-        'display_order':fields.function(get_display_order, store=True, string='display order', type='integer'),
+        'display_order':fields.function(get_fee_display_order, store=True, string='display order', type='integer'),
         'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
         'class_changed':fields.boolean('Class Changed'),
         #------------total payables---------------------------------
@@ -1390,6 +1391,7 @@ class smsfee_fee_adjustment(osv.osv):
                                         'due_month':f.due_month.id,
                                         'fee_amount':f.amount,
                                         'total_amount':f.amount,
+                                        'generic_fee_type':f.fee_type.id,
                                         'reconcile':False,
                                          'state':'fee_unpaid',
                     
