@@ -9,6 +9,8 @@ from dateutil import parser
 from dateutil import rrule
 import logging
 import datetime
+from lxml import etree
+from openerp.osv.orm import setup_modifiers
 
 _logger = logging.getLogger(__name__)
 
@@ -719,6 +721,20 @@ sms_student_certificate()
 
 
 class sms_student(osv.osv):
+    
+    def fields_view_get(self, cr, uid, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
+        if context is None:context = {}
+        res = super(sms_student, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=False)
+        print "if ondtion treeeeeeeeeeeeeeeeeeeeeeeee"
+        doc = etree.XML(res['arch'])
+        nodes = doc.xpath("//field[@name='father_name']")
+        for node in nodes:
+            if uid != 1:
+                node.set('readonly', '1')
+                node.set('help', 'If you print the report from Account list/form view it will not consider Charts of account')
+                setup_modifiers(node, res['fields']['father_name'])
+        res['arch'] = etree.tostring(doc)
+        return res
     
     """ This object defines students of an institute """
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):

@@ -1164,7 +1164,7 @@ class smsfee_studentfee(osv.osv):
         'due_month':fields.many2one('sms.session.months','Payment Month'),
         'fee_amount':fields.integer('Fee'),
         'late_fee':fields.integer('Late Fee'),
-        'total_amount':fields.integer('Payble'),
+        'total_amount':fields.integer('Receivable'),
         'paid_amount':fields.integer('Paid Amount'),
         'returned_amount':fields.float('Returned Amount'),
         'discount': fields.integer('Discount'),
