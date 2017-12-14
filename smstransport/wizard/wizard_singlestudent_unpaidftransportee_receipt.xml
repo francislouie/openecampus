@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Fee Reports -->
+
+        <record id="view_singlestudent_unpaidtransportfee_receipt" model="ir.ui.view">
+            <field name="name">class.singlestudent_unpaidtransportfee_receipt_form</field>
+            <field name="model">class.singlestudent_unpaidtransportfee_receipt</field>
+            <field name="arch" type="xml">
+                <form string="Student Fee Receipt" version="7.0">
+                    <group>
+                    <h1><field name="student_id" readonly ="1" nolabel = "1" /></h1>
+					<group col="6" string = "" >
+						 
+						 <newline/><field name="due_date" />
+						 <newline/>
+						 <field name="amount_after_due_date"/>
+				    </group>
+                    </group>
+                    <group>
+                    <ol>
+                    	
+	                    <li><p>To Cancel a challan, goto <strong>Open Challans</strong> under <strong>Fee Management</strong> menu.</p></li>
+	                    <li><p><font color = "red">Generating New Fee Challan will cancel all previous unpaid challans</font></p></li>
+                    </ol>
+                    </group>
+                     <footer>
+                        <button string="Print Transport Fee Bill" name="print_singlestudent_unpaidfee_report" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+           </field>
+          </record>
+
+  <!-- action Fee Reports-->
+
+        <record id="action_singlestudent_unpaidtransportfee_receipt_id" model="ir.actions.act_window">
+            <field name="name">Print Transport fee challans for student</field>
+            <field name="res_model">class.singlestudent_unpaidtransportfee_receipt</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_singlestudent_unpaidtransportfee_receipt"/>
+           <field name="target">new</field>
+        </record>
+</data>
+</openerp>

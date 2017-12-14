@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Student Promotion -->
+
+        <record id="view_sms_wizard_student_transfer_in" model="ir.ui.view">
+            <field name="name">Student Transfer</field>
+            <field name="model">sms.wizard.student.transfer.in</field>
+            <field name="arch" type="xml">
+                <form string="Student Promotion" version="7.0">
+					<h1><field name="txt" nolabel="1" readonly="1"/></h1>
+                    <group col="4">
+						<field name="student" attrs="{'invisible':[('txt','=','Transfer In')]}"  />
+						<newline/>
+						<field name="current_class"/>						
+					</group>
+
+                    <footer>
+                        <button string="Next" name="print_d" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+          </record>
+
+  <!-- View Student Promotion -->
+
+        <record id="action_view_sms_wizard_student_transfer_in" model="ir.actions.act_window">
+            <field name="name">Student Transfer</field>
+            <field name="res_model">sms.wizard.student.transfer.in</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_sms_wizard_student_transfer_in"/>
+           <field name="target">new</field>
+        </record>
+</data>
+</openerp>

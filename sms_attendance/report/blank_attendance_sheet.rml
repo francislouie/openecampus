@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<document filename="blank_attendanceShett.pdf">
+  <template pageSize="(792.0,920.0)" title="Crossovered Analytic" author="Ghulam Masood" allowSplitting="20">
+    <pageTemplate id="first">
+      <frame id="first" x1="26.0" y1="10.0" width="700" height="880"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <blockTableStyle id="Table2">
+	    <blockAlignment value="CENTER"/>
+	    <blockValign value="TOP"/>
+		<blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+	    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+	    <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
+		<blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
+		<blockBackground colorName="#e6e6e6" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+    <blockTableStyle id="Table3">
+	    <blockAlignment value="CENTER"/>
+	    <blockValign value="TOP"/>
+		<blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+	    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+	    <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
+		<blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+	<initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="para_1" fontName="Helvetica" fontSize="10.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P6" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P20" fontName="Helvetica" fontSize="8" leading="9" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+	<paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="LEFT" color="#FFFFFF" spaceBefore="3.0" spaceAfter="3.0"/>
+    <paraStyle name="form_heading" fontName="Helvetica-Bold" fontSize="14.0" leading="5" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <images/>
+  </stylesheet>
+  <story>
+    <section>
+		<blockTable colWidths="540.0" style="">
+			<tr>
+			<td><para style="form_heading">[[ class_name(data['form'])]]</para></td>
+			</tr>
+			<tr>
+				<td><para style="white">.</para></td>
+			</tr>
+			<tr>
+				<td><para style="white">.</para></td>
+			</tr>
+		</blockTable>
+	    <blockTable colWidths="40.0,100.0,100.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0" repeatRows="1" style="Table2">
+			<tr>      
+				<td><para style="P1">S.No</para></td>
+				<td><para style="P1">Student Name</para></td>
+				<td><para style="P1">Father Name</para></td>	
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+				<td><para style="P1"></para></td>
+			</tr>
+		</blockTable>
+		<blockTable colWidths="40.0,100.0,100.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0" style="Table3">
+			<tr><para style="P1">[[repeatIn(get_blank_attendance_sheet(data['form']),'s')]]</para>
+				<td><para style="P6"> [[(s['S.No'])]]</para></td>
+				<td><para style="P6">[[(s['name'])]]</para></td>
+				<td><para style="P6">[[(s['father'])]]</para></td>
+				<td><para style="P6"></para></td>
+				<td><para style="P6"></para></td>
+				<td><para style="P6"></para></td>
+				<td><para style="P6"></para></td>
+				<td><para style="P6"></para></td>
+				<td><para style="P6"></para></td>
+				<td><para style="P6"></para></td>
+			</tr>
+		</blockTable>
+	</section>
+  </story>
+</document>

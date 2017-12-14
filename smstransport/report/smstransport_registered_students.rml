@@ -1,0 +1,104 @@
+<document filename="test.pdf">
+   <template pageSize="(710.0,842.0)" title="Transport Regisration Detail" author="Ghulam Masood" allowSplitting="20" showBoundary="0">
+      <pageTemplate id="first">
+    <frame id="first" x1="0.0" y1="28.0" width="700" height="738"/>
+    <header>
+		<pageGraphics>
+           <setFont name="Helvetica-Bold" size="13" />
+           <drawString x="4.3cm" y="28.4cm">[[ company.name ]]</drawString>
+           <setFont name="Helvetica" size="12" />
+           <drawString x="6.5cm" y="27.7cm">Details of People Registered In Transport Department </drawString>
+			<setFont name="Helvetica" size="7"/>
+			<drawString x="1.4cm" y="0.5cm">Printed by: [[get_user_name()]]</drawString>
+			<drawString x="19.0cm" y="0.5cm">Page <pageNumber/></drawString>
+           <drawString x="10.0cm" y="0.5cm">Date : [[ get_today()]]</drawString>
+		</pageGraphics>
+	  </header>  
+      </pageTemplate>
+   </template>
+  	<stylesheet>
+
+      <blockTableStyle id="Table_maintable">
+         <blockAlignment value="LEFT" />
+         <blockValign value="TOP" />
+         <blockLeftPadding length="0.0" start="0,0" stop="-1,-1" />
+         <blockRightPadding length="0.0" start="0,0" stop="-1,-1" />
+         <blockTopPadding length="3.0" start="0,0" stop="-1,-1" />
+         <blockBottomPadding length="0.0" start="0,0" stop="-1,-1" />
+         <lineStyle kind="GRID" colorName="#cccccc" start="0,0" stop="-1,-1" />
+         <blockBackground colorName="#ffffff" start="0,0" stop="-1,-1" />
+      </blockTableStyle>
+      <blockTableStyle id="Table_maintable_bg">
+         <blockAlignment value="LEFT" />
+         <blockValign value="TOP" />
+         <blockLeftPadding length="0.0" start="0,0" stop="-1,-1" />
+         <blockRightPadding length="0.0" start="0,0" stop="-1,-1" />
+         <blockTopPadding length="0.0" start="0,0" stop="-1,-1" />
+         <blockBottomPadding length="0.0" start="0,0" stop="-1,-1" />
+         <lineStyle kind="GRID" colorName="#cccccc" start="0,0" stop="-1,-1" />
+         <blockBackground colorName="#e6e6e6" start="0,0" stop="-1,-1" />
+      </blockTableStyle>
+	
+	<initialize>
+    <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="P1" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="10" alignment="CENTER" textColor="#000000"/>
+	<paraStyle name="P2-Bold" fontName="Helvetica-Bold" fontSize="9.0" leading="10" alignment="CENTER" textColor="#000000"/>
+	<paraStyle name="P2-Bold-Left" fontName="Helvetica-Bold" fontSize="9.0" leading="10" alignment="LEFT" textColor="#000000"/>
+	<paraStyle name="P2-White" fontName="Helvetica" fontSize="9.0" leading="10" alignment="CENTER" textColor="#FFFFFF"/>
+    <paraStyle name="P3" fontName="Helvetica" fontSize="8.0" leading="9" alignment="CENTER" spaceBefore="0.0" spaceAfter="6.0" textColor="#000000"/>
+    <paraStyle name="P4" fontName="Helvetica" fontSize="9.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P4-Bold" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P4-Bold-Right" fontName="Helvetica-Bold" fontSize="9" leading="10" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P5" fontName="Helvetica" fontSize="8.0" leading="9" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P6" fontName="Helvetica" fontSize="8.0" leading="9" alignment="Right" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P7" fontName="Helvetica" fontSize="12.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P8" fontName="Helvetica" fontSize="12.0" leading="15" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="Standard" fontName="Times-Roman"/>
+    <paraStyle name="Heading" fontName="Helvetica" fontSize="14.0" leading="17" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Text body" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="List" fontName="Times-Roman" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="Caption" fontName="Times-Roman" fontSize="12.0" leading="15" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="Index" fontName="Times-Roman"/>
+    <paraStyle name="Table Contents" fontName="Times-Roman"/>
+    <paraStyle name="terp_header" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="LEFT" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="terp_header_Centre" fontName="Helvetica-Bold" fontSize="15.0" leading="19" alignment="CENTER" spaceBefore="12.0" spaceAfter="6.0"/>
+    <paraStyle name="Table Heading" fontName="Times-Roman" alignment="CENTER"/>
+    <paraStyle name="terp_default_8" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_9" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="Center" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="terp_default_9_italic" fontName="Helvetica-Oblique" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <images/>
+</stylesheet>
+<story>
+  <pto>
+	<section>
+   		 <blockTable colWidths="50.0,150.0,150.0,80.0,80.0,80.0,80.0" repeatRows="1" style="Table_maintable_bg">
+			<tr>
+				<td><para style="para_2">S.No</para></td>
+				<td><para style="para_2">Name</para></td>
+				<td><para style="para_2">Father Name</para></td>
+				<td><para style="para_2">Email</para></td>
+				<td><para style="para_2">Phone</para></td>
+				<td><para style="para_2">Class</para></td>
+				<td><para style="para_2">Address</para></td>
+			</tr>
+		</blockTable>
+	</section>
+	<section>
+		<blockTable colWidths="50.0,150.0,150.0,80.0,80.0,80.0,80.0" style="Table_maintable">
+			<para>[[repeatIn(get_registered_students_transport(data),'s')]]</para>
+			<tr>
+				<td><para style="para_1">[[ s['sno'] ]]</para></td>
+				<td><para style="para_1">[[ s['name'] ]]</para></td>
+				<td><para style="para_1">[[ s['father_name'] ]]</para></td>
+				<td><para style="para_1">[[ s['email'] ]]</para></td>
+				<td><para style="para_1">[[ s['phone'] ]]</para></td>
+				<td><para style="para_1">[[ s['class'] ]]</para></td>
+				<td><para style="para_1">[[ s['address'] ]]</para></td>
+			</tr>
+		</blockTable>
+	</section>
+</pto>
+</story>
+</document>

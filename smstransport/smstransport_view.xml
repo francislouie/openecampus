@@ -1,0 +1,787 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+		
+	<!--Transport Locations-->
+	<record model="ir.ui.view" id="view_sms_transport_location_form">
+		<field name="name">sms.transport.location.form</field>
+		<field name="model">sms.transport.location</field>
+		<field name="arch" type="xml">
+			<form string="Transport Location" version="7.0">
+				<header>
+					<field name="state" widget="statusbar"/>
+				</header>
+				<sheet>
+					<separator string="Route"/>
+					<group name="location_form_main">
+						<field name="name"/>
+					</group>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_sms_transport_location_tree">
+		<field name="name">sms.transport.location.tree</field>
+		<field name="model">sms.transport.location</field>
+		<field name="arch" type="xml">
+			<tree string="Transport Location">
+				<field name="name"/>
+				<field name="state"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_sms_transport_location_search" model="ir.ui.view">
+		<field name="name">sms.transport.locationsearch</field>
+		<field name="model">sms.transport.location</field>
+		<field name="arch" type="xml">
+			<search string="Transport Location">
+				<field name="name" string="Location"/>
+				<field name="state" string="State"/>
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_location">
+		<field name="name">TransportRoute</field>
+		<field name="res_model">sms.transport.location</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="view_sms_transport_location_search"/>
+	</record>
+
+	<!--Transport Route-->
+	<record model="ir.ui.view" id="view_sms_transport_route_form">
+		<field name="name">sms.transport.route.form</field>
+		<field name="model">sms.transport.route</field>
+		<field name="arch" type="xml">
+			<form string="Transport Route" version="7.0">
+				<header>
+					<field name="state" widget="statusbar"/>
+				</header>
+				<sheet>
+					<separator string="Transport Destinations"/>
+					<group name="transport_route_main" col="4" colpsan="2">
+						<field name="name" readonly="1" attrs="{'invisible':[('state','=','UnActive')]}"/>
+						<newline/>
+						<label for="route_name" class="oe_edit_only" string="Destination"/><field name="route_name" nolabel="1"/>
+						<newline/>
+						<label for="transport_location" class="oe_edit_only" string="Route"/><field name="transport_location" nolabel="1"/>
+						<newline/>
+					</group>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_sms_transport_route_tree">
+		<field name="name">sms.transport.route.tree</field>
+		<field name="model">sms.transport.route</field>
+		<field name="arch" type="xml">
+			<tree string="Transport Route">
+				<field name="name" string="Destination"/>
+				<field name="transport_location" string="Route"/>
+				<field name="state"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_sms_transport_route_search" model="ir.ui.view">
+		<field name="name">sms.transport.routesearch</field>
+		<field name="model">sms.transport.route</field>
+		<field name="arch" type="xml">
+			<search string="Transport Route">
+				<field name="name" string="Destination"/>
+				<field name="transport_location" string="Route"/>
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_route">
+		<field name="name">Transport Route</field>
+		<field name="res_model">sms.transport.route</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="view_sms_transport_route_search"/>
+	</record>
+
+	<!-- Transport Shifts -->
+	<record model="ir.ui.view" id="view_sms_transport_shift_form">
+		<field name="name">sms.transport.shift.form</field>
+		<field name="model">sms.transport.shift</field>
+		<field name="arch" type="xml">
+			<form string="Transport Shift" version="7.0">
+				<header>
+				</header>
+				<sheet>
+					<separator string="Shifts"/>
+					<group name="shift_form_main">
+						<field name="name"/>
+						<field name="desc"/>
+					</group>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_sms_transport_shift_tree">
+		<field name="name">sms.transport.shift.tree</field>
+		<field name="model">sms.transport.shift</field>
+		<field name="arch" type="xml">
+			<tree string="Transport Shift">
+				<field name="name"/>
+				<field name="desc"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_sms_transport_shift_search" model="ir.ui.view">
+		<field name="name">sms.transport.shiftsearch</field>
+		<field name="model">sms.transport.shift</field>
+		<field name="arch" type="xml">
+			<search string="Transport Shift">
+				<field name="name" string="Shift"/>
+				<field name="desc" string="Description"/>
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_shift">
+		<field name="name">Transport Shift</field>
+		<field name="res_model">sms.transport.shift</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="view_sms_transport_shift_search"/>
+	</record>
+
+	<!--Transport Vehciles-->
+	<record model="ir.ui.view" id="view_sms_transport_vehcile_form">
+		<field name="name">sms.transport.vehcile.form</field>
+		<field name="model">sms.transport.vehcile</field>
+		<field name="arch" type="xml">
+			<form string="Transport Vehcile" version="7.0">
+				<header>
+				</header>
+				<sheet>
+					 <separator string="Transport Vehicle" colspan="4"/>
+					<label for="name" class="oe_edit_only" string="Name"/><h2><field name="name" nolabel="1"/></h2>
+					<group name="transport_vehcile_inner_1" col="4" colspan="2"> 
+						<field name="vehcile_type"/>
+						<field name="max_accomodation"/>
+						<field name="current_accomodation"/>
+						<field name="income_amount"/>
+						<field name="expanse_amount"/>
+						<field name="vehcile_no"/>
+					</group>
+					<notebook>
+						<page readonly = "1" string = "Collections Register">
+						<h3><p>Monthly Collections Register</p></h3>
+						<field name="fee_register" widget="one2many_list" readonly ="1">
+							<tree string = "Click to see details" delete="false">
+								<field name="name" />
+								<field name="month" />
+								<field name="month_forcasted_fee" />
+								<field name="month_fee_received" />
+								
+							</tree>
+						
+						</field>
+						</page>
+						<page string="Transport Route">
+							<field name="transport_route" nolabel="1" colspan="4"/>
+						</page>
+						<page string="Drivers">
+							<field name="drivers" nolabel="1" colspan="4"/>
+						</page>
+						<page string="Registered Students">
+							<field name="registered_students" nolabel="1" colspan="4" readonly="1"/>
+						</page>
+						<page string="Registered Staff">
+							<field name="registered_staff" nolabel="1" colspan="4" readonly="1"/>	
+						</page>
+						<page string="Vechile Shifts">
+							<field name="transport_shifts" nolabel="1" colspan="4"/>
+						</page>
+					</notebook>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_sms_transport_vehcile_tree">
+		<field name="name">sms.transport.vehcile.tree</field>
+		<field name="model">sms.transport.vehcile</field>
+		<field name="arch" type="xml">
+			<tree string="Transport Vehcile">
+					<field name="name"/>
+					<field name="vehcile_type"/>
+					<field name="income_amount"/>
+					<field name="expanse_amount"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_sms_transport_vehcile_search" model="ir.ui.view">
+		<field name="name">sms.transport.vehcilesearch</field>
+		<field name="model">sms.transport.vehcile</field>
+		<field name="arch" type="xml">
+			<search string="Transport Vechile">
+					<field name="name"/>
+					<field name="vehcile_type" string="Vechile Type"/>
+					<field name="income_amount" string="Income Amount"/>
+					<field name="expanse_amount" string="Expanse Amount"/>
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_vehcile">
+		<field name="name">Transport Vehcile</field>
+		<field name="res_model">sms.transport.vehcile</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="view_sms_transport_vehcile_search"/>
+	</record>
+
+	<!--Transport Fee Structure-->
+	<record model="ir.ui.view" id="view_sms_transport_fee_structure_form">
+		<field name="name">sms.transport.fee.structure.form</field>
+		<field name="model">sms.transport.fee.structure</field>
+		<field name="arch" type="xml">
+			<form string="Transport Fee Structure" version="7.0">
+				<header>
+				</header>
+				<sheet>
+				<img src='/smstransport/static/src/img/schoo_bus1.png' class='calendar_img_tuto'/>
+					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
+					<group name="transport_fee_structure_main" col="4" colspan="2">
+						<field name="transport_route"/>
+						<field name="session_id"/>
+						<field name="monhtly_fee"/>
+						<field name="registration_fee"/>
+					</group>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_sms_transport_fee_structure_tree">
+		<field name="name">sms.transport.fee.structure.tree</field>
+		<field name="model">sms.transport.fee.structure</field>
+		<field name="arch" type="xml">
+			<tree string="Transport Fee Structure">
+				<field name="name"/>
+				<field name="transport_route"/>
+				<field name="session_id"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_sms_transport_fee_structure_search" model="ir.ui.view">
+		<field name="name">sms.transport.fee.structuresearch</field>
+		<field name="model">sms.transport.fee.structure</field>
+		<field name="arch" type="xml">
+			<search string="Transport Fee Structure">
+				<field name="name" string="Fee Structure Name"/>
+				<field name="transport_route" string="Route"/>
+				<field name="session_id" string="Session"/>
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_fee_structure">
+		<field name="name">Transport Fee Structure</field>
+		<field name="res_model">sms.transport.fee.structure</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="view_sms_transport_fee_structure_search"/>
+	</record>
+
+	<!--Transport Fee Registration Time-->
+	<record model="ir.ui.view" id="view_sms_transport_fee_registration_tree">
+		<field name="name">sms.transport.fee.registration.tree</field>
+		<field name="model">sms.transport.fee.registration</field>
+		<field name="arch" type="xml">
+			<tree string="Transport Fee Structure">
+				<field name="name"/>
+				<field name="fee_month"/>
+				<field name="fee_amount"/>
+				<field name="parent_id"/>
+			</tree>
+		</field>
+	</record>
+
+	<!--Transport Registrations-->
+	<record model="ir.ui.view" id="view_sms_transport_registration_form">
+		<field name="name">sms.transport.registrations.form</field>
+		<field name="model">sms.transport.registrations</field>
+		<field name="arch" type="xml">
+			<form string="Transport Registrations" version="7.0">
+				<header>
+					<field name="state" widget="statusbar"/>
+					<button name="load_transport_fee" string="1.Proceed Registration" states="Draft" type="object" class="oe_highlight" groups=""/>
+					<button name="register_person" string="Register" states="waiting_approval" class="oe_highlight" type="object" group=""/>
+				</header>
+				<sheet>
+		            <field name="picture" widget='image' nolabel="1" class="oe_left oe_avatar"/>
+		            <div class="oe_title">
+						<h1>
+							<field name="name" placeholder="Student Name" nolabel="1"/>
+						</h1>
+					</div>
+					<group name="transport_registration_main">
+						<group col="4" colspan="2">
+							<field name="transport_route" placeholder="Destination"  attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+							<field name="registration_type" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+							<newline/>
+							<field name="employee_id" attrs="{'required':[('registration_type','=','Employee')],'readonly':[('state','not in',['Draft'])],'invisible':[('registration_type','=','Student')]}"/>
+							<newline/>
+							<field name="student_reg_no" on_change="onchange_load_student(student_reg_no)" attrs="{'readonly':[('state','not in',['Draft'])],'invisible':[('registration_type','=','Employee')]}"/>
+							<newline/>
+							<field name="student_id" domain="[('state','=','Admitted'),('transport_availed','=',False)]" attrs="{'required':[('registration_type','=','Student')],'readonly':[('state','not in',['Draft'])],'invisible':[('registration_type','=','Employee')]}"/>
+							<newline/>
+							<field name="current_vehcile" on_change="onchange_vehcile_load_shift(current_vehcile)" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+							<field name="shift" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+							<field name="reg_start_date" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+							<field name="reg_end_date" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+						</group>
+					</group>
+					<notebook>
+						<field name="transportfee_ids" nolabel="1" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+						<page string = "Registration Fees">
+						<div class="oe_title"><label for="total_fee_applicable"/>
+							<h2><field name="total_fee_applicable" readonly="1"/></h2>
+						</div>
+						<field name="transportfee_ids" context = " {'parent_id':active_id}" nolabel="1"/>
+				    	</page>
+				   </notebook>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_sms_transport_registration_tree">
+		<field name="name">sms.transport.registrations.tree</field>
+		<field name="model">sms.transport.registrations</field>
+		<field name="arch" type="xml">
+			<tree string="Transport Registration">
+				<field name="registration_no"/>
+				<field name="student_id"/>
+				<field name="registration_type" invisible="1"/>
+				<field name="current_vehcile"/>
+				<field name="state"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_sms_transport_registration_search1" model="ir.ui.view">
+		<field name="name">sms.transport.registrationssearch1</field>
+		<field name="model">sms.transport.registrations</field>
+		<field name="arch" type="xml">
+			<search string="Search Students">
+				<field name="employee_id" string="Employee"/>
+				<field name="student_id" string="Student"/>
+                <field name="transport_route" string="Route"/>
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_registration_new">
+		<field name="name">Transport Registration</field>
+		<field name="res_model">sms.transport.registrations</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">form,tree</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_registration_unregistered">
+		<field name="name">Transport Registration</field>
+		<field name="res_model">sms.transport.registrations</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+        <field name="domain">[('state','in',['Draft','Withdrawn','waiting_approval'])]</field>
+		<field name="search_view_id" ref="view_sms_transport_registration_search1"/>
+	</record>
+	
+	<record model="ir.actions.act_window" id="action_transport_registration_registered">
+		<field name="name">Transport Registration</field>
+		<field name="res_model">sms.transport.registrations</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+        <field name="domain">[('state','=','Registered')]</field>
+		<field name="search_view_id" ref="view_sms_transport_registration_search1"/>
+	</record>
+
+	<!-- Sms Student Inherit -->
+	<record model="ir.ui.view" id="inherit_view_sms_student_transport_form">
+	<field name="name">sms.student.inherit.trnasport</field>
+	<field name="model">sms.student</field>
+	<field name="inherit_id" ref="smsfee.inherit_view_sms_student_form"/>
+	<field name="type">form</field>
+	<field name="arch" type="xml">
+		<data>
+			<notebook>
+				<page string="Transport Details">
+					<group>					
+						<field name="vehcile_reg_students_id"/>
+						<field name="transport_availed"/>
+						<field name="transport_fee_history"/>
+						<field name="transport_reg_id"/>
+					</group>
+				</page>
+			</notebook>
+			<xpath expr="//field[@name='studen_fee_ids']" position="after">
+				<newline/>
+				<notebook>
+					<page string ="Transport Fee Details">
+						<button name="%(action_student_transprotfee_collect_id)d" string="Collect Fee" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+						<!--<button name="%(action_singlestudent_unpaidtransportfee_receipt_id)d" string="Transport Fee Receipt" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>-->
+						<field name="transport_fee_payment_ids" nolabel="1" attrs=""/>
+					</page>
+				</notebook>
+	        </xpath>
+		</data>
+	</field>
+	</record>
+
+	<!-- Transport Fee Payments -->
+	<record model="ir.ui.view" id="view_sms_transport_fee_payments_form">
+		<field name="name">sms.transport.fee.payments.form</field>
+		<field name="model">sms.transport.fee.payments</field>
+		<field name="arch" type="xml">
+			<form string="Transport Payments" version="7.0">
+				<header>
+					<field name="state" widget="statusbar"/>
+				</header>
+				<sheet>
+					<label for="name" class="oe_edit_only" string="Name"/><field name="name" nolabel="1"/>
+					<group name="transport_payments_main" col="4" colspan="2">
+						<field name="employee_id"/>
+						<field name="student_id"/>
+						<field name="registeration_id"/>
+						<field name="fee_month"/>
+						<field name="receipt_no"/>
+						<field name="date_fee_charged"/>
+						<field name="date_fee_paid"/>
+						<field name="fee_amount"/>
+						<field name="fee_discount"/>
+						<field name="is_reconcile"/>
+						<field name="paid_amount"/>
+						<field name="late_fee"/>
+						<field name="net_total"/>
+					</group>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+	
+	<!-- Sms Student fee -->
+	<record model="ir.ui.view" id="inherit_view_sms_student_transportfee12_form">
+	<field name="name">sms.student.inherit.trnasportfee12</field>
+	<field name="model">sms.student</field>
+	<field name="inherit_id" ref="smsfee.inherit_view_sms_student_form"/>
+	<field name="type">form</field>
+	<field name="arch" type="xml">
+		<data>
+			<xpath expr="//page[@string='Fee Academics']" position="after">
+				<page string = "Transport Fee">
+				<group>
+					<group>					
+					<div class="oe_title"><label for="total_paybles"/>
+						<h2><field name="total_paybles_transport"/></h2>
+					</div>
+					</group>
+				</group>
+				<group readonly ="1">		    	 		
+				<field name="view_transport_fee" nolabel="1"/>
+				</group>
+				</page>
+	        </xpath>
+		</data>
+	</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_sms_transport_fee_payments_tree">
+		<field name="name">sms.transport.fee.payments.tree</field>
+		<field name="model">sms.transport.fee.payments</field>
+		<field name="arch" type="xml">
+			<tree colors="red:state =='fee_calculated';blue:state=='Adjusted'" string="Transport Fee Payments">
+				<field name="name"/>
+				<field name="fee_amount"/>
+				<field name="paid_amount"/>
+				<field name="state"/>
+				<field name="date_fee_charged"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_sms_transport_fee_payments_search" model="ir.ui.view">
+		<field name="name">sms.transport.fee.paymentssearch</field>
+		<field name="model">sms.transport.fee.payments</field>
+		<field name="arch" type="xml">
+			<search string="Transport Fee Payments">
+				<field name="name" string="Fee"/>
+				<field name="fee_amount" string="Amount"/>
+				<field name="student_id" string="Student"/>
+				<field name="paid_amount" string="Paid Amount"/>
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_fee_payments">
+		<field name="name">Transport Fee Payments</field>
+		<field name="res_model">sms.transport.fee.payments</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="view_sms_transport_fee_payments_search"/>
+	</record>
+
+	<!--Transport Challan Book-->
+	<record model="ir.ui.view" id="view_sms_transport_fee_challan_form">
+		<field name="name">sms.transportfee.challan.book.form</field>
+		<field name="model">sms.transportfee.challan.book</field>
+		<field name="arch" type="xml">
+			<form string="Transport Fee Challan" version="7.0">
+				<header>
+					<field name="state" widget="statusbar"/>
+					<button name="load_student_transportfee" string="Show Student Fees" states="Draft" type="object"  class="oe_highlight" />
+					<button name="recive_fee_send_2approve" string="Send for approval (Transport)" confirm="Receive Fee with given amount?" states="fee_calculated" type="object" class="oe_highlight"/>
+					<button name="receive_transportfee" string="Confirm Fee Received (Transport)" confirm="Receive Fee with given amount?" states="waiting_approval" type="object" class="oe_highlight"/>
+					<button name="cancel_fee_bill" string="[X]Cancel This Fee Bill" confirm = "Are you sure Cancel Fee bill?" states="waiting_approval,Draft,fee_calculated" type="object" class="button_close_statement" />
+					<button name="%(action_transportfee_existing_challans_id)d" string="Print" states="fee_calculated,Cancel" type="action" class="oe_link" groups=""/>
+				</header>
+				<sheet>
+					<group name="transport_chalan_main_one">
+					<h2><field name="student_id" nolabel ="1" readonly ="1"/><field name="student_class_id" readonly ="1"   /></h2>
+					</group>
+					<group name="transport_chalan_main_two" col="4" colspan="2">
+						<group name="transport_chalan_main_two_inner_one">
+							<field name="father_name" readonly="1"/>
+							<field name="receive_whole_amount" attrs="{'readonly':[('state','!=','Draft')]}" />	
+							<field name="late_fee" attrs="{'readonly':[('state','in',['Paid','Cancel','Adjusted'])]}"/>
+						</group>
+			     		<group name="transport_chalan_main_two_inner_two">
+							<field name="receipt_date" required ="1"  attrs="{'readonly':[('state','IN',['Paid'])]}"  />
+							<field name="payment_method" readonly = "1"  required ="1" />	
+							<field name="manual_recpt_no" attrs="{'readonly':[('state','IN',['Paid','Cancel','Adjusted'])]}" />								
+						</group>
+					</group>
+					<notebook>
+						<page string="Fee Received">
+							<field name="transport_challan_lines_ids" nolabel="1">
+							</field>
+						</page>
+						<page string="Note" >
+						<p><h2>Need Any correction?</h2><button name="request_for_adjustment" string="Ask For Fee Adjustment" states="Paid" type="object" class="oe_highlight"/></p>
+						<field name="note_at_receive" nolabel ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
+						</page>
+						<page string="Accounting Enteries" >
+							<group>
+								<group>
+									<field name="vouchered"/>
+									<field name="vouchered_by"/>
+								</group>							
+								<group>
+									<field name="voucher_date"/>
+									<field name="voucher_no"/>
+								</group>
+							</group>
+						</page>
+					</notebook>
+					<group name="transport_chalan_main_three">
+						<h2><label for="total_payables" string="Total Amount"/><field name="total_payables" readonly ="1"/></h2>
+						<h2><label for="total_paid" string="Paid Amount"/><field name="total_paid" readonly ="1"/></h2>
+					</group>
+					<group name="transport_chalan_main_four">
+						<field name="fee_received_by"/>
+						<field name="challan_cancel_by"/>
+					</group>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_sms_transport_fee_challan_tree">
+		<field name="name">sms.transportfee.challan.book.tree</field>
+		<field name="model">sms.transportfee.challan.book</field>
+		<field name="arch" type="xml">
+			<tree string="Transport Fee Challan">
+				<field name="student_id"/>
+				<field name="father_name"/>
+				<field name="payment_method"/>
+				<field name="total_payables"/>
+				<field name="total_paid"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="sms_transport_fee_challan_search" model="ir.ui.view">
+		<field name="name">sms.transportfee.challan.booksearch</field>
+		<field name="model">sms.transportfee.challan.book</field>
+		<field name="arch" type="xml">
+			<search string="Transport Fee Challan">
+				<field name="student_id" string="Student"/>
+				<field name="total_payables" string="Total Payables"/>
+				<field name="total_paid" string="Total Paid"/>
+			</search>
+		</field>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_fee_challan">
+		<field name="name">Transport Fee Challan</field>
+		<field name="res_model">sms.transportfee.challan.book</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_feechallan_open_id">
+		<field name="name">Open Challans</field>
+		<field name="res_model">sms.transportfee.challan.book</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+        <field name="domain">[('state','=','fee_calculated')]</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
+	</record>
+	
+	<record model="ir.actions.act_window" id="action_transport_feechallan_watitingapproval_id">
+		<field name="name">To be Approved</field>
+		<field name="res_model">sms.transportfee.challan.book</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+        <field name="domain">[('state','=','waiting_approval')]</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_feechallan_paid_id">
+		<field name="name">Paid Challans</field>
+		<field name="res_model">sms.transportfee.challan.book</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+        <field name="domain">[('state','=','Paid')]</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_feechallan_cancel_id">
+		<field name="name">Cancelled Challans</field>
+		<field name="res_model">sms.transportfee.challan.book</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+        <field name="domain">[('state','in',['Cancel'])]</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
+	</record>
+
+	<record model="ir.actions.act_window" id="action_transport_feechallan_search_id_old">
+		<field name="name">Old Challans (Temp)</field>
+		<field name="res_model">sms.transportfee.challan.book</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+	    <field name="domain">[('state','in',['Draft','Adjusted','fee_calculated','Cancel','Paid'])]</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_draft': 1}</field>
+		<field name="search_view_id" ref="sms_transport_fee_challan_search"/>
+	</record>
+
+    <record model="ir.ui.view" id="sms_transport_fee_challanlines_treeview">
+	<field name="name">sms.transport.fee.challan.linestree</field>
+		<field name="model">sms.transport.fee.challan.lines</field>
+		<field name="type">tree</field>
+		<field name="arch" type="xml">
+		<tree string="Transport Fee Challan Book lines" editable="top">
+			<field name="name" readonly="1"/>
+			<field name="fee_month" readonly="1"/>
+			<field name="total" invisible="1"/>									
+			<field name="fee_amount" string="Payable" readonly="1"/>
+			<field name="received_amount" string="Paid Amount" on_change="onchange_amount(total, received_amount)"/>
+			<field name="discount" string="Discount" readonly="1"/> <!--on_change="onchange_discount(total, discount)"/>-->
+			<field name="is_reconcile" string="Reconciled" />
+		</tree>
+	</field>
+	</record>
+
+	<!--Session months inherited-->
+	<record model = "ir.ui.view" id="sms_session_months_inherit_trnasport">
+		<field name = "name">sms.session.months.tree_transprt</field>	
+		<field name = "model">sms.session.months</field>
+		<field name = "inherit_id" ref = "smsfee.sms_session_months_ih_ihrt"/>
+		<field name = "arch" type = "xml">
+			<xpath expr = "//button[@name ='update_monthly_feeregister']" position = "after">
+				<button name="update_monthly_feeregister_transport" string="Update Transport Fee" type="object"
+                                    groups="" 
+									icon="terp-go-today" 
+									
+									confirm = "Update Transport register for selected month?"
+                                    />
+                <field name="transport_update_log" />
+			</xpath>
+		</field>
+	</record>
+
+	<!-- Acadmeic Calendar Inherited View
+	<record model="ir.ui.view" id="inherit_view_sms_transport_acad_calendar">
+		<field name="name">sms.academiccalendar.inherit</field>
+		<field name="model">sms.academiccalendar</field>
+		<field name="inherit_id" ref="sms.view_session_classes_form"/>
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+		<field name="helptxt" position="before">
+			</field>
+				<header>
+					<button name="%(action_fee_receipts_2)d" string="Transport Fee Receipts"  states="Draft,Active" type="action" icon="gtk-print"/>
+				</header>
+			</field>
+	</record>	
+	-->
+
+	<!-- Inherited res company for challan print settings -->
+	<record model="ir.ui.view" id="view_cms_company_form112">
+		<field name="name">res.company.form.inheritt.transport</field>
+		<field name="model">res.company</field>
+		<field name="inherit_id" ref="base.view_company_form" />
+		<field name="type">form</field>
+		<field name="arch" type="xml">
+			<notebook>
+			<page string="Transport Fee Management" position="after">
+         		<separator string="Field for Transport Challan Printing(Header)" colspan="4"/>
+				<group>
+					 <field name="company_clogo_trans"/>
+					 <field name="company_cfieldone_trans"/>
+					 <field name="company_cfieldtwo_trans"/>
+					 <field name="company_cfieldthree_trans"/>
+				</group>
+         		<separator string="Field for Transport Challan Printing(Footer)" colspan="4"/>
+				<group col="4" colspan="2">
+					 <field name="bank_name1_trans"/>
+					 <field name="bank_acctno1_trans"/>
+					 <field name="bank_name2_trans"/>
+					 <field name="bank_acctno2_trans"/>
+					 <field name="company_cfieldfour_trans"/>
+					 <field name="company_cfieldfive_trans"/>
+					 <field name="company_cfieldsix_trans"/>
+					 <field name="company_cfieldseven_trans"/>
+					 <field name="company_cfieldeight_trans"/>
+				</group>	
+			</page>
+			</notebook>
+		</field>
+	</record>
+
+	</data>
+</openerp>

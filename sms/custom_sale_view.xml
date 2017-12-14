@@ -1,0 +1,102 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+    
+     <!--res.partner-->
+		<record model="ir.ui.view" id="view_respartnerform2">
+	      <field name="name">res.partner.inhrted</field>
+	      <field name="model">res.partner</field>
+	      <field name="inherit_id" ref="base.view_partner_form"/>
+	      <field name="type">form</field>
+	      <field name="arch" type="xml">
+				<xpath expr="//notebook/page[@string='Internal Notes']" position="before">
+					<page string = "Transactions">
+					<field name="transaction_ids"  widget="one2many_lise">
+					<tree>
+						<field name="name"/>
+						<field name="effective_date"/>
+						<field name="invoice_no"/>
+						<field name="due_date"/>
+						<field name="amount"/>
+						<field name="state"/>
+						<field name="paid_on" invisible = "1"/>
+					</tree>
+					</field>
+					</page>
+                </xpath>
+	      </field>
+	    </record>
+    
+		 <record id="invoice_sale_invoice_inherit1" model="ir.ui.view">
+            <field name="name">invoice_sale_invoice_inherit.inherit</field>
+            <field name="model">account.invoice</field>
+            <field name="inherit_id" ref="account.invoice_form"/>
+            <field name="arch" type="xml">
+            <field name="state" invisible = "1" />
+                <xpath expr="//group[@class='oe_subtotal_footer oe_right']" position="after">
+                    <group attrs="{'readonly':[('state','!=','open')]}">
+                    </group> 
+                </xpath>
+                <xpath expr="//page[@string='Other Info']" position="after">
+                    <page string = "Installments">
+					<h2><field name="amount_total" string="Invoice Total" readonly = "1"/></h2>
+					<group>
+						
+						<group name= "Instalments">
+								<field name="create_monthly_installments" />
+                                <field name="no_of_instl" on_change="onchange_installments(no_of_instl,amount_total)" attrs="{'required':[('create_monthly_installments','=',1)]}" />
+                                <field name="amount_per_installment" attrs="{'readonly':[('create_monthly_installments','=',0)]}" widget="monetary" />
+						</group>
+						<group name= "Esitmate Duration">
+                                <field name="days_in_instalment" attrs="{'readonly':[('create_monthly_installments','=',0)]}" />
+								<field name="instalment_start_date" attrs="{'readonly':[('create_monthly_installments','=',0)]}"/>
+								<button name="calculate_installements"  attrs="{'readonly':[('create_monthly_installments','=',0)]}" string="Calculate Instalments"  states="open"  groups="account.group_account_invoice" type="object" class="oe_highlight" />
+								<button name="post_to_register"  attrs="{'readonly':[('create_monthly_installments','=',0)]}" string="Post to Client Register"  states="open"  groups="account.group_account_invoice" type="object" class="oe_highlight" />
+						</group>
+					</group>
+                     <field name="instalments_ids" widget="one2many_lise"  >
+						<tree>
+						<field name="name"/>
+						<field name="effective_date"/>
+						<field name="invoice_no"/>
+						<field name="due_date"/>
+						<field name="amount"/>
+						<field name="state"/>
+						<field name="paid_on" invisible = "1"/>
+					</tree>
+					</field>
+                    </page> 
+                </xpath>
+            </field>
+        </record>
+	
+	 <!--account_voucher  -->
+		<record model="ir.ui.view" id="view_custom_acc_vouch">
+	      <field name="name">account.voucher.ted</field>
+	      <field name="model">account.voucher</field>
+	      <field name="inherit_id" ref="account_voucher.view_vendor_receipt_form"/>
+	      <field name="type">form</field>
+	      <field name="arch" type="xml">
+				<xpath expr = "//field[@name ='amount']"  position="before">
+					<field name="installments" domain="[('partner_id','=',partner_id),('state','=','Unpaid')]" on_change="onchange_installments_selection(installments)" />
+                </xpath>
+	      </field>
+	    </record>       
+	
+ <!--TREE CLEINT TRANSACTIONS  -->
+<record id="view_client_trans_tree" model="ir.ui.view">
+		<field name="name">client.trancations.tree</field>
+	    <field name="model">client.trancations</field>
+	    <field name="arch" type="xml">
+	    <tree string="Installments Record">
+	        <field name="name"/>
+	        <field name="due_date"/>
+			 <field name="amount"/>
+	        <field name="state"/>
+	    </tree>
+	    </field>
+	</record>
+
+
+	</data>
+</openerp>

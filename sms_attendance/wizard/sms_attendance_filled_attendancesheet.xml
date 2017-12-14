@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<!-- Blank Attendance Report-->
+        <record id="view_sms_filled_attendance_sheet" model="ir.ui.view">
+            <field name="name">Filled Attendance Report</field>
+            <field name="model">class.print_filled_attendance_sheet</field>
+            <field name="arch" type="xml">
+                <form string="Filled Attendance Report" version="7.0">
+					<group colspan="4">
+						<field name="class_id" required="1"/>
+						<field name="date_from" required="1"/>
+						<field name="date_to" required="1"/>
+					</group>
+                    <ol>
+                    <li><p>Due to limitation of page width currently you are adivsed to select 7 days between 
+							 <strong>Date From</strong> and <strong>Date Two</strong> Option</p></li>
+                    </ol>
+                    <footer>
+                        <button string="Print" name="print_filled_attendance_list" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+          </record>
+
+        <record id="action_sms_filled_attendance_sheet" model="ir.actions.act_window">
+            <field name="name">Filled Attendance Report</field>
+            <field name="res_model">class.print_filled_attendance_sheet</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_sms_filled_attendance_sheet"/>
+           <field name="target">new</field>
+        </record>
+
+</data>
+</openerp>

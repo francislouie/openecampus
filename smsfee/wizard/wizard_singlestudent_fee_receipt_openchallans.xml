@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Fee Reports -->
+
+        <record id="view_singlestudent_fee_openchallan" model="ir.ui.view">
+            <field name="name">class.singlestudent_fee_receipt_openchallans_form</field>
+            <field name="model">class.singlestudent_fee_receipt_openchallans</field>
+            <field name="arch" type="xml">
+                <form string="Student Fee Receipt" version="7.0">
+                    <group>
+                    <h1><field name="challan_id" readonly="1" nolabel="1"/></h1>
+					<group col="6" string = "" >
+						 <field name="due_date" />
+						 <newline/>
+						 <field name="amount_after_due_date"/>
+				    </group>
+                    </group>
+                     <footer>
+                        <button string="Print" name="print_singlestudent_fee_report_openchallans" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+           </field>
+          </record>
+
+  <!-- action Fee Reports-->
+
+        <record id="action_singlestudent_fee_openchallan_id" model="ir.actions.act_window">
+            <field name="name">Print Existing challans student</field>
+            <field name="res_model">class.singlestudent_fee_receipt_openchallans</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_singlestudent_fee_openchallan"/>
+           <field name="target">new</field>
+        </record>
+</data>
+</openerp>

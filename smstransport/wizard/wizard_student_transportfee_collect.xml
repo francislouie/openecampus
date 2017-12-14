@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Fee Reports -->
+
+        <record id="view_class_student_transportfee_collect" model="ir.ui.view">
+            <field name="name">class.student_transportfee_collect_form</field>
+            <field name="model">class.student_transportfee_collect</field>
+            <field name="arch" type="xml">
+                <form string="Student Fee Receiving" version="7.0">
+                    <group>
+	                    <h1>
+							<field name="student_id" readonly ="1" nolabel = "1" />
+						</h1>
+						<newline/>
+						<group col="4" String = "">
+							 <field name="challan_id"/>
+					    </group>
+                    </group>
+                    <group>
+	                    <ol>
+		                    <li>
+								<p>You can receive fee challans from student in Open State Only.</p>
+							</li>
+	                    </ol>
+                    </group>
+                     <footer>
+                        <button string="Receive Fee" name="action_pay_student_transportfee" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+           </field>
+          </record>
+
+  <!-- action Fee Reports-->
+
+        <record id="action_student_transprotfee_collect_id" model="ir.actions.act_window">
+            <field name="name">Transport fee receiving for student</field>
+            <field name="res_model">class.student_transportfee_collect</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_class_student_transportfee_collect"/>
+           <field name="target">new</field>
+        </record>
+</data>
+</openerp>

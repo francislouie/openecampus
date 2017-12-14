@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    	<!-- Fee Reports -->
+
+        <record id="view_fee_receipts_2" model="ir.ui.view">
+            <field name="name">class.fee.receipts.unpaid.2.form</field>
+            <field name="model">class.fee.receipts.unpaid.2</field>
+            <field name="arch" type="xml">
+                <form string="Student Admission" version="7.0">
+                    <group string = "Transport Fee Bills">
+                    <h1><field name="class_id" readonly ="1" nolabel = "1" /></h1>
+					<group col="6" String = "" >
+						 <field name="due_date" />
+						 <newline/>
+						 <field name="amount_after_due_date"/>
+				    </group>
+                    </group>
+					<group>
+                    <ol>
+                    <li><p>You can print Fee challan for an individual student from student Form.</p></li>
+                    <li><p>To Cancel a challan, goto <strong>Open Challans</strong> under <strong>Fee Management</strong> menu.</p></li>
+                    <li><p><font color = "red">Generating New Fee Challan will cancel all previous unpaid challans</font></p></li>
+                    </ol>
+                    </group>
+                     <footer>
+                        <button string="Print" name="print_fee_report_2" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+           </field>
+          </record>
+
+		<!-- action Fee Reports-->
+
+        <record id="action_fee_receipts_2" model="ir.actions.act_window">
+            <field name="name">Print Fee Receipts</field>
+            <field name="res_model">class.fee.receipts.unpaid.2</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_fee_receipts_2"/>
+           <field name="target">new</field>
+        </record>
+
+</data>
+</openerp>

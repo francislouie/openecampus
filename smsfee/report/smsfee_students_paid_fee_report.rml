@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+  <template pageSize="(750.0,900.0)" title="Test" author="BaharAli" allowSplitting="20">
+	<pageTemplate id="first">
+    	<frame id="first" x1="15.0" y1="10.0" width="700" height="766"/>
+
+     <header>
+        <pageGraphics>
+           	<!-- Header -->			
+			<setFont name="Helvetica-Bold" size="19" />
+            <image x="15" y="789" height="100.0" width="100.0">[[company.logo]]</image>
+			<setFont name="Helvetica" size="7"/>
+           	<drawString x="12" y="20">Prepared By: [[ get_user_name(data['form'])]]</drawString>
+           	<drawString x="570" y="20">Date:  [[ get_today(data['form'])]]</drawString>
+        </pageGraphics>
+     </header>
+
+
+    </pageTemplate>
+  	</template>
+  	<stylesheet>
+    
+    <blockTableStyle id="Standard_Outline">
+    <blockAlignment value="CENTER"/>
+    <blockValign value="TOP"/>
+    </blockTableStyle>
+    
+    <blockTableStyle id="Table1">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+      </blockTableStyle>
+      
+  <blockTableStyle id="Table2">
+	    <blockAlignment value="LEFT"/>
+	    <blockValign value="TOP"/>
+		<blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+	    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+	    <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
+		<blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
+		<blockBackground colorName="#e6e6e6" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+    
+        
+    <blockTableStyle id="Table_maintable">
+    <blockAlignment value="LEFT"/>
+    <blockValign value="TOP"/>
+	<blockTopPadding length="0.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+    <blockBackground colorName="#e6e6e6" start="1,0" stop="1,-1"/>
+     <blockBackground colorName="#e6e6e6" start="15,0" stop="15,-1"/>
+    <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+	
+	<blockTableStyle id="Table_maintable_header">
+    <blockAlignment value="LEFT"/>
+    <blockValign value="TOP"/>
+	<blockTopPadding length="5.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+    <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
+	<blockBackground colorName="#e6e6e6" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+    
+    <initialize>
+	<paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="para_heading2" fontName="Helvetica" fontSize="9.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="para_heading" fontName="Helvetica" fontSize="8.0" leading="13" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="para_heading3" fontName="Helvetica" fontSize="8.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+	<paraStyle name="para_title" fontName="Helvetica" fontSize="12.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+
+    <images/>
+  </stylesheet>
+  <story>
+     
+    	 <blockTable colWidths="610" repeatRows="2" style="Table1">
+			<tr><td><para style="para_title">Fee Collection Report</para></td></tr>
+			<tr><td><para style="para_title">[[ get_class_name(data['form'])]]</para></td></tr>
+			<tr><td><para style="para_title"></para></td></tr>
+	    </blockTable>
+
+    <section>
+    
+   	<blockTable colWidths="25.0,35.0,85.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,40.0" repeatRows="1" style="Table2">
+	 <para style="P1">[[repeatIn(students_paidfee_report(data['form']),'r')]]</para> 
+	<para style="P6">[[ r['flag']!='a' and removeParentNode('blockTable')]]</para>
+      <tr>
+      	<td><para style="para_heading2">[[ r['sno'] ]]</para></td>
+		<td><para style="para_heading2">[[ r['reg_no'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['student'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft1'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft2'] ]]</para></td>
+		<td><para style="para_heading2">[[ r['ft3'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft4'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft5'] ]]</para></td>
+         <td><para style="para_heading2">[[ r['ft6'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft7'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft8'] ]]</para></td>
+		<td><para style="para_heading2">[[ r['ft9'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft10'] ]]</para></td>
+        <td><para style="para_heading2">[[ r['ft11'] ]]</para></td>
+         <td><para style="para_heading2">[[ r['ft12'] ]]</para></td>
+         <td><para style="para_heading2">[[ r['total'] ]]</para></td>
+      </tr>
+	
+    </blockTable>
+    <blockTable colWidths="25.0,35.0,85.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,36.0,40.0" repeatRows="1" style="Table_maintable">
+	<para style="P6">[[ r['flag']!='b' and removeParentNode('blockTable')]]</para>
+      <tr>
+      	<td><para style="para_heading">[[ r['sno'] ]]</para></td>
+		<td><para style="para_heading">[[ r['reg_no'] ]]</para></td>
+        <td><para style="para_heading3">[[ r['student'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft1'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft2'] ]]</para></td>
+		<td><para style="para_heading">[[ r['ft3'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft4'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft5'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft6'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft7'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft8'] ]]</para></td>
+		<td><para style="para_heading">[[ r['ft9'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft10'] ]]</para></td>
+        <td><para style="para_heading">[[ r['ft11'] ]]</para></td>
+         <td><para style="para_heading">[[ r['ft12'] ]]</para></td>
+          <td><para style="para_heading">[[ r['total'] ]]</para></td>
+      </tr>
+	
+    </blockTable>
+    
+    </section>
+	</story>
+</document>
