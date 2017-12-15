@@ -1022,7 +1022,8 @@ class smsfee_studentfee(osv.osv):
                         'due_month': due_month,
                         'fee_month': fee_month,
                         'paid_amount':0,
-                        'fee_amount': fee_amount,  
+                        'fee_amount': fee_amount, 
+                        'generic_fee_type':fee_type_row.fee_type.id, 
                         'late_fee':0,
                         'discount':0,
                         'total_amount':fee_amount + 0, 
@@ -1136,7 +1137,7 @@ class smsfee_studentfee(osv.osv):
     ('Stationary', 'Portal'),
     ('Portal', 'Portal')]
     
-    def get_display_order(self, cr, uid, ids, name, args, context=None):
+    def get_fee_display_order(self, cr, uid, ids, name, args, context=None):
         """This method retruns the sequnece of parent class of this record. that will be use to order the list record of acad cal"""
         res = {}
         for f in self.browse(cr, uid, ids, context):
@@ -1163,13 +1164,13 @@ class smsfee_studentfee(osv.osv):
         'due_month':fields.many2one('sms.session.months','Payment Month'),
         'fee_amount':fields.integer('Fee'),
         'late_fee':fields.integer('Late Fee'),
-        'total_amount':fields.integer('Payble'),
+        'total_amount':fields.integer('Receivable'),
         'paid_amount':fields.integer('Paid Amount'),
         'returned_amount':fields.float('Returned Amount'),
         'discount': fields.integer('Discount'),
         'net_total': fields.integer('Balance'),  
         'reconcile':fields.boolean('Reconcile'), 
-        'display_order':fields.function(get_display_order, store=True, string='display order', type='integer'),
+        'display_order':fields.function(get_fee_display_order, store=True, string='display order', type='integer'),
         'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
         'class_changed':fields.boolean('Class Changed'),
         #------------total payables---------------------------------
@@ -1390,6 +1391,7 @@ class smsfee_fee_adjustment(osv.osv):
                                         'due_month':f.due_month.id,
                                         'fee_amount':f.amount,
                                         'total_amount':f.amount,
+                                        'generic_fee_type':f.fee_type.id,
                                         'reconcile':False,
                                          'state':'fee_unpaid',
                     
@@ -1798,6 +1800,7 @@ class smsfee_receiptbook(osv.osv):
     _order = 'id desc'
     #smsfee_receiptbook
     _name = 'smsfee.receiptbook'
+    _inherit = ['mail.thread']
     _description = "This object store fee types"
     _columns = {
         'name': fields.char('Bill No', readonly =True,size=15), 
@@ -1814,7 +1817,7 @@ class smsfee_receiptbook(osv.osv):
         'total_paid_amount':fields.float('Paid Amount',readonly = True),
         'note_at_receive': fields.text('Note'),
         'receive_whole_amount': fields.boolean('Receive Whole Amount'),
-        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
+        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True,track_visibility='onchange', help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
         'fee_approved_by': fields.many2one('res.users', 'Approved By'),
         'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),

@@ -9,6 +9,8 @@ from dateutil import parser
 from dateutil import rrule
 import logging
 import datetime
+from lxml import etree
+from openerp.osv.orm import setup_modifiers
 
 _logger = logging.getLogger(__name__)
 
@@ -720,6 +722,20 @@ sms_student_certificate()
 
 class sms_student(osv.osv):
     
+    def fields_view_get(self, cr, uid, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
+        if context is None:context = {}
+        res = super(sms_student, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=False)
+        print "if ondtion treeeeeeeeeeeeeeeeeeeeeeeee"
+        doc = etree.XML(res['arch'])
+        nodes = doc.xpath("//field[@name='father_name']")
+        for node in nodes:
+            if uid != 1:
+                node.set('readonly', '1')
+                node.set('help', 'If you print the report from Account list/form view it will not consider Charts of account')
+                setup_modifiers(node, res['fields']['father_name'])
+        res['arch'] = etree.tostring(doc)
+        return res
+    
     """ This object defines students of an institute """
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         
@@ -850,16 +866,17 @@ class sms_student(osv.osv):
            
     _name = 'sms.student'
     _description = "This object store generic classes"
+    _inherit = ['mail.thread']
     _columns = {
-        'name': fields.char(string = "Student", required = True, size=32),
+        'name': fields.char(string = "Student", required = True, size=32,track_visibility='onchange'),
         'is_loged_user_admin':fields.function(_is_current_user_admin, string='Is Admin Task', type='boolean'),
         'relatives': fields.one2many('sms.student.relation', 'student_id', 'Relatives'),
         'registration_counter': fields.function(set_registration_counter, method=True,  string='Registration Counter',type='integer', store=True),
-        'registration_no': fields.char(string = "Registration No.", size=32),
+        'registration_no': fields.char(string = "Registration No.", size=32,track_visibility='onchange'),
         'gender': fields.selection([('Male', 'Male'),('Female', 'Female')], 'Gender'),
         'birthday': fields.date("Date of Birth"),
         'blood_grp': fields.selection([('A+', 'A+'),('A-', 'A-'),('B+', 'B+'),('B-', 'B-'),('AB+', 'AB+'),('AB-', 'AB-'),('O+', 'O+'),('O-', 'O-')], 'Blood Group'),
-        'father_name': fields.char(string = "Father", size=32),
+        'father_name': fields.char(string = "Father", size=32,track_visibility='onchange'),
         'father_occupation': fields.char(string = "Father Occupation", size=32),
         'father_nic': fields.char(string = "Father NIC", size=32),
         'religion': fields.char(string = "Religion", size=32),
@@ -1369,6 +1386,7 @@ class sms_academiccalendar(osv.osv):
                                             'acad_cal_std_id': new_cls_id,
                                             'fee_type': obj3.id,
                                             'fee_month': month1.id,
+                                            'generic_fee_type':obj2.fee_type.id,
                                             'due_month': month1.id,
                                             'fee_amount': obj3.amount,
                                             'total': obj3.amount + late_fee,
@@ -1496,6 +1514,39 @@ class sms_academiccalendar(osv.osv):
                 res[f.id] = cr.fetchone()[0]
         return res
 
+    def count_students_wait_approval(self, cr, uid, ids, name, args, context=None):
+            """This method will return students  waiting  for admission"""
+            res = {}
+           
+            for f in self.browse(cr, uid, ids, context):
+               
+                if f.class_id.id:
+                    sql = """SELECT COUNT(*) from student_admission_register
+                          where student_class =""" +str(f.id)+"""
+                          AND state = 'waiting_approval'"""
+                            
+                    cr.execute(sql)
+                    result = cr.fetchone()[0]
+                    res[f.id] = result
+            return res
+        
+    def count_students_confirm_approval(self, cr, uid, ids, name, args, context=None):
+            """This method will return students    for admission"""
+            res = {}
+           
+            for f in self.browse(cr, uid, ids, context):
+               
+                if f.class_id.id:
+                    sql = """SELECT COUNT(*) from student_admission_register
+                          where student_class =""" +str(f.id)+"""
+                          AND state = 'Confirm'"""
+                            
+                    cr.execute(sql)
+                    result = cr.fetchone()[0]
+                    res[f.id] = result
+            return res
+    
+    
     _name = 'sms.academiccalendar'
     _description = "Crates new class in a new session."
     _order = 'disp_order, section_id'
@@ -1521,6 +1572,9 @@ class sms_academiccalendar(osv.osv):
         'date_closed':fields.date('Closed On'),
         'closed_by':fields.many2one('res.users', 'Closed By'),
         'helptxt':fields.text('Help', readonly = True),
+        'pendingadmits':fields.function(count_students_wait_approval, method=True, string='Pending Admits',type='integer'),
+        #this field will be removed later on no need of this 'Admited'
+        'Admited':fields.function(count_students_confirm_approval, method=True, string='Admited',type='integer'),
         'pending_results':fields.function(pending_annual_results, string='Pending Annual Results', type='integer'),
         'withdrawn_students':fields.function(withdrawn_students_information, method=True, string='With Drawn Students', type='integer', store=True),
         'active_students':fields.function(active_students_information, method=True, string='Active Students', type='integer', store=True),
@@ -3809,125 +3863,6 @@ class sms_student_promotion(osv.osv):
             else:
                 return False
     
-    def change_student_class_delete_student_data(self, cr, uid, ids,class_id,new_class_id):
-        ftlist = []
-        std = self.pool.get('sms.student').browse(cr,uid,obj.name.id)
-        acad_cal = self.pool.get('sms.academiccalendar').browse(cr,uid,obj.class_id)
-        student_class_id = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('std_id','=',ids),('name','=',class_id),('state','=',"Current")])
-        acd_cal_name = acad_cal.name
-            
-                
-        std_subs = self.pool.get('sms.student.subject').search(cr,uid,[('student','=',ids),('subject_status','=','Current')])
-        for sub in std_subs:
-            del_subs = self.pool.get('sms.student.subject').unlink(cr,uid,sub)
-        # Delete fees of old class
-        cls_fees_ids = self.pool.get('smsfee.studentfee').search(cr,uid,[('student_id','=',ids),('acad_cal_id','=',class_id)])
-                
-        for rec in cls_fees_ids:
-                       
-            #delete this from receiptbooklines
-            del_fee1 = """DELETE FROM smsfee_receiptbook_lines WHERE student_fee_id ="""+str(rec)
-            cr.execute(del_fee1)
-            done_del = cr.commit()
-            if done_del:
-                #Delete this fee from student fee
-                del_fee2 = self.pool.get('smsfee.studentfee').unlink(cr,uid,rec)
-                 
-                 #Delete Class History
-                del_class = self.pool.get('sms.academiccalendar.student').unlink(cr,uid,obj.student_class_id[0])
-                if del_class:
-                    new_cls_id = self.pool.get('sms.academiccalendar.student').create(cr,uid,{
-                        'name':new_class_id,                                                       
-                        'std_id':ids,
-                        'date_registered':datetime.date.today(), 
-                        'state':'Current' })
-                    if new_cls_id:
-                        #add subjects to students
-                        self.pool.get('sms.student').write(cr, uid, [ids], {'current_class':new_class_id})
-                        acad_subs = self.pool.get('sms.academiccalendar.subjects').search(cr,uid,[('academic_calendar','=',new_class_id),('state','!=','Closed')])
-                        for sub in acad_subs:
-                            add_subs = self.pool.get('sms.student.subject').create(cr,uid,{
-                            'student': new_cls_id,
-                            'student_id': ids,
-                            'subject': sub,
-                            'subject_status': 'Current'})
-                        
-                        #Now add newfees added from wziard
-                        sql_ft = """SELECT id from smsfee_feetypes WHERE subtype IN('at_admission','Monthly_Fee','Annual_fee')"""
-                        cr.execute(sql_ft)
-                        ft_ids = cr.fetchall() 
-                          
-                        for ft in ft_ids:
-                            ftlist.append(ft[0])
-                        ftlist = tuple(ftlist)
-                        ftlist = str(ftlist).rstrip(',)')
-                        ftlist = ftlist+')'
-        #               first insert all non motnly fees(search for fee with subtype at_admission) 
-                        if ft_ids:
-                            sqlfee1 =  """SELECT smsfee_classes_fees.id from smsfee_classes_fees
-                                                INNER JOIN smsfee_feetypes
-                                                ON smsfee_feetypes.id = smsfee_classes_fees.fee_type_id
-                                                WHERE smsfee_classes_fees.academic_cal_id ="""+str(obj.sms_academiccalendar_to.id)+"""
-                                                AND smsfee_classes_fees.fee_structure_id="""+str(obj.fee_str.id)+"""
-                                                AND smsfee_feetypes.subtype <>'Monthly_Fee'
-                                                AND smsfee_feetypes.id IN"""+str(ftlist)+""""""
-                            cr.execute(sqlfee1)
-                            fees_ids = cr.fetchall()  
-                            if fees_ids: 
-                                late_fee = 0
-                                for idds in fees_ids:
-                                    obj2 = self.pool.get('smsfee.classes.fees').browse(cr,uid,idds[0])
-                                    crate_fee = self.pool.get('smsfee.studentfee').create(cr,uid,{
-                                    'student_id': ids,
-                                    'acad_cal_id': new_class_id,
-                                    'acad_cal_std_id': new_cls_id,
-                                    'date_fee_charged': datetime.date.today(),
-                                    'fee_type': obj2.id,
-                                    'due_month': obj.fee_starting_month.id,
-                                    'fee_amount': obj2.amount,
-                                    'paid_amount':0,
-                                    'total':obj2.amount + late_fee,
-                                     'state':'fee_unpaid',
-                                    })
-                            else:
-                                  msg = 'Fee May be defined but not set for New Class:'        
-        #                 # now insert all month fee , get it from the classes with a fee structure and then insert
-                            sqlfee2 =  """SELECT smsfee_classes_fees.id from smsfee_classes_fees
-                                        INNER JOIN smsfee_feetypes
-                                        ON smsfee_feetypes.id = smsfee_classes_fees.fee_type_id
-                                        WHERE smsfee_classes_fees.academic_cal_id ="""+str(obj.sms_academiccalendar_to.id)+"""
-                                        AND smsfee_classes_fees.fee_structure_id="""+str(obj.fee_str.id)+"""
-                                        AND smsfee_feetypes.subtype ='Monthly_Fee'
-                                        AND smsfee_feetypes.id IN"""+str(ftlist)+""""""
-                    
-                            cr.execute(sqlfee2)
-                            fees_ids2 = cr.fetchall() 
-                            #get update month of the class
-                            updated_month = new_cal_obj.fee_update_till.id
-                            #Now brows its session month ids, that will be saved as fee month 
-                            session_months = self.pool.get('sms.session.months').search(cr,uid,[('session_id','=',new_cal_obj.session_id.id),('id','>=',obj.fee_starting_month.id)]) 
-                            rec_months = self.pool.get('sms.session.months').browse(cr,uid,session_months)       
-                            for month1 in rec_months:
-                                if month1.id <= updated_month:
-                                    late_fee = 0
-                                    for fee in fees_ids2:
-                                        obj3 = self.pool.get('smsfee.classes.fees').browse(cr,uid,fee[0])
-                                        create_fee2 = self.pool.get('smsfee.studentfee').create(cr,uid,{
-                                        'student_id': obj.name.id,
-                                        'acad_cal_id': obj.sms_academiccalendar_to.id,
-                                        'date_fee_charged': datetime.date.today(),
-                                        'acad_cal_std_id': new_cls_id,
-                                        'fee_type': obj3.id,
-                                        'fee_month': month1.id,
-                                        'due_month': month1.id,
-                                        'fee_amount': obj3.amount,
-                                        'total': obj3.amount + late_fee,
-                                         'state':'fee_unpaid',
-                                        })
-                                    
-                        else:
-                            raise osv.except_osv(('No Fee Found'),('Please Define a Fee For students promotion'))
-        return 
     
     _columns = { 
         'student':fields.many2one('sms.student','StudentID', readonly=True),

@@ -722,8 +722,12 @@
 				<field name="reason_withdraw" nolabel="1"/>
 			    </page>
 				<page string="Academics">
-				   <field name="classes_history"/>
-				   <field name="reg_nos"/>	
+					<notebook>
+					<page string= "Classes Details">
+				   	<field name="classes_history"/>
+					</page>
+					</notebook>
+				  
 			    </page>
 				<page string="Class Subjects">
 				   <field name="active_subjects" domain="[('subject_status','=','Current')]" />
