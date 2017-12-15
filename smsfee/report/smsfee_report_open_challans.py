@@ -7,6 +7,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
         super(smsfee_report_open_challan, self).__init__(cr, uid, name, context)
         self.result_temp=[]
+        
         self.localcontext.update( {
             'get_today':self.get_today,
             'get_challans':self.get_challans,
@@ -50,7 +51,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
             fieldone = company_recs.company_cfieldone
         elif self.datas['form']['category'] == 'Transport':
             fieldone = company_recs.company_cfieldone_trans
-        print "returning line 1.............................................:",fieldone
+        print "returning line 1.............................................:"
         return fieldone
 
     def get_challan_header_linetwo(self):
@@ -61,6 +62,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
         for rec in company_recs:
             fieldtwo = rec.company_cfieldtwo
+            print("fieldtowssssssssssssssssssss",fieldtwo)
         return fieldtwo
     
     def get_challan_header_linethree(self):
