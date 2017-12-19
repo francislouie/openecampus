@@ -4,9 +4,11 @@ from openerp.tools import amount_to_text_en
 from openerp.report import report_sxw
 
 class smsfee_report_open_challan(report_sxw.rml_parse):
+    print("smsfee_report_open_challan called")
     def __init__(self, cr, uid, name, context):
         super(smsfee_report_open_challan, self).__init__(cr, uid, name, context)
         self.result_temp=[]
+        print("smsfee_report_open_challan......")
         
         self.localcontext.update( {
             'get_today':self.get_today,
@@ -86,6 +88,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         return footerone
     
     def get_challan_footer_two(self):
+        print("get_challan_footer_two")
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
         if len(rescompany_id)>1:
@@ -96,6 +99,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         return footertwo
      
     def get_today(self):
+        print("get today")
         today = time.strftime('%d-%m-%Y')
         return today 
 
@@ -104,11 +108,12 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         due_date = datetime.strptime(due_date, '%Y-%m-%d').strftime('%d/%m/%Y')
         return due_date 
      
-    def get_class_group(self, data):
+    def get_class_group(self):
         challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=', self.datas['form']['challan_id'][0])])
         challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
         student_id =  challan_rec[0].student_id.id
         stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
+        print("get class group called and value is",stu_rec ,"or =====",stu_rec.current_class.group_id.name)
         return stu_rec.current_class.group_id.name
      
     def get_challans(self, data):
