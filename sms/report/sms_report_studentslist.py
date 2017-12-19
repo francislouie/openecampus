@@ -93,31 +93,29 @@ class sms_report_studentslist(report_sxw.rml_parse):
         class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_ids)
         i = 1
         total_cur_strength = 0
-        total_allowed_students = 0        
+        total_pending_admission = 0   
+        overall_total = 0     
         for class_obj in class_objs:
             mydict = {'s_no':'', 'class':'', 'pendingadmits':'','admited':'', 'strength':''}
-            draft_stds = self.pool.get('sms.academiccalendar').count_students_admission_draft(self.cr, self.uid, class_obj.id)
          
-            wait_approv_stds = self.pool.get('sms.academiccalendar').count_students_admission_wait_approval(self.cr, self.uid, class_obj.id)
             mydict['s_no']  = i
             mydict['class']     = class_obj.name
             mydict['pendingadmits']  = class_obj.pendingadmits
-           
-            mydict['admited']  = class_obj.Admited
-#             if draft_boolean is True:
-#                 total_cur_strength = total_cur_strength + class_obj.cur_strength + draft_stds + wait_approv_stds  
-#             else:
-#                 total_cur_strength = total_cur_strength + class_obj.cur_strength
-            mydict['strength']  = class_obj.pendingadmits + class_obj.Admited
-            total_allowed_students = total_allowed_students + class_obj.max_stds            
+            mydict['admited']  = class_obj.cur_strength
+            
+            total_cur_strength = total_cur_strength +class_obj.cur_strength
+            total_pending_admission = total_pending_admission + class_obj.pendingadmits
+            total = mydict['pendingadmits'] + mydict['admited']
+            mydict['strength']  =  total
+            overall_total = overall_total + total
             i += 1
             result.append(mydict)
             
-        #mydict = {'s_no':'', 'class':'', 'pendingadmits':'','admited':'', 'strength':''}
-        #mydict['class']     = 'Total Students'
-        #mydict['pendingadmits']  = 'Pending Admits'
-        #mydict['admited']  = 'Admited'
-        #mydict['strength']  = 'Total'
+        mydict = {'s_no':'', 'class':'', 'pendingadmits':'','admited':'', 'strength':''}
+        mydict['class']     = 'Total Students'
+        mydict['pendingadmits']  = total_pending_admission
+        mydict['admited']  = total_cur_strength
+        mydict['strength']  = overall_total
         result.append(mydict)
         return result
     

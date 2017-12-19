@@ -26,6 +26,7 @@
     </initialize>
     <paraStyle name="para_1" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
 	<paraStyle name="para_2" fontName="Helvetica" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+	<paraStyle name="para_22" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
 	<paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="LEFT" color="#ffffff" spaceBefore="3.0" spaceAfter="3.0"/>
     <images/>
   </stylesheet>
@@ -40,7 +41,7 @@
 			<tr>
 				<td><para style="para_1">S.No</para></td>
 				<td><para style="para_1">Class</para></td>
-				<td><para style="para_1">Pending Admits</para></td>
+				<td><para style="para_1">Pending Admissions</para></td>
 				<td><para style="para_1">Admited</para></td>
 				<td><para style="para_1">Total</para></td>
 			</tr>
@@ -48,7 +49,7 @@
 		<blockTable colWidths="40.0,260.0,80.0,80.0,80.0" style="Table21">
 			<tr>[[repeatIn(get_student_strength(data['form']),'r')]]
 				<td><para style="para_2">[[ r['s_no'] ]]</para></td>
-				<td><para style="para_2">[[ r['class'] ]]</para></td>
+				<td><para style="para_22">[[ r['class'] ]]</para></td>
 				<td><para style="para_2">[[ r['pendingadmits'] ]]</para></td>
 				<td><para style="para_2">[[ r['admited'] ]]</para></td>
 				<td><para style="para_2">[[ r['strength'] ]]</para></td>

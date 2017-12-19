@@ -1215,7 +1215,8 @@
 				<field name="total_students" readonly="1"/>
 				<field name="withdrawn_students" readonly="1"/>
 				<field name="promoted_students" readonly="1"/>
-				<field name="active_students" readonly="1"/>
+				<field name="count_student_class_changed" readonly="1"/>
+				<field name="cur_strength" readonly="1"/>
 			</group>
 			<field name="acad_cal_students" widget="one2many_list" readonly="1">
 				<tree delete="false">
