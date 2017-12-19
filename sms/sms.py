@@ -1443,6 +1443,18 @@ class sms_academiccalendar(osv.osv):
             if f.class_id.id:
                 sql = """SELECT count(id) from sms_academiccalendar_student
                          where name =""" + str(f.id) +"""
+                         AND state in ('Withdraw','Suspended')"""
+                cr.execute(sql)
+                res[f.id] = cr.fetchone()[0]
+        return res
+    
+    def count_student_class_changed(self, cr, uid, ids, name, args, context=None):
+        """This method will return students withdrawn from a class"""
+        res = {}
+        for f in self.browse(cr, uid, ids, context):
+            if f.class_id.id:
+                sql = """SELECT count(id) from sms_academiccalendar_student
+                         where name =""" + str(f.id) +"""
                          AND state in ('Withdraw','Suspended','Demoted','section_changed','Conditionally_Promoted','class_changed')"""
                 cr.execute(sql)
                 res[f.id] = cr.fetchone()[0]
@@ -1530,16 +1542,15 @@ class sms_academiccalendar(osv.osv):
                     res[f.id] = result
             return res
         
-    def count_students_confirm_approval(self, cr, uid, ids, name, args, context=None):
+    def count_total_enrolled(self, cr, uid, ids, name, args, context=None): 
             """This method will return students    for admission"""
             res = {}
            
             for f in self.browse(cr, uid, ids, context):
                
                 if f.class_id.id:
-                    sql = """SELECT COUNT(*) from student_admission_register
-                          where student_class =""" +str(f.id)+"""
-                          AND state = 'Confirm'"""
+                    sql = """SELECT COUNT(*) from sms_academiccalendar_student
+                          where name =""" +str(f.id)
                             
                     cr.execute(sql)
                     result = cr.fetchone()[0]
@@ -1572,18 +1583,21 @@ class sms_academiccalendar(osv.osv):
         'date_closed':fields.date('Closed On'),
         'closed_by':fields.many2one('res.users', 'Closed By'),
         'helptxt':fields.text('Help', readonly = True),
-        'pendingadmits':fields.function(count_students_wait_approval, method=True, string='Pending Admits',type='integer'),
-        #this field will be removed later on no need of this 'Admited'
-        'Admited':fields.function(count_students_confirm_approval, method=True, string='Admited',type='integer'),
-        'pending_results':fields.function(pending_annual_results, string='Pending Annual Results', type='integer'),
-        'withdrawn_students':fields.function(withdrawn_students_information, method=True, string='With Drawn Students', type='integer', store=True),
-        'active_students':fields.function(active_students_information, method=True, string='Active Students', type='integer', store=True),
-        'promoted_students':fields.function(promoted_students_information, method=True, string='Promoted Students', type='integer', store=True),
-        'total_students':fields.function(total_students_information, string='Total Students', method=True, type='integer', store=True),
+        
 #        'display_order':fields.function(get_display_order,store=True, string='display order', type='integer'),
         'disp_order':fields.related('class_id', 'sequence', type='integer', relation='sms.academiccalendar', string='Order', store=True),
         'exam_ids' :fields.one2many('sms.exam.datesheet', 'academiccalendar', 'Exam', readonly=True),
         'class_session':fields.function(get_class_session_detail, method=True, string='Session', store=True, type='char'),
+        
+        
+        
+        'pendingadmits':fields.function(count_students_wait_approval, method=True, string='Pending Admits',type='integer'),
+        'pending_results':fields.function(pending_annual_results, string='Pending Annual Results', type='integer'),
+        'withdrawn_students':fields.function(withdrawn_students_information, method=True, string='With Drawn Students', type='integer'),
+        'count_student_class_changed':fields.function(count_student_class_changed, method=True, string='Class changed', type='integer'),
+        'active_students':fields.function(active_students_information, method=True, string='Active Students', type='integer'),
+        'promoted_students':fields.function(promoted_students_information, method=True, string='Promoted Students', type='integer'),
+        'total_students':fields.function(count_total_enrolled, string='Total Enrolled', method=True, type='integer'),
     } 
     _defaults = {
         'max_stds': 40,

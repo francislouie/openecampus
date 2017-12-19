@@ -110,7 +110,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         if self.datas['form']['category']== 'Academics':
             line2 = company_recs[0].company_cfieldtwo
         elif self.datas['form']['category'] == 'Transport':
-            lin2 = company_recs[0].company_cfieldtwo_trans
+            line2 = company_recs[0].company_cfieldtwo_trans
         return line2
     
     def get_challan_header_linethree(self):
@@ -154,19 +154,19 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return today 
 
     def get_due_date(self):
+        
         due_date = self.datas['form']['due_date']
         due_date = datetime.strptime(due_date, '%Y-%m-%d').strftime('%d/%m/%Y')
+        print("get_due_date called",due_date)
         return due_date 
 
-    def get_class_group(self, datas):
+
+    def get_class_group(self,datas):
         cls_id = self.datas['form']['student_id'][0]
-        print("cls_id============",cls_id)
         class_id = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('id','=',cls_id)])
         class_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id)
         for obj in class_obj:
-            print("obj======",obj)
             group =obj.group_id.name
-            print("group=======",group)
         return group  
      
     def get_challans(self, data):
