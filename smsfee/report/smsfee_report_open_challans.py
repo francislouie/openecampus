@@ -7,6 +7,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
         super(smsfee_report_open_challan, self).__init__(cr, uid, name, context)
         self.result_temp=[]
+        print("smsfee_report_open_challan......")
         
         self.localcontext.update( {
             'get_today':self.get_today,

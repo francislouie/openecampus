@@ -9,7 +9,13 @@
      <header>
         <pageGraphics>
 
-           	<!-- Header -->			
+           	<!-- Header -->	
+           	<!-- Challan Type -->
+            <setFont name="Helvetica-Bold" size="9" />
+            <drawString x="225" y="585">[[get_challan_header_linezero()]]</drawString>
+            <drawString x="520" y="585">[[get_challan_header_linezero()]]</drawString>
+            <drawString x="815" y="585">[[get_challan_header_linezero()]]</drawString>
+            <!-- Junior/Senior Tag -->  		
 			<setFont name="Helvetica-Bold" size="9" />
 			<drawString x="112" y="585">[[get_class_group(data)]]</drawString>
 			<drawString x="420" y="585">[[get_class_group(data)]]</drawString>
