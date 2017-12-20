@@ -274,25 +274,7 @@
 								<field name="view_academics_fee"     nolabel="1"/>
 							</group>
 						</page>
-						<page string = "Fee Refundable">
-						<field  name="refundable_fee_ids"     nolabel="1" widget="one2many_list"   >
-							<tree editable = "top" >
-								<field name="receipt_no" readonly ="1"/>
-								<field name="amount_received" readonly ="1"/>
-								<field name="state" readonly ="0"/>
-							 </tree>
-							 <form editable = "top">
-								<field name="name" readonly ="1"/>
-								<field name="receipt_no" readonly ="1"/>
-								<field name="amount_received" readonly ="1"/>
-								<field name="student_fee_id" readonly ="1"/>
-								<field name="balance" readonly ="1"/>
-								<field name="paid_back_by" readonly ="1"/>
-								<field name="date_paid_back_date" readonly ="1"/>
-								<field name="state" />
-							 </form>
-							 </field>
-						</page>
+						
 						<page string="Discounts" groups="sms.group_sms_fee_officer,sms.group_sms_director,sms.group_sms_admin,sms.group_sms_fee_manager">
 							<group>
 								<group>					
@@ -336,6 +318,39 @@
 								<field name="challan_cat"/>
 							 </tree>
 						</field>
+						</page>
+						<page string = "More Details">
+						<separator string="Fee Refundable" colspan="4"/>	
+						<field  name="refundable_fee_ids"     nolabel="1" widget="one2many_list"   >
+							<tree editable = "top" >
+								<field name="receipt_no" readonly ="1"/>
+								<field name="amount_received" readonly ="1"/>
+								<field name="state" readonly ="0"/>
+							 </tree>
+							 <form editable = "top">
+								<field name="name" readonly ="1"/>
+								<field name="receipt_no" readonly ="1"/>
+								<field name="amount_received" readonly ="1"/>
+								<field name="student_fee_id" readonly ="1"/>
+								<field name="balance" readonly ="1"/>
+								<field name="paid_back_by" readonly ="1"/>
+								<field name="date_paid_back_date" readonly ="1"/>
+								<field name="state" />
+							 </form>
+							 </field>
+						<separator string="Fee Structure Allocations" colspan="4"/>							 
+						 <field  name="fee_str_ids" nolabel="1" widget="one2many_list"   >
+							<tree>
+								<field name="name" readonly ="1"/>
+								<field name="date_effective_from" readonly ="1"/>
+							 </tree>
+							 <form>
+								<field name="name" readonly ="1"/>
+								<field name="date_effective_from" />
+								<field name="datetime_assigned" />
+								<field name="assigned_by" />
+							 </form>
+							 </field>
 						</page>
 						</notebook>
 			    	</page>

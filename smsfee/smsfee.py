@@ -74,7 +74,19 @@ class sms_change_student_class_new(osv.osv):
 sms_change_student_class_new()
 
 #******************change studnet class*******************************************************
-
+class smsfee_student_feestr_history(osv.osv):
+    """Keeps track of change of fee str of student"""
+    _name = 'smsfee.student.feestr.history'
+    _columns = {
+         'name': fields.many2one('sms.feestructure', 'Fee Structure',readonly=True),
+         'student_id': fields.many2one('sms.student', 'Applicable Fee',readonly=True),
+         'date_effective_from': fields.date('Effective From',readonly=True),
+         'datetime_assigned': fields.datetime('Activity Time',readonly=True),
+         'assigned_by': fields.many2one('res.users',readonly=True),
+    }
+    _defaults = {
+    }
+smsfee_student_feestr_history()
 
 #session monnths inherited
 
@@ -478,6 +490,44 @@ class sms_student(osv.osv):
           
             print"this is the id",res
         return res
+    
+    def create(self, cr, uid, vals, context=None, check=True):
+        result = super(sms_student, self).create(cr, uid, vals, context)       
+        for f in self.browse(cr, uid, [result], context=context):        
+            if 'fee_type' in vals:
+                maintain_fs_history = self.maintain_std_feestructure_history(self,cr,f.id,vals['fee_type'])
+        return result
+    
+    def write(self, cr, uid, ids, vals, context=None):
+        super(sms_student, self).write(cr, uid, ids, vals, context)
+        for f in self.browse(cr, uid, ids, context=context):
+            if 'fee_type' in vals:
+                maintain_fs_history = self.maintain_std_feestructure_history(self,cr,f.id,vals['fee_type'])
+        return {}
+    
+    def maintain_std_feestructure_history(self, cr, uid, student_id, fs_id):
+        """
+        This mehtod maintains history of fee strucures assgined to studet from time to time
+        
+        --called by 1) create method of student
+                    2) write method of student
+                    
+        --input 1) student_id 2) new fs_id
+        """
+        print "student id",student_id,
+        dict = {
+                                    'name': fs_id, 
+                                    'student_id': student_id, 
+                                    'date_effective_from': datetime.date.today(), 
+                                    'datetime_assigned': datetime.datetime.now(), 
+                                    'assigned_by': uid 
+                                    } 
+        print "dict",dict
+        self.pool.get('smsfee.student.feestr.history').create(cr,uid,dict)
+        
+        
+        return 
+    
     #sms_student    
     _name = 'sms.student'
     _inherit ='sms.student'
@@ -490,6 +540,7 @@ class sms_student(osv.osv):
             'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
             'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
             'fee_bills':fields.one2many('smsfee.receiptbook', 'student_id','Fee Bills' ),
+            'fee_str_ids':fields.one2many('smsfee.student.feestr.history', 'student_id','Fee Structures' ),
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),
             'disp_cntct_prtal':fields.boolean('Display Student Contacts?'),
