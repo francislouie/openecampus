@@ -4213,7 +4213,7 @@ class hr_employee(osv.osv):
         'father_name': fields.char("Father Name", size=32),
         'attendance_id':fields.integer('Attendance iD'),
         'isactive':fields.boolean('Is Active'),    
-        'joiningdate': fields.date("Joining Date"),
+        'joiningdate': fields.date("Joining Date")
         
         
     }
