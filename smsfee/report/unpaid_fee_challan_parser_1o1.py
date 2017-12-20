@@ -42,6 +42,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             'get_due_date':self.get_due_date,
             'get_class_group':self.get_class_group,
             'get_challan_logo':self.get_challan_logo,
+            'get_challan_header_linezero':self.get_challan_header_linezero,
             'get_challan_header_lineone':self.get_challan_header_lineone,
             'get_challan_header_linetwo':self.get_challan_header_linetwo,
             'get_challan_header_linethree':self.get_challan_header_linethree,
@@ -75,7 +76,18 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         elif self.datas['form']['category'] == 'Transport':
             logo = company_recs[0].company_clogo_trans
         return logo
-
+    def get_challan_header_linezero(self):
+        
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        if self.datas['form']['category']== 'Academics':
+           line0 = "ACADEMICS"
+        elif self.datas['form']['category'] == 'Transport':
+            line0 = "TRANSPORT"
+        return line0
     def get_challan_header_lineone(self):
         
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
@@ -148,20 +160,17 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         print("get_due_date called",due_date)
         return due_date 
 
+
     def get_class_group(self,datas):
         if 'student_id' in str(self.datas):
             cls_id = self.datas['form']['student_id'][0]
         else:
             cls_id = self.datas['form']['class_id'][0]
         
-
-        print("cls_id============",cls_id)
         class_id = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('id','=',cls_id)])
         class_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id)
         for obj in class_obj:
-            print("obj======",obj)
             group =obj.group_id.name
-            print("group=======",group)
         return group  
      
     def get_challans(self, data):
