@@ -18,7 +18,7 @@ result_acc=[]
    class wise, other parsers that prints class wise challans, should be rmeoved """
 
 class unpaid_fee_challan_parser(report_sxw.rml_parse):
-    print("unpaid_fee_challan_parser callllllllllllllllllllllllllled")
+    
     #this will be the only challans parsser called for
     # acadimc fee, transport fee and other 
     # currently called for clasess wside fees for trasport and academics
