@@ -514,7 +514,6 @@ class sms_student(osv.osv):
                     
         --input 1) student_id 2) new fs_id
         """
-        print "student id",student_id,
         dict = {
                                     'name': fs_id, 
                                     'student_id': student_id, 
@@ -522,8 +521,9 @@ class sms_student(osv.osv):
                                     'datetime_assigned': datetime.datetime.now(), 
                                     'assigned_by': uid 
                                     } 
-        print "dict",dict
-        self.pool.get('smsfee.student.feestr.history').create(cr,uid,dict)
+        #the following create operation is generating error, so it is commented for short time, 22 DEC 2017
+        #later on investigate the error and make this method functional
+        #self.pool.get('smsfee.student.feestr.history').create(cr,uid,dict)
         
         
         return 
@@ -1757,10 +1757,15 @@ class smsfee_receiptbook(osv.osv):
         #user when sending challans for approvals
         result = {}
         records =  self.browse(cr, uid, ids, context)
-#         for f in records:
-#             date_convt = datetime.datetime.strptime(str(f.receipt_date) , '%Y-%m-%d')
-#             date_str = str(date_convt.strftime('%d/%m/%Y'))
-#             result[f.id] = str(f.receipt_date)
+        for f in records:
+            sql = """SELECT receipt_date from smsfee_receiptbook where id=""" + str(f.id)
+        
+            cr.execute(sql)
+            _ids = cr.fetchone()
+            if _ids is not None or False:
+                date_convt = datetime.datetime.strptime(str(_ids[0]) , '%Y-%m-%d')
+                date_str = str(date_convt.strftime('%d-%B-%Y'))
+                result[f.id] = str(date_str)
         return result
     
     def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
@@ -1884,7 +1889,7 @@ class smsfee_receiptbook(osv.osv):
         'std_reg_no': fields.related('student_id','registration_no',type='char',relation='sms.student', string='Registration Number', readonly=True),
         'challan_type':fields.selection([('Full','Full'),('Partial','Partial')],'Challan Type'),
         'receipt_date': fields.date('Payment Date'),
-        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='date', method =True),
+        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='char', method =True),
         'date_receivd_onsystem':fields.datetime('Received on', readonly =True),
         'approve_date': fields.datetime('Date Approved',readonly=True),
     }

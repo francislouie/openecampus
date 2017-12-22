@@ -632,11 +632,11 @@
 			<!-- Put here related buttons -->
 			</div>
 				<notebook>
-                <page string="Information">
+                <page string="Information" name="personal_information">
 					<notebook>
 						<page string="Contact Information">
 							 <group>
-			                 	<group string="Personal">
+			                 	<group string="Personal" name="personal">
 			                   	<field name="father_name" required="1"/>
 								<field name="gender"  required="1"/>
 								<field name="father_nic"/>

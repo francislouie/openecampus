@@ -726,12 +726,12 @@ class sms_student(osv.osv):
         if context is None:context = {}
         res = super(sms_student, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=False)
         doc = etree.XML(res['arch'])
-        nodes = doc.xpath("//field[@name='father_name']")
+        nodes = doc.xpath("//page[@name='personal_information']")
         for node in nodes:
             if uid != 1:
                 node.set('readonly', '1')
                 node.set('help', 'If you print the report from Account list/form view it will not consider Charts of account')
-                setup_modifiers(node, res['fields']['father_name'])
+                #setup_modifiers(node, res['page']['personal_information'])
         res['arch'] = etree.tostring(doc)
         return res
     

@@ -311,7 +311,7 @@
 						<field name="fee_bills" widget="one2many_list" domain="[('category','=','Academics')]"  nolabel="1">
 							<tree string="Fee Bills" >
 								<field name="name"/>
-								<field name="receipt_date"/>
+								<field name="payment_date"/> 
 								<field name="state"/>
 								<field name="fee_received_by"/>
 								<field name="total_paybles"/>
@@ -793,8 +793,8 @@
 					<field name="challan_type" readonly="1"/>
 					</group>
 		     		<group string ="">
-						<field name="receipt_date" required ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"/>
-						<field name="payment_date" readonly="1"/>
+						<field name="receipt_date" required ="1" attrs="{'invisible':[('state','IN',['Paid','Waiting_Approval','Cancel','Adjusted'])]}"/>
+						<field name="payment_date" attrs="{'invisible':[('state','NOT IN',['Paid','Waiting_Approval','Cancel','Adjusted'])]}"/>
 						<field name="payment_method" readonly = "1" required ="1"/>	
 						<field name="manual_recpt_no"  />								
 					</group>
@@ -854,7 +854,6 @@
 					<field name="student_id" domain="[('current_class','=',name)]" />
 					<field name="std_reg_no"/>
 					<field name="payment_date"/>
-					<field name="receipt_date"/>
 					<field name="state"/>
 					<field name="challan_cat"/>
 					<field name="total_paybles"/>
