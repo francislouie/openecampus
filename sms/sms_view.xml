@@ -632,11 +632,11 @@
 			<!-- Put here related buttons -->
 			</div>
 				<notebook>
-                <page string="Information">
+                <page string="Information" name="personal_information">
 					<notebook>
 						<page string="Contact Information">
 							 <group>
-			                 	<group string="Personal">
+			                 	<group string="Personal" name="personal">
 			                   	<field name="father_name" required="1"/>
 								<field name="gender"  required="1"/>
 								<field name="father_nic"/>
@@ -743,8 +743,22 @@
 				 <page string="References">
 				   <field name="reference_ids" nolabel="1" colspan="4"/> 
 			     </page>
-				 <page string="Previous School">
-                    <field name="previous_school_ids" nolabel="1" colspan="4"/> 
+				 <page string="Previous Institute">
+                    <field name="previous_school_ids" widget="one2many_list" nolabel="1" colspan="4"> 
+						<tree delete="false">
+							<field name="name" />
+							<field name="exit_date"/>
+						</tree>
+						<form delete="false">
+							<field name="name" />
+							<field name="registration_no"/>
+							<field name="admission_date" />
+							<field name="last_class_attended"/>
+							<field name="result_last_class" />
+							<field name="marks_obtained"/>
+							<field name="per"/>
+						</form>
+						</field>
                   </page>
 				  <page string="Relatives">
                     <field name="relatives" nolabel="1"/> 

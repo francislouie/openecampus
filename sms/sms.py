@@ -725,14 +725,13 @@ class sms_student(osv.osv):
     def fields_view_get(self, cr, uid, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
         if context is None:context = {}
         res = super(sms_student, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=False)
-        print "if ondtion treeeeeeeeeeeeeeeeeeeeeeeee"
         doc = etree.XML(res['arch'])
-        nodes = doc.xpath("//field[@name='father_name']")
+        nodes = doc.xpath("//page[@name='personal_information']")
         for node in nodes:
             if uid != 1:
                 node.set('readonly', '1')
                 node.set('help', 'If you print the report from Account list/form view it will not consider Charts of account')
-                setup_modifiers(node, res['fields']['father_name'])
+                #setup_modifiers(node, res['page']['personal_information'])
         res['arch'] = etree.tostring(doc)
         return res
     
@@ -920,7 +919,7 @@ class sms_student(osv.osv):
 #                         "Use this field in form views or some kanban views."),
 #               
         'reference_ids':fields.one2many('student.reference', 'reference_id', 'References', states={'done':[('readonly',True)]}),
-        'previous_school_ids':fields.one2many('student.previous.school', 'previous_school_id', 'Previous School Detail', states={'done':[('readonly',True)]}),
+        'previous_school_ids':fields.one2many('student.previous.school', 'previous_school_id', 'Previous Institute Details', states={'done':[('readonly',True)]}),
         'family_contact_ids':fields.one2many('student.guardian.contact', 'family_contact_id', 'Guardian Contact', states={'done':[('readonly',True)]}),
         'doctor': fields.char('Doctor Name', size=64, states={'done':[('readonly',True)]} ),
         'designation': fields.char('Designation', size=64),
@@ -939,6 +938,7 @@ class sms_student(osv.osv):
         'blood_pressure':fields.boolean('Blood Pressure'),
         'remark':fields.text('Remark'),
         'medical_comment':fields.text('Remark'),
+        
         'achievements_ids' : fields.one2many('student.achievements','student_id','Achievements'),
         'active_subjects' : fields.one2many('sms.student.subject','student_id','Subjects'),
         'certificate_ids' : fields.one2many('sms.student.certificate','name','Certificates'),   
@@ -1151,13 +1151,18 @@ class sms_registration_nos(osv.Model):
 class student_previous_school(osv.Model):
     ''' Defining a student previous school information '''
     _name = "student.previous.school"
-    _description = "Student Previous School"
+    _description = "Student Previous Institute"
     _columns = {
         'previous_school_id': fields.many2one('sms.student', 'Student'),
-        'name': fields.char('Name', size=64, required=True),
+        'name': fields.char('Institute', size=64, required=True),
         'registration_no': fields.char('Registration No.', size=12, required=True),
         'admission_date': fields.date('Admission Date'),
         'exit_date': fields.date('Exit Date'),
+         'last_class_attended': fields.many2one('sms.classes', 'Last Class'),
+         'result_last_class': fields.selection([('Passed','Passed'),('Failed','Failed'),('not_declared','Result Not Declared')] ,'Result'),
+         'marks_obtained':fields.integer('Marks'),
+         'per':fields.float('%')
+        
     }
  
 student_previous_school()
@@ -3220,7 +3225,7 @@ class sms_exam_offered(osv.osv):
         if academiccalendar_ids:
 
             #self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
-            self.write(cr, uid, ids, {'state':'Active'})
+            self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
             for calendar in academiccalendar_ids:
                 datesheet_id = self.pool.get('sms.exam.datesheet').create(cr,uid,{
                                                             'academiccalendar':calendar, 
@@ -3261,10 +3266,10 @@ class sms_exam_offered(osv.osv):
                 close_classes_exam = self.pool.get('sms.exam.datesheet').close_exam_class(cr,uid,ds.id)
         #5 close offered exam
         #6 create log
-        self.write(cr, uid, ids, {'state':'Closed','start_date':None})
+        self.write(cr, uid, ids, {'state':'Closed','closing_date':datetime.date.today()})
         #7. create log
         dict={'state':'Closed'}  
-        self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_offered','Close exam',state)
+        self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_offered','Close exam','Closed')
         return True
     
     def cancel_exam(self, cr, uid, ids, *args):
@@ -3280,7 +3285,7 @@ class sms_exam_offered(osv.osv):
     _columns = { 
         'name':fields.function(set_exam_offered_name, method=True,  string='Exam Offered',type='char', store=True),
         'exam_type': fields.many2one('sms.exam.type', 'Exam Type',required=True),
-        'start_date': fields.date('Start Date',required =True),
+        'start_date': fields.date('Start Date'),
         'closing_date': fields.date('Closing Date'),
         'session_year': fields.many2one('sms.session', 'Session',  required=True, help="Session Year "),
         'state': fields.selection([('Draft','Draft'),('Active','Active'),('Closed','Closed'),('Cancelled','Cancelled')],'Status'),

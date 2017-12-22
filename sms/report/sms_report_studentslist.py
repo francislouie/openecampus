@@ -252,22 +252,22 @@ class sms_report_studentslist(report_sxw.rml_parse):
     
     def get_student_biodata(self,form):
         
-        sql = """select id ,fee_type from smsfee_studentfee """
-        self.cr.execute(sql)
-        all = self.cr.fetchall()
-        for feee in all:
-            sql2 = """ 
-                        update smsfee_studentfee set generic_fee_type = ( select distinct smsfee_feetypes.id from smsfee_feetypes
-                         inner join smsfee_classes_fees_lines on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                         inner join smsfee_studentfee on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type 
-                        
-                         where smsfee_studentfee.fee_type = """+str(feee[1])+ """)
-                         where smsfee_studentfee.fee_type = """+str(feee[1])+ """
-             
-             """
-            self.cr.execute(sql2)
-            self.cr.commit()
-        return
+#         sql = """select id ,fee_type from smsfee_studentfee """
+#         self.cr.execute(sql)
+#         all = self.cr.fetchall()
+#         for feee in all:
+#             sql2 = """ 
+#                         update smsfee_studentfee set generic_fee_type = ( select distinct smsfee_feetypes.id from smsfee_feetypes
+#                          inner join smsfee_classes_fees_lines on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+#                          inner join smsfee_studentfee on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type 
+#                         
+#                          where smsfee_studentfee.fee_type = """+str(feee[1])+ """)
+#                          where smsfee_studentfee.fee_type = """+str(feee[1])+ """
+#              
+#              """
+#             self.cr.execute(sql2)
+#             self.cr.commit()
+#         return
           #fille the date view in recept book
             
         
