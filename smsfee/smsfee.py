@@ -74,7 +74,19 @@ class sms_change_student_class_new(osv.osv):
 sms_change_student_class_new()
 
 #******************change studnet class*******************************************************
-
+class smsfee_student_feestr_history(osv.osv):
+    """Keeps track of change of fee str of student"""
+    _name = 'smsfee.student.feestr.history'
+    _columns = {
+         'name': fields.many2one('sms.feestructure', 'Fee Structure',readonly=True),
+         'student_id': fields.many2one('sms.student', 'Applicable Fee',readonly=True),
+         'date_effective_from': fields.date('Effective From',readonly=True),
+         'datetime_assigned': fields.datetime('Activity Time',readonly=True),
+         'assigned_by': fields.many2one('res.users',readonly=True),
+    }
+    _defaults = {
+    }
+smsfee_student_feestr_history()
 
 #session monnths inherited
 
@@ -478,6 +490,44 @@ class sms_student(osv.osv):
           
             print"this is the id",res
         return res
+    
+    def create(self, cr, uid, vals, context=None, check=True):
+        result = super(sms_student, self).create(cr, uid, vals, context)       
+        for f in self.browse(cr, uid, [result], context=context):        
+            if 'fee_type' in vals:
+                maintain_fs_history = self.maintain_std_feestructure_history(self,cr,f.id,vals['fee_type'])
+        return result
+    
+    def write(self, cr, uid, ids, vals, context=None):
+        super(sms_student, self).write(cr, uid, ids, vals, context)
+        for f in self.browse(cr, uid, ids, context=context):
+            if 'fee_type' in vals:
+                maintain_fs_history = self.maintain_std_feestructure_history(self,cr,f.id,vals['fee_type'])
+        return {}
+    
+    def maintain_std_feestructure_history(self, cr, uid, student_id, fs_id):
+        """
+        This mehtod maintains history of fee strucures assgined to studet from time to time
+        
+        --called by 1) create method of student
+                    2) write method of student
+                    
+        --input 1) student_id 2) new fs_id
+        """
+        dict = {
+                                    'name': fs_id, 
+                                    'student_id': student_id, 
+                                    'date_effective_from': datetime.date.today(), 
+                                    'datetime_assigned': datetime.datetime.now(), 
+                                    'assigned_by': uid 
+                                    } 
+        #the following create operation is generating error, so it is commented for short time, 22 DEC 2017
+        #later on investigate the error and make this method functional
+        #self.pool.get('smsfee.student.feestr.history').create(cr,uid,dict)
+        
+        
+        return 
+    
     #sms_student    
     _name = 'sms.student'
     _inherit ='sms.student'
@@ -490,6 +540,7 @@ class sms_student(osv.osv):
             'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
             'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
             'fee_bills':fields.one2many('smsfee.receiptbook', 'student_id','Fee Bills' ),
+            'fee_str_ids':fields.one2many('smsfee.student.feestr.history', 'student_id','Fee Structures' ),
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),
             'disp_cntct_prtal':fields.boolean('Display Student Contacts?'),
@@ -1706,10 +1757,15 @@ class smsfee_receiptbook(osv.osv):
         #user when sending challans for approvals
         result = {}
         records =  self.browse(cr, uid, ids, context)
-#         for f in records:
-#             date_convt = datetime.datetime.strptime(str(f.receipt_date) , '%Y-%m-%d')
-#             date_str = str(date_convt.strftime('%d/%m/%Y'))
-#             result[f.id] = str(f.receipt_date)
+        for f in records:
+            sql = """SELECT receipt_date from smsfee_receiptbook where id=""" + str(f.id)
+        
+            cr.execute(sql)
+            _ids = cr.fetchone()
+            if _ids is not None or False:
+                date_convt = datetime.datetime.strptime(str(_ids[0]) , '%Y-%m-%d')
+                date_str = str(date_convt.strftime('%d-%B-%Y'))
+                result[f.id] = str(date_str)
         return result
     
     def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
@@ -1833,7 +1889,7 @@ class smsfee_receiptbook(osv.osv):
         'std_reg_no': fields.related('student_id','registration_no',type='char',relation='sms.student', string='Registration Number', readonly=True),
         'challan_type':fields.selection([('Full','Full'),('Partial','Partial')],'Challan Type'),
         'receipt_date': fields.date('Payment Date'),
-        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='date', method =True),
+        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='char', method =True),
         'date_receivd_onsystem':fields.datetime('Received on', readonly =True),
         'approve_date': fields.datetime('Date Approved',readonly=True),
     }
