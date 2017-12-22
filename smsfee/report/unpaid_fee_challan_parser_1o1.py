@@ -18,7 +18,7 @@ result_acc=[]
    class wise, other parsers that prints class wise challans, should be rmeoved """
 
 class unpaid_fee_challan_parser(report_sxw.rml_parse):
-    print("unpaid_fee_challan_parser callllllllllllllllllllllllllled")
+    
     #this will be the only challans parsser called for
     # acadimc fee, transport fee and other 
     # currently called for clasess wside fees for trasport and academics
@@ -162,7 +162,11 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
 
 
     def get_class_group(self,datas):
-        cls_id = self.datas['form']['student_id'][0]
+        if 'student_id' in str(self.datas):
+            cls_id = self.datas['form']['student_id'][0]
+        else:
+            cls_id = self.datas['form']['class_id'][0]
+        
         class_id = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('id','=',cls_id)])
         class_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id)
         for obj in class_obj:
@@ -173,7 +177,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         #currentlty this parser is set to call for whole class challans orinting
         #both transport and acadmics
         #later on this will be set to call this parser for single students also, both academics challans and transprot challans (3-10-2017)
-        
+    
         challan_list = []
         ###########print challan at the time of admission for paying fee (it is before admitting student)
         if data['model'] == 'student.admission.register':

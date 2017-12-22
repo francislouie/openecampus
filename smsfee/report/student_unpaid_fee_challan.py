@@ -147,10 +147,9 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return due_date 
      
     def get_class_group(self, data):
-        print("group callaed")
+        print("student_upaid_challans get_class")
         student_id = self.datas['form']['student_id'][0]
         stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
-        print("group nammmmmmmmmmmmmmmmmmmmmmme",stu_rec.current_class.group_id.name)
         return stu_rec.current_class.group_id.name
 
     def get_challans(self, data):

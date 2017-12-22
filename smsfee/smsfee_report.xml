@@ -39,7 +39,6 @@
             rml="smsfee/report/smsfee_annual_singleclass.rml"
             string="Fee Reports"
             /> 
-            
              <report
             id="report_motnhlyfee_collection_allclasses_id"
             model="smsfee.classfees.register"

@@ -2743,6 +2743,23 @@
 					<field name="father_name"/>
 					<field name="attendance_id"/>
 				</field>
+				
+				    <field name="coach_id" position="after">
+                    <!-- <label for="isactive" class="oe_edit_only"/> -->
+                    <field name="isactive"/>
+                   
+                </field>
+                
+                
+                
+                    <field name="isactive" position="after">
+                    <!-- <label for="joiningdate" class="oe_edit_only"/> -->
+                    <field name="joiningdate"/>
+                 
+                </field>
+				
+				
+				
 		      </field>
 		    </record>
 
