@@ -1719,13 +1719,16 @@ class smsfee_receiptbook(osv.osv):
             self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})  
         return result
     
-    def check_fee_challans_issued(self, cr, uid, class_id, student_id, category, challan_type, month_ids):
+    def check_fee_challans_issued(self, cr, uid, class_id, student_id, category, challan_type, month_ids,due_date):
         # Date 7 may 2017
         #this objects will generate challans if challans are not exists
         # the same method will be used by all modules, may be one more argument will be added, module_id e.g categoty id
         # the challan cration method of transport will be delted, transport will also call this method
         # challan category will be used in the case when separate challans tp ne printed for each category, we can keep this setting 
         # in res company wheter to print combine challans or separate (this code is not currently set for combine challans .13 may 2017)
+        
+        # Date 22 Dec 2017
+        # parameter Due date is added in this function By ibrahim 
         result = {}
         fee_ids = []
         if month_ids:
@@ -1777,6 +1780,7 @@ class smsfee_receiptbook(osv.osv):
                                                                               'challan_type':challan_type,
                                                                               'state':'fee_calculated',
                                                                               'receipt_date':datetime.date.today(),
+                                                                              'due_date':due_date,
                                                                               'session_id' :session_id})
             std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr ,uid ,fee_ids)
             print "challan created or not:",receipt_id
@@ -1836,6 +1840,7 @@ class smsfee_receiptbook(osv.osv):
         'payment_date':fields.function(change_date_format, string='Payment Date.', type ='date', method =True),
         'date_receivd_onsystem':fields.datetime('Received on', readonly =True),
         'approve_date': fields.datetime('Date Approved',readonly=True),
+        'due_date': fields.datetime('Due Date',readonly=True),
     }
     _sql_constraints = [  
         #('Fee Exisits', 'unique (name)', 'Fee Receipt No Must be Unique!')

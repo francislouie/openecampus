@@ -162,7 +162,11 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
 
 
     def get_class_group(self,datas):
-        cls_id = self.datas['form']['student_id'][0]
+        if 'student_id' in str(self.datas):
+              cls_id = self.datas['form']['student_id'][0]
+              
+        else:   
+              cls_id = self.datas['form']['class_id'][0]
         class_id = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('id','=',cls_id)])
         class_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id)
         for obj in class_obj:

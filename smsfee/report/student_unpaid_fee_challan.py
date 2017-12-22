@@ -155,7 +155,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
 
     def get_challans(self, data):
         
-        print("challan callaed")
+        print("challan callaed tested on 22 decem")
         challan_list = []
         student_id = self.datas['form']['student_id'][0]
         category = self.datas['form']['category']
