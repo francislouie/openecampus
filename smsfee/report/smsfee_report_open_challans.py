@@ -4,12 +4,9 @@ from openerp.tools import amount_to_text_en
 from openerp.report import report_sxw
 
 class smsfee_report_open_challan(report_sxw.rml_parse):
-    print("smsfee_report_open_challan called")
     def __init__(self, cr, uid, name, context):
         super(smsfee_report_open_challan, self).__init__(cr, uid, name, context)
         self.result_temp=[]
-        print("smsfee_report_open_challan......")
-        
         self.localcontext.update( {
             'get_today':self.get_today,
             'get_challans':self.get_challans,
@@ -53,7 +50,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
             fieldone = company_recs.company_cfieldone
         elif self.datas['form']['category'] == 'Transport':
             fieldone = company_recs.company_cfieldone_trans
-        print "returning line 1.............................................:"
+        print "returning line 1.............................................:",fieldone
         return fieldone
 
     def get_challan_header_linetwo(self):
@@ -64,7 +61,6 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
         for rec in company_recs:
             fieldtwo = rec.company_cfieldtwo
-            print("fieldtowssssssssssssssssssss",fieldtwo)
         return fieldtwo
     
     def get_challan_header_linethree(self):
@@ -88,7 +84,6 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         return footerone
     
     def get_challan_footer_two(self):
-        print("get_challan_footer_two")
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
         if len(rescompany_id)>1:
@@ -99,7 +94,6 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         return footertwo
      
     def get_today(self):
-        print("get today")
         today = time.strftime('%d-%m-%Y')
         return today 
 
@@ -108,12 +102,11 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         due_date = datetime.strptime(due_date, '%Y-%m-%d').strftime('%d/%m/%Y')
         return due_date 
      
-    def get_class_group(self):
+    def get_class_group(self, data):
         challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('id','=', self.datas['form']['challan_id'][0])])
         challan_rec = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids)
         student_id =  challan_rec[0].student_id.id
         stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
-        print("get class group called and value is",stu_rec ,"or =====",stu_rec.current_class.group_id.name)
         return stu_rec.current_class.group_id.name
      
     def get_challans(self, data):

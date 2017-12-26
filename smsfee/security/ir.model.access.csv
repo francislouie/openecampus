@@ -136,14 +136,3 @@
 "124","smsfee.discount","model_smsfee_discount","sms.group_sms_admission_manager",1,1,1,0
 "125","res.users","base.model_res_users","sms.group_sms_fee_manager",1,0,0,0
 "126","res.users","base.model_res_users","sms.group_sms_fee_officer",1,0,0,0
-
-
-"127","smsfee.student.feestr.history","model_smsfee_student_feestr_history","sms.group_sms_admission_officer",1,0,1,0
-"128","smsfee.student.feestr.history","model_smsfee_student_feestr_history","sms.group_sms_officers_exams",1,0,1,0
-"129","smsfee.student.feestr.history","model_smsfee_student_feestr_history","sms.group_sms_fee_officer",1,0,1,0
-"130","smsfee.student.feestr.history","model_smsfee_student_feestr_history","sms.group_sms_principal",1,0,1,0
-"131","smsfee.student.feestr.history","model_smsfee_student_feestr_history","sms.group_sms_director",1,0,1,0
-"132","smsfee.student.feestr.history","model_smsfee_student_feestr_history","sms.group_sms_fee_manager",1,0,1,0
-
-"133","smsfee.studentfee.refundable","model_smsfee_studentfee_refundable","sms.group_sms_principal",1,0,0,0
-

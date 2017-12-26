@@ -258,7 +258,7 @@
               </field>
 				<notebook>
 					<page string = "Fees Payments">
-						<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups="sms.group_sms_admin"/>
+						<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
 						<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Print Fee Bills" states="Admitted,admission_cancel,drop_out,deceased,passout,slc,Withdraw" type="action" class="oe_highlight" groups=""/>
 						<button name="%(action_student_fee_collect_id)d" string="Receive a Fee Bill" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 						<notebook>
@@ -274,7 +274,25 @@
 								<field name="view_academics_fee"     nolabel="1"/>
 							</group>
 						</page>
-						
+						<page string = "Fee Refundable">
+						<field  name="refundable_fee_ids"     nolabel="1" widget="one2many_list"   >
+							<tree editable = "top" >
+								<field name="receipt_no" readonly ="1"/>
+								<field name="amount_received" readonly ="1"/>
+								<field name="state" readonly ="0"/>
+							 </tree>
+							 <form editable = "top">
+								<field name="name" readonly ="1"/>
+								<field name="receipt_no" readonly ="1"/>
+								<field name="amount_received" readonly ="1"/>
+								<field name="student_fee_id" readonly ="1"/>
+								<field name="balance" readonly ="1"/>
+								<field name="paid_back_by" readonly ="1"/>
+								<field name="date_paid_back_date" readonly ="1"/>
+								<field name="state" />
+							 </form>
+							 </field>
+						</page>
 						<page string="Discounts" groups="sms.group_sms_fee_officer,sms.group_sms_director,sms.group_sms_admin,sms.group_sms_fee_manager">
 							<group>
 								<group>					
@@ -311,46 +329,13 @@
 						<field name="fee_bills" widget="one2many_list" domain="[('category','=','Academics')]"  nolabel="1">
 							<tree string="Fee Bills" >
 								<field name="name"/>
-								<field name="payment_date"/> 
+								<field name="receipt_date"/>
 								<field name="state"/>
 								<field name="fee_received_by"/>
 								<field name="total_paybles"/>
 								<field name="challan_cat"/>
 							 </tree>
 						</field>
-						</page>
-						<page string = "More Details">
-						<separator string="Fee Refundable" colspan="4"/>	
-						<field  name="refundable_fee_ids"     nolabel="1" widget="one2many_list"   >
-							<tree editable = "top" >
-								<field name="receipt_no" readonly ="1"/>
-								<field name="amount_received" readonly ="1"/>
-								<field name="state" readonly ="0"/>
-							 </tree>
-							 <form editable = "top">
-								<field name="name" readonly ="1"/>
-								<field name="receipt_no" readonly ="1"/>
-								<field name="amount_received" readonly ="1"/>
-								<field name="student_fee_id" readonly ="1"/>
-								<field name="balance" readonly ="1"/>
-								<field name="paid_back_by" readonly ="1"/>
-								<field name="date_paid_back_date" readonly ="1"/>
-								<field name="state" />
-							 </form>
-							 </field>
-						<separator string="Fee Structure Allocations" colspan="4"/>							 
-						 <field  name="fee_str_ids" nolabel="1" widget="one2many_list"   >
-							<tree>
-								<field name="name" readonly ="1"/>
-								<field name="date_effective_from" readonly ="1"/>
-							 </tree>
-							 <form>
-								<field name="name" readonly ="1"/>
-								<field name="date_effective_from" />
-								<field name="datetime_assigned" />
-								<field name="assigned_by" />
-							 </form>
-							 </field>
 						</page>
 						</notebook>
 			    	</page>
@@ -793,8 +778,8 @@
 					<field name="challan_type" readonly="1"/>
 					</group>
 		     		<group string ="">
-						<field name="receipt_date" required ="1" attrs="{'invisible':[('state','IN',['Paid','Waiting_Approval','Cancel','Adjusted'])]}"/>
-						<field name="payment_date" attrs="{'invisible':[('state','NOT IN',['Paid','Waiting_Approval','Cancel','Adjusted'])]}"/>
+						<field name="receipt_date" required ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"/>
+						<field name="payment_date" readonly="1"/>
 						<field name="payment_method" readonly = "1" required ="1"/>	
 						<field name="manual_recpt_no"  />								
 					</group>
@@ -854,6 +839,7 @@
 					<field name="student_id" domain="[('current_class','=',name)]" />
 					<field name="std_reg_no"/>
 					<field name="payment_date"/>
+					<field name="receipt_date"/>
 					<field name="state"/>
 					<field name="challan_cat"/>
 					<field name="total_paybles"/>
