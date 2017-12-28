@@ -1,9 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data>
-
+	
+	<!-- Top menu item -->
 	<menuitem name="Academics" id="menu_sms_root" 
 	groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer" sequence="0"/>
+
+	 
+        <menuitem name="Reporting.."
+            id="menu_reporting_opencampus"
+            groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer" sequence="5"
+            />
+	 <menuitem name="Administrative"
+            id="menu_reporting_opencampus_administrative"
+            groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer" sequence="1"
+			parent="menu_reporting_opencampus"
+            />	
+	
+	<menuitem name="Students Analysis"
+            id="menu_reporting_opencampus_studentanal"
+            groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer" sequence="2"
+			parent="menu_reporting_opencampus"
+            />	
 
 	<menuitem id="menu_configuration_id" name="Configuration" parent="" sequence="5" groups="group_sms_admin,group_sms_director"/>
 	<menuitem id="menu_exective_reports_id" name="Exective Reports" parent="" sequence="6" groups="group_sms_admin,group_sms_director"/>
