@@ -136,6 +136,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                     index = 2
                 else:
                     index = (i % 2)
+                print("index................  ",index)
                     
                 fee_name = str(fee.name.name)+"  "+str(fee.fee_month.name)
                 dict = {'head_name':fee_name,'head_amount':fee.amount}
@@ -170,7 +171,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
             cls_id = self.datas['form']['class_id'][0]
             challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('student_class_id','=',cls_id),('state','=','fee_calculated')]) 
             if challan_ids:
-                i = 0
+                i = 1
                 challan_dict = {'challan_number_1':'','candidate_info_1':'','vertical_lines_1':'','on_accounts_1':'','total_amount_1':'','amount_in_words_1':'','amount_after_due_date_1':'',
                                 'challan_number_2':'','candidate_info_2':'','vertical_lines_2':'','on_accounts_2':'','total_amount_2':'','amount_in_words_2':'','amount_after_due_date_2':''}
                 
@@ -180,6 +181,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
                         index = 2
                     else:
                         index = (i % 2)
+                    print("0000000000index................  ",index)
                     challan_dict['challan_number_'+ str(index)] = self.get_challan_number(challan.id)
                     challan_dict['candidate_info_'+ str(index)] = self.get_candidate_info(challan.student_id.id)
                     challan_dict['on_accounts_'+ str(index)] = self.get_on_accounts(challan.id)

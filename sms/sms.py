@@ -4216,7 +4216,11 @@ class hr_employee(osv.osv):
         
     _columns = {
         'father_name': fields.char("Father Name", size=32),
-        'attendance_id':fields.integer('Attendance iD')
+        'attendance_id':fields.integer('Attendance iD'),
+        'isactive':fields.boolean('Is Active'),    
+        'joiningdate': fields.date("Joining Date")
+        
+        
     }
 hr_employee()
 

@@ -74,19 +74,7 @@ class sms_change_student_class_new(osv.osv):
 sms_change_student_class_new()
 
 #******************change studnet class*******************************************************
-class smsfee_student_feestr_history(osv.osv):
-    """Keeps track of change of fee str of student"""
-    _name = 'smsfee.student.feestr.history'
-    _columns = {
-         'name': fields.many2one('sms.feestructure', 'Fee Structure',readonly=True),
-         'student_id': fields.many2one('sms.student', 'Applicable Fee',readonly=True),
-         'date_effective_from': fields.date('Effective From',readonly=True),
-         'datetime_assigned': fields.datetime('Activity Time',readonly=True),
-         'assigned_by': fields.many2one('res.users',readonly=True),
-    }
-    _defaults = {
-    }
-smsfee_student_feestr_history()
+
 
 #session monnths inherited
 
@@ -490,44 +478,6 @@ class sms_student(osv.osv):
           
             print"this is the id",res
         return res
-    
-    def create(self, cr, uid, vals, context=None, check=True):
-        result = super(sms_student, self).create(cr, uid, vals, context)       
-        for f in self.browse(cr, uid, [result], context=context):        
-            if 'fee_type' in vals:
-                maintain_fs_history = self.maintain_std_feestructure_history(self,cr,f.id,vals['fee_type'])
-        return result
-    
-    def write(self, cr, uid, ids, vals, context=None):
-        super(sms_student, self).write(cr, uid, ids, vals, context)
-        for f in self.browse(cr, uid, ids, context=context):
-            if 'fee_type' in vals:
-                maintain_fs_history = self.maintain_std_feestructure_history(self,cr,f.id,vals['fee_type'])
-        return {}
-    
-    def maintain_std_feestructure_history(self, cr, uid, student_id, fs_id):
-        """
-        This mehtod maintains history of fee strucures assgined to studet from time to time
-        
-        --called by 1) create method of student
-                    2) write method of student
-                    
-        --input 1) student_id 2) new fs_id
-        """
-        dict = {
-                                    'name': fs_id, 
-                                    'student_id': student_id, 
-                                    'date_effective_from': datetime.date.today(), 
-                                    'datetime_assigned': datetime.datetime.now(), 
-                                    'assigned_by': uid 
-                                    } 
-        #the following create operation is generating error, so it is commented for short time, 22 DEC 2017
-        #later on investigate the error and make this method functional
-        #self.pool.get('smsfee.student.feestr.history').create(cr,uid,dict)
-        
-        
-        return 
-    
     #sms_student    
     _name = 'sms.student'
     _inherit ='sms.student'
@@ -540,7 +490,6 @@ class sms_student(osv.osv):
             'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
             'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
             'fee_bills':fields.one2many('smsfee.receiptbook', 'student_id','Fee Bills' ),
-            'fee_str_ids':fields.one2many('smsfee.student.feestr.history', 'student_id','Fee Structures' ),
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),
             'disp_cntct_prtal':fields.boolean('Display Student Contacts?'),
@@ -1073,8 +1022,7 @@ class smsfee_studentfee(osv.osv):
                         'due_month': due_month,
                         'fee_month': fee_month,
                         'paid_amount':0,
-                        'fee_amount': fee_amount, 
-                        'generic_fee_type':fee_type_row.fee_type.id, 
+                        'fee_amount': fee_amount,  
                         'late_fee':0,
                         'discount':0,
                         'total_amount':fee_amount + 0, 
@@ -1188,7 +1136,7 @@ class smsfee_studentfee(osv.osv):
     ('Stationary', 'Portal'),
     ('Portal', 'Portal')]
     
-    def get_fee_display_order(self, cr, uid, ids, name, args, context=None):
+    def get_display_order(self, cr, uid, ids, name, args, context=None):
         """This method retruns the sequnece of parent class of this record. that will be use to order the list record of acad cal"""
         res = {}
         for f in self.browse(cr, uid, ids, context):
@@ -1215,13 +1163,13 @@ class smsfee_studentfee(osv.osv):
         'due_month':fields.many2one('sms.session.months','Payment Month'),
         'fee_amount':fields.integer('Fee'),
         'late_fee':fields.integer('Late Fee'),
-        'total_amount':fields.integer('Receivable'),
+        'total_amount':fields.integer('Payble'),
         'paid_amount':fields.integer('Paid Amount'),
         'returned_amount':fields.float('Returned Amount'),
         'discount': fields.integer('Discount'),
         'net_total': fields.integer('Balance'),  
         'reconcile':fields.boolean('Reconcile'), 
-        'display_order':fields.function(get_fee_display_order, store=True, string='display order', type='integer'),
+        'display_order':fields.function(get_display_order, store=True, string='display order', type='integer'),
         'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
         'class_changed':fields.boolean('Class Changed'),
         #------------total payables---------------------------------
@@ -1442,7 +1390,6 @@ class smsfee_fee_adjustment(osv.osv):
                                         'due_month':f.due_month.id,
                                         'fee_amount':f.amount,
                                         'total_amount':f.amount,
-                                        'generic_fee_type':f.fee_type.id,
                                         'reconcile':False,
                                          'state':'fee_unpaid',
                     
@@ -1757,15 +1704,10 @@ class smsfee_receiptbook(osv.osv):
         #user when sending challans for approvals
         result = {}
         records =  self.browse(cr, uid, ids, context)
-        for f in records:
-            sql = """SELECT receipt_date from smsfee_receiptbook where id=""" + str(f.id)
-        
-            cr.execute(sql)
-            _ids = cr.fetchone()
-            if _ids is not None or False:
-                date_convt = datetime.datetime.strptime(str(_ids[0]) , '%Y-%m-%d')
-                date_str = str(date_convt.strftime('%d-%B-%Y'))
-                result[f.id] = str(date_str)
+#         for f in records:
+#             date_convt = datetime.datetime.strptime(str(f.receipt_date) , '%Y-%m-%d')
+#             date_str = str(date_convt.strftime('%d/%m/%Y'))
+#             result[f.id] = str(f.receipt_date)
         return result
     
     def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
@@ -1856,7 +1798,6 @@ class smsfee_receiptbook(osv.osv):
     _order = 'id desc'
     #smsfee_receiptbook
     _name = 'smsfee.receiptbook'
-    _inherit = ['mail.thread']
     _description = "This object store fee types"
     _columns = {
         'name': fields.char('Bill No', readonly =True,size=15), 
@@ -1873,7 +1814,7 @@ class smsfee_receiptbook(osv.osv):
         'total_paid_amount':fields.float('Paid Amount',readonly = True),
         'note_at_receive': fields.text('Note'),
         'receive_whole_amount': fields.boolean('Receive Whole Amount'),
-        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True,track_visibility='onchange', help='State'),
+        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
         'fee_approved_by': fields.many2one('res.users', 'Approved By'),
         'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),
@@ -1889,7 +1830,7 @@ class smsfee_receiptbook(osv.osv):
         'std_reg_no': fields.related('student_id','registration_no',type='char',relation='sms.student', string='Registration Number', readonly=True),
         'challan_type':fields.selection([('Full','Full'),('Partial','Partial')],'Challan Type'),
         'receipt_date': fields.date('Payment Date'),
-        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='char', method =True),
+        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='date', method =True),
         'date_receivd_onsystem':fields.datetime('Received on', readonly =True),
         'approve_date': fields.datetime('Date Approved',readonly=True),
     }

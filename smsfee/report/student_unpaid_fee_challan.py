@@ -96,7 +96,7 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         if self.datas['form']['category']== 'Academics':
             line2 = company_recs[0].company_cfieldtwo
         elif self.datas['form']['category'] == 'Transport':
-            line2 = company_recs[0].company_cfieldtwo_trans
+            lin2 = company_recs[0].company_cfieldtwo_trans
         return line2
     
     def get_challan_header_linethree(self):
@@ -112,7 +112,6 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return line3
     
     def get_challan_footer_one(self):
-        print("challan footer callaed")
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
         if len(rescompany_id)>1:
@@ -137,7 +136,6 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return line5
      
     def get_today(self):
-        print("today callaed")
         today = time.strftime('%d-%m-%Y')
         return today 
 
@@ -147,15 +145,11 @@ class unpaid_fee_challan_parser(report_sxw.rml_parse):
         return due_date 
      
     def get_class_group(self, data):
-        print("group callaed")
         student_id = self.datas['form']['student_id'][0]
         stu_rec = self.pool.get('sms.student').browse(self.cr ,self.uid , student_id)
-        print("group nammmmmmmmmmmmmmmmmmmmmmme",stu_rec.current_class.group_id.name)
         return stu_rec.current_class.group_id.name
 
     def get_challans(self, data):
-        
-        print("challan callaed")
         challan_list = []
         student_id = self.datas['form']['student_id'][0]
         category = self.datas['form']['category']
