@@ -384,7 +384,8 @@ class smsfee_report_feereports(report_sxw.rml_parse):
 #             print "BBBBBBBBBBBBBBB>>>>>>", acad_ids
 #             cls_id = self.pool.get('sms.session').search(self.cr, self.uid,[('name', '=', acad_ids)])
 #             print "CCCCCCCCCCCCCCC>>>>>>", acad_ids
-    def defaulter_student_list(self, data):                                                         
+    def defaulter_student_list(self, data):  
+            #ibrahim                                                       
             result = []
             """Late fee amount is not shown. to show it, make another columns on right side of others and mention it in separate column"""
             this_form = self.datas['form']
@@ -397,7 +398,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 class_str = "AND sms_student.current_class in " + class_str.replace(',)', ')')
             else:
                 class_str = ''
-                
+               
             sql_academics = """ SELECT sms_student.id, sms_student.name, registration_no, sms_student.state
                                 ,sms_academiccalendar.name , sms_academiccalendar.id, sms_student.cell_no, 
                                 sms_student.phone 

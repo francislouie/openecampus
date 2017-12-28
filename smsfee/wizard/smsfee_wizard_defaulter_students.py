@@ -36,7 +36,7 @@ class fee_defaulters(osv.osv_memory):
               "class_id": fields.many2many('sms.academiccalendar','sms_academiccalendar_class_fee', 'thisobj_id', 'academiccalendar_id','Class', domain="[('session_id','=',session)]"),
               'report_type': fields.selection([('summary','Print Summary (Donot show monthly Details'),('detailed','Detailed Report')],'Options'),
               'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('All','All Fee Categories')],'Fee Category'),
-              'order_by':fields.selection([('sms_student.name','Student Name'),('sms_student.registration_no','Registration No'),('sms_student.state','Admission Status')],'Order By'),
+              'order_by':fields.selection([('sms_student.name','Student Name'),('sms_student.registration_no','Registration No'),('sms_student.state','Admission Status'),('sms_academiccalendar.name,sms_student.name','Class')],'Order By'),
               'show_phone_no':fields.boolean('Display Contact No')
                }
     _defaults = {

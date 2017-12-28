@@ -10,8 +10,8 @@
             <field name="arch" type="xml">
                 <form string="Students list" version="7.0">
 			    		<group col="4">
-						<newline/><field name="session_id"/>
-						<newline/><field name="class_cat" />
+						<newline/><field name="session_ids"/>
+						<newline/><field name="order_by" />
 						</group>
 					
                     <footer>

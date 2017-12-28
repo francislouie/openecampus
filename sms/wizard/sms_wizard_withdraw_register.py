@@ -12,8 +12,9 @@ class sms_withdraw_register(osv.osv_memory):
     _name = "sms.withdraw.register"
     _description = "withdraws student from the school"
     _columns = {
-              'session_id': fields.many2one('sms.session', 'Session', help="Select a session",required = True),
-              'class_cat': fields.selection([('Primary','Primary'),('Middle','Middle'),('High','High')],'Category', required = True),
+               #'session_id': fields.many2one('sms.session', 'Session', help="Select a session",required = True),
+               'session_ids':fields.many2many('sms.session', 'withdraw_register_session_rel', 'sms_withdraw_register_id', 'session_id', 'Session'),
+               'order_by': fields.selection([('registration_no','Registration No'),('name','Student Name'),('admitted_on','Date of Admission'),('date_withdraw','Date of withdraw'),('current_class','Class')],'Order By', required = True),
              }
     _defaults = {
            }
