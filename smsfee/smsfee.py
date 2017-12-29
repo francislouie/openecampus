@@ -1704,10 +1704,16 @@ class smsfee_receiptbook(osv.osv):
         #user when sending challans for approvals
         result = {}
         records =  self.browse(cr, uid, ids, context)
-#         for f in records:
-#             date_convt = datetime.datetime.strptime(str(f.receipt_date) , '%Y-%m-%d')
-#             date_str = str(date_convt.strftime('%d/%m/%Y'))
-#             result[f.id] = str(f.receipt_date)
+        for f in records:
+            if f.id:
+                sql = """SELECT receipt_date from smsfee_receiptbook where id= """+str(f.id)
+                cr.execute(sql)
+                rdate = cr.fetchone()[0]
+                date_convt = datetime.datetime.strptime(str(rdate) , '%Y-%m-%d')
+                date_str = str(date_convt.strftime('%d-%b-%Y'))
+                result[f.id] = date_str
+            else:
+                result[f.id] = '--'
         return result
     
     def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
@@ -1830,7 +1836,7 @@ class smsfee_receiptbook(osv.osv):
         'std_reg_no': fields.related('student_id','registration_no',type='char',relation='sms.student', string='Registration Number', readonly=True),
         'challan_type':fields.selection([('Full','Full'),('Partial','Partial')],'Challan Type'),
         'receipt_date': fields.date('Payment Date'),
-        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='date', method =True),
+        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='char', method =True),
         'date_receivd_onsystem':fields.datetime('Received on', readonly =True),
         'approve_date': fields.datetime('Date Approved',readonly=True),
     }
