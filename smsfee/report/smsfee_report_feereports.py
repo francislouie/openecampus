@@ -385,7 +385,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
 #             cls_id = self.pool.get('sms.session').search(self.cr, self.uid,[('name', '=', acad_ids)])
 #             print "CCCCCCCCCCCCCCC>>>>>>", acad_ids
     def defaulter_student_list(self, data):  
-            #ibrahim                                                       
+            #Prints summary for defaulter students list                                                   
             result = []
             """Late fee amount is not shown. to show it, make another columns on right side of others and mention it in separate column"""
             this_form = self.datas['form']
@@ -414,6 +414,9 @@ class smsfee_report_feereports(report_sxw.rml_parse):
              
             i = 1    
             for student in rec:
+                amount_academics = 0
+                amount_transport = 0
+                amount_overall   = 0
                 if student[3] != 'Admitted':
                     student_name = str(student[1])+'(*)'
                 else:
@@ -445,8 +448,10 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                     mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
                     amount_overall = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Overall')
                     mydict['fee_amount_total'] = '{0:,d}'.format(amount_overall)
-                mydict['sno'] = i
-                result.append(mydict)
+                #donot append students with 0 amount in all categories
+                if amount_overall >0 or amount_academics >0 or amount_transport >0:
+                    mydict['sno'] = i
+                    result.append(mydict)
                 i = i + 1
             return result
 #---------------------------------------------------------------------------------------------------------------------------------------------------
