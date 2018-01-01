@@ -22,7 +22,7 @@ class fee_defaulters(osv.osv_memory):
     """
     This wizard was initially developed for printing defaulter students list only, now we are using this for fee analysis purpose, other reports 
     are also added to this, later on its name will be change in .py and xml file
-    --last updated: 23 oct 17 by Shahid
+    --last updated: 31 DEC 17 by Shahid
     """
     def _get_active_session(self, cr, uid, context={}):
         ssn = self.pool.get('sms.session').search(cr, uid, [('state','=','Active')])
@@ -37,11 +37,13 @@ class fee_defaulters(osv.osv_memory):
               'report_type': fields.selection([('summary','Print Summary (Donot show monthly Details'),('detailed','Detailed Report')],'Options'),
               'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('All','All Fee Categories')],'Fee Category'),
               'order_by':fields.selection([('sms_student.name','Student Name'),('sms_student.registration_no','Registration No'),('sms_student.state','Admission Status'),('sms_academiccalendar.name,sms_student.name','Class')],'Order By'),
-              'show_phone_no':fields.boolean('Display Contact No')
+              'show_phone_no':fields.boolean('Display Contact No'),
+              'base_amount':fields.integer('Dues Greater Than',help = 'Enter an amount e.g 1000, it will search all students having dues greater or equal to 1000.')
                }
     _defaults = {
                  'session':_get_active_session,
                  'category':'Academics',
+                 'base_amount':1,
                  'order_by':'sms_student.registration_no',
            }
     
