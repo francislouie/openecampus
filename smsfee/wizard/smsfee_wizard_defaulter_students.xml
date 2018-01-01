@@ -19,6 +19,7 @@
 	                    <group>
 							 <newline/><field name="order_by" required="1"/>
 							 <newline/><field name="show_phone_no"/>
+							 <newline/><field name="base_amount"/>
 	                   </group>
 	                    
 					</group>

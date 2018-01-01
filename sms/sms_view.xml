@@ -2732,6 +2732,26 @@
 	      </notebook>
 	      </field>
 	    </record>
+
+
+		 <!-- hr contracted inherited for adding dedicting hours for attendance-->
+		<record id="hr_contract_inherited_form2" model="ir.ui.view">
+            <field name="name">hr.contract.fform2</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//group[@name='duration_group']" position="before">
+                        <group string="Deductions">
+                            <field name="hours_to_deduct" />
+                            <field name="amount_to_deduct"/>
+                        </group>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
         <!-- sms.employee-->
 		<record model="ir.ui.view" id="view_sms_employee_form">
 		      <field name="name">hr.employee.inherit</field>

@@ -316,7 +316,31 @@ sms_revision_line_feetypes()
 
 class sms_academiccalendar(osv.osv):
     """This object is used to add fields in sms_academiccalendar"""
- 
+    
+    def return_count_class_defaulter_students(self, cr, uid,ids):
+        """
+        :purpose = Returns list of defaulter students for given class, or returns counted defaulter students in a given class i.e id = ids
+        :param ids:class_id: Id of the class for which students will be searched
+        :called by: This method is not called by any other method or field, we can use it when we need defaulter students for a given class
+        :last modified 30 DEC 2017, Shahid
+        """
+        result = {}
+        
+        sql = """SELECT std_id from sms_academiccalendar_student where name= """+str(ids)
+        cr.execute(sql)
+        students = cr.fetchall()
+        for student in students:
+            my_dict = {'std_id':student[0],'amount_acadamics':'','amount_transport':'','amount_overall':''}
+            my_dict['amount_acadamics'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics')
+            my_dict['amount_transport'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Transport')
+            my_dict['amount_overall'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Overall')
+            result.append(my_dict)
+        return result
+        
+        
+        
+        # for returing list of defaulter students
+          
     def _calculate_class_forecasted_fee(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -409,7 +433,7 @@ class sms_student(osv.osv):
         This methods is called by
         1: Set_payebl methods which is used in f.function on sms_student
         2: Defaulter students list by passing students id
-        
+        3: return_count_class_defaulter_students () > which returns total defaulter students of a class
         Note: this method is also called for transport fee, but this is not inside transport module, we will check its working where tranport is 
         not installed, if it works fine then the same method will be called by all other modules like hostel, mass_sms etc
         """
@@ -431,7 +455,7 @@ class sms_student(osv.osv):
                             
         cr.execute(sql)
         rec = cr.fetchone() 
-        return rec[0]
+        return int(rec[0])
         
     def set_paybles(self, cr, uid, ids, context={}, arg=None, obj=None):
         # temproray inner joins are used to get to fee cateogry of fee ttype, when fee strucre of student fee table is refined, one inner joiin will be removed
@@ -1704,10 +1728,16 @@ class smsfee_receiptbook(osv.osv):
         #user when sending challans for approvals
         result = {}
         records =  self.browse(cr, uid, ids, context)
-#         for f in records:
-#             date_convt = datetime.datetime.strptime(str(f.receipt_date) , '%Y-%m-%d')
-#             date_str = str(date_convt.strftime('%d/%m/%Y'))
-#             result[f.id] = str(f.receipt_date)
+        for f in records:
+            if f.id:
+                sql = """SELECT receipt_date from smsfee_receiptbook where id= """+str(f.id)
+                cr.execute(sql)
+                rdate = cr.fetchone()[0]
+                date_convt = datetime.datetime.strptime(str(rdate) , '%Y-%m-%d')
+                date_str = str(date_convt.strftime('%d-%b-%Y'))
+                result[f.id] = date_str
+            else:
+                result[f.id] = '--'
         return result
     
     def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
@@ -1830,7 +1860,7 @@ class smsfee_receiptbook(osv.osv):
         'std_reg_no': fields.related('student_id','registration_no',type='char',relation='sms.student', string='Registration Number', readonly=True),
         'challan_type':fields.selection([('Full','Full'),('Partial','Partial')],'Challan Type'),
         'receipt_date': fields.date('Payment Date'),
-        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='date', method =True),
+        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='char', method =True),
         'date_receivd_onsystem':fields.datetime('Received on', readonly =True),
         'approve_date': fields.datetime('Date Approved',readonly=True),
     }
