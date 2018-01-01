@@ -387,6 +387,7 @@
 				<field name="employee_id" string="Employee"/>
 				<field name="student_id" string="Student"/>
                 <field name="transport_route" string="Route"/>
+                <field name="registration_no" string="Reg No"/>
 			</search>
 		</field>
 	</record>
