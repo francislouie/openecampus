@@ -1,5 +1,4 @@
 import smsfee_report_feereports
 import report_unpaid_fee_bills_3folded
 import report_unpaid_fee_bills_2folded
-import student_unpaid_fee_challan
 import smsfee_report_open_challans
