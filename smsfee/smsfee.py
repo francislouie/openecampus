@@ -101,7 +101,7 @@ class sms_session_months(osv.osv):
                         for fee in rec_fees:
                         # search all feetypes in this fs of thi class
                             ft_list = []
-                            fee_types_ids = self.pool.get('smsfee.classes.fees.lines').search(cr,uid,[('parent_fee_structure_id','=',fee.id)])
+                            fee_types_ids = self.pool.get('smsfee.classes.fees.lines').search(cr,uid,[('fee_type.category','=','Academics'),('parent_fee_structure_id','=',fee.id)])
                             print "fee lines ",fee_types_ids
                             if fee_types_ids:
                                 rec_fee_types = self.pool.get('smsfee.classes.fees.lines').browse(cr,uid,fee_types_ids)

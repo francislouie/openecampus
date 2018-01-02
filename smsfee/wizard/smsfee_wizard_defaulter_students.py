@@ -62,6 +62,9 @@ class fee_defaulters(osv.osv_memory):
         }
     
     def print_fee_analysis_ms_excel(self, cr, uid, ids, data):
+        print("print_fee_analysis_ms_excel called")
+        classes = self.pool.get('sms.academiccalendar').browse(cr,uid,41)
+        
     
         result = []
         book=xlwt.Workbook()
