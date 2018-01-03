@@ -4224,15 +4224,6 @@ class hr_employee(osv.osv):
     }
 hr_employee()
 
-class hr_attendance(osv.osv):
-    """This object is used to add fields in employee"""
-    _name = 'hr.attendance'
-    _inherit ='hr.attendance'
-        
-    _columns = {
-        'action': fields.selection([('sign_in','sign_out'),('sign_out','sign_out')]),
-    }
-hr_attendance()
 
 class hr_contract(osv.osv):
     """Stores additional informatin to hr contact"""
@@ -4259,7 +4250,7 @@ class hr_contract(osv.osv):
         'hours_to_deduct': fields.float('Hours To Deduct'),
         'amount_to_deduct':fields.function(deduct_amount, method=True, string='Deducted Amount',type='float'),
     }
-hr_attendance()
+hr_contract()
 
 class sms_registration_format(osv.osv):
     """This object is used for regitration format"""
