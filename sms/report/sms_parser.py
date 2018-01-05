@@ -461,11 +461,20 @@ class crossovered_analytic(report_sxw.rml_parse):
             students_acad_cal_rows = self.cr.fetchall()
             
             k = 1
+            # This query is commented, beacuse we want to print practcile marks on sheet, this option should be moved to wizards
+            # where user should selected whether to print or noat           
+#             subject_sql = """SELECT sms_academiccalendar_subjects.id, sms_subject.name, reference_practical_of
+#                 from sms_academiccalendar_subjects
+#                 inner join sms_subject on
+#                 sms_subject.id = sms_academiccalendar_subjects.subject_id
+#                 where offered_as != 'practical' and sms_academiccalendar_subjects.academic_calendar = """ + str(academiccalendar_id) + """ 
+#                 order by sms_subject.name"""
+#             
             subject_sql = """SELECT sms_academiccalendar_subjects.id, sms_subject.name, reference_practical_of
                 from sms_academiccalendar_subjects
                 inner join sms_subject on
                 sms_subject.id = sms_academiccalendar_subjects.subject_id
-                where offered_as != 'practical' and sms_academiccalendar_subjects.academic_calendar = """ + str(academiccalendar_id) + """ 
+                where  sms_academiccalendar_subjects.academic_calendar = """ + str(academiccalendar_id) + """ 
                 order by sms_subject.name"""
                 
             self.cr.execute(subject_sql)
@@ -477,11 +486,18 @@ class crossovered_analytic(report_sxw.rml_parse):
             for subject_row in subject_rows:
                 my_dict1['subject_' + str(count)] = subject_row[1]
                 if subject_row[2]: 
+                    # this query is commented bec we want to print practicles on sheet 
+#                     sql = """SELECT sms_academiccalendar_subjects.id, sms_subject.name 
+#                         from sms_academiccalendar_subjects
+#                         inner join sms_subject on
+#                         sms_subject.id = sms_academiccalendar_subjects.subject_id
+#                         where offered_as != 'practical' and sms_academiccalendar_subjects.id = """ + str(subject_row[2])
+                    
                     sql = """SELECT sms_academiccalendar_subjects.id, sms_subject.name 
                         from sms_academiccalendar_subjects
                         inner join sms_subject on
                         sms_subject.id = sms_academiccalendar_subjects.subject_id
-                        where offered_as != 'practical' and sms_academiccalendar_subjects.id = """ + str(subject_row[2]) 
+                        where sms_academiccalendar_subjects.id = """ + str(subject_row[2]) 
                     
                     self.cr.execute(sql)
                     practical = self.cr.fetchone()

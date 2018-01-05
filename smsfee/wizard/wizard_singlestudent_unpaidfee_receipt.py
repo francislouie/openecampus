@@ -14,6 +14,7 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
     def _get_student(self, cr, uid, ids):
         obj = self.browse(cr, uid, ids['active_id'])
         std_id =  obj.id
+        print("student id...................", std_id)
         return std_id
     
     def _get_unpaid_fee_months(self, cr, uid, ids):
