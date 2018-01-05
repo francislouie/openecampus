@@ -446,7 +446,7 @@ class sms_student(osv.osv):
             sql =   """ SELECT  COALESCE(sum(fee_amount),'0')  FROM smsfee_studentfee
                        inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                         inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                     WHERE student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Transport'  AND state='fee_unpaid'"""
+                     WHERE student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Transport'  AND state='fee_unpaid' order by fee_month"""
             cr.execute(sql)
             amount = float(cr.fetchone()[0])
         result[f.id] = amount
