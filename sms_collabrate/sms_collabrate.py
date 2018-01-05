@@ -332,15 +332,20 @@ class sms_collabrator(osv.osv):
                     receipt_no = this_recipt.manual_recpt_no
                 else:
                     receipt_no = 'Null'
-                    
+                recept_date = datetime.datetime.strptime(str(this_recipt.receipt_date), '%Y-%m-%d').strftime('%d-%m-%Y')
+                
+                recept_month = datetime.datetime.strptime(str(this_recipt.receipt_date), '%Y-%m-%d').strftime('%m') 
+        
+                mname = self.pool.get('sms.session').get_month_name(cr,uid,int(recept_month))
+               
                 my_dict = {
                             'id':this_recipt.id,
                             'name':this_recipt.name,
-                            'receipt_date':this_recipt.receipt_date,
+                            'receipt_date':recept_date,
                             'manual_receipt_no':receipt_no,
                             'total_paybles':this_recipt.total_paybles,
                             'total_paid_amount':this_recipt.total_paid_amount,
-                            'due_date':'2017-01-01',
+                            'due_date':mname,
                             'state':this_recipt.state,
                             'challan_cat':this_recipt.challan_cat,
                             'return_status':1,
