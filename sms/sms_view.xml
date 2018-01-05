@@ -730,7 +730,10 @@
 				  
 			    </page>
 				<page string="Class Subjects">
-				   <field name="active_subjects" domain="[('subject_status','=','Current')]" />
+				   <button name="%(action_wizard_calss_subject)d" string="Add new Subject" states="Admitted" type="action" class="oe_highlight" groups=""/>
+				    
+				    
+				   <field name="active_subjects" domain="[('subject_status','=','Cu rrent')]" />
 			    </page>
 				</notebook>
 				<notebook>
