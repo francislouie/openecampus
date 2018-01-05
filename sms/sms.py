@@ -325,8 +325,8 @@ class sms_session(osv.osv):
             registration_no = self.pool.get('sms.academiccalendar.student')._set_admission_no(cr, uid, student_semester_id,context = None)
             self.pool.get('sms.student').write(cr, uid, student_id, {'registration_no': registration_no})
             
-            subject_ids = self.pool.get('sms.academiccalendar.subjects').search(cr, uid, [('academic_calendar','=', academic_id)], context=context)
-            subject_objects = self.pool.get('sms.academiccalendar.subjects').browse(cr, uid, subject_ids, context=context)
+            subject_ids = self.pool.get('').search(cr, uid, [('academic_calendar','=', academic_id)], context=context)
+            subject_objects = self.pool.get('sms.academiccalendar.subjects').browse(cr, uid, _ids, context=context)
             
             for subject in subject_objects: 
                 self.pool.get('sms.student.subject').create(cr, uid, {
@@ -1641,7 +1641,7 @@ class sms_academiccalendar(osv.osv):
             else:
                 academic_default_ids = self.pool.get('sms.academiccalendar.default').search(cr, uid, [('name','=',f.class_id.id)])
                 if academic_default_ids:
-                    academic_default_object = self.pool.get('sms.academiccalendar.default').browse(cr, uid, academic_default_ids, context=context)
+                    academic_default_object = self.pool.get('sms.academiccalendar.default').browse(cr, uid, academic_deault_ids, context=context)
                      
                     for row in academic_default_object:
                         subject_ids = self.pool.get('sms.academiccalendar.subjects.default').search(cr, uid, [('academic_calendar','=', row.id)], context=context)
