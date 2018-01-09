@@ -634,7 +634,7 @@
 				<notebook>
                 <page string="Information" name="personal_information">
 					<notebook>
-						<page string="Contact Information">
+						<page string="Contact Information" name='contact_information'>
 							 <group>
 			                 	<group string="Personal" name="personal">
 			                   	<field name="father_name" required="1"/>
