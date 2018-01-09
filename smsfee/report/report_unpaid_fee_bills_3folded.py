@@ -154,12 +154,9 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
     def get_class_group(self, data):
         if 'student_id' in self.datas['form']:
             #user is printing indivual student challan from student form, get class id using student id from wizard form
-            print "stucccccccccdent id",self.datas['form']['student_id'][0]  
             cls_id = self.pool.get('sms.student').browse(self.cr,self.uid,self.datas['form']['student_id'][0]).current_class.id
         else:
-            #user is priting challns for whole class, so get class id from wziard form
             cls_id = self.datas['form']['class_id'][0]
-        print "class id",cls_id
         class_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, cls_id)
         return class_obj.group_id.name  
      

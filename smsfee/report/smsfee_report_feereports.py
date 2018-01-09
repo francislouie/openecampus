@@ -447,18 +447,18 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                         mydict['fee_amount_total'] = '{0:,d}'.format(amount_academics)
                 elif this_form['category'] == 'Transport':
                     amount_transport = self.pool.get('sms.student').class_total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Transport','fee_unpaid')
-                    if amount_academics >= this_form['base_amount']:
+                    if amount_transport >= this_form['base_amount']:
                         grand_total_unpaid_dues = grand_total_unpaid_dues + amount_transport
                         mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
                         mydict['fee_amount_academics'] = '--'
                         mydict['fee_amount_total'] = '{0:,d}'.format(amount_transport)
                 elif this_form['category'] == 'All':
                     amount_academics = self.pool.get('sms.student').class_total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Academics','fee_unpaid')
-                    if amount_academics >= this_form['base_amount']:
+                    if amount_academics + amount_transport >this_form['base_amount']:
                         mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
-                        amount_transport = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Transport','fee_unpaid')
+                        amount_transport = self.pool.get('sms.student').class_total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Transport','fee_unpaid')
                         mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
-                        amount_overall = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Overall','fee_unpaid')
+                        amount_overall = self.pool.get('sms.student').class_total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Overall','fee_unpaid')
                         grand_total_unpaid_dues = grand_total_unpaid_dues + amount_transport
                         mydict['fee_amount_total'] = '{0:,d}'.format(amount_overall)
                 #donot append students with 0 amount in all categories
