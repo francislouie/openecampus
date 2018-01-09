@@ -17,6 +17,7 @@ import sms_wizard_failed_student_class_assignment
 import sms_wizard_student_change_section
 import sms_wizard_change_student_class
 import sms_wizard_withdraw_register
+import sms_wizard_calss_subject
 import sms_wizard_expense_report
 import sms_wizard_demote_student
 import sms_wizard_datesheet_list

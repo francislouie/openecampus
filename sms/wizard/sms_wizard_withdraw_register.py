@@ -18,7 +18,7 @@ class sms_withdraw_register(osv.osv_memory):
              }
     _defaults = {
            }
-
+  
     def print_list(self, cr, uid, ids, data):
         result = []
         

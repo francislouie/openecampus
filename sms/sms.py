@@ -11,6 +11,8 @@ import logging
 import datetime
 from lxml import etree
 from openerp.osv.orm import setup_modifiers
+from pdftools.pdfdefs import false
+from openerp.pooler import get_pool
 
 _logger = logging.getLogger(__name__)
 
@@ -325,8 +327,8 @@ class sms_session(osv.osv):
             registration_no = self.pool.get('sms.academiccalendar.student')._set_admission_no(cr, uid, student_semester_id,context = None)
             self.pool.get('sms.student').write(cr, uid, student_id, {'registration_no': registration_no})
             
-            subject_ids = self.pool.get('sms.academiccalendar.subjects').search(cr, uid, [('academic_calendar','=', academic_id)], context=context)
-            subject_objects = self.pool.get('sms.academiccalendar.subjects').browse(cr, uid, subject_ids, context=context)
+            subject_ids = self.pool.get('').search(cr, uid, [('academic_calendar','=', academic_id)], context=context)
+            subject_objects = self.pool.get('sms.academiccalendar.subjects').browse(cr, uid, _ids, context=context)
             
             for subject in subject_objects: 
                 self.pool.get('sms.student.subject').create(cr, uid, {
@@ -726,12 +728,60 @@ class sms_student(osv.osv):
         if context is None:context = {}
         res = super(sms_student, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=False)
         doc = etree.XML(res['arch'])
-        nodes = doc.xpath("//page[@name='personal_information']")
-        for node in nodes:
-            if uid != 1:
+        nodes = doc.xpath("//page[@name='contact_information']")
+        sqluser=""" select res_groups.id from res_groups inner join res_users 
+        on res_groups.id=res_users.partner_id where res_users.id="""+str(uid)
+        cr.execute(sqluser)
+        group_id=cr.fetchone()[0]
+        if group_id !=66:
+            for node in doc.xpath("//field[@name='father_occupation']"):
                 node.set('readonly', '1')
-                node.set('help', 'If you print the report from Account list/form view it will not consider Charts of account')
-                #setup_modifiers(node, res['page']['personal_information'])
+            for node in doc.xpath("//field[@name='father_name']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='gender']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='father_nic']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='father_occupation']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='religion']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='birthday']"):
+                node.set('readonly', '1')
+               # setup_modifiers(node)
+            for node in doc.xpath("//field[@name='Contact']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='phone']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='cell_no']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='fax_no']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='email']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='nationality']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='permanent_address']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='permanent_city']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='permanent_country']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='cur_address']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='cur_city']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='cur_country']"):
+                node.set('readonly', '1')
+            for node in doc.xpath("//field[@name='cell_no']"):
+                node.set('readonly','1')
+            for node in doc.xpath("//field[@name='fax_no']"):
+                node.set('readonly','1')
+            for node in doc.xpath("//field[@name='email']"):
+                node.set('readonly','1')
+            for node in doc.xpath("//field[@name='nationality']"):
+                node.set('readonly','1')
+            
         res['arch'] = etree.tostring(doc)
         return res
     
@@ -1641,7 +1691,7 @@ class sms_academiccalendar(osv.osv):
             else:
                 academic_default_ids = self.pool.get('sms.academiccalendar.default').search(cr, uid, [('name','=',f.class_id.id)])
                 if academic_default_ids:
-                    academic_default_object = self.pool.get('sms.academiccalendar.default').browse(cr, uid, academic_default_ids, context=context)
+                    academic_default_object = self.pool.get('sms.academiccalendar.default').browse(cr, uid, academic_deault_ids, context=context)
                      
                     for row in academic_default_object:
                         subject_ids = self.pool.get('sms.academiccalendar.subjects.default').search(cr, uid, [('academic_calendar','=', row.id)], context=context)
