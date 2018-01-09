@@ -730,8 +730,10 @@
 				  
 			    </page>
 				<page string="Class Subjects">
+
 				<button name="" string="Subject button"  type="action" class="oe_highlight" groups=""/>
 				   <field name="active_subjects" domain="[('subject_status','=','Current')]" />
+
 			    </page>
 				</notebook>
 				<notebook>

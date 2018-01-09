@@ -17,14 +17,14 @@ class sms_report_withdraw_register(report_sxw.rml_parse):
         string = "Withdraw Register \n "
         return string
     def print_withdrawal_register(self, data):
-        print"method is callllllllllllllllllllllllled"
+      
         result = []
         ftlist = []
         this_form = self.datas['form']
         order_by = this_form['order_by']
-        print"ooooooooooooooooooooooorder_ by",order_by
+     
         Ses_id = this_form['session_ids']
-        print"sssssssssssssssssssSection_id",Ses_id
+
             
         if Ses_id:
             Session_str = str(tuple(Ses_id))
@@ -40,8 +40,6 @@ class sms_report_withdraw_register(report_sxw.rml_parse):
              
         self.cr.execute(sql)
         rows = self.cr.fetchall()
-        
-        print"printing in the mid"
         
         for cls_id in rows:
             ftlist.append(cls_id[0])
@@ -91,7 +89,6 @@ class sms_report_withdraw_register(report_sxw.rml_parse):
         session_id = this_form['session_id'][0]
         print "session ",session_id
         class_cat = this_form['class_cat']
-        print"ddddddddddddddddddddddddddddddd",class_cat
         class_cat = 'Primary'
       
         
