@@ -875,7 +875,7 @@ class sms_student(osv.osv):
         'gender': fields.selection([('Male', 'Male'),('Female', 'Female')], 'Gender'),
         'birthday': fields.date("Date of Birth"),
         'blood_grp': fields.selection([('A+', 'A+'),('A-', 'A-'),('B+', 'B+'),('B-', 'B-'),('AB+', 'AB+'),('AB-', 'AB-'),('O+', 'O+'),('O-', 'O-')], 'Blood Group'),
-        'father_name': fields.char(string = "Father", size=32,track_visibility='onchange'),
+        'father_name': fields.char(string = "Father", size=32,track_visibility='onchange',write=['sms.Profile_Manager']),
         'father_occupation': fields.char(string = "Father Occupation", size=32),
         'father_nic': fields.char(string = "Father NIC", size=32),
         'religion': fields.char(string = "Religion", size=32),
@@ -4224,15 +4224,6 @@ class hr_employee(osv.osv):
     }
 hr_employee()
 
-class hr_attendance(osv.osv):
-    """This object is used to add fields in employee"""
-    _name = 'hr.attendance'
-    _inherit ='hr.attendance'
-        
-    _columns = {
-        'action': fields.selection([('sign_in','sign_out'),('sign_out','sign_out')]),
-    }
-hr_attendance()
 
 class hr_contract(osv.osv):
     """Stores additional informatin to hr contact"""
@@ -4259,7 +4250,7 @@ class hr_contract(osv.osv):
         'hours_to_deduct': fields.float('Hours To Deduct'),
         'amount_to_deduct':fields.function(deduct_amount, method=True, string='Deducted Amount',type='float'),
     }
-hr_attendance()
+hr_contract()
 
 class sms_registration_format(osv.osv):
     """This object is used for regitration format"""

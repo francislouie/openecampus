@@ -64,30 +64,91 @@ class sms_collabrator(osv.osv):
             if obj[0].image:
                 pic = obj[0].image
             else:
-                pic = 'pic-not-av'
+                pic = 'Info not available'
+                
+                
+                
+            if obj[0].registration_no:
+                registration_no = obj[0].registration_no
+            else:
+                registration_no = ' Info not available'
+                
+                
+               
+            if obj[0].name:
+                stdname = obj[0].name
+            else:
+                stdname = ' Info not available' 
+            if obj[0].father_name:
+                father_name = obj[0].father_name
+            else:
+                father_name = ' Info not available'    
+            if obj[0].current_class.name:
+                class_name = obj[0].current_class.name
+            else:
+                class_name = ' Info not available'       
+            if obj[0].gender:
+                gender = obj[0].gender
+            else:
+                gender = ' Info not available'      
+                   
+                   
+            if obj[0].phone:
+                contact_no_1 = obj[0].phone
+            else:
+                contact_no_1 = ' Info not available'      
+                          
+            if obj[0].cell_no:
+                contact_no_2 = obj[0].cell_no
+            else:
+                contact_no_2 = ' Info not available'      
+            if obj[0].email:
+                email = obj[0].email
+            else:
+                email = ' Info not available'                            
+                   
+            if obj[0].state:
+                state = obj[0].state
+            else:
+                state = 'Info not available'    
+                
+            if obj[0].cur_address:
+                cur_address = obj[0].cur_address
+            else:
+                cur_address = ' Info not available'      
+                
+                
+            if obj[0].cur_city:
+                cur_city = obj[0].cur_city
+            else:
+                cur_city = ' Info not available'       
+                
+                     
             my_dict = {
-                        'registration_no':obj[0].registration_no,
-                        'stdname':obj[0].name,
-                        'fathername':obj[0].father_name,
+                        'registration_no':registration_no,
+                        'stdname':stdname,
+                        'fathername':father_name,
                         'class_id':obj[0].current_class.id,
-                        'class_name':obj[0].current_class.name,
+                        'class_name':class_name,
                         'pic':pic,
                         'std_id':obj[0].id,
-                        'state':obj[0].state,
+                        'state':state,
                         'blood_group':obj[0].blood_grp,
                         'gender':obj[0].gender,
                         'date_of_birth':obj[0].birthday,
                         'father_nic':obj[0].father_nic,
-                        'contact_no_1':obj[0].phone,
-                        'contact_no_2':obj[0].cell_no,
-                        'email':obj[0].email,
+                        'contact_no_1':contact_no_1,
+                        'contact_no_2':contact_no_2,
+                        'email':email,
                         'transport_availed':obj[0].transport_availed,
-                        'address':obj[0].cur_address,
-                        'city':obj[0].cur_city,
+                        'address':cur_address,
+                        'city':cur_city,
                         'display_contact_info':disp_cntct_prtal,
                         'login_status':1
                     }
             result.append(my_dict)
+            
+            print"Result",result
         return result
 
     def getstudent_notifications(self, cr, uid, student_id):
@@ -462,7 +523,17 @@ class sms_collabrator(osv.osv):
                         }
             result.append(my_dict)
         return result  
+    def sms_exam_marksheet_test(self, cr, uid, student_id, class_id):
+        result="hhhhhhhhhhhhhhhhhh"
+        return result
 
+    def daily_class_attendence(self, cr, uid, ids, class_id, date):
+        
+        print"daily_class_attendence method is fine"
+        result=self.pool.get('sms.academiccalendar').get_class_attendance(cr, uid, ids, class_id, date)
+        
+        print"Daily class attendence",result
+        return result
     def sms_exam_marksheet(self, cr, uid, student_id, class_id):
         result = []
         get_portal_setting = """SELECT exammark_prtal FROM sms_student WHERE id= """+str(student_id)

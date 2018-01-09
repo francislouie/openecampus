@@ -46,11 +46,16 @@ class sms_wizard_class_subject(osv.osv_memory):
 #         ftlist = tuple(ftlist)
 #         ftlist = str(ftlist).rstrip(',)')
 #         ftlist = ftlist+')'
-              
+        date='2017-01-01'
+        student_id=6
+        ids=[60]
+        
+        
+        mname = self.pool.get('sms.collabrator').getstudent_personal_info( cr, uid, student_id)
           
-        print"testtttttttttttttttttttttttt-----------------",ftlist
+        print"testtttttttttttttttttttttttt-----------------",mname
         return ftlist
-
+  
     
     _name = "sms.wizard.class.subject"
     _description = "wizard for adding subject to student"                                
@@ -64,17 +69,17 @@ class sms_wizard_class_subject(osv.osv_memory):
     
     _defaults = {
         'student_id':_get_student,
-        
+         'state':_get_current_subjects
                 }
 
     def create_class_subject(self, cr, uid, ids, data):
        
         dat= self.read(cr, uid, ids)[0],
         form_data=dat[0]
-        
         state=form_data["state"]
         student_id=form_data["student_id"][0]
         subject_ids=form_data["subject_ids"]
+        
         if student_id:
            sql="""SELECT current_class from sms_student 
            where id="""+str(student_id) + """ 

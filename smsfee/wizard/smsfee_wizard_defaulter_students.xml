@@ -24,6 +24,9 @@
 	                    
 					</group>
 					<group>
+					   <field name="fee_type_list"  widget="many2many_tags" placeholder="Fee Types" nolabel="1"/>
+					</group>
+					<group>
 						
 	                      	<field name="class_id" placeholder="Classes" nolabel="1"/>
 	                    </group>

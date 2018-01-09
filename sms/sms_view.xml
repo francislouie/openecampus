@@ -623,7 +623,7 @@
 			<h1><field name="name" placeholder="Student Name" /></h1>
 			<h2><field name="current_class" placeholder="current_class" /></h2>
 			</div>
-			<group col="6" colspan="2">
+			<group    col="6" colspan="2">
 				<field name="registration_no" widget="" placeholder="" groups=""/>
 				<field name="login_id" readonly="1"/>
 				<field name="password" readonly="1"/>
@@ -641,8 +641,8 @@
 								<field name="gender"  required="1"/>
 								<field name="father_nic"/>
 								<field name="father_occupation"/>
-								 <field name="religion" />
-								<field name="birthday" />
+								<field name="religion"/>
+								<field name="birthday"/>
 			                  </group>
 								<group string="Contact">
 								<field name="phone"  />
@@ -730,10 +730,13 @@
 				  
 			    </page>
 				<page string="Class Subjects">
+
 				   <button name="%(action_wizard_calss_subject)d" string="Add new Subject" states="Admitted" type="action" class="oe_highlight" groups=""/>
-				    
-				    
 				   <field name="active_subjects" domain="[('subject_status','=','Cu rrent')]" />
+
+				<button name="" string="Subject button"  type="action" class="oe_highlight" groups=""/>
+				   <field name="active_subjects" domain="[('subject_status','=','Current')]" />
+
 			    </page>
 				</notebook>
 				<notebook>
@@ -3051,13 +3054,13 @@
                    </group>
 				   <newline/>
 					<notebook>
-						<page string="Contact Information"  attrs="{'readonly':[('state','=','Confirm')]}">
+						<page string="Contact Information"   attrs="{'readonly':[('state','=','Confirm')]}">
 						 <group>
 		                 	<group string="Personal">
 			                   	<field name="gender"  required="1"/>
-								<field name="father_nic" required="1"/>
+								<field name="father_nic" required="1" groups='base.group_sms_profile_manager'/>
 								<field name="blood_grp"/>
-								<field name="father_occupation"/>
+								<field name="father_occupation"  />
 								 <field name="religion" />
 								<field name="birthday" />
 		                  	</group>
