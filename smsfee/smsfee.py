@@ -495,12 +495,12 @@ class sms_student(osv.osv):
             sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
                        inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                         inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics' """
+                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics' order by smsfee_feetypes.id, fee_month  """
             cr.execute(sql)
             res[f.id] = [x[0] for x in cr.fetchall()]
 #         raise osv.except_osv((res), (sql))
           
-            print"this is the id",res
+            print"this is the iddddddddddddddddddddddddd",res
         return res
     #sms_student    
     _name = 'sms.student'
@@ -512,7 +512,7 @@ class sms_student(osv.osv):
             'discount_reason': fields.char(string='Reason of Discount', size=100),
             'studen_fee_ids':fields.one2many('smsfee.studentfee', 'student_id','Student Fee'),
             'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
-            'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
+            'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Feeee'),
             'fee_bills':fields.one2many('smsfee.receiptbook', 'student_id','Fee Bills' ),
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),
@@ -1784,6 +1784,7 @@ class smsfee_receiptbook(osv.osv):
             challan_ids = self.pool.get('smsfee.receiptbook').search(cr, uid,
                                                                      [('student_id','=',student_id),
                                                                       ('student_class_id','=', class_id),
+                                                                      ('fee_received_by','=',uid),
                                                                       ('state','=','fee_calculated'),
                                                                       ('challan_cat','=',category)])
             print "we are canceling challans:",challan_ids

@@ -634,7 +634,7 @@
 				<notebook>
                 <page string="Information" name="personal_information">
 					<notebook>
-						<page string="Contact Information">
+						<page string="Contact Information" name='contact_information'>
 							 <group>
 			                 	<group string="Personal" name="personal">
 			                   	<field name="father_name" required="1"/>
@@ -731,8 +731,6 @@
 			    </page>
 				<page string="Class Subjects">
 
-				   <button name="%(action_wizard_calss_subject)d" string="Add new Subject" states="Admitted" type="action" class="oe_highlight" groups=""/>
-				   <field name="active_subjects" domain="[('subject_status','=','Cu rrent')]" />
 
 				<button name="" string="Subject button"  type="action" class="oe_highlight" groups=""/>
 				   <field name="active_subjects" domain="[('subject_status','=','Current')]" />
