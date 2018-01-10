@@ -102,7 +102,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         if self.datas['form']['category']== 'Academics':
             line2 = company_recs[0].company_cfieldtwo
         elif self.datas['form']['category'] == 'Transport':
-            lin2 = company_recs[0].company_cfieldtwo_trans
+            line2 = company_recs[0].company_cfieldtwo_trans
         return line2
     
     def get_challan_header_linethree(self):
@@ -152,12 +152,13 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         return due_date 
 
     def get_class_group(self, data):
-        cls_id = self.datas['form']['class_id'][0]
-        class_id = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('id','=',cls_id)])
-        class_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id)
-        for obj in class_obj:
-            group = obj.group_id.name
-        return group  
+        if 'student_id' in self.datas['form']:
+            #user is printing indivual student challan from student form, get class id using student id from wizard form
+            cls_id = self.pool.get('sms.student').browse(self.cr,self.uid,self.datas['form']['student_id'][0]).current_class.id
+        else:
+            cls_id = self.datas['form']['class_id'][0]
+        class_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, cls_id)
+        return class_obj.group_id.name  
      
     def get_challans(self, data):
         #currentlty this parser is set to call for whole class challans orinting
