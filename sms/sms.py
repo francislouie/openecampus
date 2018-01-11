@@ -3,6 +3,7 @@ from openerp import tools
 from openerp import addons
 import xlwt
 import xlrd
+import calendar
 from datetime import datetime, timedelta
 from datetime import datetime
 from dateutil import parser
@@ -3123,6 +3124,17 @@ class sms_attendance(osv.osv):
     _sql_constraints = [  
         ('Attendance Exists', 'unique (class,cls_date)', 'Attendance already Entered !')
     ]  
+
+    
+    def get_student_monthly_attendence(self,cr,std_id,date_from,date_to):
+        std= """select sms_class_attendance.attendance_date,sms_class_attendance_lines.state from sms_class_attendance inner join sms_class_attendance_lines 
+        on sms_class_attendance.id = sms_class_attendance_lines.parent_id where  sms_class_attendance.attendance_date BETWEEN '"""+str(date_from)+ """' AND '"""+str(date_to)+ """'
+        and sms_class_attendance_lines.student_name ="""+str(std_id)+ """ """
+        cr.execute(std)
+        result = cr.fetchall()
+       
+        return result
+
 sms_attendance()
 
 class sms_attendancelines(osv.osv):

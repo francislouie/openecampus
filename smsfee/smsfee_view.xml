@@ -56,6 +56,8 @@
 						<group>
 						 	<field name="fee_display_portal"/>
 						 	<field name="display_refundable"/>
+						 	
+						 	
 						</group>
 		          	</page>
 				   </notebook>
@@ -352,6 +354,7 @@
 					<page string="Portal Settings">
 						<group colspan="4" col="2">
 							<field name="exammark_prtal" string="Donnot Show Exam Detail"/>
+	                        <field name="info_portal" string="Show Personal Information?"/>
 							<field name="disp_cntct_prtal" />
 						</group>
 					</page>
