@@ -65,6 +65,7 @@ class sms_offdays(osv.osv):
 sms_offdays()
 
 class sms_academiccalendar(osv.osv):
+ 
     
     def get_class_attendance(self, cr, uid, ids, class_id, date):
         sql = """SELECT 

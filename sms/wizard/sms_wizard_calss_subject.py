@@ -14,7 +14,7 @@ class sms_wizard_class_subject(osv.osv_memory):
         ftlist = []
         stdobj = self.browse(cr, uid, ids['active_id'])
         std_id =  stdobj.id
-        print"dffdfdff",std_id
+    
         sql="""SELECT current_class from sms_student 
         where id="""+str(std_id) + """ 
         AND current_state='Current'"""
@@ -37,18 +37,19 @@ class sms_wizard_class_subject(osv.osv_memory):
         cr.execute(sql)
         ft_ids = cr.fetchall()
         
-        print"aaaaaaaaaaaaaaaaaaa",ft_ids
+       
         
         for ft in ft_ids:
             
             ftlist.append(ft[0])
-#         print"cccccccccccccccc",ftlist
-#         ftlist = tuple(ftlist)
-#         ftlist = str(ftlist).rstrip(',)')
-#         ftlist = ftlist+')'
-              
-          
-        print"testtttttttttttttttttttttttt-----------------",ftlist
+
+        stdid=701
+        
+        datefrom='2017-08-01'
+   
+        result=self.pool.get('sms.collabrator').monthly_class_attendence(cr,stdid,datefrom)
+        
+      
         return ftlist
 
     
@@ -64,7 +65,7 @@ class sms_wizard_class_subject(osv.osv_memory):
     
     _defaults = {
         'student_id':_get_student,
-        
+        'state':_get_current_subjects
                 }
 
     def create_class_subject(self, cr, uid, ids, data):

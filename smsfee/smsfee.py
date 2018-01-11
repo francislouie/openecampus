@@ -40,6 +40,7 @@ class res_company(osv.osv):
     'campus_code':fields.char('Campus Code', size=64),
     'fee_display_portal':fields.selection([('fee_unpaid','Un-Paid Fee'),('fee_paid','Paid Fee')],'Fee (Displayed on Portal)'),
     'display_refundable':fields.boolean('Display Refundable Fee'),
+    
     }
     _defaults = {
                  'fee_report_type':'One_on_One',
@@ -519,6 +520,8 @@ class sms_student(osv.osv):
             'disp_cntct_prtal':fields.boolean('Display Student Contacts?'),
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
             'exammark_prtal':fields.boolean('Show Exam Marks?'),
+            'info_portal':fields.boolean('Show Personal Information?')
+          
             }
     _defaults = {
         'discount_given': False,
