@@ -40,6 +40,7 @@ class res_company(osv.osv):
     'campus_code':fields.char('Campus Code', size=64),
     'fee_display_portal':fields.selection([('fee_unpaid','Un-Paid Fee'),('fee_paid','Paid Fee')],'Fee (Displayed on Portal)'),
     'display_refundable':fields.boolean('Display Refundable Fee'),
+    
     }
     _defaults = {
                  'fee_report_type':'One_on_One',
@@ -317,12 +318,12 @@ sms_revision_line_feetypes()
 class sms_academiccalendar(osv.osv):
     """This object is used to add fields in sms_academiccalendar"""
     
-    def return_count_class_defaulter_students(self, cr, uid,ids):
+    def return_count_class_defaulter_students_list(self, cr, uid,ids):
         """
         :purpose = Returns list of defaulter students for given class, or returns counted defaulter students in a given class i.e id = ids
         :param ids:class_id: Id of the class for which students will be searched
         :called by: This method is not called by any other method or field, we can use it when we need defaulter students for a given class
-        :last modified 30 DEC 2017, Shahid
+        :last modified 7 JAN 2017, Shahid
         """
         result = {}
         
@@ -331,9 +332,9 @@ class sms_academiccalendar(osv.osv):
         students = cr.fetchall()
         for student in students:
             my_dict = {'std_id':student[0],'amount_acadamics':'','amount_transport':'','amount_overall':''}
-            my_dict['amount_acadamics'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics')
-            my_dict['amount_transport'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Transport')
-            my_dict['amount_overall'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Overall')
+            my_dict['amount_acadamics'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics','fee_unpaid')
+            my_dict['amount_transport'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Transport','fee_unpaid')
+            my_dict['amount_overall'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Overall','fee_unpaid')
             result.append(my_dict)
         return result
         
@@ -425,15 +426,19 @@ class sms_student(osv.osv):
         }
         return result 
     
-    def total_outstanding_dues(self, cr, uid, student_id,fee_category):
+    def total_outstanding_dues(self, cr, uid, student_id,fee_category,return_choice):
         """
-        This method returns total outstanding dues of a stduent in academics section only. 
+        This method returns total outstanding dues,total paid dues, or both of a stduent in academics section only. 
         No other function will be cereated on parser or any place to calculate dues of academics for a students, all methods in wizard report 
         or in any place will call this method
         This methods is called by
         1: Set_payebl methods which is used in f.function on sms_student
         2: Defaulter students list by passing students id
         3: return_count_class_defaulter_students () > which returns total defaulter students of a class
+        Important porint:
+        1) call this method only when 1) student whole fee irrespective of a class to be found (Paid,unpaid,both), this method doesnot belong to any
+           class
+           
         Note: this method is also called for transport fee, but this is not inside transport module, we will check its working where tranport is 
         not installed, if it works fine then the same method will be called by all other modules like hostel, mass_sms etc
         """
@@ -456,6 +461,78 @@ class sms_student(osv.osv):
         cr.execute(sql)
         rec = cr.fetchone() 
         return int(rec[0])
+    
+    def class_total_outstanding_dues(self, cr, uid, student_id,class_id,fee_category,return_choice):
+        """
+        This method returns total outstanding dues,total paid dues, or both of a stduent for a specific class . 
+        No other function will be cereated on parser or any place to calculate dues , all methods in wizard report 
+        or in any place will call this method
+        This methods is called by
+        1: Setclass_payebl methods which is used in f.function on sms_acadecmiclacalender student (thiis field is not yet created)
+        2: Defaulter students list by passing students id and class_id,
+        3: return_count_class_defaulter_students () > which returns total defaulter students of a class
+        Important porint:
+        1) call this method only when 1) student whole fee belong to a given class 
+           class
+           
+        Note: this method is also called for transport fee, but this is not inside transport module, we will check its working where tranport is 
+        not installed, if it works fine then the same method will be called by all other modules like hostel, mass_sms etc
+        """
+        if fee_category == 'Overall':
+            sql= """SELECT COALESCE(sum(fee_amount),'0') as fee_amount from smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where smsfee_studentfee.state = '""" +str(return_choice)+"""'
+                            and smsfee_studentfee.student_id = """+str(student_id)
+        else:
+            sql= """SELECT COALESCE(sum(fee_amount),'0') as fee_amount from smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where smsfee_feetypes.category = '""" +fee_category+"""'
+                            and smsfee_studentfee.state = '""" +str(return_choice)+"""'
+                            and smsfee_studentfee.student_id = """+str(student_id)
+                            
+        cr.execute(sql)
+        rec = cr.fetchone() 
+        return int(rec[0])
+    
+    def get_student_fees_lines(self, cr, uid, student_id,class_id,fee_category,return_choice):
+        """
+        --This method returns studentfeeslines(paid,unpaid or both) from table (smsfee_studentfee)
+        --para, return_choice may have one of the values (fee_paid,fee_unpaid,paid_and_unpaid)
+        --param fee_category: Academics, Transport,Overall   
+        --called by: 1) sms_collaborator for portal
+        """
+        if return_choice == 'paid_and_unpaid':
+            sub_query = """ and smsfee_studentfee.state in (fee_paid,fee_unpaid) """
+        else:
+            sub_query = """ and smsfee_studentfee.state =  '"""+str(return_choice)+"""' """
+       
+        if class_id:
+            class_query = """ and smsfee_studentfee.acad_cal_id= """+str(class_id)
+        else:
+            class_query = """ """
+        if fee_category == 'Overall':
+            sql= """SELECT  smsfee_studentfee.id,smsfee_feetypes.name,smsfee_studentfee.fee_amount,smsfee_studentfee.state  from smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where 
+                             smsfee_studentfee.student_id = """+str(student_id)+sub_query+class_query
+        else:
+            sql= """SELECT smsfee_studentfee.id,smsfee_feetypes.name,smsfee_studentfee.fee_amount,smsfee_studentfee.state  from smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where smsfee_feetypes.category = '""" +fee_category+"""'
+                            and smsfee_studentfee.student_id = """+str(student_id)+sub_query+class_query
+                            
+        print "sql::::::::",sql
+        cr.execute(sql)
+        rec = cr.fetchall() 
+        return rec
         
     def set_paybles(self, cr, uid, ids, context={}, arg=None, obj=None):
         # temproray inner joins are used to get to fee cateogry of fee ttype, when fee strucre of student fee table is refined, one inner joiin will be removed
@@ -519,6 +596,8 @@ class sms_student(osv.osv):
             'disp_cntct_prtal':fields.boolean('Display Student Contacts?'),
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
             'exammark_prtal':fields.boolean('Show Exam Marks?'),
+            'info_portal':fields.boolean('Show Personal Information?')
+          
             }
     _defaults = {
         'discount_given': False,
