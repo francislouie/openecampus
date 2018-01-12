@@ -512,7 +512,7 @@ class sms_student(osv.osv):
             'discount_reason': fields.char(string='Reason of Discount', size=100),
             'studen_fee_ids':fields.one2many('smsfee.studentfee', 'student_id','Student Fee'),
             'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
-            'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Feeee'),
+            'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
             'fee_bills':fields.one2many('smsfee.receiptbook', 'student_id','Fee Bills' ),
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),

@@ -102,7 +102,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         if self.datas['form']['category']== 'Academics':
             line2 = company_recs[0].company_cfieldtwo
         elif self.datas['form']['category'] == 'Transport':
-            lin2 = company_recs[0].company_cfieldtwo_trans
+            line2 = company_recs[0].company_cfieldtwo_trans
         return line2
     
     def get_challan_header_linethree(self):
