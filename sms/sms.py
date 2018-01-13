@@ -12,7 +12,6 @@ import logging
 import datetime
 from lxml import etree
 from openerp.osv.orm import setup_modifiers
-from pdftools.pdfdefs import false
 from openerp.pooler import get_pool
 
 _logger = logging.getLogger(__name__)
