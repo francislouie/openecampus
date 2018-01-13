@@ -3129,7 +3129,7 @@ class sms_attendance(osv.osv):
     def get_student_monthly_attendence(self,cr,std_id,date_from,date_to):
         std= """select sms_class_attendance.attendance_date,sms_class_attendance_lines.state from sms_class_attendance inner join sms_class_attendance_lines 
         on sms_class_attendance.id = sms_class_attendance_lines.parent_id where  sms_class_attendance.attendance_date BETWEEN '"""+str(date_from)+ """' AND '"""+str(date_to)+ """'
-        and sms_class_attendance_lines.student_name ="""+str(std_id)+ """ """
+        and sms_class_attendance_lines.student_name ="""+str(std_id)+ """order by sms_class_attendance.attendance_date DESC """
         cr.execute(std)
         result = cr.fetchall()
        
@@ -3330,29 +3330,43 @@ class sms_exam_offered(osv.osv):
         return result
     
     def start_exam(self, cr, uid, ids, *args):
+                               
         rec = self.browse(cr,uid,ids)
         print "exam offered id",rec[0].id
+        
+        sql ="""select session_year,state from sms_exam_offered where id = """ +str(rec[0].id)+""" """
+        cr.execute(sql)
+        ex_ses = cr.fetchone()
+        ses_id = ex_ses[0]
+        sql ="""select id from sms_exam_offered where session_year = """ +str(ses_id)+"""AND state='Active' """
+        cr.execute(sql)
+        Active_exam = cr.fetchone()
+        print"Active exam",Active_exam
+        if not Active_exam:
         # find active academiccalendars that of this session
-        academiccalendar_ids = self.pool.get('sms.academiccalendar').search(cr,uid,[('state','=','Active'),('session_id','=',rec[0].session_year.id)])
-        if academiccalendar_ids:
-
-            #self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
-            self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
-            for calendar in academiccalendar_ids:
-                datesheet_id = self.pool.get('sms.exam.datesheet').create(cr,uid,{
-                                                            'academiccalendar':calendar, 
-                                                            'exam_type':rec[0].exam_type.id,
-                                                            'exam_offered':rec[0].id,
-                                                            'start_date':rec[0].start_date,
-                                                            'status':'Active'})
+        
+            academiccalendar_ids = self.pool.get('sms.academiccalendar').search(cr,uid,[('state','=','Active'),('session_id','=',rec[0].session_year.id)])
+            if academiccalendar_ids:
+                
+                #self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
+                self.write(cr, uid, ids, {'state':'Active','start_date':datetime.date.today()})
+                for calendar in academiccalendar_ids:
+                    datesheet_id = self.pool.get('sms.exam.datesheet').create(cr,uid,{
+                                                                'academiccalendar':calendar, 
+                                                                'exam_type':rec[0].exam_type.id,
+                                                                'exam_offered':rec[0].id,
+                                                                'start_date':rec[0].start_date,
+                                                                'status':'Active'})
+            else:
+                raise osv.except_osv(('Cannot Start Exam'),('No Active class found for this exam, You have either all clesses in Draft State,OR you didnot create classes for this session'))
+            
+            #. create log
+            state = rec[0].state 
+            dict={'state':'Active'}
+            self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_offered','Start exam',state)        
         else:
-            raise osv.except_osv(('Cannot Start Exam'),('No Active class found for this exam, You have either all clesses in Draft State,OR you didnot create classes for this session'))
-        
-        #. create log
-        state = rec[0].state 
-        dict={'state':'Active'}
-        self.pool.get('project.transactional.log').create_transactional_logs( cr, uid,dict,'sms_exam_offered','Start exam',state)        
-        
+                raise osv.except_osv(('Cannot Start Exam'),('There is already an exam in active state in this session'))
+                
         return True
     
     def close_exam(self, cr, uid, ids, *args):
@@ -3399,7 +3413,7 @@ class sms_exam_offered(osv.osv):
         'exam_type': fields.many2one('sms.exam.type', 'Exam Type',required=True),
         'start_date': fields.date('Start Date'),
         'closing_date': fields.date('Closing Date'),
-        'session_year': fields.many2one('sms.session', 'Session',  required=True, help="Session Year "),
+        'session_year': fields.many2one('sms.session', 'Session',  required=True, help="Session Year ",domain="[('state','=','Active')]"),
         'state': fields.selection([('Draft','Draft'),('Active','Active'),('Closed','Closed'),('Cancelled','Cancelled')],'Status'),
         'datesheet_ids' :fields.one2many('sms.exam.datesheet', 'exam_offered', 'Datesheets'),
         'result':fields.function(set_result, method=True,  string='Result(%)',type='float'),

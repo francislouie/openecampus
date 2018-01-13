@@ -532,7 +532,7 @@ class sms_collabrator(osv.osv):
         result="hhhhhhhhhhhhhhhhhh"
         return result
 
-    def monthly_class_attendence(self, cr,stdid,datefrom):
+    def monthly_class_attendence(self, cr,uid,stdid,datefrom):
         year = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%Y'))
         mont = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%m'))
        

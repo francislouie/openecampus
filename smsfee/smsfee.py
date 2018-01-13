@@ -497,6 +497,7 @@ class sms_student(osv.osv):
         cr.execute(sql)
         rec = cr.fetchone() 
         return int(rec[0])
+
     
     def get_student_fees_lines(self, cr, uid, student_id,class_id,fee_category,return_choice):
         """
@@ -533,6 +534,7 @@ class sms_student(osv.osv):
         cr.execute(sql)
         rec = cr.fetchall() 
         return rec
+
         
     def set_paybles(self, cr, uid, ids, context={}, arg=None, obj=None):
         # temproray inner joins are used to get to fee cateogry of fee ttype, when fee strucre of student fee table is refined, one inner joiin will be removed
