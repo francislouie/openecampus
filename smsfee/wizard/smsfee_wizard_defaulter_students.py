@@ -17,6 +17,7 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from xml.etree import ElementTree
 import os
+from openerp.osv.orm import browse_record
 
 class fee_defaulters(osv.osv_memory):
     """
@@ -39,6 +40,7 @@ class fee_defaulters(osv.osv_memory):
               'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('All','All Fee Categories')],'Fee Category'),
               'order_by':fields.selection([('sms_student.name','Student Name'),('sms_student.registration_no','Registration No'),('sms_student.state','Admission Status'),('sms_academiccalendar.name,sms_student.name','Class')],'Order By'),
               'show_phone_no':fields.boolean('Display Contact No'),
+              'developer_mode':fields.boolean('For Developer'),
               'base_amount':fields.integer('Dues Greater Than',help = 'Enter an amount e.g 1000, it will search all students having dues greater or equal to 1000.')
                }
     _defaults = {
@@ -65,14 +67,7 @@ class fee_defaulters(osv.osv_memory):
     def print_fee_analysis_ms_excel(self, cr, uid, ids, data):
         print("print_fee_analysis_ms_excel called")
        
-        selected_fee_list=[]
-        for f in self.browse(cr, uid, ids):
-            for s in f.fee_type_list:
-                selected_fee_list.append(s.id)     
-                
-        classes = self.pool.get('sms.academiccalendar').browse(cr,uid,41)
-         
-     
+      
         result = []
         book=xlwt.Workbook()
         header_top =  xlwt.Style.easyxf('font: bold 0, color white,  height 250;'
@@ -114,6 +109,14 @@ class fee_defaulters(osv.osv_memory):
                              'pattern: pattern solid, fore_colour  white;'
                              'font: color red'
                              )
+        
+        selected_fee_list=[]
+        for f in self.browse(cr, uid, ids):
+            for s in f.fee_type_list:
+                selected_fee_list.append(s.id)     
+        #classes = self.pool.get('sms.academiccalendar').browse(cr,uid,41)
+       
+         
         #loop via classes, for each class there will be 1 sheet
          
         collected_classes = []
@@ -129,13 +132,14 @@ class fee_defaulters(osv.osv_memory):
                 class_ctr = 1
                 row = 0
                 for this_class in classes:
+                    print("this_class.name",this_class.name)
                      
                     sheet1=book.add_sheet(str(class_ctr)+" "+str(this_class.name),cell_overwrite_ok=True)
                     title = this_class.name
                     class_ctr = class_ctr + 1
-                    _col = (sheet1.col(1)).width = 200 * 20
+                    _col = (sheet1.col(1)).width = 200 * 15
                     _col = (sheet1.col(2)).width = 300 * 15
-                    _col = (sheet1.row(3)).height = 200 * 15
+                    _col = (sheet1.row(3)).height = 300 * 15
                     _col = (sheet1.row(3)).height = 200 * 15
                      
                     sheet1.write(3,1,'Rego NO',header_top)
@@ -168,8 +172,9 @@ class fee_defaulters(osv.osv_memory):
                    
                     for fee in feerec2:
                         fee_ids_list.append(fee[0])
+                        print("this_class",this_class,"this_class.session_id",this_class.session_id,"/nthis_class.session_id.id",this_class.session_id.id)
                         
-                        sql3 = """SELECT id,name from sms_session_months where session_id  = """+str(this_class.session_id.id)+"""order by name """
+                        sql3 = """SELECT id,name from sms_session_months where session_id  = """+str(this_class.session_id.id)+""" order by session_year, to_date(name,'Month') """
                         cr.execute(sql3)
                         months = cr.fetchall()
                         annual_number=4
@@ -177,8 +182,11 @@ class fee_defaulters(osv.osv_memory):
                         if fee[0] ==2:
                             if fee[0]==2:
                                 month_ids_list = []  #chnages: result2 replaced wiht month_ids_list
-                                for this_month in months:                                
-                                    ft_name = str(fee[1])+"\n"+str(this_month[1])+"\nmonth_id:"+str(this_month[0])+"\nfee_id:"+str(fee[0])
+                                for this_month in months:
+                                    if f.developer_mode:                                
+                                        ft_name = str(fee[1])+"\n"+str(this_month[1])+"\nmonth_id:"+str(this_month[0])+"\nfee_id:"+str(fee[0])
+                                    else:
+                                        ft_name=str(fee[1])+"\n"+str(this_month[1])
                                     sheet1.write_merge(r1=0, c1=0, r2=2, c2=11)
                                     _col = (sheet1.row(col_fee)).height = 100 * 10
                                     _col = (sheet1.col(col_fee)).width = 400 * 20
@@ -193,9 +201,12 @@ class fee_defaulters(osv.osv_memory):
                             annual_number=annual_number+1
                             sheet1.write_merge(r1=0, c1=0, r2=2, c2=11)
                             _col = (sheet1.row(col_fee)).height = 100 * 10
-                            _col = (sheet1.col(col_fee)).width = 300 * 20
+                            _col = (sheet1.col(col_fee)).width = 200 * 20
                             sheet1.write(0,3, title,header_feetypes )
-                            ft_name = str(fee[1])+"\nfee_id:"+str(fee[0])
+                            if f.developer_mode:
+                                ft_name = str(fee[1])+"\nfee_id:"+str(fee[0])
+                            else:
+                                ft_name=str(fee[1])
                             sheet1.write(3,col_fee,ft_name,header_feetypes )
                             #popluate dict1 for non mnthly fees
                             col_fee = col_fee +1
@@ -214,8 +225,9 @@ class fee_defaulters(osv.osv_memory):
                     for this_student in students:
                         color=not color 
              
-                        _col = (sheet1.col(1)).width = 200 * 20
-                        _col = (sheet1.col(1)).height = 200 *20
+                        _col = (sheet1.col(1)).width = 200 * 10
+                        _col = (sheet1.col(1)).height = 200 *10
+                        _col = (sheet1.row(row)).height = 100 * 10
                         
                         if color:
                             sheet1.write(row,1, this_student[1],student_grey_rows )
@@ -239,16 +251,23 @@ class fee_defaulters(osv.osv_memory):
                                    
                                     cr.execute(sql5)
                                     stdfee = cr.fetchall()
+                                    print("stdfee",stdfee)
                                     for found_fee in stdfee:
                                         #print( "generic fee type",fees2,"fee_month",month2,"this_student",this_student[0])
                                         if found_fee[3]==2:
                                             if found_fee[4]=='fee_paid':
-                                                label = 'Paid Amount'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])+"state:"+str(found_fee[4])
+                                                if f.developer_mode:
+                                                    label = 'Paid Amount:\n'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3]) 
+                                                else:
+                                                    label='Paid Amount:\n'+str(found_fee[2]) 
                                                 sheet1.write(row,month_dict_ids[month2+fees2], label,paid_fee)
                                                 col_month = col_month + 1
                                                 col_fee=col_fee+1
                                             else:
-                                                label = 'Fee Amount'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])+"state:"+str(found_fee[4])
+                                                if f.developer_mode:
+                                                    label = 'Fee Amount:\n'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                                else:
+                                                    label='Fee Amount\n'+str(found_fee[2]) 
                                                 sheet1.write(row,month_dict_ids[month2+fees2], label,unpaid_fee)
                                                 col_month = col_month + 1
                                                 col_fee=col_fee+1
@@ -257,10 +276,16 @@ class fee_defaulters(osv.osv_memory):
                                                 
                                         else:
                                             if found_fee[4]=='fee_paid':
-                                                label = 'Paid Amount'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                                if f.developer_mode:
+                                                    label = 'Paid Amount:\n'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                                else:
+                                                    label='Paid Amount:\n'+str(found_fee[2]) 
                                                 sheet1.write(row,annual_dict_ids[fees2], label,student_white_rows)
                                             else:
-                                                label = 'Fee Amount'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                                if f.developer_mode:
+                                                    label = 'Fee Amount:\n'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                                else:
+                                                    label='Fee Amount:\n '+str(found_fee[2]) 
                                                 sheet1.write(row,annual_dict_ids[fees2], label,student_white_rows)
                                                 
                                       # if found_fee[3] !='02':
@@ -286,12 +311,19 @@ class fee_defaulters(osv.osv_memory):
                                     #print( "generic fee type",fees2,"fee_month",month2,"this_student",this_student[0])
                                     if found_fee[3]==2:
                                         if found_fee[4]=='fee_paid':
-                                            label = 'Paid Amount'+str(found_fee[2])+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])+"state:"+str(found_fee[4])
+                                            if f.developer_mode:
+                                            
+                                                label = 'Paid Amount\n'+str(found_fee[2])+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3]) 
+                                            else:
+                                                label='Paid Amount\n: '+str(found_fee[2])
                                             sheet1.write(row,month_dict_ids[fees2], label,paid_fee)
                                             col_month = col_month + 1
                                             col_fee=col_fee+1
                                         else:
-                                            label = 'Fee Amount'+str(found_fee[2])+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])+"state:"+str(found_fee[4])
+                                            if f.developer_mode:
+                                                label = 'Fee Amount:\n '+str(found_fee[2])+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3]) 
+                                            else:
+                                                label='Fee Amount:\n '+str(found_fee[2])
                                             sheet1.write(row,month_dict_ids[fees2], label,unpaid_fee)
                                             col_month = col_month + 1
                                             col_fee=col_fee+1
@@ -300,10 +332,16 @@ class fee_defaulters(osv.osv_memory):
                                             
                                     else:
                                         if found_fee[4]=='fee_paid':
-                                            label = 'Paid Amount'+str(found_fee[2])+"\nmonth_id:"+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                            if f.developer_mode:
+                                                label = 'Paid Amount:\n'+str(found_fee[2])+"\nmonth_id:"+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                            else:
+                                                label='Paid Amount:\n '+str(found_fee[2])
                                             sheet1.write(row,annual_dict_ids[fees2], label,student_white_rows)
                                         else:
-                                            label = 'Fee Amount'+str(found_fee[2])+"\nmonth_id:"+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                            if f.developer_mode:
+                                                label = 'Fee Amount:\n '+str(found_fee[2])+"\nmonth_id:"+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                            else:
+                                                label='Fee Amount:\n '+str(found_fee[2])
                                             sheet1.write(row,annual_dict_ids[fees2], label,student_white_rows)
                                             
                                         
