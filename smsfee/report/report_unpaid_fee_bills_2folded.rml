@@ -151,7 +151,7 @@
       		</tr>
 			</blockTable>
 
-			<blockTable colWidths="380" style="Table_2">
+			<blockTable colWidths="380" style="Table_1">
       		<tr>
         		<td>
           		<para style="P2-Bold">For Student/Parents</para>
@@ -164,7 +164,7 @@
 	          		<para style="P3">[[repeatIn((record['candidate_info_1']),'r')]]</para>
 					<blockTable colWidths="80.0,300.0" style="Table_1">
 		      		<tr>
-						<td><para style="P4-Bold">Challan #</para></td>
+						<td><para style="P4-Bold">Challan #1</para></td>
 						<td>
 			          		<blockTable colWidths="200.0" style="">
 				      		<tr>
@@ -301,9 +301,9 @@
 			<tr>
         		<td>
 	          		<para style="P3">[[repeatIn((record['candidate_info_2']),'r')]]</para>
-					<blockTable colWidths="80.0,300.0" style="Table_1">
+					<blockTable colWidths="80.0,300.0" style="Table_2">
 		      		<tr>
-						<td><para style="P4-Bold">Challan #</para></td>
+						<td><para style="P4-Bold">Challan #2</para></td>
 						<td>
 			          		<blockTable colWidths="200.0" style="">
 				      		<tr>

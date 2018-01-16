@@ -40,6 +40,7 @@ class res_company(osv.osv):
     'campus_code':fields.char('Campus Code', size=64),
     'fee_display_portal':fields.selection([('fee_unpaid','Un-Paid Fee'),('fee_paid','Paid Fee')],'Fee (Displayed on Portal)'),
     'display_refundable':fields.boolean('Display Refundable Fee'),
+    
     }
     _defaults = {
                  'fee_report_type':'One_on_One',
@@ -101,7 +102,7 @@ class sms_session_months(osv.osv):
                         for fee in rec_fees:
                         # search all feetypes in this fs of thi class
                             ft_list = []
-                            fee_types_ids = self.pool.get('smsfee.classes.fees.lines').search(cr,uid,[('parent_fee_structure_id','=',fee.id)])
+                            fee_types_ids = self.pool.get('smsfee.classes.fees.lines').search(cr,uid,[('fee_type.category','=','Academics'),('parent_fee_structure_id','=',fee.id)])
                             print "fee lines ",fee_types_ids
                             if fee_types_ids:
                                 rec_fee_types = self.pool.get('smsfee.classes.fees.lines').browse(cr,uid,fee_types_ids)
@@ -316,7 +317,31 @@ sms_revision_line_feetypes()
 
 class sms_academiccalendar(osv.osv):
     """This object is used to add fields in sms_academiccalendar"""
- 
+    
+    def return_count_class_defaulter_students_list(self, cr, uid,ids):
+        """
+        :purpose = Returns list of defaulter students for given class, or returns counted defaulter students in a given class i.e id = ids
+        :param ids:class_id: Id of the class for which students will be searched
+        :called by: This method is not called by any other method or field, we can use it when we need defaulter students for a given class
+        :last modified 7 JAN 2017, Shahid
+        """
+        result = {}
+        
+        sql = """SELECT std_id from sms_academiccalendar_student where name= """+str(ids)
+        cr.execute(sql)
+        students = cr.fetchall()
+        for student in students:
+            my_dict = {'std_id':student[0],'amount_acadamics':'','amount_transport':'','amount_overall':''}
+            my_dict['amount_acadamics'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics','fee_unpaid')
+            my_dict['amount_transport'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Transport','fee_unpaid')
+            my_dict['amount_overall'] = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Overall','fee_unpaid')
+            result.append(my_dict)
+        return result
+        
+        
+        
+        # for returing list of defaulter students
+          
     def _calculate_class_forecasted_fee(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -401,15 +426,19 @@ class sms_student(osv.osv):
         }
         return result 
     
-    def total_outstanding_dues(self, cr, uid, student_id,fee_category):
+    def total_outstanding_dues(self, cr, uid, student_id,fee_category,return_choice):
         """
-        This method returns total outstanding dues of a stduent in academics section only. 
+        This method returns total outstanding dues,total paid dues, or both of a stduent in academics section only. 
         No other function will be cereated on parser or any place to calculate dues of academics for a students, all methods in wizard report 
         or in any place will call this method
         This methods is called by
         1: Set_payebl methods which is used in f.function on sms_student
         2: Defaulter students list by passing students id
-        
+        3: return_count_class_defaulter_students () > which returns total defaulter students of a class
+        Important porint:
+        1) call this method only when 1) student whole fee irrespective of a class to be found (Paid,unpaid,both), this method doesnot belong to any
+           class
+           
         Note: this method is also called for transport fee, but this is not inside transport module, we will check its working where tranport is 
         not installed, if it works fine then the same method will be called by all other modules like hostel, mass_sms etc
         """
@@ -431,7 +460,81 @@ class sms_student(osv.osv):
                             
         cr.execute(sql)
         rec = cr.fetchone() 
-        return rec[0]
+        return int(rec[0])
+    
+    def class_total_outstanding_dues(self, cr, uid, student_id,class_id,fee_category,return_choice):
+        """
+        This method returns total outstanding dues,total paid dues, or both of a stduent for a specific class . 
+        No other function will be cereated on parser or any place to calculate dues , all methods in wizard report 
+        or in any place will call this method
+        This methods is called by
+        1: Setclass_payebl methods which is used in f.function on sms_acadecmiclacalender student (thiis field is not yet created)
+        2: Defaulter students list by passing students id and class_id,
+        3: return_count_class_defaulter_students () > which returns total defaulter students of a class
+        Important porint:
+        1) call this method only when 1) student whole fee belong to a given class 
+           class
+           
+        Note: this method is also called for transport fee, but this is not inside transport module, we will check its working where tranport is 
+        not installed, if it works fine then the same method will be called by all other modules like hostel, mass_sms etc
+        """
+        if fee_category == 'Overall':
+            sql= """SELECT COALESCE(sum(fee_amount),'0') as fee_amount from smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where smsfee_studentfee.state = '""" +str(return_choice)+"""'
+                            and smsfee_studentfee.student_id = """+str(student_id)
+        else:
+            sql= """SELECT COALESCE(sum(fee_amount),'0') as fee_amount from smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where smsfee_feetypes.category = '""" +fee_category+"""'
+                            and smsfee_studentfee.state = '""" +str(return_choice)+"""'
+                            and smsfee_studentfee.student_id = """+str(student_id)
+                            
+        cr.execute(sql)
+        rec = cr.fetchone() 
+        return int(rec[0])
+
+    
+    def get_student_fees_lines(self, cr, uid, student_id,class_id,fee_category,return_choice):
+        """
+        --This method returns studentfeeslines(paid,unpaid or both) from table (smsfee_studentfee)
+        --para, return_choice may have one of the values (fee_paid,fee_unpaid,paid_and_unpaid)
+        --param fee_category: Academics, Transport,Overall   
+        --called by: 1) sms_collaborator for portal
+        """
+        if return_choice == 'paid_and_unpaid':
+            sub_query = """ and smsfee_studentfee.state in (fee_paid,fee_unpaid) """
+        else:
+            sub_query = """ and smsfee_studentfee.state =  '"""+str(return_choice)+"""' """
+       
+        if class_id:
+            class_query = """ and smsfee_studentfee.acad_cal_id= """+str(class_id)
+        else:
+            class_query = """ """
+        if fee_category == 'Overall':
+            sql= """SELECT  smsfee_studentfee.id,smsfee_feetypes.name,smsfee_studentfee.fee_amount,smsfee_studentfee.state  from smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where 
+                             smsfee_studentfee.student_id = """+str(student_id)+sub_query+class_query
+        else:
+            sql= """SELECT smsfee_studentfee.id,smsfee_feetypes.name,smsfee_studentfee.fee_amount,smsfee_studentfee.state  from smsfee_studentfee
+                            inner join smsfee_classes_fees_lines 
+                            on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
+                            inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                            where smsfee_feetypes.category = '""" +fee_category+"""'
+                            and smsfee_studentfee.student_id = """+str(student_id)+sub_query+class_query
+                            
+        print "sql::::::::",sql
+        cr.execute(sql)
+        rec = cr.fetchall() 
+        return rec
+
         
     def set_paybles(self, cr, uid, ids, context={}, arg=None, obj=None):
         # temproray inner joins are used to get to fee cateogry of fee ttype, when fee strucre of student fee table is refined, one inner joiin will be removed
@@ -471,12 +574,12 @@ class sms_student(osv.osv):
             sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
                        inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                         inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics' """
+                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics' order by smsfee_feetypes.id, fee_month  """
             cr.execute(sql)
             res[f.id] = [x[0] for x in cr.fetchall()]
 #         raise osv.except_osv((res), (sql))
           
-            print"this is the id",res
+            print"this is the iddddddddddddddddddddddddd",res
         return res
     #sms_student    
     _name = 'sms.student'
@@ -495,6 +598,8 @@ class sms_student(osv.osv):
             'disp_cntct_prtal':fields.boolean('Display Student Contacts?'),
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
             'exammark_prtal':fields.boolean('Show Exam Marks?'),
+            'info_portal':fields.boolean('Show Personal Information?')
+          
             }
     _defaults = {
         'discount_given': False,
@@ -1022,8 +1127,7 @@ class smsfee_studentfee(osv.osv):
                         'due_month': due_month,
                         'fee_month': fee_month,
                         'paid_amount':0,
-                        'fee_amount': fee_amount, 
-                        'generic_fee_type':fee_type_row.fee_type.id, 
+                        'fee_amount': fee_amount,  
                         'late_fee':0,
                         'discount':0,
                         'total_amount':fee_amount + 0, 
@@ -1137,7 +1241,7 @@ class smsfee_studentfee(osv.osv):
     ('Stationary', 'Portal'),
     ('Portal', 'Portal')]
     
-    def get_fee_display_order(self, cr, uid, ids, name, args, context=None):
+    def get_display_order(self, cr, uid, ids, name, args, context=None):
         """This method retruns the sequnece of parent class of this record. that will be use to order the list record of acad cal"""
         res = {}
         for f in self.browse(cr, uid, ids, context):
@@ -1164,13 +1268,13 @@ class smsfee_studentfee(osv.osv):
         'due_month':fields.many2one('sms.session.months','Payment Month'),
         'fee_amount':fields.integer('Fee'),
         'late_fee':fields.integer('Late Fee'),
-        'total_amount':fields.integer('Receivable'),
+        'total_amount':fields.integer('Payble'),
         'paid_amount':fields.integer('Paid Amount'),
         'returned_amount':fields.float('Returned Amount'),
         'discount': fields.integer('Discount'),
         'net_total': fields.integer('Balance'),  
         'reconcile':fields.boolean('Reconcile'), 
-        'display_order':fields.function(get_fee_display_order, store=True, string='display order', type='integer'),
+        'display_order':fields.function(get_display_order, store=True, string='display order', type='integer'),
         'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
         'class_changed':fields.boolean('Class Changed'),
         #------------total payables---------------------------------
@@ -1391,7 +1495,6 @@ class smsfee_fee_adjustment(osv.osv):
                                         'due_month':f.due_month.id,
                                         'fee_amount':f.amount,
                                         'total_amount':f.amount,
-                                        'generic_fee_type':f.fee_type.id,
                                         'reconcile':False,
                                          'state':'fee_unpaid',
                     
@@ -1706,10 +1809,16 @@ class smsfee_receiptbook(osv.osv):
         #user when sending challans for approvals
         result = {}
         records =  self.browse(cr, uid, ids, context)
-#         for f in records:
-#             date_convt = datetime.datetime.strptime(str(f.receipt_date) , '%Y-%m-%d')
-#             date_str = str(date_convt.strftime('%d/%m/%Y'))
-#             result[f.id] = str(f.receipt_date)
+        for f in records:
+            if f.id:
+                sql = """SELECT receipt_date from smsfee_receiptbook where id= """+str(f.id)
+                cr.execute(sql)
+                rdate = cr.fetchone()[0]
+                date_convt = datetime.datetime.strptime(str(rdate) , '%Y-%m-%d')
+                date_str = str(date_convt.strftime('%d-%b-%Y'))
+                result[f.id] = date_str
+            else:
+                result[f.id] = '--'
         return result
     
     def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
@@ -1759,6 +1868,7 @@ class smsfee_receiptbook(osv.osv):
             challan_ids = self.pool.get('smsfee.receiptbook').search(cr, uid,
                                                                      [('student_id','=',student_id),
                                                                       ('student_class_id','=', class_id),
+                                                                      ('fee_received_by','=',uid),
                                                                       ('state','=','fee_calculated'),
                                                                       ('challan_cat','=',category)])
             print "we are canceling challans:",challan_ids
@@ -1804,7 +1914,6 @@ class smsfee_receiptbook(osv.osv):
     _order = 'id desc'
     #smsfee_receiptbook
     _name = 'smsfee.receiptbook'
-    _inherit = ['mail.thread']
     _description = "This object store fee types"
     _columns = {
         'name': fields.char('Bill No', readonly =True,size=15), 
@@ -1821,7 +1930,7 @@ class smsfee_receiptbook(osv.osv):
         'total_paid_amount':fields.float('Paid Amount',readonly = True),
         'note_at_receive': fields.text('Note'),
         'receive_whole_amount': fields.boolean('Receive Whole Amount'),
-        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True,track_visibility='onchange', help='State'),
+        'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
         'fee_approved_by': fields.many2one('res.users', 'Approved By'),
         'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),
@@ -1837,7 +1946,7 @@ class smsfee_receiptbook(osv.osv):
         'std_reg_no': fields.related('student_id','registration_no',type='char',relation='sms.student', string='Registration Number', readonly=True),
         'challan_type':fields.selection([('Full','Full'),('Partial','Partial')],'Challan Type'),
         'receipt_date': fields.date('Payment Date'),
-        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='date', method =True),
+        'payment_date':fields.function(change_date_format, string='Payment Date.', type ='char', method =True),
         'date_receivd_onsystem':fields.datetime('Received on', readonly =True),
         'approve_date': fields.datetime('Date Approved',readonly=True),
         'due_date': fields.datetime('Due Date',readonly=True),

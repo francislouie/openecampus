@@ -225,9 +225,15 @@ class fee_defaulters(osv.osv_memory):
                     for this_student in students:
                         color=not color 
              
+<<<<<<< HEAD
                         _col = (sheet1.col(1)).width = 200 * 20
                         _col = (sheet1.col(1)).height = 200 *20
                         _col = (sheet1.row(row)).height = 100 * 15
+=======
+                        _col = (sheet1.col(1)).width = 200 * 10
+                        _col = (sheet1.col(1)).height = 200 *10
+                        _col = (sheet1.row(row)).height = 100 * 10
+>>>>>>> 66ab869c5176c021bd00e137e1ccc66285392f1a
                         
                         if color:
                             sheet1.write(row,1, this_student[1],student_grey_rows )
@@ -245,7 +251,11 @@ class fee_defaulters(osv.osv_memory):
                            
                             if 2 in selected_fee_list:
                                 for month2 in month_ids_list:
+<<<<<<< HEAD
                                     sql5 = """select id,fee_month,fee_amount,generic_fee_type,state,receipt_no,date_fee_paid
+=======
+                                    sql5 = """select id,fee_month,fee_amount,generic_fee_type,state
+>>>>>>> 66ab869c5176c021bd00e137e1ccc66285392f1a
                                                   from smsfee_studentfee where student_id =  """+str(this_student[0])+"""
                                               and generic_fee_type= """+str(fees2)+""" and fee_month="""+str(month2)
                                    
@@ -257,9 +267,15 @@ class fee_defaulters(osv.osv_memory):
                                         if found_fee[3]==2:
                                             if found_fee[4]=='fee_paid':
                                                 if f.developer_mode:
+<<<<<<< HEAD
                                                     label = 'Paid Amount:\n'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3]) +'\nReceip No: '+str(found_fee[5]) +'\nPaid Date: '+str(found_fee[6])
                                                 else:
                                                     label='Paid Amount:\n'+str(found_fee[2])+'\nReceip No: '+str(found_fee[5])+'\nPaid Date: '+str(found_fee[6])
+=======
+                                                    label = 'Paid Amount:\n'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3]) 
+                                                else:
+                                                    label='Paid Amount:\n'+str(found_fee[2]) 
+>>>>>>> 66ab869c5176c021bd00e137e1ccc66285392f1a
                                                 sheet1.write(row,month_dict_ids[month2+fees2], label,paid_fee)
                                                 col_month = col_month + 1
                                                 col_fee=col_fee+1
@@ -277,9 +293,15 @@ class fee_defaulters(osv.osv_memory):
                                         else:
                                             if found_fee[4]=='fee_paid':
                                                 if f.developer_mode:
+<<<<<<< HEAD
                                                     label = 'Paid Amount:\n'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])+'\nReceip No: '+str(found_fee[5])+'\nPaid Date: '+str(found_fee[6])
                                                 else:
                                                     label='Paid Amount:\n'+str(found_fee[2]) +'\nReceip No: '+str(found_fee[5])+'\nPaid Date: '+str(found_fee[6])
+=======
+                                                    label = 'Paid Amount:\n'+str(found_fee[2])+"\nmonth_id:"+str(month2)+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                                else:
+                                                    label='Paid Amount:\n'+str(found_fee[2]) 
+>>>>>>> 66ab869c5176c021bd00e137e1ccc66285392f1a
                                                 sheet1.write(row,annual_dict_ids[fees2], label,student_white_rows)
                                             else:
                                                 if f.developer_mode:
@@ -301,7 +323,11 @@ class fee_defaulters(osv.osv_memory):
                                             col_fee = col_fee + 1
                             else:
                                 
+<<<<<<< HEAD
                                 sql6 = """select id,fee_month,fee_amount,generic_fee_type,state,reciept_no,date_fee_paid
+=======
+                                sql6 = """select id,fee_month,fee_amount,generic_fee_type,state
+>>>>>>> 66ab869c5176c021bd00e137e1ccc66285392f1a
                                               from smsfee_studentfee where student_id =  """+str(this_student[0])+"""
                                           and generic_fee_type= """+str(fees2)
                                
@@ -313,15 +339,25 @@ class fee_defaulters(osv.osv_memory):
                                         if found_fee[4]=='fee_paid':
                                             if f.developer_mode:
                                             
+<<<<<<< HEAD
                                                 label = 'Paid Amount\n'+str(found_fee[2])+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3]) +'\nReceip No: '+str(found_fee[5])+'\nPaid Date: '+str(found_fee[6])
                                             else:
                                                 label='Paid Amount\n: '+str(found_fee[2])+'\nReceip No: '+str(found_fee[5])+'\nPaid Date: '+str(found_fee[6])
+=======
+                                                label = 'Paid Amount\n'+str(found_fee[2])+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3]) 
+                                            else:
+                                                label='Paid Amount\n: '+str(found_fee[2])
+>>>>>>> 66ab869c5176c021bd00e137e1ccc66285392f1a
                                             sheet1.write(row,month_dict_ids[fees2], label,paid_fee)
                                             col_month = col_month + 1
                                             col_fee=col_fee+1
                                         else:
                                             if f.developer_mode:
+<<<<<<< HEAD
                                                 label = 'Fee Amount:\n '+str(found_fee[2])+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+=======
+                                                label = 'Fee Amount:\n '+str(found_fee[2])+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3]) 
+>>>>>>> 66ab869c5176c021bd00e137e1ccc66285392f1a
                                             else:
                                                 label='Fee Amount:\n '+str(found_fee[2])
                                             sheet1.write(row,month_dict_ids[fees2], label,unpaid_fee)
@@ -333,9 +369,15 @@ class fee_defaulters(osv.osv_memory):
                                     else:
                                         if found_fee[4]=='fee_paid':
                                             if f.developer_mode:
+<<<<<<< HEAD
                                                 label = 'Paid Amount:\n'+str(found_fee[2])+"\nmonth_id:"+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])+'\nReceip No: '+str(found_fee[5])+'\nPaid Date: '+str(found_fee[6])
                                             else:
                                                 label='Paid Amount:\n '+str(found_fee[2])+'\nReceip No: '+str(found_fee[5])+'\nPaid Date: '+str(found_fee[6])
+=======
+                                                label = 'Paid Amount:\n'+str(found_fee[2])+"\nmonth_id:"+"\nfee_id:"+str(fees2)+"\nfee_id_genric:"+str(found_fee[3])
+                                            else:
+                                                label='Paid Amount:\n '+str(found_fee[2])
+>>>>>>> 66ab869c5176c021bd00e137e1ccc66285392f1a
                                             sheet1.write(row,annual_dict_ids[fees2], label,student_white_rows)
                                         else:
                                             if f.developer_mode:

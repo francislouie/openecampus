@@ -56,6 +56,8 @@
 						<group>
 						 	<field name="fee_display_portal"/>
 						 	<field name="display_refundable"/>
+						 	
+						 	
 						</group>
 		          	</page>
 				   </notebook>
@@ -258,7 +260,7 @@
               </field>
 				<notebook>
 					<page string = "Fees Payments">
-						<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups="sms.group_sms_admin"/>
+						<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
 						<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Print Fee Bills" states="Admitted,admission_cancel,drop_out,deceased,passout,slc,Withdraw" type="action" class="oe_highlight" groups=""/>
 						<button name="%(action_student_fee_collect_id)d" string="Receive a Fee Bill" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
 						<notebook>
@@ -352,6 +354,7 @@
 					<page string="Portal Settings">
 						<group colspan="4" col="2">
 							<field name="exammark_prtal" string="Donnot Show Exam Detail"/>
+	                        <field name="info_portal" string="Show Personal Information?"/>
 							<field name="disp_cntct_prtal" />
 						</group>
 					</page>
@@ -769,17 +772,20 @@
 				<h2><field name="student_id" nolabel ="1" readonly ="1"/><field name="student_class_id" readonly ="1"   /></h2>
 				<h4><field name="fee_structure"  readonly ="1" /></h4>
 				</group>
+				<group>
+				<h2><field name="counter" readonly ="1"  nolabel ="1" /></h2>
+				</group>
 			</group>
 			<group >
 					<group>
-					<field name="counter" readonly ="1" />
 					<field name="receive_whole_amount" attrs="{'readonly':[('state','!=','fee_calculated')]}" />	
+					<!--late fee will be atuo filled when late calcultion is up-->
 					<field name="late_fee" attrs="{'readonly':[('state','in',['Paid','Cancel','Adjusted'])]}"/>
 					<field name="challan_type" readonly="1"/>
 					</group>
 		     		<group string ="">
-						<field name="receipt_date" required ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"/>
-						<field name="payment_date" readonly="1"/>
+						<field name="receipt_date" required ="1" attrs="{'invisible':[('state','IN',['Waiting_Approval','Paid','Cancel','Adjusted'])]}"/>
+						<field name="payment_date" attrs="{'invisible':[('state','IN',['Draft','fee_calculated'])]}"/>
 						<field name="payment_method" readonly = "1" required ="1"/>	
 						<field name="manual_recpt_no"  />								
 					</group>
@@ -836,10 +842,11 @@
             <field name="arch" type="xml">
                 <tree fonts="bold:challan_cat=='Transport'" string="Fee Bills">
 					<field name="counter"/>
+					<field name="std_reg_no" string = "Student Reg#"/>
 					<field name="student_id" domain="[('current_class','=',name)]" />
-					<field name="std_reg_no"/>
-					<field name="payment_date"/>
-					<field name="receipt_date"/>
+					
+					<field name="payment_date" attrs="{'invisible':[('state','IN',['Draft','fee_calculated'])]}"/>
+					<field name="receipt_date" attrs="{'invisible':[('state','IN',['Waiting_Approval','Paid','Cancel','Adjusted'])]}"/>
 					<field name="state"/>
 					<field name="challan_cat"/>
 					<field name="total_paybles"/>
@@ -858,6 +865,7 @@
 					<field name="manual_recpt_no" string= "Manual Receipt No"/>
 					<field name="std_reg_no" string="Registration Number"/>
 					<field name="challan_cat" string="Category"/>
+					<field name="total_paybles" string="Amount"/>
 					<field name="fee_approved_by" string="Approved By"/>
                 </search>
             </field>
