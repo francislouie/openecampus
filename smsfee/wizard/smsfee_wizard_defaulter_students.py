@@ -178,7 +178,7 @@ class fee_defaulters(osv.osv_memory):
                         cr.execute(sql3)
                         months = cr.fetchall()
                         annual_number=4
-                        
+                        #testing git branch 2
                         if fee[0] ==2:
                             if fee[0]==2:
                                 month_ids_list = []  #chnages: result2 replaced wiht month_ids_list
