@@ -550,6 +550,15 @@ class sms_collabrator(osv.osv):
         
         print"Monthly attendance",result
         return result
+    
+    
+    def get_student_fees(self, cr, uid, student_id,fee_category,return_choice):
+
+         result=self.pool.get('sms.student').get_student_fees_lines(cr, uid, student_id,fee_category,return_choice)
+
+         return result
+    
+    
     def sms_exam_marksheet(self, cr, uid, student_id, class_id):
         result = []
         get_portal_setting = """SELECT exammark_prtal FROM sms_student WHERE id= """+str(student_id)
