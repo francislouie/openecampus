@@ -3055,7 +3055,7 @@
 						 <group>
 		                 	<group string="Personal">
 			                   	<field name="gender"  required="1"/>
-								<field name="father_nic" required="1" groups='base.group_sms_profile_manager'/>
+								<field name="father_nic" required="1" groups=''/>
 								<field name="blood_grp"/>
 								<field name="father_occupation"  />
 								 <field name="religion" />

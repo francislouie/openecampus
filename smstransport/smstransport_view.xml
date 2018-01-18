@@ -492,7 +492,7 @@
 	<field name="arch" type="xml">
 		<data>
 			<xpath expr="//page[@string='Fee Academics']" position="after">
-				<page string = "Transport Fee">
+				<page string = "Transport Fee" name="transport_fee">
 				<group>
 					<group>					
 					<div class="oe_title"><label for="total_paybles"/>

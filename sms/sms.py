@@ -727,16 +727,28 @@ class sms_student(osv.osv):
         res = super(sms_student, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=False)
         doc = etree.XML(res['arch'])
         #nodes = doc.xpath("//page[@name='contact_information']")
-        
         sqluser=""" select res_groups.name from res_groups inner join res_groups_users_rel 
         on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid="""+str(uid)
         cr.execute(sqluser)
         group_name=cr.fetchall()
         profile_manager = True
+        principal=False
         for s in group_name:
+            print "groups",s[0]
             if s[0] == 'Profile Manager':
                 profile_manager = False
+            if s[0]== 'Principal':
+                principal=True
         # group_name=json.dumps(group_name)
+        if principal:
+            nodes = doc.xpath("//page[@name='fee_payment']")
+            for node in nodes:
+                node.set('invisible', '1')
+                setup_modifiers(node)
+            nodes = doc.xpath("//page[@string='Transport Details']")
+            for node in nodes:
+                node.set('invisible', '1')
+                setup_modifiers(node)
         if profile_manager:
             for node in doc.xpath("//field[@name='father_occupation']"):
                 node.set('readonly', '1')
