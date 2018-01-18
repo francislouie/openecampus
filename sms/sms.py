@@ -732,8 +732,12 @@ class sms_student(osv.osv):
         on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid="""+str(uid)
         cr.execute(sqluser)
         group_name=cr.fetchall()
-        print("goup_name",group_name)
-        if "Profile Manager" not in  group_name:
+        profile_manager = True
+        for s in group_name:
+            if s[0] == 'Profile Manager':
+                profile_manager = False
+        # group_name=json.dumps(group_name)
+        if profile_manager:
             for node in doc.xpath("//field[@name='father_occupation']"):
                 node.set('readonly', '1')
                 setup_modifiers(node)
