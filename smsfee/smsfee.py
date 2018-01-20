@@ -1382,26 +1382,15 @@ class smsfee_std_withdraw(osv.osv):
     def onchange_student(self, cr, uid, ids, std, context=None):
         result = {}
         std_rec = self.pool.get('sms.student').browse(cr, uid, std)
-        result['fee_structure'] = std_rec.fee_type.name
-        result['father_name'] = std_rec.father_name
+        print "stddddddddddd",std
+        print "std rec",std_rec
+        if std:
+            result['fee_structure'] = std_rec.fee_type.name
+            result['father_name'] = std_rec.father_name
 
         return {'value':result}
         
-#         fee_ids = self.pool.get('sms.studentfee').search(cr, uid, [('student_id','=', std)], context=context)
-#         print "obj.fee_ids",fee_ids
-#         for fees in fee_ids:
-#             obj = self.pool.get('sms.studentfee').browse(cr, uid, fees)
-#             student = obj.student_id.name
-#             print "obj.acad_cal_id.id",obj.acad_cal_id.id
-#             create = self.pool.get('smsfee.receiptbook.lines').create(cr, uid, {
-#                        'name': obj.acad_cal_id.id,
-#                        'fee_type':obj.fee_type.id,
-#                        'fee_month': obj.fee_month,
-#                        'receipt_book_id':pid,
-#                        'fee_amount': obj.fee_amount,
-#                        }) 
-#             print "crert::",create
-#          return {}
+
     def _set_req_no(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -1412,10 +1401,16 @@ class smsfee_std_withdraw(osv.osv):
     def on_change_registration_no(self, cr, uid, ids, registration_no, context=None):
         result = {}
         rec = self.pool.get('sms.student').search(cr, uid, [('registration_no','=',registration_no)])
-        student = self.pool.get('sms.student').browse(cr, uid, rec[0])
-        result["student_id"] =  student.id
-        result["student_class_id"] = student.current_class.id
-        result['total_dues'] = student.total_paybles + student.total_paybles_transport
+        if rec:
+            student = self.pool.get('sms.student').browse(cr, uid, rec[0])
+            result["student_id"] =  student.id
+            result["student_class_id"] = student.current_class.id
+            result['total_dues'] = student.total_paybles + student.total_paybles_transport
+        else:
+            result["student_id"] =  None
+            result["student_class_id"] = None
+            result['total_dues'] = None
+            raise osv.except_osv(('Invalid Reg No'), ('No Student Found With Given Reg no'))
         return {'value' : result}
 
     _name = 'smsfee.std.withdraw'
@@ -1433,7 +1428,7 @@ class smsfee_std_withdraw(osv.osv):
         'father_name': fields.char(string = 'Father',size = 100,readonly = True),
         'reason_withdraw':fields.text('Reason Withdraw'),
         'request_type':fields.selection([('Withdraw','Withdraw'),('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),('slc','School Leaving Certificate'), ('transfer_out','Transfer Out')],'Request Type'),
-        'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type',required = True),
+        'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type'),
         'transfer_campus': fields.many2one('sms.transfer.in', 'Campus'),
         'transfer_fee': fields.float('Transfer Fee'),
         'total_dues': fields.float('Total Dues'),

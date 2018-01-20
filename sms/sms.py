@@ -540,6 +540,35 @@ class sms_subject(osv.osv):
     _sql_constraints = [('name_unique', 'unique (name)', """ Subject name must be Unique.""")]
     
 class sms_classes(osv.osv):
+    
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        
+#         import urllib2      
+#         req = urllib2.Request('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3')
+#         response = urllib2.urlopen(req)
+#         the_page = response.read()
+#         print "the page read",the_page
+#    
+#         import requests
+#         r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3')
+#         read = r.json()
+#         print "attemp2",read
+
+        import requests
+        r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3')
+        read = r.json()
+        print "json response",read
+        
+        #read = {u'status': u'ok', u'att_records': [{u'att_time': u'20180111105255', u'bio_id': u'2025', u'user_empleado_id': u'961', u'auth': u'd86ee704b4962d54227af9937a1396c3', u'device_id': u'20170767645'}], u'acknowledge_id': u'1387', u'auth': u'd86ee704b4962d54227af9937a1396c3'}''
+        for attenadnce in read:
+            for gg in read['att_records']:
+                print "gg as whole",gg
+                print "att_time",gg['att_time']
+                print "bio_id",gg['bio_id']
+                print "user_empleado_id id",['user_empleado_id']
+                print "device_id id",['device_id']
+        return True
+   
     """
     This object defines classes of an institute
     """
