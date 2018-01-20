@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+  <template pageSize="(732.0,920.0)" title="Crossovered Analytic" author="Inovtec" allowSplitting="20">
+    <pageTemplate id="first">
+      <frame id="first" x1="28.0" y1="5.0" width="570" height="786"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+    <blockTableStyle id="Standard_Outline">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+    
+	 <blockTableStyle id="Table2">
+    <blockAlignment value="CENTER"/>
+    <blockValign value="TOP"/>
+	<blockTopPadding length="8.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="13.0" start="0,0" stop="-1,-1"/>
+    <lineStyle kind="GRID" colorName="#FFFFFF" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+
+	<blockTableStyle id="innermost_tables">
+    <blockAlignment value="CENTER"/>
+    <blockBackground colorName="#e6e6e6" start="0,0" stop="4,0"/>
+    <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
+	<blockTopPadding length="1.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="1.0" start="0,0" stop="-1,-1"/>
+    <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+
+    <blockTableStyle id="inner_tables">
+    <blockAlignment value="CENTER"/>
+    <blockValign value="TOP"/>
+	<blockTopPadding length="5.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+    <lineStyle kind="GRID" colorName="#FFFFFF" start="0,0" stop="-1,-1"/>
+	</blockTableStyle>
+    
+    <initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="Standard" fontName="Helvetica"/>
+    <paraStyle name="Text body" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="List" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="Table Contents" fontName="Helvetica" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="Caption" fontName="Helvetica" fontSize="10.0" leading="13" spaceBefore="6.0" spaceAfter="6.0"/>
+    <paraStyle name="Index" fontName="Helvetica"/>
+    <paraStyle name="Heading" fontName="Helvetica" fontSize="12.0" leading="15" spaceBefore="12.0" spaceAfter="6.0"/>
+	<paraStyle name="Heading2" fontName="Helvetica"  alignment="CENTER" fontSize="14.0" leading="0.0" spaceBefore="0.0" spaceAfter="6.0"/>
+    <paraStyle name="Footer" fontName="Helvetica"/>
+	<paraStyle name="para_heading" fontName="Helvetica" fontSize="10.0" leading="12" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="form_heading" fontName="Helvetica-Bold" fontSize="14.0" leading="15" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+	<paraStyle name="address_bar" fontName="Helvetica" fontSize="9.0" leading="10" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="para_1" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+	<paraStyle name="para_2" fontName="Helvetica" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+	<paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="LEFT" color="#FFFFFF" spaceBefore="3.0" spaceAfter="3.0"/>
+	<paraStyle name="para_signature2" fontName="Helvetica" fontSize="9.0" leading="9" alignment="RIGHT" spaceBefore="3.0" spaceAfter="0.0"/>
+    <images/>
+  
+  </stylesheet>
+  <story>
+  <pto>
+	<section>
+   		 <blockTable colWidths="250.0,250.0,250.0" repeatRows="1" style="Table2">
+			<tr>
+			<td><para style="Heading2"></para></td>
+			<td><para style="form_heading">[[ class_name(data['form'])]]</para></td>
+			<td><para style="Heading2"></para></td>
+			</tr>
+			<tr>
+			<td><para style="white">.</para></td>
+			<td><para style="white">.</para></td>
+			<td><para style="white">.</para></td>
+			</tr>
+		</blockTable>
+
+	<blockTable   colWidths="40.0,80.0,130.0,160.0,120.0,80.0" repeatRows="1" style="innermost_tables">
+					<tr>
+						<td><para style="para_2">S.No</para></td>
+						<td><para style="para_2">Image</para></td>
+						<td><para style="para_2">Name</para></td>
+						<td><para style="para_2">Perm Address</para></td>
+						<td><para style="para_2">Currrent Address</para></td>
+						<td><para style="para_2">Phone No</para></td>
+					</tr>
+
+					<tr>[[ repeatIn(get_student_biodata(data['form']),'r') ]]
+						<td><para style="para_1">[[ r['s_no'] ]]</para></td>
+						<td><para style="para_1">[[ r['image'] and setTag('para','image',{'width':'65.0','height':'75.0'}) or removeParentNode('para') ]][[(r['image']) ]]</para></td>
+						<td><para style="para_1">[[ r['registration_no'] ]]</para>
+						<para style="para_1">[[ r['name'] ]]</para>
+						<para style="para_1">[[ r['father_name'] ]]</para>
+						<para style="para_1">[[ r['gender'] ]]</para></td>
+						<td><para style="para_1">[[ r['perm_address'] ]]</para></td>
+						<td><para style="para_1">[[ r['cur_address'] ]]</para></td>
+						<td>
+						<para style="para_1">[[ r['phone'] ]]</para>,
+						<para style="para_1">[[ r['cell'] ]]</para>,
+						<para style="para_1">[[ r['fax'] ]]</para>
+						</td>
+					</tr>
+	</blockTable>
+	</section>
+</pto>
+  </story>
+</document>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Print Class Students list -->
+
+        <record id="view_studentlist" model="ir.ui.view">
+            <field name="name">sms.studentlist</field>
+            <field name="model">sms.studentlist</field>
+            <field name="arch" type="xml">
+                <form string="Students list" version="7.0">
+			    		<group col="4">
+						<newline/><field name="list_type"/>
+						<newline/><field name="acad_cal" attrs="{'invisible':[('list_type','in',['check_admissions','students_strength'])], 'required':[('list_type','in',['contact_list','class_list','security_cards'])]}"/>
+						<newline/><field name="card_display_message" attrs="{'invisible':[('list_type','!=','security_cards')], 'required':[('list_type','=','security_cards')]}"/>
+						<newline/><field name="student_ids" attrs="{'invisible':[('list_type','!=','security_cards')], 'required':[('list_type','=','security_cards')]}" domain="[('current_class','=',acad_cal)]"/>
+						</group>
+						<newline/>
+						<group attrs="{'invisible':[('list_type','in',['contact_list','class_list','students_strength'])]}">              			
+							<newline/><field name="start_date"  attrs="{ 'required':[('list_type','in',['check_admissions','security_cards'])] , 'invisible':[('list_type','in',['contact_list','class_list'])] }"/>
+							<newline/><field name="end_date"  attrs="{ 'required':[('list_type','in',['check_admissions','security_cards'])] , 'invisible':[('list_type','in',['contact_list','class_list'])] }"/>
+						</group>
+						<newline/>
+							<group attrs="{'invisible':[('list_type','=','students_strength')]}">
+							<field name="export_to_excel"/>
+							</group>
+						<newline/><field name="class_form" invisible="1"/>
+						<newline/>
+						<group attrs="{'invisible':[('list_type','!=','students_strength')]}">
+						<field name="display_draft_waitapprov"/>
+						</group>
+                    <footer>
+                        <button string="Print" name="print_list" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+          </record>
+
+  <!-- View CMS Student Admit -->
+
+        <record id="action_studentlist" model="ir.actions.act_window">
+            <field name="name">Students list</field>
+            <field name="res_model">sms.studentlist</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_studentlist"/>
+           <field name="target">new</field>
+        </record>
+</data>
+</openerp>
