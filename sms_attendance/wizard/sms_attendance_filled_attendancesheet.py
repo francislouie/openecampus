@@ -9,8 +9,8 @@ class class_print_filled_attendance_sheet(osv.osv_memory):
     
     _columns = {
                 'class_id': fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active')]", help="Class"),
-                'date_from': fields.date('Date From'),
-                'date_to':fields.date('Date To'),
+                'date_from': fields.date('Month'),
+#                 'date_to':fields.date('Date To'),
                }
     _defaults = {} 
     

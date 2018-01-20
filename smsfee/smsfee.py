@@ -497,8 +497,9 @@ class sms_student(osv.osv):
         cr.execute(sql)
         rec = cr.fetchone() 
         return int(rec[0])
+
     
-    def get_student_fees_lines(self, cr, uid, student_id,class_id,fee_category,return_choice):
+    def get_student_fees_lines(self, cr, uid, student_id,fee_category,return_choice):
         """
         --This method returns studentfeeslines(paid,unpaid or both) from table (smsfee_studentfee)
         --para, return_choice may have one of the values (fee_paid,fee_unpaid,paid_and_unpaid)
@@ -506,33 +507,34 @@ class sms_student(osv.osv):
         --called by: 1) sms_collaborator for portal
         """
         if return_choice == 'paid_and_unpaid':
-            sub_query = """ and smsfee_studentfee.state in (fee_paid,fee_unpaid) """
+            sub_query = """ and smsfee_studentfee.state in ('fee_paid','fee_unpaid') """
         else:
             sub_query = """ and smsfee_studentfee.state =  '"""+str(return_choice)+"""' """
        
-        if class_id:
-            class_query = """ and smsfee_studentfee.acad_cal_id= """+str(class_id)
-        else:
-            class_query = """ """
+#         if class_id:
+#             class_query = """ and smsfee_studentfee.acad_cal_id= """+str(class_id)
+#         else:
+#             class_query = """ """
         if fee_category == 'Overall':
             sql= """SELECT  smsfee_studentfee.id,smsfee_feetypes.name,smsfee_studentfee.fee_amount,smsfee_studentfee.state  from smsfee_studentfee
                             inner join smsfee_classes_fees_lines 
                             on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                             inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
                             where 
-                             smsfee_studentfee.student_id = """+str(student_id)+sub_query+class_query
+                             smsfee_studentfee.student_id = """+str(student_id)+sub_query
         else:
             sql= """SELECT smsfee_studentfee.id,smsfee_feetypes.name,smsfee_studentfee.fee_amount,smsfee_studentfee.state  from smsfee_studentfee
                             inner join smsfee_classes_fees_lines 
                             on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                             inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
                             where smsfee_feetypes.category = '""" +fee_category+"""'
-                            and smsfee_studentfee.student_id = """+str(student_id)+sub_query+class_query
+                            and smsfee_studentfee.student_id = """+str(student_id)+sub_query
                             
         print "sql::::::::",sql
         cr.execute(sql)
         rec = cr.fetchall() 
         return rec
+
         
     def set_paybles(self, cr, uid, ids, context={}, arg=None, obj=None):
         # temproray inner joins are used to get to fee cateogry of fee ttype, when fee strucre of student fee table is refined, one inner joiin will be removed
@@ -589,7 +591,7 @@ class sms_student(osv.osv):
             'discount_reason': fields.char(string='Reason of Discount', size=100),
             'studen_fee_ids':fields.one2many('smsfee.studentfee', 'student_id','Student Fee'),
             'refundable_fee_ids':fields.one2many('smsfee.studentfee.refundable', 'student_id','Refundable Fees'),
-            'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Feeee'),
+            'view_academics_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Academic Fee'),
             'fee_bills':fields.one2many('smsfee.receiptbook', 'student_id','Fee Bills' ),
             'latest_fee':fields.many2one('sms.session.months','Fee Register'),
             'total_paybles':fields.function(set_paybles, method=True, string='Balance', type='float'),

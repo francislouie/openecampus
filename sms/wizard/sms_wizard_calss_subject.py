@@ -47,7 +47,7 @@ class sms_wizard_class_subject(osv.osv_memory):
         
         datefrom='2017-08-01'
    
-        result=self.pool.get('sms.collabrator').monthly_class_attendence(cr,stdid,datefrom)
+        result=self.pool.get('sms.collabrator').monthly_class_attendence(cr,uid,stdid,datefrom)
         
       
         return ftlist
