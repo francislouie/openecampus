@@ -11,7 +11,7 @@
 					<group colspan="4">
 						<field name="class_id" required="1"/>
 						<field name="date_from" required="1"/>
-						<field name="date_to" required="1"/>
+						
 					</group>
                     <ol>
                     <li><p>Due to limitation of page width currently you are adivsed to select 7 days between 

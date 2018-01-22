@@ -6,7 +6,7 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
     """
     This wizard is used to print sinlge student challans for academics and transport, this wizard called a parser that generated academics and trnsport
     challans for single student and whole class. Please note that in this case that parser will print challans for single students
-    --Last Updated: 23 OCT 17 By Shahid
+    --Last Updated: 9 jan 18 By Shahid
       
     
     """
@@ -14,6 +14,7 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
     def _get_student(self, cr, uid, ids):
         obj = self.browse(cr, uid, ids['active_id'])
         std_id =  obj.id
+        print("student id...................", std_id)
         return std_id
     
     def _get_unpaid_fee_months(self, cr, uid, ids):

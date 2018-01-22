@@ -12,6 +12,7 @@
                     <group>
 	                    <group>
 	                    <h1><field name="student_id" colspan="4" col="8" readonly ="1" nolabel = "1" /></h1>
+	                    <h2><field name="student_id" colspan="4" col="8" readonly ="1" nolabel = "1" /></h2>
 	                    </group>
 						<group colspan="4" col="8">
 							 <field name="due_date"   colspan="2"/>

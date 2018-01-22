@@ -23,6 +23,14 @@
         <field name="name">Admission Manager</field>
     </record>
     
+    <record id="group_sms_profile_manager" model="res.groups">
+        <field name="name">Profile Manager</field>
+    </record>
+    
+    <record id="group_sms_it_coordinator" model="res.groups">
+        <field name="name">IT Coordinator</field>
+    </record>
+    
     <record id="group_sms_admission_officer" model="res.groups">
         <field name="name">Admission Officer</field>
     </record>

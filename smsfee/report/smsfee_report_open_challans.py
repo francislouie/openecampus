@@ -201,6 +201,7 @@ class smsfee_report_open_challan(report_sxw.rml_parse):
         return info_list
  
     def get_on_accounts(self, data):
+        print "duplicated challns is printed ><><><<><><><><><><><><><><><><><>"
         result = []
         challans = []
         lines_ids = self.pool.get('smsfee.receiptbook.lines').search(self.cr,self.uid, [('receipt_book_id','=',data)])

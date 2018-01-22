@@ -21,6 +21,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
             'get_student_strength':self.get_student_strength,            
             'get_date_range':self.get_date_range,
             'get_student_strength_message':self.get_student_strength_message,
+            'get_user_name':self.get_user_name,
+            'get_today':self.get_today
         })
         self.base_amount = 0.00
     
@@ -36,6 +38,18 @@ class sms_report_studentslist(report_sxw.rml_parse):
         else:
             acad_cal = form['acad_cal'][0]
         return self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, acad_cal).name
+    
+    
+    def get_user_name(self,form):
+            user_name = self.pool.get('res.users').browse(self.cr, self.uid, self.uid).name
+            result = 'Printed By'+ '    '+user_name
+            return  result
+    
+    def get_today(self,form):
+            today =datetime.datetime.today().strftime('%d-%m-%Y')
+          
+            result = 'Date'+ '    '+today
+            return result 
     
     def get_student_contacts(self, data):                                                         
         result = []
@@ -72,31 +86,36 @@ class sms_report_studentslist(report_sxw.rml_parse):
 
     def get_student_strength(self, form):                                                         
         result = []
+        result = []
         this_form = self.datas['form']
 #         draft_boolean = this_form['display_draft_waitapprov']
         class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','in',['Active','Draft'])], order='disp_order, section_id')
         class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_ids)
         i = 1
         total_cur_strength = 0
-        total_allowed_students = 0        
+        total_pending_admission = 0   
+        overall_total = 0     
         for class_obj in class_objs:
-            mydict = {'s_no':'', 'class':'', 'strength':''}
-            draft_stds = self.pool.get('sms.academiccalendar').count_students_admission_draft(self.cr, self.uid, class_obj.id)
-            wait_approv_stds = self.pool.get('sms.academiccalendar').count_students_admission_wait_approval(self.cr, self.uid, class_obj.id)
+            mydict = {'s_no':'', 'class':'', 'pendingadmits':'','admited':'', 'strength':''}
+         
             mydict['s_no']  = i
             mydict['class']     = class_obj.name
-#             if draft_boolean is True:
-#                 total_cur_strength = total_cur_strength + class_obj.cur_strength + draft_stds + wait_approv_stds  
-#             else:
-#                 total_cur_strength = total_cur_strength + class_obj.cur_strength
-            mydict['strength']  = class_obj.cur_strength
-            total_allowed_students = total_allowed_students + class_obj.max_stds            
+            mydict['pendingadmits']  = class_obj.pendingadmits
+            mydict['admited']  = class_obj.cur_strength
+            
+            total_cur_strength = total_cur_strength +class_obj.cur_strength
+            total_pending_admission = total_pending_admission + class_obj.pendingadmits
+            total = mydict['pendingadmits'] + mydict['admited']
+            mydict['strength']  =  total
+            overall_total = overall_total + total
             i += 1
             result.append(mydict)
             
-        mydict = {'s_no':'', 'class':'', 'strength':''}
+        mydict = {'s_no':'', 'class':'', 'pendingadmits':'','admited':'', 'strength':''}
         mydict['class']     = 'Total Students'
-        mydict['strength']  = total_cur_strength
+        mydict['pendingadmits']  = total_pending_admission
+        mydict['admited']  = total_cur_strength
+        mydict['strength']  = overall_total
         result.append(mydict)
         return result
     
@@ -233,95 +252,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
     
     def get_student_biodata(self,form):
         
-        sql = """select id ,fee_type from smsfee_studentfee """
-        self.cr.execute(sql)
-        all = self.cr.fetchall()
-        for feee in all:
-            sql2 = """ 
-                        update smsfee_studentfee set generic_fee_type = ( select distinct smsfee_feetypes.id from smsfee_feetypes
-                         inner join smsfee_classes_fees_lines on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                         inner join smsfee_studentfee on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type 
-                        
-                         where smsfee_studentfee.fee_type = """+str(feee[1])+ """)
-                         where smsfee_studentfee.fee_type = """+str(feee[1])+ """
-             
-             """
-            self.cr.execute(sql2)
-            self.cr.commit()
-        return
-          #fille the date view in recept book
-            
-        
-#         sql = """select sms_student_subject.id,sms_student_subject.student_id
-#                  from sms_student_subject where subject_status = 'Current'"""
-#         self.cr.execute(sql)
-#         stdsub = self.cr.fetchall()
-#         for subject in stdsub:
-#             
-#             sql2 = """select id from sms_academiccalendar_student where std_id =""" +str(subject[1])+""" and state = 'Current'"""
-#             self.cr.execute(sql2)
-#             stdsub2 = self.cr.fetchall()
-#             
-#             for subject2 in stdsub2:
-#                 sql3 = """update sms_student_subject set student =""" +str(subject2[0])
-#                 self.cr.execute(sql3)
-#                 self.cr.commit()
-#         #------  To Populate admission confirmation date in student_admission_register object ------------------
-#         sql = """SELECT sms_student.id, sms_student.admitted_on, student_admission_register.id
-#                 FROM sms_student
-#                 INNER JOIN student_admission_register
-#                 ON sms_student.admission_form_no = student_admission_register.id
-#                 """
-#         self.cr.execute(sql)
-#         studentrecs = self.cr.fetchall()
-#          
-#         # now reset order of smsfee_studentfee
-#         fees = self.pool.get('smsfee.studentfee').search(self.cr, self.uid, [])
-#         feerec = self.pool.get('smsfee.studentfee').browse(self.cr, self.uid,fees)
-#         for thisfee in feerec:
-#             if thisfee.fee_type is not None:
-#                 if thisfee.fee_type.fee_type is not None:
-#                     self.pool.get('smsfee.studentfee').write(self.cr, self.uid, thisfee.id, {'display_order':thisfee.fee_type.fee_type.display_sequence})
-#          
-#         for rec in studentrecs:
-#             updating = self.pool.get('student.admission.register').write(self.cr, self.uid, rec[2], {'date_admission_confirmed':rec[1]})
-#             if updating:
-#                 print 'success'
-                
-        #-----------Update login Ids for students----------------------------
-#         sql_query = """SELECT campus_code from res_company"""
-#         self.cr.execute(sql_query)
-#         campus_code = self.cr.fetchone()
-#         student_ids = self.pool.get('sms.student').search(self.cr, self.uid, [])
-#         srudent_recs = self.pool.get('sms.student').browse(self.cr, self.uid, student_ids)
-#         for rec in srudent_recs:
-#             registration_no = rec.registration_no
-#             login_id = str(campus_code[0])+str(registration_no)
-#             import random
-#             random_pass = random.randrange(100, 1000)
-#             password = str(random_pass)+str(registration_no)
-#             update=self.pool.get('sms.student').write(self.cr, self.uid, rec.id, {'login_id':login_id, 'password':password})
-#             if update:
-#                 print 'Done'
-                
-#        temporary query to set students security fee
-#         sql0 = """SELECT smsfee_studentfee.id,student_id,receipt_no,paid_amount FROM smsfee_studentfee
-#               inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-#               inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-#             WHERE smsfee_feetypes.refundable = True  and smsfee_studentfee.state = 'fee_paid'"""
-#         self.cr.execute(sql0)
-#         feeids = self.cr.fetchall()
-#         if feeids:
-#             for booklines_rw in feeids:
-#               
-#                 addfee = self.pool.get('smsfee.studentfee.refundable').create(self.cr,self.uid,{
-#                                         'student_id':booklines_rw[1],
-#                                         'receipt_no':booklines_rw[2],
-#                                         'amount_received':booklines_rw[3],
-#                                         'amount_paid_back':0,
-#                                         'student_fee_id':booklines_rw[0],
-#                                         'state':'to_be_paid'})
-#         
+        call_fees_lines = self.pool.get('sms.student').get_student_fees_lines(self.cr,self.uid,22,70,'Academics','fee_paid')
+        print "fee return liens",call_fees_lines
         res = []
         s_no = 0
         _ids = self.pool.get('sms.academiccalendar.student').search(self.cr ,self.uid ,[('name','=',form['acad_cal'][0])])

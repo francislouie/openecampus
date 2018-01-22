@@ -623,7 +623,7 @@
 			<h1><field name="name" placeholder="Student Name" /></h1>
 			<h2><field name="current_class" placeholder="current_class" /></h2>
 			</div>
-			<group col="6" colspan="2">
+			<group    col="6" colspan="2">
 				<field name="registration_no" widget="" placeholder="" groups=""/>
 				<field name="login_id" readonly="1"/>
 				<field name="password" readonly="1"/>
@@ -632,17 +632,17 @@
 			<!-- Put here related buttons -->
 			</div>
 				<notebook>
-                <page string="Information">
+                <page string="Information" name="personal_information">
 					<notebook>
-						<page string="Contact Information">
+						<page string="Contact Information" name='contact_information'>
 							 <group>
-			                 	<group string="Personal">
+			                 	<group string="Personal" name="personal">
 			                   	<field name="father_name" required="1"/>
 								<field name="gender"  required="1"/>
 								<field name="father_nic"/>
 								<field name="father_occupation"/>
-								 <field name="religion" />
-								<field name="birthday" />
+								<field name="religion"/>
+								<field name="birthday"/>
 			                  </group>
 								<group string="Contact">
 								<field name="phone"  />
@@ -722,11 +722,18 @@
 				<field name="reason_withdraw" nolabel="1"/>
 			    </page>
 				<page string="Academics">
-				   <field name="classes_history"/>
-				   <field name="reg_nos"/>	
+					<notebook>
+					<page string= "Classes Details">
+				   	<field name="classes_history"/>
+					</page>
+					</notebook>
+				  
 			    </page>
 				<page string="Class Subjects">
-				   <field name="active_subjects" domain="[('subject_status','=','Current')]" />
+
+                <button name="%(action_wizard_calss_subject)d" string="Add new Subject" states="Admitted" type="action" class="oe_highlight" groups=""/>
+                   <field name="active_subjects" domain="[('subject_status','=','Cu rrent')]" />
+
 			    </page>
 				</notebook>
 				<notebook>
@@ -739,8 +746,22 @@
 				 <page string="References">
 				   <field name="reference_ids" nolabel="1" colspan="4"/> 
 			     </page>
-				 <page string="Previous School">
-                    <field name="previous_school_ids" nolabel="1" colspan="4"/> 
+				 <page string="Previous Institute">
+                    <field name="previous_school_ids" widget="one2many_list" nolabel="1" colspan="4"> 
+						<tree delete="false">
+							<field name="name" />
+							<field name="exit_date"/>
+						</tree>
+						<form delete="false">
+							<field name="name" />
+							<field name="registration_no"/>
+							<field name="admission_date" />
+							<field name="last_class_attended"/>
+							<field name="result_last_class" />
+							<field name="marks_obtained"/>
+							<field name="per"/>
+						</form>
+						</field>
                   </page>
 				  <page string="Relatives">
                     <field name="relatives" nolabel="1"/> 
@@ -1211,7 +1232,8 @@
 				<field name="total_students" readonly="1"/>
 				<field name="withdrawn_students" readonly="1"/>
 				<field name="promoted_students" readonly="1"/>
-				<field name="active_students" readonly="1"/>
+				<field name="count_student_class_changed" readonly="1"/>
+				<field name="cur_strength" readonly="1"/>
 			</group>
 			<field name="acad_cal_students" widget="one2many_list" readonly="1">
 				<tree delete="false">
@@ -2712,6 +2734,26 @@
 	      </notebook>
 	      </field>
 	    </record>
+
+
+		 <!-- hr contracted inherited for adding dedicting hours for attendance-->
+		<record id="hr_contract_inherited_form2" model="ir.ui.view">
+            <field name="name">hr.contract.fform2</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//group[@name='duration_group']" position="before">
+                        <group string="Deductions">
+                            <field name="hours_to_deduct" />
+                            <field name="amount_to_deduct"/>
+                        </group>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
         <!-- sms.employee-->
 		<record model="ir.ui.view" id="view_sms_employee_form">
 		      <field name="name">hr.employee.inherit</field>
@@ -2724,6 +2766,23 @@
 					<field name="father_name"/>
 					<field name="attendance_id"/>
 				</field>
+				
+				    <field name="coach_id" position="after">
+                    <!-- <label for="isactive" class="oe_edit_only"/> -->
+                    <field name="isactive"/>
+                   
+                </field>
+                
+                
+                
+                    <field name="isactive" position="after">
+                    <!-- <label for="joiningdate" class="oe_edit_only"/> -->
+                    <field name="joiningdate"/>
+                 
+                </field>
+				
+				
+				
 		      </field>
 		    </record>
 
@@ -2992,13 +3051,13 @@
                    </group>
 				   <newline/>
 					<notebook>
-						<page string="Contact Information"  attrs="{'readonly':[('state','=','Confirm')]}">
+						<page string="Contact Information"   attrs="{'readonly':[('state','=','Confirm')]}">
 						 <group>
 		                 	<group string="Personal">
 			                   	<field name="gender"  required="1"/>
-								<field name="father_nic" required="1"/>
+								<field name="father_nic"/>
 								<field name="blood_grp"/>
-								<field name="father_occupation"/>
+								<field name="father_occupation"  />
 								 <field name="religion" />
 								<field name="birthday" />
 		                  	</group>
