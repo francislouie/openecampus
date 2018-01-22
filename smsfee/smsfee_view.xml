@@ -292,6 +292,7 @@
 								<field name="paid_back_by" readonly ="1"/>
 								<field name="date_paid_back_date" readonly ="1"/>
 								<field name="state" />
+
 							 </form>
 							 </field>
 						</page>
@@ -623,7 +624,12 @@
 							<field name="id" string = "Record#"/>
 							<field name="category"/>
 						</group>
-				    </group>	
+
+				    </group>
+					<group>
+
+							<field name="verified" string="Verified"/>
+						</group>
 				</sheet>	 	
           	</form>
          </field>
@@ -639,6 +645,7 @@
 					<field name="paid_amount"/>
 					<field name="state"/>
 					<field name="category" invisible ="1"/>
+
 					<!--<field name="class_changed"/>-->
 			    </tree>
             </field>

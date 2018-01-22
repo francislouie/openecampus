@@ -1276,7 +1276,7 @@ class smsfee_studentfee(osv.osv):
         'reconcile':fields.boolean('Reconcile'),
         'verified': fields.boolean('verified'),
         'display_order':fields.function(get_display_order, store=True, string='display order', type='integer'),
-        'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted'),('Waiting_Approval','Waiting Approval')],'Fee Status',readonly=True),
+        'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
         'class_changed':fields.boolean('Class Changed'),
         #------------total payables---------------------------------
         'total_payable': fields.function(_get_total_payables,string = 'Total Payable',type = 'integer',method = True,store = True),
@@ -1657,6 +1657,7 @@ class smsfee_receiptbook(osv.osv):
                            'reconcile':line.reconcile,
                            'receipt_no':str(ids[0]),
                            'state':'fee_paid',
+                            'verified':True
                            })
              
         if generate_receipt:
@@ -1785,12 +1786,24 @@ class smsfee_receiptbook(osv.osv):
         generate_receipt = False
         total_paid_amount = 0
         for line in lines_obj:
-            std_fee_id = line.student_fee_id.id
-            update_std_fee_obj = self.pool.get('smsfee.studentfee').write(cr, uid,std_fee_id, {
 
-                'receipt_no': str(ids[0]),
-                'state': 'Waiting_Approval'
-            })
+            std_fee_id = line.student_fee_id.id
+            late_fee = 0
+
+            if line.reconcile:
+                total_paid_amount = total_paid_amount + line.paid_amount
+                generate_receipt = True
+                update_std_fee_obj = self.pool.get('smsfee.studentfee').write(cr, uid, std_fee_id, {
+                    'late_fee': late_fee,
+                    'paid_amount': line.paid_amount,
+                    'date_fee_paid': datetime.date.today(),
+                    'discount': line.discount,
+                    'net_total': line.net_total,
+                    'reconcile': line.reconcile,
+                    'receipt_no': str(ids[0]),
+                    'state': 'fee_paid',
+                    'verified':False
+                })
 
         for f in self.browse(cr, uid, ids, context):
             #-------------------------------------------------------------------
