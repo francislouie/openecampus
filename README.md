@@ -8,3 +8,5 @@ to work for forward college, checkout this branch and work in it, then on client
 
 If your you are working on a routine task not special for any client but for improvment of application, then get a new barnch from master
 related to your name e.g new branch will be branch_dev_shahid. work on this branch and merger it into master branch
+
+singa ye zargia?
