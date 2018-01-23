@@ -178,7 +178,7 @@ class fee_defaulters(osv.osv_memory):
                         cr.execute(sql3)
                         months = cr.fetchall()
                         annual_number=4
-                        
+                        #testing git branch 2
                         if fee[0] ==2:
                             if fee[0]==2:
                                 month_ids_list = []  #chnages: result2 replaced wiht month_ids_list
@@ -189,6 +189,7 @@ class fee_defaulters(osv.osv_memory):
                                         ft_name=str(fee[1])+"\n"+str(this_month[1])
                                     sheet1.write_merge(r1=0, c1=0, r2=2, c2=11)
                                     _col = (sheet1.row(col_fee)).height = 100 * 10
+                                    #cell width for fee type other than months
                                     _col = (sheet1.col(col_fee)).width = 400 * 20
                                     sheet1.write(0,3, title,header_top )
                                     sheet1.write(3,col_fee,ft_name,header_feetypes)

@@ -90,7 +90,7 @@ class sms_academics_session(osv.osv):
            
             s_year = str(datetime.datetime.strptime(str(f.start_date), '%Y-%m-%d').strftime('%Y'))
             e_year = str(datetime.datetime.strptime(str(f.end_date), '%Y-%m-%d').strftime('%Y'))[2:]
-            result[f.id] =f.subcate+"("+str(s_year) + "-" + str(e_year)+")"
+            result[f.id] =f.program_category_id.name+"("+str(s_year) + "-" + str(e_year)+")"
         return result
     
     
@@ -106,7 +106,8 @@ class sms_academics_session(osv.osv):
         'date_closed':fields.date('Closed On',readonly = True),
         'closed_by':fields.many2one('res.users','Closed By',readonly = True),
         'state': fields.selection([('Draft', 'Draft'),('Active', 'Active'),('Closed', 'Closed')], 'State', readonly = True),
-        'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
+        'program_category_id':fields.many2one('sms.program.category','Program category'),
+#         'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
     } 
     _defaults = {  'state': 'Draft','name':'New Academic Session'}
     _sql_constraints = [('name_unique', 'unique (name,subcate)', """ Academic Session Must be Unique.""")]
@@ -383,6 +384,7 @@ class sms_session(osv.osv):
         'session_admissions_closed':fields.boolean("Admission Closed In This Session"),
         'session_started_by':fields.many2one('res.users','Started By:'),
         'session_closed_by':fields.many2one('res.users','Closed By'),
+        'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
         'state': fields.selection([('Draft', 'Draft'),('Active', 'Active'),('Previous', 'Closed')], 'State', readonly = True, help='Session State'),
     }
     _defaults = {  'state': 'Draft'}
@@ -499,6 +501,20 @@ class sms_class_section(osv.osv):
     } 
     _sql_constraints = [('name_unique', 'unique (name)', """ Section name must be Unique.""")]
 sms_class_section()
+class sms_program_category(osv.osv):
+    """
+    This object defines program category
+    """
+
+    _name = 'sms.program.category'
+    _description = "This object store generic section of class"
+    _columns = {
+        "name": fields.char("program category", size=32), 
+        "category_code": fields.char("Code", size=32),
+        "offered_in_inst": fields.boolean("Offered in Institute"), 
+    } 
+    
+sms_program_category()
 
 class sms_year(osv.osv):
     """
@@ -732,8 +748,12 @@ class sms_student(osv.osv):
         on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid="""+str(uid)
         cr.execute(sqluser)
         group_name=cr.fetchall()
-        print("goup_name",group_name)
-        if "Profile Manager" not in  group_name:
+        profile_manager = True
+        for s in group_name:
+            if s[0] == 'Profile Manager':
+                profile_manager = False
+        # group_name=json.dumps(group_name)
+        if profile_manager:
             for node in doc.xpath("//field[@name='father_occupation']"):
                 node.set('readonly', '1')
                 setup_modifiers(node)
@@ -1669,7 +1689,7 @@ class sms_academiccalendar(osv.osv):
     _order = 'disp_order, section_id'
     _columns = {
         'name':  fields.function(set_class_name, method=True, store = True, string='Class', type='char'), 
-        'acad_session_id': fields.many2one('sms.academics.session', 'Academic Session',domain="[('state','!=','Closed')]",required=True),
+        'acad_session_id': fields.many2one('sms.academics.session', 'Academic Program',domain="[('state','!=','Closed')]",required=True),
         'session_id': fields.many2one('sms.session', 'Session Year',domain="[('state','!=','Previous'),('academic_session_id','=',acad_session_id)]",required=True),
         'class_id': fields.many2one('sms.classes', 'Class',required=True), 
         'section_id': fields.many2one('sms.class.section', 'Section',required=True),

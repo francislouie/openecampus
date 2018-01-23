@@ -134,16 +134,16 @@
 	
 	<!--Examination-->
 	<menuitem id="menu_examination_head_top_id" name="Examinations" parent="" sequence="2" 
-	groups="group_sms_admission_officer,group_sms_director,group_sms_admin,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal"/>
+	groups="group_sms_admission_officer,group_sms_director,group_sms_admin,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal,group_sms_faculty"/>
 	
 	<menuitem id="menu_sms_exam_results_id" name="Results" parent="menu_examination_head_top_id" sequence="3" 
 	groups="group_sms_admission_officer,group_sms_director,group_sms_principal,group_sms_officers_exams,group_sms_admin,group_sms_manager_exams,group_sms_principal"/>
 
 	<menuitem id="menu_examination_head_id" name="Examinations" parent="menu_examination_head_top_id" sequence="1" 
-	groups="group_sms_director,group_sms_admin,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal"/>
+	groups="group_sms_director,group_sms_admin,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal,group_sms_faculty"/>
 	
 	<menuitem id="menu_sms_exam_entry_wizard" parent="menu_examination_head_id" sequence="" 
-	groups="group_sms_director,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal" action="action_view_sms_exam_entry_wizard" />
+	groups="group_sms_director,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal,group_sms_faculty" action="action_view_sms_exam_entry_wizard" />
 
 	<menuitem id="menu_sms_student_exam_lists_wizard" parent="menu_sms_exam_results_id" sequence="" action="action_view_sms_student_exam_lists_wizard"
 	groups="group_sms_director,group_sms_manager_exams,group_sms_principal,group_sms_manager_exams,group_sms_principal"/>

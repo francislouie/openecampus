@@ -131,8 +131,8 @@ class sms_attendance_parser(report_sxw.rml_parse):
         datelist = []
         this_form = self.datas['form']
         class_id = this_form['class_id'][0]
-#         datefrom = this_form['date_from']
-        datefrom ='2017-12-01'
+        datefrom = this_form['date_from']
+#         datefrom ='2017-12-01'
 #         dateto = this_form['date_to']
 
         year = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%Y'))
