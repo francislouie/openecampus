@@ -1,0 +1,22 @@
+{
+    'name': 'SMS Human Resource',
+    'version': '1.0',
+    'author': 'CYME Business Tech',
+    'category': 'Human Resource Management',
+    'description': """Modifies All Human Resources addons according to the needs of educational institutions.""",
+    'website': 'http://www.cyme.com.pk',
+    'images': [''],
+    'depends' : ['base','account','account_accountant','sms','hr','hr_contract','hr_payroll'],
+    'data': [
+             'sms_hr_view.xml',
+             'sms_hr_report.xml',  
+             'wizard/sms_hr_payslips_for_signature.xml',  
+             'wizard/sms_device_hr_data.xml',           
+             'sms_hr_menu.xml',
+            ],
+    'demo': [],
+    'installable': True,
+    'application': True,
+    'auto_install': False,
+    'images': [],
+}
