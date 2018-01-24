@@ -2278,6 +2278,7 @@
 		 <group colspan="4">
  		   <field name="start_date" on_change="onchange_exam_start_date(start_date)" attrs="{'readonly':[('state','in',['Closed','Cancelled'])]}"/>
  		   <field name="session_year"/>
+ 		     <field name="term_name"/>
  		    <field name="result"/>
 		</group>
 		</group>
@@ -2298,6 +2299,7 @@
         <tree string="Exam Offered">
           <field name="name"/>
 		  <field name="exam_type"/>
+		  <field name="term_name"/>
  		  <field name="start_date"/>
 		   <field name="session_year"/>
 		  <field name="state"/>

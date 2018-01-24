@@ -3444,6 +3444,7 @@ class sms_exam_offered(osv.osv):
     _columns = { 
         'name':fields.function(set_exam_offered_name, method=True,  string='Exam Offered',type='char', store=True),
         'exam_type': fields.many2one('sms.exam.type', 'Exam Type',required=True),
+        'term_name': fields.many2one('academic.session.term', 'Exam Term', required=True),
         'start_date': fields.date('Start Date'),
         'closing_date': fields.date('Closing Date'),
         'session_year': fields.many2one('sms.session', 'Session',  required=True, help="Session Year ",domain="[('state','=','Active')]"),
@@ -3455,7 +3456,18 @@ class sms_exam_offered(osv.osv):
     _defaults = {
         'state': lambda *a: 'Draft',
         }
+
+class academic_session_term(osv.osv):
+    _name = "academic.session.term"
+    _description = "This class stores the records of exam terms in a session"
     
+    _colums = {
+        'name':fields.char(string = 'Term Name'),
+        'start_date':fields.date('Start Date'),
+        'end_date':fields.date('End Date'),
+        'state':fields.char('State'),
+        }
+   
 class sms_exam_datesheet(osv.osv):
     
     """This object register academic calender in to active exams, when click on start exams all acitve
