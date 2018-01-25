@@ -609,7 +609,7 @@
 							<field name="receipt_no" attrs="{'readonly':[('state','IN',['fee_paid'])]}"/>
 						</group>
 						 <group>
-							<field name="fee_month"/>
+							<field name="fee_month" readonly = "1"/>/>
 							<field name="paid_amount" readonly="1"/>
 							<field name="discount" readonly="1"/>
 					    </group>
@@ -622,8 +622,9 @@
 							<field name="due_month"/>
 							<field name="id" string = "Record#"/>
 							<field name="category"/>
+							 <field name="verified" string="Yet to Verify:state =='fee_unpaid';Verified:state=='fee_returned'"/>
 						</group>
-				    </group>	
+				    </group>
 				</sheet>	 	
           	</form>
          </field>

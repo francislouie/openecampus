@@ -1273,7 +1273,8 @@ class smsfee_studentfee(osv.osv):
         'returned_amount':fields.float('Returned Amount'),
         'discount': fields.integer('Discount'),
         'net_total': fields.integer('Balance'),  
-        'reconcile':fields.boolean('Reconcile'), 
+        'reconcile':fields.boolean('Reconcile'),
+        'verified': fields.boolean('Verified'),
         'display_order':fields.function(get_display_order, store=True, string='display order', type='integer'),
         'state':fields.selection([('fee_exemption','Fee Exemption'),('fee_unpaid','Fee Unpaid'),('fee_paid','Fee Paid'),('fee_returned','Fee Returned'),('Deleted','Deleted')],'Fee Status',readonly=True),
         'class_changed':fields.boolean('Class Changed'),
@@ -1633,12 +1634,12 @@ class smsfee_receiptbook(osv.osv):
         search_lines_id = self.pool.get('smsfee.receiptbook.lines').search(cr, uid, [('receipt_book_id','=',ids[0])], context=context)
         lines_obj = self.pool.get('smsfee.receiptbook.lines').browse(cr, uid, search_lines_id)
         generate_receipt = False
-        total_paid_amount = 0 
+        total_paid_amount = 0
         for line in lines_obj:
-             
+
             std_fee_id = line.student_fee_id.id
             late_fee = 0
-             
+
             if line.reconcile:
                 total_paid_amount = total_paid_amount+ line.paid_amount
                 generate_receipt = True
@@ -1652,7 +1653,7 @@ class smsfee_receiptbook(osv.osv):
                            'receipt_no':str(ids[0]),
                            'state':'fee_paid',
                            })
-             
+
         if generate_receipt:
             update_receiptbook = self.write(cr, uid, ids[0],{
                            'fee_approved_by':uid,
@@ -1771,8 +1772,37 @@ class smsfee_receiptbook(osv.osv):
         rec =  self.browse(cr, uid, ids)
         return rec.id
     
-    def send_for_approval(self, cr, uid, ids, context=None): 
+    def send_for_approval(self, cr, uid, ids, context=None):
+        rec = self.browsle(cr, uid, ids, context)
         for f in self.browse(cr, uid, ids, context):
+            pass
+
+        search_lines_id = self.pool.get('smsfee.receiptbook.lines').search(cr, uid,
+                                                                               [('receipt_book_id', '=', ids[0])],
+                                                                               context=context)
+        lines_obj = self.pool.get('smsfee.receiptbook.lines').browse(cr, uid, search_lines_id)
+        generate_receipt = False
+        total_paid_amount = 0
+        for line in lines_obj:
+
+            std_fee_id = line.student_fee_id.id
+            late_fee = 0
+
+            if line.reconcile:
+                total_paid_amount = total_paid_amount + line.paid_amount
+                generate_receipt = True
+                update_std_fee_obj = self.pool.get('smsfee.studentfee').write(cr, uid, std_fee_id, {
+                    'late_fee': late_fee,
+                    'paid_amount': line.paid_amount,
+                    'date_fee_paid': datetime.date.today(),
+                    'discount': line.discount,
+                    'net_total': line.net_total,
+                    'reconcile': line.reconcile,
+                    'receipt_no': str(ids[0]),
+                    'state': 'fee_paid',
+                    'verified':True
+                    })
+
             #-------------------------------------------------------------------
             self.write(cr, uid, ids[0], {'state':'Waiting_Approval','fee_received_by':uid,'date_receivd_onsystem':datetime.datetime.now()})
         return
