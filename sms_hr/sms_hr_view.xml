@@ -1,0 +1,113 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+    
+    <record id="view_biometric_device_form" model="ir.ui.view">
+            <field name="name">hr.biometirc.device.form</field>
+            <field name="model">hr.biometirc.device</field>
+            <field name="arch" type="xml">
+                <form string="Biometric Device" version="7.0">
+                    <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="campus_name"/>
+                        <field name="device_id"/>
+                        <field name="location_within_campus"/>
+                    </group>
+                    <group>
+                        <field name="date_installed"/>
+                        <field name="provider"/>
+                        <field name="company"/>
+                        <field name="support_contact"/>
+                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    
+			<record id="hr_attendance_" model="ir.ui.view">
+            <field name="name">hr.attendancefform2</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.view_attendance_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//field[@name='action_desc']" position="after">
+                        <group string="Biometric Setting">
+                            <field name="emp_regno_on_device"/>
+                            <field name="empleado_account_id"/>
+                            <field name="device_odoo_config_id"/>
+                        </group>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
+        
+        <record id="hr_employee_form10" model="ir.ui.view">
+            <field name="name">hr.employee.form10</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//field[@name='active']" position="after">
+                        <group string="Biometric Setting">
+                            <field name="emp_regno_on_device"/>
+                            <field name="empleado_account_id"/>
+                        </group>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
+        
+         <record id="hr_patslip_form_inherit1" model="ir.ui.view">
+            <field name="name">hr.payslip.form10</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//button[@name='cancel_sheet']" position="after">
+                        <button string="Archieve" name="send_to_archieve" states="done,cancel"/>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
+        
+        
+	<!-- Show draft pay slips -->
+	<record id="action_view_hr_payslip_inprocess_form" model="ir.actions.act_window">
+            <field name="name">Slips (Inprocess)</field>
+            <field name="res_model">hr.payslip</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_payroll.view_hr_payslip_tree"/>
+             <field name="domain">[('state','in',['draft','verify'])]</field>
+            <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+        </record>
+        
+    <!-- Show confirmed pay slips -->
+	<record id="action_view_hr_new_payslip_confirmed_form" model="ir.actions.act_window">
+            <field name="name">Slips (Confirmed)</field>
+            <field name="res_model">hr.payslip</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_payroll.view_hr_payslip_tree"/>
+             <field name="domain">[('state','in',['done'])]</field>
+            <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+        </record>
+	
+	 <!-- Show archieved pay slips (means confirmed slips of old months) -->
+	<record id="action_view_hr_payslip_archieved_confirmed_form" model="ir.actions.act_window">
+            <field name="name">Archieved (Confirmed)</field>
+            <field name="res_model">hr.payslip</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_payroll.view_hr_payslip_tree"/>
+             <field name="domain">[('state','in',['Archieved'])]</field>
+            <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+        </record>
+	
+	
+	</data>
+</openerp>
