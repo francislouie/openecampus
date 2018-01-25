@@ -203,7 +203,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
-                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':'','dbid':''}
+                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':'','dbid':'','grand_total':'','grand_lable':'','partial_lable':''}
                     challan_dict['challan_number'] = self.get_challan_number(challan.id)
                     challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                     challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
@@ -212,10 +212,12 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                     challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id) 
                     challan_dict['dbid'] = self.print_challan_dbid(challan.id)
                     if self.datas['form']['fee_receiving_type'] == "Partial":
-                        grand_amt=int(self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], 'Academics','fee_unpaid'))
+                        grand_amt=self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], 'Academics','fee_unpaid')
                         total_amt=self.get_total_amount(challan.id)
-                        challan_dict['total_amount'] = "("+str(grand_amt)+"-Partial total"+str(total_amt)+")="+str(grand_amt-total_amt)
-
+                        dues=int(grand_amt)-int(total_amt)
+                        challan_dict['grand_total']="Dues:       ("+str(grand_amt)+"-  Paid "+str(total_amt)+")  = "+str(dues)
+                        challan_dict['partial_lable']='Partial Challan'
+                        # color  #D4D4D4 [record['partial_lable']challan_dict['partial_lable']='Partial Challan'
                     else:
                         challan_dict['total_amount'] = self.get_total_amount(challan.id)
 
