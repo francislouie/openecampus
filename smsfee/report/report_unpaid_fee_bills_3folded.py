@@ -210,7 +210,15 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                     challan_dict['vertical_lines'] = self.get_vertical_lines_total(challan.id)
                     challan_dict['total_amount'] = self.get_total_amount(challan.id)
                     challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id) 
-                    challan_dict['dbid'] = self.print_challan_dbid(challan.id) 
+                    challan_dict['dbid'] = self.print_challan_dbid(challan.id)
+                    if self.datas['form']['fee_receiving_type'] == "Partial":
+                        grand_amt=int(self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], 'Academics','fee_unpaid'))
+                        total_amt=self.get_total_amount(challan.id)
+                        challan_dict['total_amount'] = "("+str(grand_amt)+"-Partial total"+str(total_amt)+")="+str(grand_amt-total_amt)
+
+                    else:
+                        challan_dict['total_amount'] = self.get_total_amount(challan.id)
+
                     if self.datas['form']['amount_after_due_date']:
                         challan_dict['amount_after_due_date'] = challan_dict['total_amount'] + self.datas['form']['amount_after_due_date'] 
                     else:
