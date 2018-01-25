@@ -18,7 +18,8 @@
 						<p style = "color:blue;">An Academic Session may have multiple years, depends on start and end date of an academic session</p>
 							<group>
 							<group string="" >
-								 <field name="subcate" />
+								<!--  <field name="subcate" /> -->
+								<field name="program_category_id" />
 								<field name="start_date" />
 								<field name="date_started" readonly ="1"/>
 								<field name="started_by" readonly ="1"/>
@@ -106,6 +107,7 @@
                 	
                   </group>
                   <field name="session_admissions_closed"/>
+                  <field name="subcate"/>
                 	<field name="state"/>
 				</group>  
 				<group></group>
@@ -142,6 +144,7 @@
 						<field name="academic_session_id"/>
 						<field name="start_date"/>
                     	<field name="end_date"/>
+                    	  <field name="subcate"/>
                     	<field name="state"/>
 						<field name="id" string = "Code" readonly ="1"/>
                 </tree>

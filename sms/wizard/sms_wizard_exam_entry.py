@@ -6,12 +6,15 @@ class exam_entry(osv.osv_memory):
     def onchange_set_domain(self, cr, uid, ids, exam_type,academiccalendar_id):
         existing_subject_id = []
 
+        cr.execute("""select id from hr_employee where resource_id =(select id from resource_resource where user_id =""" + str(uid) + """  )""")
+        emp_id = cr.fetchone()[0]
+
         if (academiccalendar_id != False) and (exam_type != False):
             exam_dt_rec = self.pool.get('sms.exam.datesheet').browse(cr ,uid ,exam_type)
             existing_subject_id = [x.subject.id for x in exam_dt_rec.datesheet_lines]
-        
+            
         return {'domain': {'exam_type':[('academiccalendar','=',academiccalendar_id),('status','=','Active')],
-                           'subject_id':[('id','in',existing_subject_id)]   }
+                           'subject_id':[('id','in',existing_subject_id),('teacher_id','=',emp_id)]   }
                 }
         
         
