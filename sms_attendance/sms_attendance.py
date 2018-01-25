@@ -163,9 +163,11 @@ class sms_class_attendance(osv.osv):
                 self.pool.get('sms.class.attendance.lines').write(cr ,uid ,a_lines.id ,{'state':'Present'})
         self.write(cr ,uid ,ids ,{'state':'Submit' , 'punched_by':uid})
         return None
-    
+#      return {'domain': {'group':[('id','=',acad_cal_obj.group_id.id ) ]},'value': vals}
     def onchange_set_domain(self, cr, uid , ids, class_id, attendance_date, context=None):
         result = {}
+        cr.execute("""select id from hr_employee where resource_id =(select id from resource_resource where user_id =""" + str(uid) + """  )""")
+        teacher_id = cr.fetchone()[0]
         if class_id:
             rec = self.pool.get('sms.academiccalendar').browse(cr ,uid ,[class_id])[0]
             if attendance_date < rec.session_id.start_date or attendance_date > rec.session_id.end_date:
@@ -173,7 +175,7 @@ class sms_class_attendance(osv.osv):
             result['class_teacher'] = rec.class_teacher.id
         else:
             result['class_teacher'] = None
-        return {'value': result}
+        return {'domain': {'class_id':[('class_teacher','=',teacher_id) ]},'value': result}
     
     def _user_get(self,cr,uid,context={}):
         return uid
