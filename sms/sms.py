@@ -555,18 +555,19 @@ class sms_classes(osv.osv):
 #         print "attemp2",read
 
         import requests
-        r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3')
-        read = r.json()
-        print "json response",read
-        
-        #read = {u'status': u'ok', u'att_records': [{u'att_time': u'20180111105255', u'bio_id': u'2025', u'user_empleado_id': u'961', u'auth': u'd86ee704b4962d54227af9937a1396c3', u'device_id': u'20170767645'}], u'acknowledge_id': u'1387', u'auth': u'd86ee704b4962d54227af9937a1396c3'}''
-        for attenadnce in read:
-            for gg in read['att_records']:
-                print "gg as whole",gg
-                print "att_time",gg['att_time']
-                print "bio_id",gg['bio_id']
-                print "user_empleado_id id",['user_empleado_id']
-                print "device_id id",['device_id']
+        r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24')
+        if(r.status_code == 200):
+            read = r.json()
+            print "---------------------------     json response    -----------------------------",read
+#         
+#         #read = {u'status': u'ok', u'att_records': [{u'att_time': u'20180111105255', u'bio_id': u'2025', u'user_empleado_id': u'961', u'auth': u'd86ee704b4962d54227af9937a1396c3', u'device_id': u'20170767645'}], u'acknowledge_id': u'1387', u'auth': u'd86ee704b4962d54227af9937a1396c3'}''
+#         for attenadnce in read:
+#             for gg in read['att_records']:
+#                 print "gg as whole",gg
+#                 print "att_time",gg['att_time']
+#                 print "bio_id",gg['bio_id']
+#                 print "user_empleado_id id",['user_empleado_id']
+#                 print "device_id id",['device_id']
         return True
    
     """
@@ -3456,17 +3457,22 @@ class sms_exam_offered(osv.osv):
     _defaults = {
         'state': lambda *a: 'Draft',
         }
+sms_exam_offered()
+
 
 class academic_session_term(osv.osv):
     _name = "academic.session.term"
     _description = "This class stores the records of exam terms in a session"
     
-    _colums = {
-        'name':fields.char(string = 'Term Name'),
+    _columns = {
+        'name': fields.selection([('1st','1st'),('2nd','2nd'),('3rd','3rd'),('Final','Final')],'Term Name'),
         'start_date':fields.date('Start Date'),
         'end_date':fields.date('End Date'),
-        'state':fields.char('State'),
+        'state': fields.selection([('Draft','Draft'),('Active','Active'),('Closed','Closed'),('Cancelled','Cancelled')],'Status'),
         }
+    
+academic_session_term()
+
    
 class sms_exam_datesheet(osv.osv):
     

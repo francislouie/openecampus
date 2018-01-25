@@ -149,7 +149,7 @@
         </record>
 
         <record id="view_session_search" model="ir.ui.view">
-            <field name="name">session.search</field>
+            <field name="name">session search</field>
             <field name="model">sms.session</field>
             <field name="arch" type="xml">
                 <search string="Search Session Record">
@@ -158,16 +158,66 @@
                 </search>
             </field>
         </record>
-
         <record model="ir.actions.act_window" id="action_session">
             <field name="name">Session Years</field>
             <field name="res_model">sms.session</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="context">{'search_default_draft': 1}</field>
-            <field name="search_view_id" ref="view_session_search"/>
+          <field name="context">{'search_default_draft': 1}</field>
+        <field name="search_view_id" ref="view_session_search"/>
         </record>
+
+
+
+        
+         <!-- academic.session.term -->
+         
+        <record model="ir.ui.view" id="view_term_form">
+         <field name="name">term.form</field>
+         <field name="model">academic.session.term</field>
+         <field name="arch" type="xml">
+            <form string="Academic Session Terms" version="7.0">
+                <sheet>
+                 <group string="Term" >
+                  <group >
+                    <field name="name" required="1"/>
+                    <field name="start_date" required="1"/>
+                    <field name="end_date" required="1"/>
+                    <field name="state" required="1"/>
+                  </group>
+                </group>  
+            </sheet>        
+              </form>
+            </field>
+        </record>
+        
+             <record model="ir.ui.view" id="view_term_tree">
+            <field name="name">session.term.tree</field>
+            <field name="model">academic.session.term</field>
+            <field name="arch" type="xml">
+                <tree colors="red:state =='Previous';blue:state=='Active'" string="Term">
+                        <field name="name" />
+                        <field name="start_date" />
+                        <field name="end_date" />
+                        <field name="state" />
+                </tree>
+            </field>
+        </record>
+
+
+        <record model="ir.actions.act_window" id="action_session_term">
+            <field name="name">Session Term</field>
+            <field name="res_model">academic.session.term</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+
+
+
 
 <!--Session Months-->
  <record model="ir.ui.view" id="view_sessionmonths_tree">
