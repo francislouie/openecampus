@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Fee Reports-->
+
+        <record id="view_form_pull_hr_data" model="ir.ui.view">
+            <field name="name">sms.pull.hr.machine.data.form</field>
+            <field name="model">sms.pull.hr.machine.data</field>
+            <field name="arch" type="xml">
+                <form string="Employees Payslips" version="7.0">
+                    <group>
+						<group>
+						<field name="pull_for_device" />
+	                    </group>
+	                </group>
+					
+                    <footer>
+                        <button string="Pull Employees Attendance" name="pull_attendance_device_data" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+          </record> 
+
+  <!-- action Fee Reports -->
+
+        <record id="action_pull_hr_data" model="ir.actions.act_window">
+            <field name="name">Pull Biometric Data</field>
+            <field name="res_model">sms.pull.hr.machine.data</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+           <field name="view_id" ref="view_form_pull_hr_data"/>
+           <field name="target">new</field>
+        </record> 
+</data>
+</openerp>
