@@ -577,13 +577,13 @@ class sms_classes(osv.osv):
         
         #read = {u'status': u'ok', u'att_records': [{u'att_time': u'20180111105255', u'bio_id': u'2025', u'user_empleado_id': u'961', u'auth': u'd86ee704b4962d54227af9937a1396c3', u'device_id': u'20170767645'}], u'acknowledge_id': u'1387', u'auth': u'd86ee704b4962d54227af9937a1396c3'}''
         for attenadnce in read:
-            for gg in read['att_records']:
-                print "gg as whole",gg
-                print "att_time",gg['att_time']
-                print "bio_id",gg['bio_id']
-                print "user_empleado_id id",['user_empleado_id']
-                print "device_id id",['device_id']
-        return True
+            # for gg in read['att_records']:
+            #     print "gg as whole",gg
+            #     print "att_time",gg['att_time']
+            #     print "bio_id",gg['bio_id']
+            #     print "user_empleado_id id",['user_empleado_id']
+            #     print "device_id id",['device_id']
+            return True
    
     """
     This object defines classes of an institute
