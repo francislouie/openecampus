@@ -211,12 +211,13 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                     challan_dict['total_amount'] = self.get_total_amount(challan.id)
                     challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id) 
                     challan_dict['dbid'] = self.print_challan_dbid(challan.id)
-                    if self.datas['form']['fee_receiving_type'] == "Partial":
-                        grand_amt=self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], 'Academics','fee_unpaid')
-                        total_amt=self.get_total_amount(challan.id)
-                        dues=int(grand_amt)-int(total_amt)
-                        challan_dict['grand_total']="Dues:       ("+str(grand_amt)+"-  Paid "+str(total_amt)+")  = "+str(dues)
-                        challan_dict['partial_lable']='Partial Challan'
+                    if 'fee_receiving_type' in self.datas['form']:
+                        if self.datas['form']['fee_receiving_type'] == "Partial":
+                            grand_amt=self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], 'Academics','fee_unpaid')
+                            total_amt=self.get_total_amount(challan.id)
+                            dues=int(grand_amt)-int(total_amt)
+                            challan_dict['grand_total']="Dues:       ("+str(grand_amt)+"-  Paid "+str(total_amt)+")  = "+str(dues)
+                            challan_dict['partial_lable']='Partial Challan'
                         # color  #D4D4D4 [record['partial_lable']challan_dict['partial_lable']='Partial Challan'
                     else:
                         challan_dict['total_amount'] = self.get_total_amount(challan.id)
