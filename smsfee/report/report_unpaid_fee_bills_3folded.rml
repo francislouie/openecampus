@@ -9,7 +9,7 @@
      <header>
         <pageGraphics>
 
-            <setFont name="P-Partial" size="11" textColor="#C0C0C0" />
+
            	<drawString  x="190" y="35">[[(record['partial_lable'])]]</drawString>
            	<drawString  x="490" y="35">[[(record['partial_lable'])]]</drawString>
 			<drawString x="790" y="35">[[(record['partial_lable'])]]</drawString>
@@ -128,7 +128,7 @@
 	<initialize>
     <paraStyle name="all" alignment="justify"/>
     </initialize>
-    <paraStyle name="P-Partial" fontName="Helvetica" fontSize="9.0" leading="10" alignment="CENTER" textColor="#D4D4D4"/>
+
     <paraStyle name="P1" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="10" alignment="CENTER" textColor="#000000"/>
 	<paraStyle name="P2-Bold" fontName="Helvetica-Bold" fontSize="9.0" leading="10" alignment="CENTER" textColor="#000000"/>
@@ -300,9 +300,9 @@
       		</tr>
       		<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0">
+	          		<blockTable colWidths="200.0,60.0" style="Table_1">
 		      		<tr>
-					    <td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
 		        		<td><para style="P4-Bold"></para></td>
 		      		</tr>
 		      		</blockTable>
@@ -310,7 +310,7 @@
       		</tr>
 			<tr>
         		<td>
-	          		<blockTable colWidths="150.0,110.0" style="Table_1">
+	          		<blockTable colWidths="150.0,110.0" style="table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Payment After Due Date:</para></td>
 						<td><para style="P5-Right">[[(record['amount_after_due_date'])]]</para></td>
@@ -458,17 +458,16 @@
 				</td>
       		</tr>
 			<tr>
-			<tr>
         		<td>
 	          		<blockTable colWidths="200.0,60.0" style="Table_1">
 		      		<tr>
-		      			<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
 		        		<td><para style="P4-Bold"></para></td>
-
 		      		</tr>
 		      		</blockTable>
 				</td>
       		</tr>
+      		<tr>
         		<td>
 	          		<blockTable colWidths="150.0,110.0" style="Table_1">
 		      		<tr>
@@ -615,7 +614,7 @@
       		</tr>
       		<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0">
+	          		<blockTable colWidths="200.0,60.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
 		        		<td><para style="P4-Bold"></para></td>
