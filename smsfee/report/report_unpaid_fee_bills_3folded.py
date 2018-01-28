@@ -203,6 +203,8 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
+                    if challan.student_id == 669:
+                        break
                     challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':'','dbid':''}
                     challan_dict['challan_number'] = self.get_challan_number(challan.id)
                     challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)

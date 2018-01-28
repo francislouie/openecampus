@@ -60,8 +60,8 @@
 			<setFont name="Helvetica" size="9"/>
 
            	<drawString x="002" y="35">[[get_challan_footer_one()]]</drawString>
-			<drawString x="300" y="35">[[get_challan_footer_one()]]</drawString>
-			<drawString x="600" y="35">[[get_challan_footer_one()]]</drawString>
+			<drawString x="300" y="35"></drawString>
+			<drawString x="600" y="35"></drawString>
 				
 			<setFont name="Helvetica" size="7"/>
 
