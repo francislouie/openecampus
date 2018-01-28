@@ -300,7 +300,7 @@
       		</tr>
       		<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0" style="table_1">
+	          		<blockTable colWidths="200.0,60.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
 		        		<td><para style="P4-Bold"></para></td>
@@ -310,7 +310,7 @@
       		</tr>
 			<tr>
         		<td>
-	          		<blockTable colWidths="150.0,110.0" style="Table_1">
+	          		<blockTable colWidths="150.0,110.0" style="table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Payment After Due Date:</para></td>
 						<td><para style="P5-Right">[[(record['amount_after_due_date'])]]</para></td>
