@@ -13,6 +13,7 @@
 				<page string="Attendance Settings" position="after">
 					<group  colspan="4" col="2">
 						<field name="attendace_punching"/>
+						<!--   <field name="get_class_totalattendance"/> -->
 					</group>
 	         		<separator string="Leave Days / Off Days"/>
 					<field name="off_days" nolabel="1" context="{'name': active_id}">
@@ -58,6 +59,9 @@
 		</field>
 	</record>
 	
+	
+	
+	
 	<!-- Acadmeic Calendar Inherited View-->
 	<record model="ir.ui.view" id="inherit_view_sms_attendance_acad_calendar">
 		<field name="name">sms.academiccalendar.inheritattendance</field>
@@ -67,10 +71,33 @@
 		<field name="arch" type="xml">
 			<xpath expr = "//field[@name='class_teacher']" position="after">
 	            <field name="attendace_punching"/>
+	           <field name="get_class_totalattendance"/>
 			</xpath>
 		</field>
 	</record>
-
+<!--Academic Calendar Student Inherited View-->
+    <record model="ir.ui.view" id="inherit_view_sms_academiccalendar_student">
+        <field name="name">sms.academiccalendar.student.inheritattendance</field>
+        <field name="model">sms.academiccalendar.student</field>
+        <field name="inherit_id" ref="sms.view_std_clss_reg_form"/>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <xpath expr = "//field[@name='marks_per']" position="after">
+                <field name="total_present"/>
+              
+                    <field name="total_leave"/>
+                   
+          
+            </xpath>
+            <xpath expr = "//field[@name='attendance_per']" position="after">
+              
+                  <field name="total_absent"/>
+                  
+                      <field name="attendace_percentage"/>
+          
+            </xpath>
+        </field>
+    </record>
 
 	 <!-- Attendance  Calendar  View -->
 
