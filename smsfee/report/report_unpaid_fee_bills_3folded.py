@@ -148,7 +148,6 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
     def get_due_date(self):
         due_date = self.datas['form']['due_date']
         due_date = datetime.strptime(due_date, '%Y-%m-%d').strftime('%d/%m/%Y')
-        print "shahid islam 29 DEC"
         return due_date 
 
     def get_class_group(self, data):
@@ -203,7 +202,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
-                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':'','dbid':'','grand_total':'','grand_lable':'','partial_lable':''}
+                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':'','dbid':'','grand_total':'','grand_lable':'','partial_lable':'' ,'table_1':''}
                     challan_dict['challan_number'] = self.get_challan_number(challan.id)
                     challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                     challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
@@ -216,7 +215,9 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                             grand_amt=self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], 'Academics','fee_unpaid')
                             total_amt=self.get_total_amount(challan.id)
                             dues=int(grand_amt)-int(total_amt)
-                            challan_dict['grand_total']="Dues:       ("+str(grand_amt)+"-  Paid "+str(total_amt)+")  = "+str(dues)
+                            challan_dict['grand_lable'] = "table_1"
+                            challan_dict['grand_lable']="Dues:"
+                            challan_dict['grand_total']="(Dues"+str(grand_amt)+" - To be paid"+str(total_amt)+")  =  "+str(dues)
                             challan_dict['partial_lable']='Partial Challan'
                         # color  #D4D4D4 [record['partial_lable']challan_dict['partial_lable']='Partial Challan'
                     else:

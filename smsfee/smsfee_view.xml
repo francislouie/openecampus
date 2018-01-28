@@ -622,7 +622,7 @@
 							<field name="due_month"/>
 							<field name="id" string = "Record#"/>
 							<field name="category"/>
-							 <field name="verified" string="Yet to Verify:state =='fee_unpaid';Verified:state=='fee_returned'"/>
+							 <field name="verified" string="Verified"  attrs="{'invisible':[('verified','NOT IN',[True])]}"/>
 						</group>
 				    </group>
 				</sheet>	 	
