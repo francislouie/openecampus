@@ -1,5 +1,6 @@
 import time
 import calendar
+from datetime import date
 from datetime import datetime, timedelta
 from datetime import datetime
 import mx.DateTime
@@ -54,13 +55,20 @@ class sms_attendance_parser(report_sxw.rml_parse):
 
     def get_filled_attendance_report_days(self, data):
         result = []
+        datelist = []
         this_form = self.datas['form']
         class_id = this_form['class_id'][0]
         datefrom = this_form['date_from']
-#         dateto = this_form['date_to']
+        my_date = date.today()
+        print"my_date",my_date
+        print"datefrom",datefrom
+        day = calendar.day_name[my_date.weekday()]
+        print"date",day
+
 
         year = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%Y'))
         mont = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%m'))
+      
         print"Year and month",year ,mont
         mon_days = calendar.monthrange(year,mont)[1]
         if(mont <10):
@@ -68,22 +76,23 @@ class sms_attendance_parser(report_sxw.rml_parse):
         else:
             month ='-'+str(mont)   
         date_from =str(str(year)+str(month)+'-01')
-        date_to =str(str(year)+str(month)+'-'+str(mon_days)) 
+        date_to =str(str(year)+str(month)+'-'+str(mon_days))
+        day_start = int(datetime.datetime.strptime(str(date_from), '%Y-%m-%d').strftime('%d'))
+        day_end = int(datetime.datetime.strptime(str(date_to), '%Y-%m-%d').strftime('%d'))
+        days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+        
         attendance_ids = tuple(self.pool.get('sms.class.attendance').search(self.cr, self.uid, [('class_id','=',class_id),
                                                                                                 ('attendance_date','>=',date_from),
                                                                                                 ('attendance_date','<=',date_to)]))
-        my_dict = {'date1':'1', 'date2':'2', 'date3':'3', 'date4':'4', 'date5':'5', 'date6':'6', 'date7':'7','date8':'8','date9':'9','date10':'10','date11':'11', 'date12':'12', 'date13':'13', 'date14':'14', 'date15':'15', 'date16':'16', 'date17':'17','date18':'18','date19':'19','date20':'20','date21':'21', 'date22':'22', 'date23':'23', 'date24':'24', 'date25':'25', 'date26':'26', 'date27':'27','date28':'28','date29':'29','date30':'30','date31':'31'}
-        i = 1
-        for rec_id in attendance_ids: 
-            attendance_obj = self.pool.get('sms.class.attendance').browse(self.cr, self.uid, rec_id)
-            attendance_date= attendance_obj.attendance_date
-            date_attendace = int(datetime.datetime.strptime(str(attendance_date), '%Y-%m-%d').strftime('%d'))
-#             if date_attendace!=i:
-#                 my_dict['date'+ str(i)] = date_attendace
-#             else:
-#                 my_dict['date'+ str(i)] = '--'
-# 
-#             i +=1
+        my_dict = {'date1':'', 'date2':'2', 'date3':'3', 'date4':'4', 'date5':'5', 'date6':'6', 'date7':'7','date8':'8','date9':'9','date10':'10','date11':'11', 'date12':'12', 'date13':'13', 'date14':'14', 'date15':'15', 'date16':'16', 'date17':'17','date18':'18','date19':'19','date20':'20','date21':'21', 'date22':'22', 'date23':'23', 'date24':'24', 'date25':'25', 'date26':'26', 'date27':'27','date28':'--','date29':'--','date30':'--','date31':'--'}
+        
+        dayss=1
+        for day in range(day_start,day_end+1):
+            name_day=days[calendar.weekday(year,mont,dayss)]
+          
+            my_dict['date'+str(dayss)] =str(dayss) + name_day
+          
+            dayss=dayss+1 
         result.append(my_dict)
         return result
 
@@ -126,17 +135,22 @@ class sms_attendance_parser(report_sxw.rml_parse):
     
 # method is calling from here 
     def get_filled_attendance_report_recs(self, data):
-        print"get_filled_attendance_report_recs"
+      
         result = []
         datelist = []
         this_form = self.datas['form']
         class_id = this_form['class_id'][0]
-#         datefrom = this_form['date_from']
-        datefrom ='2017-12-01'
-#         dateto = this_form['date_to']
+        datefrom = this_form['date_from']
+        my_date = date.today()
+        print"my_date",my_date
+        print"datefrom",datefrom
+        day = calendar.day_name[my_date.weekday()]
+        print"date",day
+
 
         year = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%Y'))
         mont = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%m'))
+      
         print"Year and month",year ,mont
         mon_days = calendar.monthrange(year,mont)[1]
         if(mont <10):
@@ -145,6 +159,9 @@ class sms_attendance_parser(report_sxw.rml_parse):
             month ='-'+str(mont)   
         date_from =str(str(year)+str(month)+'-01')
         date_to =str(str(year)+str(month)+'-'+str(mon_days))
+        day_start = int(datetime.datetime.strptime(str(date_from), '%Y-%m-%d').strftime('%d'))
+        day_end = int(datetime.datetime.strptime(str(date_to), '%Y-%m-%d').strftime('%d'))
+        days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
 
         attendance_ids = self.pool.get('sms.class.attendance').search(self.cr, self.uid, [('class_id','=',class_id),
                                                                                           ('attendance_date','>=',date_from),
@@ -163,9 +180,20 @@ class sms_attendance_parser(report_sxw.rml_parse):
                         
         i = 1
         for student in studentslist:
-            my_dict = {'s_no':'', 'student':'', 'date1':'--', 'date2':'--', 'date3':'--', 'date4':'--', 'date5':'--', 'date6':'--', 'date7':'--','date8':'--','date9':'--','date10':'--','date11':'--', 'date12':'--', 'date13':'--', 'date14':'--', 'date15':'--', 'date16':'--', 'date17':'--','date18':'--','date19':'--','date20':'--','date21':'--', 'date22':'--', 'date23':'--', 'date24':'--', 'date25':'--', 'date26':'--', 'date27':'--','date28':'--','date29':'--','date30':'--','date31':'--'}
-            my_dict['s_no'] = i
+            my_dict = {'s_no':'', 'student':'', 'date1':'--', 'date2':'--', 'date3':'--', 'date4':'--', 'date5':'--', 'date6':'', 'date7':'--','date8':'--','date9':'--','date10':'--','date11':'--', 'date12':'--', 'date13':'--', 'date14':'--', 'date15':'--', 'date16':'--', 'date17':'--','date18':'--','date19':'--','date20':'--','date21':'--', 'date22':'--', 'date23':'--', 'date24':'--', 'date25':'--', 'date26':'--', 'date27':'--','date28':'--','date29':'--','date30':'--','date31':'--'}
+   
+          
             my_dict['student'] = student[0]
+            dayss=1
+            for day in range(day_start,day_end+1):
+                name_day=days[calendar.weekday(year,mont,dayss)]
+                if (name_day=='Sun'):
+                    my_dict['date'+str(dayss)] = '*'
+                if (name_day=='Sat'):
+                    my_dict['date'+str(dayss)] = '*'
+                dayss=dayss+1 
+         
+            my_dict['s_no'] = i
             j = 1
             for attend_id in datelist:
                 atten_date = """SELECT attendance_date FROM sms_class_attendance  WHERE id = """+str(attend_id)
@@ -200,6 +228,7 @@ class sms_attendance_parser(report_sxw.rml_parse):
                     my_dict['date'+str(day)] = show_status      
                 j += 1
             i += 1 
+            
             result.append(my_dict)
         return result
      #end 
