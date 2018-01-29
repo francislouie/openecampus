@@ -591,7 +591,7 @@ class sms_classes(osv.osv):
 #                 print "user_empleado_id id",['user_empleado_id']
 #                 print "device_id id",['device_id']
         return True
-  """
+    """
     This object defines classes of an institute
     """
     _name = 'sms.classes'
