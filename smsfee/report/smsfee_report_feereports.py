@@ -426,8 +426,11 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                 amount_overall   = 0
                 if student[3] != 'Admitted':
                     student_name = str(student[1])+'(*)'
+
+
                 else:
                     student_name = str(student[1])
+
                 mydict = {'sno':'SNO','student':student_name,'registration_no':student[2],'adm_state':student[3],'class_name':student[4],'father':'Father','fee_amount':student[0],'remarks':'Remarks','total':'TOTAL'}
 
                 if contact_option:
@@ -555,28 +558,37 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         result = []
         ####
         this_form = self.datas['form']
-        cls_id = this_form['class_id']
+        #cls_id = this_form['class_id']
         fee_manager = this_form['fee_manager']
-        if cls_id:
-            this_form['class_id'][0]
-            cls_qry = """AND student_class_id= """+str(this_form['class_id'][0])
+        approved_by = this_form['fee_approved_by']
+        if this_form['category']:
+            category = this_form['category']
         else:
-            cls_qry = """ """ 
+            category='Academics'
+       # if cls_id:
+          #  this_form['class_id'][0]
+         #   cls_qry = """AND student_class_id= """+str(this_form['class_id'][0])
+        #else:
+           # cls_qry = """ """
         if fee_manager:
              fm_query = """AND fee_received_by = """+str(this_form['fee_manager'][0])  
         else:
-             fm_query ="""""" 
-        print "class ids:",cls_id
+             fm_query =""""""
+        if approved_by:
+             fa_query = """AND fee_approved_by = """+str(this_form['fee_approved_by'][0])
+        else:
+             fa_query =""""""
+        #print "class ids:",cls_id
         
         ###
         
         
         sql_rb = """ SELECT total_paid_amount,student_class_id,student_id,fee_received_by,receipt_date,
-                     name FROM smsfee_receiptbook                              
+                     id ,fee_approved_by FROM smsfee_receiptbook                              
                      WHERE smsfee_receiptbook.receipt_date >= '"""+str(this_form['from_date'])+"""'
                      AND smsfee_receiptbook.receipt_date <= '"""+str(this_form['to_date'])+"""'
-                     """+cls_qry+"""
                      """+fm_query+"""
+                     """+fa_query+"""
                      AND smsfee_receiptbook.state='Paid'
                      AND smsfee_receiptbook.total_paid_amount>0 ORDER By receipt_date """
                              
@@ -587,19 +599,32 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         total_amount = 0
         result2 = []
         for idss in rb_ids:
-            mydict = {'sno':'SNO','paid_amount':'class_name','student_name':'fee_received_by','receipt_date':'','receipt_no':''}
+            mydict = {'sno':'SNO',
+                      'paid_amount':'',
+                      'student_name':'',
+                      'fee_received_by':'',
+                      'receipt_date':'',
+                      'receipt_no':'',
+                      'approved_by':'',
+                      'reg_no':'',
+                      'category':''}
             student_name = self.pool.get('sms.student').browse(self.cr, self.uid,idss[2]).name
-            class_name = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,idss[1]).name
+            reg_no = self.pool.get('sms.student').browse(self.cr, self.uid, idss[2]).registration_no
+           # class_name = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,idss[1]).name
             user = self.pool.get('res.users').browse(self.cr, self.uid,idss[3]).name
+            appvd_by = self.pool.get('res.users').browse(self.cr, self.uid, idss[6]).name
             total_amount = total_amount + idss[0]
             dated = self.pool.get('sms.session').set_date_format(self.cr, self.uid,idss[4])
             mydict['sno'] = c
             mydict['receipt_date'] = dated
             mydict['paid_amount'] = idss[0]
-            mydict['class_name'] = class_name
+           # mydict['class_name'] = class_name
             mydict['student_name'] = student_name
             mydict['fee_received_by'] = user
-#             mydict['receipt_no'] = idss[5]
+            mydict['receipt_no'] = idss[0]
+            mydict['approved_by'] = appvd_by
+            mydict['reg_no'] = reg_no
+            mydict['category'] = category
             c= c + 1
             result2.append(mydict)
         dict1['arr'] = result2 
