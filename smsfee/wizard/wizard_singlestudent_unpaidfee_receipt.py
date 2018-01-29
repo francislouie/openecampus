@@ -46,7 +46,7 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
               'student_id': fields.many2one('sms.student', 'Student', domain="[('state','=','Admitted')]", help="Student"),
               'due_date': fields.date('Due Date', required=True),
               'amount_after_due_date': fields.integer('Fine After Due Date'),
-              'fee_receiving_type':fields.selection([('Full','Full'),('Partial','Partial')], 'Challan Type'),
+              'fee_receiving_type':fields.selection([('Full','Full'),('Partial','Partial'),('Dublicate','Dublicate')], 'Challan Type'),
               'unpaidfee_months_id':fields.many2many('sms.session.months', 'singlestd_partialchallan_sessionmonths', 'thisobj_id','months_id', 'Month'),
                }
     _defaults = {'student_id':_get_student,
@@ -73,8 +73,9 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
             self.create_unpaid_challans(cr, uid, thisform['student_id'], category, 'Full', None)
         elif thisform['fee_receiving_type'] == 'Partial':
             self.create_unpaid_challans(cr, uid, thisform['student_id'], category, 'Partial', selected_months)
+        else:
         #--------------------------------------------------------------------------
-        report = 'smsfee_print_one_student_per_page'
+            report = 'smsfee_print_one_student_per_page'
             #--------------------------------------------------------------------------
        
         datas = {
