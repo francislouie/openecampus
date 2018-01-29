@@ -1775,7 +1775,7 @@ class smsfee_receiptbook(osv.osv):
     def send_for_approval(self, cr, uid, ids, context=None):
         rec = self.browsle(cr, uid, ids, context)
         for f in self.browse(cr, uid, ids, context):
-            pass
+            print("f in send_for_approval",f)
 
         search_lines_id = self.pool.get('smsfee.receiptbook.lines').search(cr, uid,
                                                                                [('receipt_book_id', '=', ids[0])],
@@ -1889,13 +1889,16 @@ class smsfee_receiptbook(osv.osv):
             # another check will also be imposed if amount of curenlt created challans is greater than old challans, then that case , all other challans will be canceld
             challan_ids = self.pool.get('smsfee.receiptbook').search(cr, uid,
                                                                      [('student_id','=',student_id),
-                                                                      ('student_class_id','=', class_id),
-                                                                      ('fee_received_by','=',uid),
                                                                       ('state','=','fee_calculated'),
                                                                       ('challan_cat','=',category)])
             print "we are canceling challans:",challan_ids
             if challan_ids:
-                self.pool.get('smsfee.receiptbook').write(cr ,uid ,challan_ids, {'state':'Cancel'})
+                for challan_id in challan_ids:
+                    note="this fee bill is cancel by system on creation of new fee bill on date",datetime.datetime.now()
+                    self.pool.get('smsfee.receiptbook').write(cr ,uid ,challan_id, {'state':'Cancel',
+                                                                                    'note_at_receive':note,
+                                                                                    'cancel_date':datetime.datetime.now()
+                                                                                    })
                     
                 #---------------------- if old_val is not equal to new_val than create reciept -----------------------------
                 
