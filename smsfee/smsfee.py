@@ -1773,7 +1773,7 @@ class smsfee_receiptbook(osv.osv):
         return rec.id
     
     def send_for_approval(self, cr, uid, ids, context=None):
-        rec = self.browsle(cr, uid, ids, context)
+        rec = self.browse(cr, uid, ids, context)
         for f in self.browse(cr, uid, ids, context):
             print("f in send_for_approval",f)
 
