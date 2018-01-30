@@ -24,6 +24,9 @@
 					<field name="category"  colspan="4" required="1" />
                     <field name="fee_receiving_type"  colspan="4" required="1"/>
                     </group>
+                    <group attrs="{'invisible':[('fee_receiving_type', '!=','Dublicate')]}">>
+                        <field name="dupliate_bill_charges"/>
+                    </group>
 				    <group attrs="{'invisible':[('fee_receiving_type', '!=', 'Partial')]}">
 			    		<field name="unpaidfee_months_id" widget="many2many_tags"  nolabel="1"/>
 				    </group>
