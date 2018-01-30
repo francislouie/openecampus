@@ -27,20 +27,48 @@ class sms_student_list(osv.osv_memory):
            }
 
     def print_list(self, cr, uid, ids, data):
+        sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
+               on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
+        cr.execute(sqluser)
+        group_name = cr.fetchall()
+        Faculty_group = False
+        for s in group_name:
+            if s[0] == 'Faculty':
+                Faculty_group = True
+
+
         thisform = self.browse(cr, uid, ids)[0]
         listtype = thisform['list_type']
         if listtype == 'check_admissions':
-            report = 'sms.std_admission_statistics.name'
+            if Faculty_group:
+                raise osv.except_osv(('Teachers is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms.std_admission_statistics.name'
         elif listtype == 'class_list':
-            report = 'sms.class.list.name'
+            if Faculty_group:
+                raise osv.except_osv(('Teacher is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms.class.list.name'
         elif listtype == 'security_cards':
-            report = 'sms_students_securuty_cards_name'
+            if Faculty_group:
+                raise osv.except_osv(('Teacher is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms_students_securuty_cards_name'
         elif listtype == 'biodata':
-            report = 'sms.students.biodata'
+            if Faculty_group:
+                raise osv.except_osv(('Teacher is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms.students.biodata'
         elif listtype == 'withdrawn_students':
-            report = 'sms.withdrawn.student.details'
+            if Faculty_group:
+                raise osv.except_osv(('Teacher is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms.withdrawn.student.details'
         elif listtype == 'students_strength':
-            report = 'sms.student.strength.report'
+            if Faculty_group:
+                raise osv.except_osv(('Teacher is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms.student.strength.report'
         else:
             student_cal_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',thisform['acad_cal'].id)])
             if not student_cal_ids:

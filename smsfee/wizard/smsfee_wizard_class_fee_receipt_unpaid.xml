@@ -16,6 +16,7 @@
 						 <field name="due_date" colspan="4" />
 						 <newline/><field name="amount_after_due_date" colspan="4" />
 						 <newline/><field  colspan="4"  name="category"/>
+                        <newline/><field colspan="4" name="Dublicate"/>
 				    </group>
 						 
                     

@@ -19,9 +19,10 @@
     <initialize>
       <paraStyle name="all" alignment="justify"/>
     </initialize>
-    <paraStyle name="para_1" fontName="Helvetica" fontSize="10.0" leading="13" alignment="RIGHT" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
-    <paraStyle name="P6" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P20" fontName="Helvetica" fontSize="8" leading="9" alignment="LEFT" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
+    <paraStyle name="para_1" fontName="Helvetica" fontSize="6.0" leading="9" alignment="CENTER" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
+    <paraStyle name="P6" fontName="Helvetica" fontSize="8.0" leading="9" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P222" fontName="Helvetica" fontSize="8" leading="9" alignment="LEFT" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
+    <paraStyle name="P20" fontName="Helvetica" fontSize="8" leading="9" alignment="CENTER" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
     <paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="CENTER" color="#FFFFFF" spaceBefore="3.0" spaceAfter="3.0"/>
     <paraStyle name="form_heading" fontName="Helvetica-Bold" fontSize="14.0" leading="5" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
     <images/>
@@ -39,10 +40,10 @@
                 <td><para style="white">.</para></td>
             </tr>
         </blockTable>
-        <blockTable colWidths="425.0,175.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0" style="Table3">
+        <blockTable colWidths="325.0,100.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0" style="Table3">
             <tr>
                 <para>[[repeatIn(get_filled_attendance_report_days(data['form']),'s')]]</para> 
-                <td><para style="para_1">#</para></td>
+                <td><para style="P6">#</para></td>
                 <td><para style="P20">Student Name</para></td>
                 <td><para style="para_1">[[(s['date1'])]]</para></td>
                 <td><para style="para_1">[[(s['date2'])]]</para></td>
@@ -100,11 +101,11 @@
                 <td><para style="para_1">[[(s['date31'])]]</para></td> 
             </tr>
         </blockTable>
-          <blockTable colWidths="425.0,175.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0,20.0" style="Table3">
+          <blockTable colWidths="325.0,100.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0" style="Table3">
             <tr>
                 <para>[[repeatIn(get_filled_attendance_report_recs(data['form']),'r')]]</para> 
-                <td><para style="para_1">[[(r['s_no'])]]</para></td>
-                <td><para style="P20">[[(r['student'])]]</para></td>
+                <td><para style="P6">[[(r['s_no'])]]</para></td>
+                <td><para style="P222">[[(r['student'])]]</para></td>
                 <td><para style="P20"><font color="Black">[[ (r['date1'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date1'])]]</font></para></td>
                 <td><para style="P20"><font color="Black">[[ (r['date2'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date2'])]]</font></para></td>
                 <td><para style="P20"><font color="Black">[[ (r['date3'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date3'])]]</font></para></td>
