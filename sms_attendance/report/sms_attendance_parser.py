@@ -66,16 +66,11 @@ class sms_attendance_parser(report_sxw.rml_parse):
         class_id = this_form['class_id'][0]
         datefrom = this_form['date_from']
         my_date = date.today()
-        print"my_date",my_date
-        print"datefrom",datefrom
         day = calendar.day_name[my_date.weekday()]
-        print"date",day
- 
- 
+
         year = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%Y'))
         mont = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%m'))
-       
-        print"Year and month",year ,mont
+
         mon_days = calendar.monthrange(year,mont)[1]
         if(mont <10):
             month ='-0'+str(mont)
@@ -98,9 +93,8 @@ class sms_attendance_parser(report_sxw.rml_parse):
         dayss=1
         for day in range(day_start,day_end+1):
             name_day=days[calendar.weekday(year,mont,dayss)]
-           
-            my_dict['date'+str(dayss)] =str(dayss) + name_day
-           
+
+            my_dict['date'+str(dayss)] =str(dayss) +"\n"+ name_day.upper()
             dayss=dayss+1 
         result2.append(my_dict)
         sql = """SELECT count(id) from sms_class_attendance
