@@ -41,6 +41,7 @@
     <initialize>
     <paraStyle name="all" alignment="justify"/>
     </initialize>
+     <paraStyle name="total_amount" fontName="Helvetica" fontSize="12.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P1" fontName="Helvetica" fontSize="12.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="13" alignment="LEFT" textColor="#000000"/>
     <paraStyle name="P3" fontName="Helvetica" fontSize="15.0" leading="30" alignment="LEFT" textColor="#000000"/>
@@ -76,36 +77,41 @@
    	 </blockTable>
    	</td></tr>
    	<tr><td>
-	<blockTable colWidths="35.0,90.0,50.0,110.0,150.0,50.0,100.0"  style="Table_maintable_header">
+	<blockTable   colWidths="40.0,80.0,50.0,50.0,50.0,70.0,50.0,50.0,60.0" style="Table_maintable_header">
 	<para style="P1">[[repeatIn(daily_fee_report(data['form']),'r')]]</para>
 	<tr>
           <td><para style="P2">S.No</para></td>
           <td><para style="P2">Date</para></td>
 		  <td><para style="P2">Rec No</para></td>
-	      <td><para style="P2">Student</para></td>          
-		  <td><para style="P2">Class</para></td>
-	      <td><para style="P2">Amount</para></td>
+	      <td><para style="P2">Student</para></td>
+		  <td><para style="P2">Amount</para></td>
+	      <td><para style="P2">Approved By</para></td>
 		  <td><para style="P2">Received By</para></td>
+		  <td><para style="P2">reg no </para></td>
+		  <td><para style="P2">category </para></td>
       </tr>
     </blockTable>
 
 	</td></tr>
 	<tr><td> 
-	<blockTable colWidths="35.0,90.0,50.0,110.0,150.0,50.0,100.0" style="Table_maintable">
+	<blockTable colWidths="40.0,80.0,50.0,50.0,50.0,70.0,50.0,50.0,60.0" style="Table_maintable">
 	<para style="P1">[[repeatIn((r['arr']),'s')]]</para> 
    	<tr>
 		<td><para style="P2">[[(s['sno'])]]</para></td>
           <td><para style="P2">[[(s['receipt_date'])]]</para></td>
 		  <td><para style="P2">[[(s['receipt_no'])]]</para></td>
           <td><para style="P2">[[(s['student_name'])]] </para></td>
-		  <td><para style="P2">[[(s['class_name'])]]</para></td>
-	      <td><para style="P2">[[(s['paid_amount'])]]</para></td>
+		  <td><para style="P2">[[(s['paid_amount'])]]</para></td>
 	      <td><para style="P2">[[(s['fee_received_by'])]]</para></td>
+	      <td><para style="P2">[[(s['approved_by'])]]</para></td>
+	      <td><para style="P2">[[(s['reg_no'])]]</para></td>
+	      <td><para style="P2">[[(s['category'])]]</para></td>
+
       </tr>
     </blockTable>
 	</td></tr>
 	<tr><td><para style="P2">.</para></td></tr>
-	<tr><td><para style="P3">Total:[[(r['total_amount'])]]</para></td></tr>
+	<tr><td><para style="total_amount">Total:[[(r['total_amount'])]]</para></td></tr>
 	</blockTable>
    	</story>
 </document>
