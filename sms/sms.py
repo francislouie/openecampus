@@ -512,7 +512,7 @@ class sms_program_category(osv.osv):
     """
     This object defines program category
     """
-
+ 
     _name = 'sms.program.category'
     _description = "This object store generic section of class"
     _columns = {
@@ -520,7 +520,7 @@ class sms_program_category(osv.osv):
         "category_code": fields.char("Code", size=32),
         "offered_in_inst": fields.boolean("Offered in Institute"), 
     } 
-    
+     
 sms_program_category()
 
 class sms_year(osv.osv):
