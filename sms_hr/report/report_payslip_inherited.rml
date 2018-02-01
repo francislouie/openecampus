@@ -218,7 +218,13 @@
     <para style="P6"/>
     <blockTable colWidths="600.0" style="Standard_Outline">
         <tr>
-          <td><para style="P131">Salar is calculated according to Institues HR plocicies communicated to all employees. Attendance polcy is expalined below:</para></td>
+          <td><para style="P131">Salary is calculated according to Institues HR plocicies communicated to all employees. Attendance polcy is expalined below:</para></td>
+        </tr>
+        <tr>
+          <td><para style="P131">2 late comings upto 30 minutes = 1 day deduction</para></td>
+        </tr>
+        <tr>
+          <td><para style="P131">3 late comings upto 20 minutes = 1 day deduction</para></td>
         </tr>
        
       </blockTable>
