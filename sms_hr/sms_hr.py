@@ -54,6 +54,9 @@ class hr_attendance(osv.osv):
     _description = "Attendance"
 
     _columns = {
+        'status':fields.char('Status'),
+        'attendance_date':fields.date('Attendance Date'),
+        'attendance_time':fields.integer('Attendance Time'),
         'emp_regno_on_device': fields.char('Reg No on Device'),
         'empleado_account_id': fields.char('Empleado Acc ID'),
         'device_odoo_config_id': fields.many2one('hr.biometirc.device', "Odoo Device Parent"),

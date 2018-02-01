@@ -512,7 +512,7 @@ class sms_program_category(osv.osv):
     """
     This object defines program category
     """
-
+ 
     _name = 'sms.program.category'
     _description = "This object store generic section of class"
     _columns = {
@@ -520,7 +520,7 @@ class sms_program_category(osv.osv):
         "category_code": fields.char("Code", size=32),
         "offered_in_inst": fields.boolean("Offered in Institute"), 
     } 
-    
+     
 sms_program_category()
 
 class sms_year(osv.osv):
@@ -581,6 +581,7 @@ class sms_classes(osv.osv):
 #         r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3')
 #         read = r.json()
 #         print "json response",read
+
 #         
 #         #read = {u'status': u'ok', u'att_records': [{u'att_time': u'20180111105255', u'bio_id': u'2025', u'user_empleado_id': u'961', u'auth': u'd86ee704b4962d54227af9937a1396c3', u'device_id': u'20170767645'}], u'acknowledge_id': u'1387', u'auth': u'd86ee704b4962d54227af9937a1396c3'}''
 #         for attenadnce in read:
@@ -1797,7 +1798,7 @@ class sms_academiccalendar(osv.osv):
             else:
                 academic_default_ids = self.pool.get('sms.academiccalendar.default').search(cr, uid, [('name','=',f.class_id.id)])
                 if academic_default_ids:
-                    academic_default_object = self.pool.get('sms.academiccalendar.default').browse(cr, uid, academic_deault_ids, context=context)
+                    academic_default_object = self.pool.get('sms.academiccalendar.default').browse(cr, uid, academic_default_ids, context=context)
                      
                     for row in academic_default_object:
                         subject_ids = self.pool.get('sms.academiccalendar.subjects.default').search(cr, uid, [('academic_calendar','=', row.id)], context=context)
@@ -3466,6 +3467,7 @@ class sms_exam_offered(osv.osv):
     _columns = { 
         'name':fields.function(set_exam_offered_name, method=True,  string='Exam Offered',type='char', store=True),
         'exam_type': fields.many2one('sms.exam.type', 'Exam Type',required=True),
+        'term_name': fields.many2one('academic.session.term', 'Exam Term', required=True),
         'start_date': fields.date('Start Date'),
         'closing_date': fields.date('Closing Date'),
         'session_year': fields.many2one('sms.session', 'Session',  required=True, help="Session Year ",domain="[('state','=','Active')]"),
@@ -3477,7 +3479,23 @@ class sms_exam_offered(osv.osv):
     _defaults = {
         'state': lambda *a: 'Draft',
         }
+sms_exam_offered()
+
+
+class academic_session_term(osv.osv):
+    _name = "academic.session.term"
+    _description = "This class stores the records of exam terms in a session"
     
+    _columns = {
+        'name': fields.selection([('1st','1st'),('2nd','2nd'),('3rd','3rd'),('Final','Final')],'Term Name'),
+        'start_date':fields.date('Start Date'),
+        'end_date':fields.date('End Date'),
+        'state': fields.selection([('Draft','Draft'),('Active','Active'),('Closed','Closed'),('Cancelled','Cancelled')],'Status'),
+        }
+    
+academic_session_term()
+
+   
 class sms_exam_datesheet(osv.osv):
     
     """This object register academic calender in to active exams, when click on start exams all acitve

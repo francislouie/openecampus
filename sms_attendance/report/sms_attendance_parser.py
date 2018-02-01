@@ -53,8 +53,14 @@ class sms_attendance_parser(report_sxw.rml_parse):
             i += 1
         return result
 
+
+
+
+ 
     def get_filled_attendance_report_days(self, data):
+         
         result = []
+        result2 = []
         datelist = []
         this_form = self.datas['form']
         class_id = this_form['class_id'][0]
@@ -62,10 +68,9 @@ class sms_attendance_parser(report_sxw.rml_parse):
         my_date = date.today()
         day = calendar.day_name[my_date.weekday()]
 
-
         year = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%Y'))
         mont = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%m'))
-      
+
         mon_days = calendar.monthrange(year,mont)[1]
         if(mont <10):
             month ='-0'+str(mont)
@@ -76,21 +81,54 @@ class sms_attendance_parser(report_sxw.rml_parse):
         day_start = int(datetime.datetime.strptime(str(date_from), '%Y-%m-%d').strftime('%d'))
         day_end = int(datetime.datetime.strptime(str(date_to), '%Y-%m-%d').strftime('%d'))
         days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
-        
+         
+        main_dict = {'sessions':'','total_student':'','att_for_month':'','class':'','program':'' 
+                     ,'total_class_attendance':'','printed_by':'','dated':'','sub_dict':''}
+         
         attendance_ids = tuple(self.pool.get('sms.class.attendance').search(self.cr, self.uid, [('class_id','=',class_id),
                                                                                                 ('attendance_date','>=',date_from),
                                                                                                 ('attendance_date','<=',date_to)]))
         my_dict = {'date1':'', 'date2':'2', 'date3':'3', 'date4':'4', 'date5':'5', 'date6':'6', 'date7':'7','date8':'8','date9':'9','date10':'10','date11':'11', 'date12':'12', 'date13':'13', 'date14':'14', 'date15':'15', 'date16':'16', 'date17':'17','date18':'18','date19':'19','date20':'20','date21':'21', 'date22':'22', 'date23':'23', 'date24':'24', 'date25':'25', 'date26':'26', 'date27':'27','date28':'--','date29':'--','date30':'--','date31':'--'}
-        
+         
         dayss=1
         for day in range(day_start,day_end+1):
             name_day=days[calendar.weekday(year,mont,dayss)]
-          
+
             my_dict['date'+str(dayss)] =str(dayss) +"\n"+ name_day.upper()
-          
             dayss=dayss+1 
-        result.append(my_dict)
+        result2.append(my_dict)
+        sql = """SELECT count(id) from sms_class_attendance
+             where class_id =""" + str(class_id) +"""
+             AND attendance_date BETWEEN '"""+str(date_from)+ """' AND '"""+str(date_to)+ """'
+             """
+        self.cr.execute(sql)
+        total_classes = self.cr.fetchone()[0]
+        
+        
+        student_sql = """SELECT  count(id) FROM sms_student 
+                        WHERE current_class = """ + str(class_id) + """
+                        
+                        """     
+        self.cr.execute(student_sql)
+        total_std = self.cr.fetchone()[0]
+        
+        month = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%m'))
+        
+        mname = self.pool.get('sms.session').get_month_name(self.cr,self.uid,int(month))
+          
+        main_dict['class'] = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id).name
+        main_dict['sessions'] = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id).class_session
+        main_dict['program'] = 'SSc'  
+        main_dict['total_student'] = total_std
+        main_dict['att_for_month'] = mname
+        main_dict['total_class_attendance'] =total_classes
+        main_dict['printed_by'] = self.pool.get('res.users').browse(self.cr, self.uid,self.uid).name
+        main_dict['dated'] = datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%d-%B-%Y')
+        main_dict['sub_dict'] = result2  
+        result.append(main_dict)
         return result
+
+
 
     def class_name(self, form): 
 
@@ -228,6 +266,14 @@ class sms_attendance_parser(report_sxw.rml_parse):
             result.append(my_dict)
         return result
      #end 
+     
+     
+     
+     
+     
+     
+     
+     
     def get_daily_attendance_report(self, data):
         result = []
         final_dict = {}
