@@ -94,6 +94,7 @@
                   <field name="total_absent"/>
                   
                       <field name="attendace_percentage"/>
+                      <field name="not_taken"/>
           
             </xpath>
         </field>
@@ -188,11 +189,13 @@
             <field name="model">sms.class.attendance.lines</field>
             <field name="arch" type="xml">
                 <tree string="Student Class Attendance" editable="top" >
+                    <field name="registration_no" readonly="1"/>
 					<field name="student_name" readonly="1"/>
 					<field name="present" on_change="onchange_set_present(present)"/>
 					<field name="absent" on_change="onchange_set_absent(absent)"/>
 					<field name="leave" on_change="onchange_set_leave(leave)"/>
 					<field name="state" readonly="1"/>
+					<field name="std_agr_att_on_date"/>
                 </tree>
             </field>
         </record>
