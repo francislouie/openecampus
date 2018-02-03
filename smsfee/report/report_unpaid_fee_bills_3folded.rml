@@ -9,7 +9,11 @@
      <header>
         <pageGraphics>
 
-           	<!-- Header -->			
+
+           	<drawString  x="190" y="35">[[(record['partial_lable'])]]</drawString>
+           	<drawString  x="490" y="35">[[(record['partial_lable'])]]</drawString>
+			<drawString x="790" y="35">[[(record['partial_lable'])]]</drawString>
+           	<!-- Header -->
 			<setFont name="Helvetica-Bold" size="9" />
 			<drawString x="112" y="585">[[get_class_group(data)]]</drawString>
 			<drawString x="420" y="585">[[get_class_group(data)]]</drawString>
@@ -60,8 +64,8 @@
 			<setFont name="Helvetica" size="9"/>
 
            	<drawString x="002" y="35">[[get_challan_footer_one()]]</drawString>
-			<drawString x="300" y="35"></drawString>
-			<drawString x="600" y="35"></drawString>
+			<drawString x="300" y="35">[[get_challan_footer_one()]]</drawString>
+			<drawString x="600" y="35">[[get_challan_footer_one()]]</drawString>
 				
 			<setFont name="Helvetica" size="7"/>
 
@@ -124,6 +128,7 @@
 	<initialize>
     <paraStyle name="all" alignment="justify"/>
     </initialize>
+
     <paraStyle name="P1" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P2" fontName="Helvetica" fontSize="9.0" leading="10" alignment="CENTER" textColor="#000000"/>
 	<paraStyle name="P2-Bold" fontName="Helvetica-Bold" fontSize="9.0" leading="10" alignment="CENTER" textColor="#000000"/>
@@ -293,6 +298,7 @@
 		      		</blockTable>
 				</td>
       		</tr>
+
 			<tr>
         		<td>
 	          		<blockTable colWidths="150.0,110.0" style="Table_1">
@@ -311,6 +317,16 @@
 						<td><para style="P5">[[(record['amount_in_words'])]]</para></td>
 		      		</tr>
 					
+		      		</blockTable>
+				</td>
+      		</tr>
+      		<tr>
+        		<td>
+	          		<blockTable colWidths="200.0,60.0">
+		      		<tr>
+		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
+		        		<td><para style="P4-Bold"></para></td>
+		      		</tr>
 		      		</blockTable>
 				</td>
       		</tr>
@@ -442,7 +458,8 @@
 		      		</blockTable>
 				</td>
       		</tr>
-			<tr>
+
+      		<tr>
         		<td>
 	          		<blockTable colWidths="150.0,110.0" style="Table_1">
 		      		<tr>
@@ -458,6 +475,16 @@
 		      		<tr>
 		        		<td><para style="P4-Bold">Amount in Words: </para></td>
 						<td><para style="P5">[[(record['amount_in_words'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+      		<tr>
+        		<td>
+	          		<blockTable colWidths="200.0,60.0">
+		      		<tr>
+		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
+		        		<td><para style="P4-Bold"></para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -587,6 +614,7 @@
 		      		</blockTable>
 				</td>
       		</tr>
+
 			<tr>
         		<td>
 	          		<blockTable colWidths="150.0,110.0" style="Table_1">
@@ -602,7 +630,17 @@
 	          		<blockTable colWidths="60.0,200.0" style="Table_1">
 		      		<tr>
 		        		<td><para style="P4-Bold">Amount in Words: </para></td>
-						<td><para style="P5">[[(record['amount_in_words'])]]</para></td>
+						<td><para style="P5-Right">[[(record['amount_in_words'])]]</para></td>
+		      		</tr>
+		      		</blockTable>
+				</td>
+      		</tr>
+      		<tr>
+        		<td>
+	          		<blockTable colWidths="200.0,60.0">
+		      		<tr>
+		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
+		        		<td><para style="P4-Bold"></para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
