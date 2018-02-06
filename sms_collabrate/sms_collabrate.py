@@ -30,6 +30,11 @@ class sms_collabrator(osv.osv):
                 pic = obj[0].image
             else:
                 pic = 'pic-not-av'
+            
+            if 'transport_availed' in obj[0]:
+                transport = obj[0].transport_availed
+            else:
+                transport = False
             my_dict = {
                         'registration_no':obj[0].registration_no,
                         'stdname':obj[0].name,
@@ -38,7 +43,7 @@ class sms_collabrator(osv.osv):
                         'class_name':obj[0].current_class.name,
                         'pic':pic,
                         'std_id':obj[0].id,
-                        'transport_availed':obj[0].transport_availed,
+                        'transport_availed':transport,
                         'campus_code':sql_rec_[0],
                         'state':obj[0].state,
                         'login_status':1
@@ -127,7 +132,12 @@ class sms_collabrator(osv.osv):
             if obj[0].info_portal == False or obj[0].info_portal == None:
                 display_state = 1
             else:
-                display_state = 0         
+                display_state = 0   
+            
+            if 'transport_availed' in obj[0]:
+                transport = obj[0].transport_availed
+            else:
+                transport = False     
             my_dict = {
                             'registration_no':registration_no,
                             'stdname':stdname,
@@ -144,7 +154,7 @@ class sms_collabrator(osv.osv):
                             'contact_no_1':contact_no_1,
                             'contact_no_2':contact_no_2,
                             'email':email,
-                            'transport_availed':obj[0].transport_availed,
+                            'transport_availed':transport,
                             'address':cur_address,
                             'city':cur_city,
                             'display_contact_info':disp_cntct_prtal,
