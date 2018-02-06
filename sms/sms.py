@@ -786,7 +786,18 @@ class sms_student(osv.osv):
         group_name=cr.fetchall()
         profile_manager = True
         for s in group_name:
-            if s[0] == 'Profile Manager':
+            if s[0] == 'Profile Manager' or 'Principal' :
+                if s[0] == 'Principal':
+                    for node in doc.xpath("//page[@string='Fees Payments']"):
+                        node.set('invisible', '1')
+                        setup_modifiers(node)
+                    for node in doc.xpath("//menu[@string='Fee Management']"):
+                            node.set('invisible', '1')
+                            setup_modifiers(node)
+                    for node in doc.xpath("//page[@string='Transport Details']"):
+                        node.set('invisible', '1')
+                        setup_modifiers(node)
+
                 profile_manager = False
         # group_name=json.dumps(group_name)
         if profile_manager:
