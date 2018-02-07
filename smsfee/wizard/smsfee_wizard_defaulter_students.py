@@ -366,8 +366,6 @@ class fee_defaulters(osv.osv_memory):
         print "generating exel"
          
         path = os.path.join(os.path.expanduser('~'),'file.xls')
-        print "path",path
-        print "book",book
         book.save(path)
 
         

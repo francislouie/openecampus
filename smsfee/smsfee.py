@@ -1082,6 +1082,8 @@ class smsfee_studentfee(osv.osv):
            2) called by admission register
            3)called by promotion process
            4) called by advance fee management
+           5) adding a single student fee doesont use this method becuase it ignores fee type row
+           later on we will udpate this method and we will remove use of fee_type_row if feasible, only generic fee_id will be used
            
            admin
            """
