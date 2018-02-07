@@ -12,12 +12,10 @@
 					<notebook>
 			  		<page string ="Fee Management">
 		              	  <separator string="Fee Accounts Configuration" colspan="4"/>
-						  <field name="enable_fm"/>
-							<group>
-							 <field name="order_of_report"/>
-							</group>
-						  <group>
+						 <field name="enable_fm"/>
+						<group>
 						  	<group>
+								<field name="order_of_report"/>
 							<field name= "fee_journal"  attrs="{'required':[('enable_fm','=',True)]}" domain="[('type','=','cash')]"/>
 							<field name="student_fee_income_acc" attrs="{'required':[('enable_fm','=',True)]}"  domain="[('type','=','other')]"/>
 							<field name="fee_reception_account_cash" attrs="{'required':[('enable_fm','=',True)]}"  domain="[('type','=','liquidity')]"/>
