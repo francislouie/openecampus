@@ -5,11 +5,7 @@
       <frame id="first" x1="34.0" y1="10.0" width="880" height="780"/>
     </pageTemplate>
   </template>
-  
-  
-  
-  
-  
+ 
 <stylesheet>
 
  <blockTableStyle id="Table1">
@@ -40,8 +36,8 @@
         <blockAlignment value="CENTER"/>
         <blockValign value="TOP"/>
         <blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
-        <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
-        <blockLeftPadding length="5.0" start="5,1" stop="-1,-1"/>
+        <blockBottomPadding length="2.0" start="0,0" stop="-1,-1"/>
+        <blockLeftPadding length="2.0" start="5,1" stop="-1,-1"/>
         <blockRightPadding length="2.0" start="0,0" stop="-1,-1"/>
         <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
         <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
@@ -92,6 +88,15 @@
       <lineStyle kind="LINEABOVE" colorName="#cccccc" start="3,0" stop="3,0"/>
       <lineStyle kind="LINEBELOW" colorName="#cccccc" start="3,-1" stop="3,-1"/>
     </blockTableStyle>
+    <blockTableStyle id="Table7">
+        <blockAlignment value="CENTER"/>
+        <blockValign value="TOP"/>
+        <blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+        <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+        <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
+        <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
+        <blockBackground colorName="#e6e6e6" start="0,0" stop="-1,-1"/>
+    </blockTableStyle>
     
     <initialize>
       <paraStyle name="all" alignment="justify"/>
@@ -99,7 +104,7 @@
     <paraStyle name="para_1" fontName="Helvetica" fontSize="6.0" leading="9" alignment="CENTER" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
     <paraStyle name="P6" fontName="Helvetica" fontSize="8.0" leading="9" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P222" fontName="Helvetica" fontSize="8" leading="9" alignment="LEFT" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
-    <paraStyle name="P20" fontName="Helvetica" fontSize="8" leading="9" alignment="CENTER" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
+    <paraStyle name="P20" fontName="Helvetica" fontSize="8" leading="9" alignment="CENTER" spaceBefore="3.0" spaceAfter="3.0" textColor="#000000"/>
     <paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="CENTER" color="#FFFFFF" spaceBefore="3.0" spaceAfter="3.0"/>
     <paraStyle name="form_heading" fontName="Helvetica-Bold" fontSize="14.0" leading="5" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
     
@@ -123,20 +128,11 @@
   
     <blockTable colWidths="539.0" style="Table1">
       <tr>
-        <td><para style="P7">Filled Class Attendance Report</para></td>
+        <td><para style="P7">Filled Monthly Sheet</para></td>
       </tr>
     </blockTable>
-    
-    
-    <!-- 
-    <para style="terp_header_Centre">
-      <font face="Helvetica" size="6.0">[[o.credit_note==False and removeParentNode('para')]]</font>
-      <font face="Helvetica-Bold" size="14.0">Credit</font>
-      <font face="Helvetica" size="14.0"/>
-      <font face="Helvetica-Bold" size="14.0">Note</font>
-    </para> -->
    
-    <blockTable colWidths="400.0,280.0,190.0,281.0" style="Table2">
+    <blockTable colWidths="449.0,280.0,190.0,281.0" style="Table2">
     <tr><td><para style="P16">Class</para></td>
         <td><para style="P15">[[p['class'] ]]</para></td>
         <td><para style="P15">Total Student</para></td>
@@ -155,7 +151,7 @@
       </tr>
     </blockTable>
  
-    <blockTable colWidths="400.0,280.0,190.0,281.0" style="Table6">
+    <blockTable colWidths="449.0,280.0,190.0,281.0" style="Table6">
       <tr>
         <td><para style="P15">Printed By</para></td>
         <td><para style="P4">[[p['printed_by'] ]]</para></td>
@@ -178,7 +174,7 @@
         </blockTable> -->
         
         
-        <blockTable colWidths="325.0,100.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0" style="Table3">
+        <blockTable colWidths="325.0,100.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0" style="Table7">
             <tr>
                 <para>[[repeatIn((p['sub_dict']),'s')]]]]</para> 
                 <td><para style="P6">#</para></td>

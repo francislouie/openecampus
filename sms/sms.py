@@ -905,9 +905,10 @@ class sms_student(osv.osv):
     """ This object defines students of an institute """
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         
+        print "Vals=====",vals
         #******************to maintain log**********************************************
         for k,v in vals.iteritems():
-            print "key=====", k,"===value======",v
+            print "keyasasasa=====", k,"===value======",v
             if type(v) == "<type 'list'>":
                 sql = """ select """ +str(k)+ """ from sms_student where id ="""+str(ids[0])+ """
                 """

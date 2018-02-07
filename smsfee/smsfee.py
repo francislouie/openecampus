@@ -579,7 +579,6 @@ class sms_student(osv.osv):
             res[f.id] = [x[0] for x in cr.fetchall()]
 #         raise osv.except_osv((res), (sql))
           
-            print"this is the iddddddddddddddddddddddddd",res
         return res
     #sms_student    
     _name = 'sms.student'
