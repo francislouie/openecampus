@@ -5,31 +5,163 @@
       <frame id="first" x1="34.0" y1="10.0" width="880" height="780"/>
     </pageTemplate>
   </template>
+ 
 <stylesheet>
+
+ <blockTableStyle id="Table1">
+      <blockAlignment value="RIGHT"/>
+      <blockValign value="TOP"/>
+    </blockTableStyle>
+
+
+<blockTableStyle id="Table2">
+      <blockAlignment value="RIGHT"/>
+      <blockValign value="TOP"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="0,0" stop="0,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="0,0" stop="0,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="0,-1" stop="0,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0" stop="1,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="1,0" stop="1,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="1,-1" stop="1,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="2,0" stop="2,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="2,0" stop="2,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="2,-1" stop="2,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEAFTER" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="3,0" stop="3,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="3,-1" stop="3,-1"/>
+    </blockTableStyle>
+    
     <blockTableStyle id="Table3">
         <blockAlignment value="CENTER"/>
         <blockValign value="TOP"/>
         <blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
-        <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
-        <blockLeftPadding length="5.0" start="5,1" stop="-1,-1"/>
+        <blockBottomPadding length="2.0" start="0,0" stop="-1,-1"/>
+        <blockLeftPadding length="2.0" start="5,1" stop="-1,-1"/>
         <blockRightPadding length="2.0" start="0,0" stop="-1,-1"/>
         <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
         <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
     </blockTableStyle>
+    <blockTableStyle id="Table4">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="0,0" stop="0,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="0,0" stop="0,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="0,-1" stop="0,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0" stop="1,-1"/>
+      <lineStyle kind="LINEAFTER" colorName="#cccccc" start="1,0" stop="1,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="1,0" stop="1,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="1,-1" stop="1,-1"/>
+    </blockTableStyle>
+    
+     <blockTableStyle id="Table5">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="0,0" stop="0,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="0,0" stop="0,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="0,-1" stop="0,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0" stop="1,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="1,0" stop="1,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="1,-1" stop="1,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="2,0" stop="2,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="2,0" stop="2,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="2,-1" stop="2,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEAFTER" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="3,0" stop="3,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="3,-1" stop="3,-1"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table6">
+      <blockAlignment value="RIGHT"/>
+      <blockValign value="TOP"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="0,0" stop="0,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="0,0" stop="0,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="0,-1" stop="0,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0" stop="1,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="1,0" stop="1,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="1,-1" stop="1,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="2,0" stop="2,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="2,0" stop="2,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="2,-1" stop="2,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEAFTER" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="3,0" stop="3,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="3,-1" stop="3,-1"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table7">
+        <blockAlignment value="CENTER"/>
+        <blockValign value="TOP"/>
+        <blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+        <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+        <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
+        <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
+        <blockBackground colorName="#e6e6e6" start="0,0" stop="-1,-1"/>
+    </blockTableStyle>
+    
     <initialize>
       <paraStyle name="all" alignment="justify"/>
     </initialize>
     <paraStyle name="para_1" fontName="Helvetica" fontSize="6.0" leading="9" alignment="CENTER" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
     <paraStyle name="P6" fontName="Helvetica" fontSize="8.0" leading="9" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P222" fontName="Helvetica" fontSize="8" leading="9" alignment="LEFT" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
-    <paraStyle name="P20" fontName="Helvetica" fontSize="8" leading="9" alignment="CENTER" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
+    <paraStyle name="P20" fontName="Helvetica" fontSize="8" leading="9" alignment="CENTER" spaceBefore="3.0" spaceAfter="3.0" textColor="#000000"/>
     <paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="CENTER" color="#FFFFFF" spaceBefore="3.0" spaceAfter="3.0"/>
     <paraStyle name="form_heading" fontName="Helvetica-Bold" fontSize="14.0" leading="5" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    
+    
+    
+    
+     <paraStyle name="P2" rightIndent="-56.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P14" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="RIGHT"/>
+    <paraStyle name="P15" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+     <paraStyle name="P16" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P4" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+     <paraStyle name="P7" fontName="Helvetica-Bold" fontSize="14.0" leading="17" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
     <images/>
   </stylesheet> 
  <story>
-    <section>
-        <blockTable colWidths="800.0" alignment="CENTER">
+ 
+ 
+ 
+ 
+  <para style="P2">[[ repeatIn(get_filled_attendance_report_days('Form'),'p') ]]</para>
+  
+    <blockTable colWidths="539.0" style="Table1">
+      <tr>
+        <td><para style="P7">Filled Monthly Sheet</para></td>
+      </tr>
+    </blockTable>
+   
+    <blockTable colWidths="449.0,280.0,190.0,281.0" style="Table2">
+    <tr><td><para style="P16">Class</para></td>
+        <td><para style="P15">[[p['class'] ]]</para></td>
+        <td><para style="P15">Total Student</para></td>
+        <td><para style="P4">[[p['total_student'] ]]</para></td>
+      </tr>
+      <tr><td><para style="P16">Session</para></td>
+        <td><para style="P15">[[p['sessions'] ]]</para></td>
+        <td><para style="P15">Total Class Attendance</para></td>
+        <td><para style="P4">[[p['total_class_attendance'] ]]</para></td>
+      </tr>
+       
+      <tr><td><para style="P16">Program</para></td>
+        <td><para style="P15">[[p['program'] ]]</para></td>
+        <td><para style="P15">Month</para></td>
+        <td><para style="P4">[[p['att_for_month'] ]]</para></td>
+      </tr>
+    </blockTable>
+ 
+    <blockTable colWidths="449.0,280.0,190.0,281.0" style="Table6">
+      <tr>
+        <td><para style="P15">Printed By</para></td>
+        <td><para style="P4">[[p['printed_by'] ]]</para></td>
+        <td><para style="P15">Date</para></td>
+        <td><para style="P4">[[p['dated'] ]]</para></td>
+      </tr>
+    </blockTable> 
+ 
+     <section>
+        <!--<blockTable colWidths="800.0" alignment="CENTER">
             <tr>
             <td><para style="form_heading">[[ class_name(data['form'])]]</para></td>
             </tr>
@@ -39,10 +171,12 @@
             <tr>
                 <td><para style="white">.</para></td>
             </tr>
-        </blockTable>
-        <blockTable colWidths="325.0,100.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0" style="Table3">
+        </blockTable> -->
+        
+        
+        <blockTable colWidths="325.0,100.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0" style="Table7">
             <tr>
-                <para>[[repeatIn(get_filled_attendance_report_days(data['form']),'s')]]</para> 
+                <para>[[repeatIn((p['sub_dict']),'s')]]]]</para> 
                 <td><para style="P6">#</para></td>
                 <td><para style="P20">Student Name</para></td>
                 <td><para style="para_1">[[(s['date1'])]]</para></td>
@@ -101,6 +235,9 @@
                 <td><para style="para_1">[[(s['date31'])]]</para></td> 
             </tr>
         </blockTable>
+        
+        
+        
           <blockTable colWidths="325.0,100.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0" style="Table3">
             <tr>
                 <para>[[repeatIn(get_filled_attendance_report_recs(data['form']),'r')]]</para> 

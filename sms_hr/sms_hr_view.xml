@@ -37,10 +37,32 @@
                             <field name="emp_regno_on_device"/>
                             <field name="empleado_account_id"/>
                             <field name="device_odoo_config_id"/>
+                            <field name="status"/>
                         </group>
                     </xpath>
                     
                 </data>
+            </field>
+        </record>
+        
+        
+         <record id="hr_attendance_tree2" model="ir.ui.view">
+            <field name="name">hr.attendancetree</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_timesheet_sheet.view_attendance_tree_who"/>
+            <field name="arch" type="xml">
+            <data>
+                  <xpath expr="//field[@name='sheet_id']" position="replace">
+                            <field name="emp_regno_on_device"/>
+                            <field name="attendance_date"/>
+                            <field name="attendance_time"/>
+                            <field name="status"/>
+                    </xpath>
+                        <xpath expr="//field[@name='action']" position="replace">
+                            <field name="empleado_account_id"/>
+                    </xpath>
+                    
+                    </data>
             </field>
         </record>
         
