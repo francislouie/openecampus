@@ -114,7 +114,21 @@ class sms_academics_session(osv.osv):
         'closed_by':fields.many2one('res.users','Closed By',readonly = True),
         'state': fields.selection([('Draft', 'Draft'),('Active', 'Active'),('Closed', 'Closed')], 'State', readonly = True),
         'program_category_id':fields.many2one('sms.program.category','Program category'),
-#         'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
+        'bank_name1': fields.char('Bank One Name', size=256),
+        'bank_name2': fields.char('Bank Two Name', size=256),
+        'bank_acctno1': fields.char('Bank One Acc.No'),
+        'bank_acctno2': fields.char('Bank Two Acc.No'),
+        'company_cfieldone': fields.char('Heading Line One', size=256),
+        'company_cfieldtwo': fields.char('Heading Line Two', size=256),
+        'company_cfieldthree': fields.char('Heading Line Three', size=256),
+        'company_cfieldfour': fields.char('Footer Line One', size=256),
+        'company_cfieldfive': fields.char('Footer Line Two', size=256),
+        'company_cfieldsix': fields.char('Footer Line Three', size=256),
+        'order_of_report': fields.selection([('by_name', 'By Name'), ('by_registration_no', 'By Reg No')],
+                                            'Order Of Report'),
+        'campus_code': fields.char('Campus Code', size=64),
+
+        #         'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
     } 
     _defaults = {  'state': 'Draft','name':'New Academic Session'}
     _sql_constraints = [('name_unique', 'unique (name,subcate)', """ Academic Session Must be Unique.""")]
@@ -791,7 +805,7 @@ class sms_student(osv.osv):
                     for node in doc.xpath("//page[@string='Fees Payments']"):
                         node.set('invisible', '1')
                         setup_modifiers(node)
-                    for node in doc.xpath("//menu[@string='Fee Management']"):
+                        for node in doc.xpath("//page[@string='Fees Payments']"):
                             node.set('invisible', '1')
                             setup_modifiers(node)
                     for node in doc.xpath("//page[@string='Transport Details']"):

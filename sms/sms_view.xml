@@ -29,6 +29,24 @@
 								<field name="date_closed" readonly ="1"/>
 								<field name="closed_by" readonly ="1"/>
 						   </group>
+                              <separator string="Field for Challan Printing(Header)" colspan="4"/>
+							<group>
+
+							 <field name="company_cfieldone"/>
+							 <field name="company_cfieldtwo"/>
+							 <field name="company_cfieldthree"/>
+							</group>
+                     		<separator string="Field for Challan Printing(Footer)" colspan="4"/>
+							<group col="4" colspan="2">
+							 <field name="bank_name1"/>
+							 <field name="bank_acctno1"/>
+							 <field name="bank_name2"/>
+							 <field name="bank_acctno2"/>
+							 <field name="company_cfieldfour"/>
+							 <field name="company_cfieldfive"/>
+							 <field name="company_cfieldsix"/>
+							 <field name="campus_code" invisible="1"/>
+							</group>
 						   </group>
 				<notebook>
                 <page string="Sessions Years">
@@ -207,8 +225,6 @@
                 </tree>
             </field>
         </record>
-
-
         <record model="ir.actions.act_window" id="action_session_term">
             <field name="name">Session Term</field>
             <field name="res_model">academic.session.term</field>
@@ -216,6 +232,46 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
+
+  <!-- Program.Category -->
+
+        <record model="ir.ui.view" id="view_program_form">
+         <field name="name">program.form</field>
+         <field name="model">sms.program.category</field>
+         <field name="arch" type="xml">
+            <form string="Program Form" version="7.0">
+                <sheet>
+                 <group string="Program" >
+                  <group >
+                    <field name="name"/>
+                    <field name="category_code"/>
+                    <field name="offered_in_inst"/>
+                  </group>
+                </group>
+            </sheet>
+              </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_program_tree">
+            <field name="name">program.category.tree</field>
+            <field name="model">sms.program.category</field>
+            <field name="arch" type="xml">
+                <tree string="Programs">
+                    <field name="name"/>
+                    <field name="category_code"/>
+                    <field name="offered_in_inst"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_program">
+            <field name="name">Programs</field>
+            <field name="res_model">sms.program.category</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
 
 
 
