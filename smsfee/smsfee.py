@@ -1084,11 +1084,6 @@ class smsfee_studentfee(osv.osv):
            
            admin
            """
-        print "Student_Id",std_id
-        print "Current student class",acad_cal
-        print "Fee Type",fee_type_row
-        print "current Month",month
-          
        
         fee_already_exists =  self.pool.get('smsfee.studentfee').search(cr, uid,[('acad_cal_id', '=', acad_cal), ('student_id', '=', std_id), ('fee_type', '=', fee_type_row.id), ('due_month', '=', month)])
         print "Fee Exists_____________",fee_already_exists
