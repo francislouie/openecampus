@@ -132,12 +132,12 @@ class sms_collabrator(osv.osv):
             if obj[0].info_portal == False or obj[0].info_portal == None:
                 display_state = 1
             else:
-                display_state = 0  
+                display_state = 0   
             
             if 'transport_availed' in obj[0]:
                 transport = obj[0].transport_availed
             else:
-                transport = False       
+                transport = False     
             my_dict = {
                             'registration_no':registration_no,
                             'stdname':stdname,

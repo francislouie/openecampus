@@ -121,7 +121,26 @@ class sms_academics_session(osv.osv):
         'closed_by':fields.many2one('res.users','Closed By',readonly = True),
         'state': fields.selection([('Draft', 'Draft'),('Active', 'Active'),('Closed', 'Closed')], 'State', readonly = True),
         'program_category_id':fields.many2one('sms.program.category','Program category'),
-#         'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
+        'bank_name1': fields.char('Bank One Name', size=256),
+        'bank_name2': fields.char('Bank Two Name', size=256),
+        'bank_acctno1': fields.char('Bank One Acc.No'),
+        'bank_acctno2': fields.char('Bank Two Acc.No'),
+        'company_cfieldone': fields.char('Heading Line One', size=256),
+        'company_cfieldtwo': fields.char('Heading Line Two', size=256),
+        'company_cfieldthree': fields.char('Heading Line Three', size=256),
+        'company_cfieldfour': fields.char('Footer Line One', size=256),
+        'company_cfieldfive': fields.char('Footer Line Two', size=256),
+        'company_cfieldsix': fields.char('Footer Line Three', size=256),
+        'fee_journal': fields.many2one('account.journal', 'Fee Journal', ondelete="cascade"),
+        'student_fee_income_acc': fields.many2one('account.account', 'Fee Income Account', ondelete="cascade"),
+        'student_fee_expense_acc': fields.many2one('account.account', 'Fee Expense Account', ondelete="cascade"),
+        'fee_reception_account_cash': fields.many2one('account.account', 'Fee Cash Account', ondelete="cascade"),
+        'fee_reception_account_bank': fields.many2one('account.account', 'Fee Bank Account', ondelete="cascade"),
+        'order_of_report': fields.selection([('by_name', 'By Name'), ('by_registration_no', 'By Reg No')],
+                                            'Order Of Report'),
+        'campus_code': fields.char('Campus Code', size=64),
+
+        #         'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
     } 
     _defaults = {  'state': 'Draft','name':'New Academic Session'}
     _sql_constraints = [('name_unique', 'unique (name,subcate)', """ Academic Session Must be Unique.""")]
@@ -793,7 +812,18 @@ class sms_student(osv.osv):
         group_name=cr.fetchall()
         profile_manager = True
         for s in group_name:
-            if s[0] == 'Profile Manager':
+            if s[0] == 'Profile Manager' or 'Principal' :
+                if s[0] == 'Principal':
+                    for node in doc.xpath("//page[@string='Fees Payments']"):
+                        node.set('invisible', '1')
+                        setup_modifiers(node)
+                        for node in doc.xpath("//page[@string='Fees Payments']"):
+                            node.set('invisible', '1')
+                            setup_modifiers(node)
+                    for node in doc.xpath("//page[@string='Transport Details']"):
+                        node.set('invisible', '1')
+                        setup_modifiers(node)
+
                 profile_manager = False
         # group_name=json.dumps(group_name)
         if profile_manager:
@@ -3503,7 +3533,7 @@ class academic_session_term(osv.osv):
         'end_date':fields.date('End Date'),
         'state': fields.selection([('Draft','Draft'),('Active','Active'),('Closed','Closed'),('Cancelled','Cancelled')],'Status'),
         }
-    
+
 academic_session_term()
 
    
