@@ -4,7 +4,7 @@
 	
 	<!-- Top menu item -->
 	<menuitem name="Academics" id="menu_sms_root" 
-	groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer" sequence="0"/>
+	groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer,group_sms_faculty" sequence="0"/>
 
 	 
         <menuitem name="Reporting.."
@@ -28,6 +28,7 @@
 	<menuitem id="menu_quick_setting_id" name="Quick Setting" parent="menu_configuration_id" sequence="2" groups="group_sms_admin,group_sms_director,group_sms_admission_manager" />
 	<menuitem id="menu_session_stting_id" name="Session Setting" parent="menu_quick_setting_id" sequence="2" groups="group_sms_admin,group_sms_director,group_sms_admission_manager"/>
     <menuitem id="session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_session"/>
+    <menuitem id="term_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_session_term"/>
     <menuitem id="academic_session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_academic_session"/>
 	
 	<!-- Exective Reports
@@ -40,7 +41,12 @@
 	<menuitem id="menu_attendance" name="Class Attendance" parent="sms.menu_sms_attendance" sequence="1" groups="group_sms_principal,group_sms_admin,group_sms_admission_officer,group_sms_admission_manager"/>
 	<menuitem id="menu_sms_class_attendance" parent="menu_attendance" sequence="1" groups="group_sms_principal,group_sms_admission_officer,group_sms_admin,group_sms_admission_manager" action="action_sms_class_attendance"/>
 -->
-	
+	<!--Subjects-->
+    <menuitem id="menu_sms_subject_id" name="Subjects" parent="menu_sms_root" sequence="1" 
+    groups="group_sms_faculty"/>
+    <menuitem id="menu_sms_teacher_subject_id" parent="menu_sms_subject_id" sequence="1" action="ir_actions_server_filter_subject"
+    groups="group_sms_faculty"/>
+
 	<!--Academic calendar-->
 	<menuitem id="menu_sms_id" name="Academic Calendars" parent="menu_sms_root" sequence="1" 
 	groups="group_sms_admin,group_sms_principal,group_sms_director,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_admission_manager,group_sms_fee_officer,group_sms_fee_manager,group_sms_fee_officer"/>

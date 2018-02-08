@@ -23,7 +23,6 @@ class sms_attendance_parser(report_sxw.rml_parse):
             'get_blank_attendance_report_recs':self.get_blank_attendance_report_recs,
             'get_filled_attendance_report_days':self.get_filled_attendance_report_days,
             'get_filled_attendance_report_recs':self.get_filled_attendance_report_recs,
-            'class_name':self.class_name,
             'get_daily_attendance_report':self.get_daily_attendance_report,
             })
         self.context = context
@@ -94,10 +93,9 @@ class sms_attendance_parser(report_sxw.rml_parse):
         month = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%m'))
         
         mname = self.pool.get('sms.session').get_month_name(self.cr,self.uid,int(month))
-          
         main_dict['class'] = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id).name
         main_dict['sessions'] = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id).class_session
-        main_dict['program'] = 'SSc'  
+        main_dict['program'] =  self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id).acad_session_id.name   
         main_dict['total_student'] = total_std
         main_dict['att_for_month'] = mname+','+str(year)
         main_dict['total_class_attendance'] =total_classes
@@ -165,9 +163,6 @@ class sms_attendance_parser(report_sxw.rml_parse):
             
             result.append(my_dict)
         return result
-
-
- 
     def get_filled_attendance_report_days(self, data):
          
         result = []
@@ -229,7 +224,7 @@ class sms_attendance_parser(report_sxw.rml_parse):
           
         main_dict['class'] = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id).name
         main_dict['sessions'] = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id).class_session
-        main_dict['program'] = 'SSc'  
+        main_dict['program'] =  self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id).acad_session_id.name 
         main_dict['total_student'] = total_std
         main_dict['att_for_month'] = mname+','+str(year)
         main_dict['total_class_attendance'] =total_classes
@@ -239,46 +234,6 @@ class sms_attendance_parser(report_sxw.rml_parse):
         result.append(main_dict)
         return result
 
-
-
-    def class_name(self, form): 
-
-        this_form = self.datas['form']
-        class_id = this_form['class_id'][0]
-        datefrom = this_form['date_from']
-        month = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%m'))
-        if month == 1:
-            MonthN = "January"
-        elif  month == 2:
-            MonthN =  "February"
-        elif  month == 3:
-            MonthN =  "March"
-        elif  month == 4:
-            MonthN =  "April"
-        elif  month == 5:
-            MonthN =  "May"
-        elif  month == 6:
-            MonthN =  "June"
-        elif  month == 7:
-            MonthN =  "July"
-        elif  month == 8:
-            MonthN =  "August"
-        elif  month == 9:
-            MonthN =  "September"
-        elif  month == 10:
-            MonthN =  "October"
-        elif  month ==11:
-            MonthN =  "November"
-        elif  month == 12:
-            MonthN =  "December"
-            
-        result= self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id).name +' '+'For the month of'+'  '+str(MonthN)
-        return result
-    
-    
-    
-    
-# method is calling from here 
     def get_filled_attendance_report_recs(self, data):
       
         result = []
@@ -374,14 +329,7 @@ class sms_attendance_parser(report_sxw.rml_parse):
             result.append(my_dict)
         return result
      #end 
-     
-     
-     
-     
-     
-     
-     
-     
+   
     def get_daily_attendance_report(self, data):
         
         result = []
