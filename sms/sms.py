@@ -35,6 +35,13 @@ class res_company(osv.osv):
     }
 res_company()
 
+# 
+#  cr.execute("""select id from hr_employee where resource_id =(select id from resource_resource where user_id =""" + str(uid) + """  )""")
+#  emp_id = cr.fetchone()[0]
+
+
+
+
 class sms_academics_session(osv.osv):
     """
     This Creates an academic session thame may be of minimum 1 year, max many years
@@ -2609,7 +2616,8 @@ class sms_academiccalendar_subjects(osv.osv):
         
                 # use this portio onward if student fee is to be added on subject registration, call a method that adds fee to student
         return new_subject
-    
+  
+
         
     _name = 'sms.academiccalendar.subjects'
     _description = "Defines subjects for new class in session."
@@ -2624,7 +2632,8 @@ class sms_academiccalendar_subjects(osv.osv):
         'teacher_id': fields.many2one('hr.employee','Teacher'),
         'offered_as': fields.selection([('theory','Theory Only'),('theory_practical','Theory + Practical'),('practical','Practical Only')], 'Offered As'),
         'reference_practical_of': fields.many2one('sms.academiccalendar.subjects', 'Main Subject',),
-        'allow_delete' : fields.boolean('Allow Deletion')
+        'allow_delete' : fields.boolean('Allow Deletion'),
+
     }
      
     _defaults = {
@@ -2731,6 +2740,7 @@ class sms_time(osv.osv):
                 mint = "0" + str(mint)
             result[f.id] = str(hour) + ":" + str(mint) + " " + (f.am_pm)
         return result
+   
     
     def _set_name_24(self, cr, uid, ids, name, args, context=None):
         result = {}
@@ -3523,7 +3533,7 @@ class academic_session_term(osv.osv):
         'end_date':fields.date('End Date'),
         'state': fields.selection([('Draft','Draft'),('Active','Active'),('Closed','Closed'),('Cancelled','Cancelled')],'Status'),
         }
-    
+
 academic_session_term()
 
    
