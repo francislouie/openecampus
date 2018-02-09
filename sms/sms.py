@@ -35,6 +35,13 @@ class res_company(osv.osv):
     }
 res_company()
 
+# 
+#  cr.execute("""select id from hr_employee where resource_id =(select id from resource_resource where user_id =""" + str(uid) + """  )""")
+#  emp_id = cr.fetchone()[0]
+
+
+
+
 class sms_academics_session(osv.osv):
     """
     This Creates an academic session thame may be of minimum 1 year, max many years
@@ -114,7 +121,26 @@ class sms_academics_session(osv.osv):
         'closed_by':fields.many2one('res.users','Closed By',readonly = True),
         'state': fields.selection([('Draft', 'Draft'),('Active', 'Active'),('Closed', 'Closed')], 'State', readonly = True),
         'program_category_id':fields.many2one('sms.program.category','Program category'),
-#         'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
+        'bank_name1': fields.char('Bank One Name', size=256),
+        'bank_name2': fields.char('Bank Two Name', size=256),
+        'bank_acctno1': fields.char('Bank One Acc.No'),
+        'bank_acctno2': fields.char('Bank Two Acc.No'),
+        'company_cfieldone': fields.char('Heading Line One', size=256),
+        'company_cfieldtwo': fields.char('Heading Line Two', size=256),
+        'company_cfieldthree': fields.char('Heading Line Three', size=256),
+        'company_cfieldfour': fields.char('Footer Line One', size=256),
+        'company_cfieldfive': fields.char('Footer Line Two', size=256),
+        'company_cfieldsix': fields.char('Footer Line Three', size=256),
+        'fee_journal': fields.many2one('account.journal', 'Fee Journal', ondelete="cascade"),
+        'student_fee_income_acc': fields.many2one('account.account', 'Fee Income Account', ondelete="cascade"),
+        'student_fee_expense_acc': fields.many2one('account.account', 'Fee Expense Account', ondelete="cascade"),
+        'fee_reception_account_cash': fields.many2one('account.account', 'Fee Cash Account', ondelete="cascade"),
+        'fee_reception_account_bank': fields.many2one('account.account', 'Fee Bank Account', ondelete="cascade"),
+        'order_of_report': fields.selection([('by_name', 'By Name'), ('by_registration_no', 'By Reg No')],
+                                            'Order Of Report'),
+        'campus_code': fields.char('Campus Code', size=64),
+
+        #         'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
     } 
     _defaults = {  'state': 'Draft','name':'New Academic Session'}
     _sql_constraints = [('name_unique', 'unique (name,subcate)', """ Academic Session Must be Unique.""")]
@@ -512,7 +538,7 @@ class sms_program_category(osv.osv):
     """
     This object defines program category
     """
-
+ 
     _name = 'sms.program.category'
     _description = "This object store generic section of class"
     _columns = {
@@ -520,7 +546,7 @@ class sms_program_category(osv.osv):
         "category_code": fields.char("Code", size=32),
         "offered_in_inst": fields.boolean("Offered in Institute"), 
     } 
-    
+     
 sms_program_category()
 
 class sms_year(osv.osv):
@@ -786,7 +812,18 @@ class sms_student(osv.osv):
         group_name=cr.fetchall()
         profile_manager = True
         for s in group_name:
-            if s[0] == 'Profile Manager':
+            if s[0] == 'Profile Manager' or 'Principal' :
+                if s[0] == 'Principal':
+                    for node in doc.xpath("//page[@string='Fees Payments']"):
+                        node.set('invisible', '1')
+                        setup_modifiers(node)
+                        for node in doc.xpath("//page[@string='Fees Payments']"):
+                            node.set('invisible', '1')
+                            setup_modifiers(node)
+                    for node in doc.xpath("//page[@string='Transport Details']"):
+                        node.set('invisible', '1')
+                        setup_modifiers(node)
+
                 profile_manager = False
         # group_name=json.dumps(group_name)
         if profile_manager:
@@ -893,6 +930,7 @@ class sms_student(osv.osv):
     
     """ This object defines students of an institute """
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        
         for f in self.browse(cr, uid, ids, context=context):
             if 'fee_type' in vals:
                 
@@ -922,8 +960,9 @@ class sms_student(osv.osv):
                                                                            'assigned_by': assign_person }, context)
             print"---------------  fee Structure changed  -------------- ",f.id
             #******************to maintain log**********************************************
+
         for k,v in vals.iteritems():
-            print "key=====", k,"===value======",v
+            print "keyasasasa=====", k,"===value======",v
             if type(v) == "<type 'list'>":
                 sql = """ select """ +str(k)+ """ from sms_student where id ="""+str(ids[0])+ """
                 """
@@ -2605,7 +2644,8 @@ class sms_academiccalendar_subjects(osv.osv):
         
                 # use this portio onward if student fee is to be added on subject registration, call a method that adds fee to student
         return new_subject
-    
+  
+
         
     _name = 'sms.academiccalendar.subjects'
     _description = "Defines subjects for new class in session."
@@ -2620,7 +2660,8 @@ class sms_academiccalendar_subjects(osv.osv):
         'teacher_id': fields.many2one('hr.employee','Teacher'),
         'offered_as': fields.selection([('theory','Theory Only'),('theory_practical','Theory + Practical'),('practical','Practical Only')], 'Offered As'),
         'reference_practical_of': fields.many2one('sms.academiccalendar.subjects', 'Main Subject',),
-        'allow_delete' : fields.boolean('Allow Deletion')
+        'allow_delete' : fields.boolean('Allow Deletion'),
+
     }
      
     _defaults = {
@@ -2727,6 +2768,7 @@ class sms_time(osv.osv):
                 mint = "0" + str(mint)
             result[f.id] = str(hour) + ":" + str(mint) + " " + (f.am_pm)
         return result
+   
     
     def _set_name_24(self, cr, uid, ids, name, args, context=None):
         result = {}
@@ -3519,7 +3561,7 @@ class academic_session_term(osv.osv):
         'end_date':fields.date('End Date'),
         'state': fields.selection([('Draft','Draft'),('Active','Active'),('Closed','Closed'),('Cancelled','Cancelled')],'Status'),
         }
-    
+
 academic_session_term()
 
    

@@ -23,18 +23,16 @@ class res_company(osv.osv):
     'fee_reception_account_bank': fields.many2one('account.account', 'Fee Bank Account', ondelete="cascade"),
     'fee_report_type':fields.selection([('One_on_One','One Student Per Page'),('Two_on_One','Two Students Per Page')],'Fee Report Type'),
     ########## Fields for Challan's Print Settings ##############################################
-    'bank_name1':fields.char('Bank Name', size=256),
-    'bank_name2':fields.char('Bank Name', size=256),
-    'bank_acctno1':fields.integer('Account Number'),
-    'bank_acctno2':fields.integer('Account Number'),
+    'bank_name1':fields.char('Bank One Name', size=256),
+    'bank_name2':fields.char('Bank Two Name', size=256),
+    'bank_acctno1':fields.char('Bank One Acc.No'),
+    'bank_acctno2':fields.char('Bank Two Acc.No'),
     'company_cfieldone':fields.char('Heading Line One', size=256),
     'company_cfieldtwo':fields.char('Heading Line Two', size=256),
     'company_cfieldthree':fields.char('Heading Line Three', size=256),
     'company_cfieldfour':fields.char('Footer Line One', size=256),
     'company_cfieldfive':fields.char('Footer Line Two', size=256),
-    'company_cfieldsix':fields.char('Field Six', size=256),
-    'company_cfieldseven':fields.char('Field Seven', size=256),
-    'company_cfieldeight':fields.char('Field Eight', size=256),
+    'company_cfieldsix':fields.char('Footer Line Three', size=256),
     'company_clogo':fields.binary('Challan Logo'),
     'order_of_report':fields.selection([('by_name','By Name'),('by_registration_no','By Reg No')],'Order Of Report'),
     'campus_code':fields.char('Campus Code', size=64),
@@ -579,7 +577,6 @@ class sms_student(osv.osv):
             res[f.id] = [x[0] for x in cr.fetchall()]
 #         raise osv.except_osv((res), (sql))
           
-            print"this is the iddddddddddddddddddddddddd",res
         return res
     #sms_student    
     _name = 'sms.student'

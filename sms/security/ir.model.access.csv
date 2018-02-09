@@ -402,7 +402,7 @@
 
 "421","sms.academiccalendar","model_sms_academiccalendar","group_sms_principal",1,0,0,0
 "422","sms.exam.datesheet","model_sms_exam_datesheet","group_sms_principal",1,0,0,0
-"423","sms.student","model_sms_student","group_sms_principal",1,0,0,0
+"423","sms.student","model_sms_student","group_sms_principal",1,1,1,0
 "424","student.achievements","model_student_achievements","group_sms_principal",1,0,0,0
 "425","sms.registration.nos","model_sms_registration_nos","group_sms_principal",1,0,0,0
 "426","sms.month","model_sms_month","group_sms_principal",1,0,0,0
