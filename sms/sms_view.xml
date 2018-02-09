@@ -295,6 +295,11 @@
 
 
 
+
+
+
+
+
 <!--Session Months-->
  <record model="ir.ui.view" id="view_sessionmonths_tree">
             <field name="name">sms.session.months.tree</field>
@@ -1579,6 +1584,16 @@
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
+        </record>
+<!--filter.on.subject-->
+     <record id="ir_actions_server_filter_subject" model="ir.actions.server">
+            <field name="sequence" eval="5"/>
+            <field name="state">code</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_sms_filter_subject_open"/>
+            <field name="code">action = pool.get('sms.filter.subject.open').filter_subject(cr, uid, None, context)</field>
+            <field name="condition">True</field>
+            <field name="name">My Subjects</field>
         </record>
 <!--sms.student.subject-->
 <!--this view is set for classes with no specific subject attendance, for subject wise attendance create another view of the same object-->

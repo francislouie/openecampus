@@ -595,7 +595,8 @@ class sms_student(osv.osv):
             'disp_cntct_prtal':fields.boolean('Display Student Contacts?'),
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
             'exammark_prtal':fields.boolean('Show Exam Marks?'),
-            'info_portal':fields.boolean('Show Personal Information?')
+            'info_portal':fields.boolean('Show Personal Information?'),
+            'fee_structure_history_ids':fields.one2many('smsfee.structure.history', 'student_id', 'Fee Structure History')
           
             }
     _defaults = {
@@ -603,6 +604,19 @@ class sms_student(osv.osv):
         }
 sms_student()
 
+# <-----  Added by Obaid  ---------->
+
+class smsfee_structure_history(osv.osv):
+    _name = 'smsfee.structure.history'
+    
+    _columns = {
+        'student_id':fields.many2one('sms.student','Student'),
+        'name': fields.char('Fee Structure Name'),
+        'assignment_date': fields.date('Assignment Date'),
+        'deallocation_date': fields.date('Deallocation Date'),
+        'assigned_by': fields.char('Assigned By')
+                }
+    
 class smsfee_classes_fees(osv.osv):
     
     """ all Fee Structures for an academic calendar
