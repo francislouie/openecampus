@@ -14,11 +14,7 @@
                   parent="hr.menu_hr_main"
                   action="action_pull_hr_data" 
                   groups=""/>
-             <menuitem id="menu_hr_attendance_machines"
-                  sequence="2"
-                  parent="hr.menu_hr_main"
-                  action="action_pull_hr_data" 
-                  groups=""/>          
+         
 
       
       <!--defaulter payslip menu is inherited to show -->
