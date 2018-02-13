@@ -1909,10 +1909,12 @@ class smsfee_receiptbook(osv.osv):
                     self.pool.get('smsfee.receiptbook.lines').create(cr ,uid,feelinesdict)
         return True
      
-    _order = 'id desc'
     #smsfee_receiptbook
     _name = 'smsfee.receiptbook'
     _description = "This object store fee types"
+    _inherit = ['mail.thread']
+    _order = "id desc"
+    
     _columns = {
         'name': fields.char('Bill No', readonly =True,size=15), 
         'counter': fields.char('Bill No.', readonly =True,size=15),    
