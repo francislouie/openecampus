@@ -212,7 +212,7 @@ class sms_transport_registrations(osv.osv):
                                                 'late_fee':0,  
                                                 'total_amount':trfee.fee_amount + 0, 
                                                 'reconcile':False,
-                                                'generic_fee_type':trfee.name.id,
+                                                'generic_fee_type':trfee.name.fee_type.id,
                                                  'state':'fee_unpaid'
                                                 }
             

@@ -18,6 +18,7 @@
              'wizard/smsfee_wizard_std_admfee_receipt_unpaid.xml',
              'wizard/wizard_singlestudent_unpaidfee_receipt.xml',
              'wizard/wizard_student_fee_collect.xml',
+             'wizard/wizard_student_fee_add.xml',
              'wizard/wizard_student_advancefee_collect.xml',
              # 'wizard/sms_wizard_detailed_fee_report_msexcel.xml',
              #'wizard/smsfee_wizard_student_feetype_list_view.xml',

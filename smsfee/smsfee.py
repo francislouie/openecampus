@@ -533,6 +533,8 @@ class sms_student(osv.osv):
         rec = cr.fetchall() 
         return rec
 
+
+
         
     def set_paybles(self, cr, uid, ids, context={}, arg=None, obj=None):
         # temproray inner joins are used to get to fee cateogry of fee ttype, when fee strucre of student fee table is refined, one inner joiin will be removed
