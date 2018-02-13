@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Fee Reports -->
+
+        <record id="view_class_student_fee_collectt" model="ir.ui.view">
+            <field name="name">class.student_fee_collectt_form</field>
+            <field name="model">class.student_fee_collectt</field>
+            <field name="arch" type="xml">
+                <form string="Student Fee Receiving" version="7.0">
+                    <group>
+                        <h3>
+							<field name="student_id" readonly ="1" nolabel = "1" />
+                        </h3>
+						<newline/>
+						<group col="4" String = "">
+
+                            <field name="generic_fee_type"/>
+                            <field name="due_month"/>
+                            <field name="class_id" readonly="1"/>
+                            <field name="fee_month"/>
+                            <field name="fee_amount"/>
+                            <field name="late_fee"/>
+                            <field name="category"/>
+                            <field name="fee_type"/>
+					    </group>
+                    </group>
+                    <group>
+	                    <ol>
+		                    <li>
+								<p>You can add student  fee here</p>
+							</li>
+	                    </ol>
+                    </group>
+                     <footer>
+                        <button string="Add" name="action_pay_student_fee" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+           </field>
+          </record>
+
+  <!-- action Fee Reports-->
+
+        <record id="action_student_fee_collect_id" model="ir.actions.act_window">
+            <field name="name">Fee receiving for student</field>
+            <field name="res_model">class.student_fee_collectt</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_class_student_fee_collectt"/>
+           <field name="target">new</field>
+        </record>
+</data>
+</openerp>
