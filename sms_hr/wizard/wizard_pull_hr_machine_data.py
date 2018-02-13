@@ -87,7 +87,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                 if date_stamp == date:
                                     search_rec = self.pool.get('hr.attendance').search(cr,uid,[('attendance_date','=',date_stamp),('attendance_time','=',time_stamp)])   
                                     if not search_rec:
-#                                         print "----------  No Records Found for Attendance of this Employee  ----------",search_rec
+                                        print "----------  No Records Found for Attendance of this Employee  ----------",search_rec
                                         result = self.pool.get('hr.attendance').create(cr, uid, {
                 'attendance_date': date_stamp,
                 'attendance_time': time_stamp,                            
@@ -128,12 +128,16 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                
                     recs_found1 = self.pool.get('hr.attendance').browse(cr,uid,search_rec1) 
                     for rec1 in recs_found1:
-#                         print "Hello  ---------------- Man =----------------------- How",rec1
+                        print "Hello  ---------------- Man =----------------------- How",rec1
+
                         if rec1.attendance_time < 120000:
-                         
-                            self.pool.get('hr.attendance').write(cr, uid, rec1.id, {'status': 'Sign In'})
+                            print "Hello  ---------------- sign in=----------------------- How"
+                            att_time1 = str(datetime.strptime(rec1.attendance_time,'%H%M%S').strftime('%H:%M:%S'))
+                            self.pool.get('hr.attendance').write(cr, uid, rec1.id, {'status': 'Sign In', 'attendance_time': att_time1})
                         else:
-                            self.pool.get('hr.attendance').write(cr, uid, rec1.id, {'status': 'Sign Out'})
+                            print "Hello  ---------------- sign out=----------------------- How"
+                            att_time1 = str(datetime.strptime(rec1.attendance_time,'%H%M%S').strftime('%H:%M:%S'))
+                            self.pool.get('hr.attendance').write(cr, uid, rec1.id, {'status': 'Sign Out', 'attendance_time': att_time1})
                 item2 += 1
                 
         return True    

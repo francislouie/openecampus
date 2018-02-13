@@ -4,7 +4,7 @@ from openerp import addons
 import xlwt
 import xlrd
 import calendar
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from datetime import datetime
 from dateutil import parser
 from dateutil import rrule
@@ -931,8 +931,36 @@ class sms_student(osv.osv):
     """ This object defines students of an institute """
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         
-        print "Vals=====",vals
-        #******************to maintain log**********************************************
+        for f in self.browse(cr, uid, ids, context=context):
+            if 'fee_type' in vals:
+                
+                student_history_id = self.pool.get('smsfee.structure.history').search(cr, uid, [('student_id','=', f.id)])
+                student_history_obj = self.pool.get('smsfee.structure.history').browse(cr, uid, student_history_id)
+                print"---------------  One Students All Records   -------------- ",student_history_obj
+                
+                sql = """SELECT id FROM smsfee_structure_history WHERE student_id ="""+str(f.id)+""" order by create_date desc limit 1 """
+                cr.execute(sql)
+                target_id = cr.fetchone()[0]
+                result = self.pool.get('smsfee.structure.history').write(cr, uid, target_id, {'deallocation_date': datetime.datetime.now()}, context=context)
+                print"---------------  Target Id to Change   -------------- ",target_id
+                
+                fee_type_id = self.pool.get('sms.feestructure').search(cr, uid, [('id','=', vals['fee_type'])])
+                fee_type_obj = self.pool.get('sms.feestructure').browse(cr, uid, fee_type_id[0])
+                print"---------------  fee fee_type_obj   -------------- ",fee_type_obj
+                fee_name = fee_type_obj.name
+                assigned_date = datetime.datetime.now()
+                deallot_date = datetime.datetime.now()
+                user = self.pool.get('res.users').browse(cr, uid, uid, )
+                assign_person = user.login
+                historyId = f.id
+                result = self.pool.get('smsfee.structure.history').create(cr, uid, 
+                                                                          {'student_id':historyId,
+                                                                            'name':fee_name, 
+                                                                           'assignment_date':assigned_date,
+                                                                           'assigned_by': assign_person }, context)
+            print"---------------  fee Structure changed  -------------- ",f.id
+            #******************to maintain log**********************************************
+
         for k,v in vals.iteritems():
             print "keyasasasa=====", k,"===value======",v
             if type(v) == "<type 'list'>":
