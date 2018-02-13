@@ -4,6 +4,19 @@ import  datetime
 _logger = logging.getLogger(__name__)
 
 class class_student_fee_collectt(osv.osv_memory):
+    def _category_list(self, cr, uid, args, context=None):
+        sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
+              on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
+        cr.execute(sqluser)
+        group_name = cr.fetchall()
+        for s in group_name:
+            if s[0] == 'SMS Transport Manager':
+                return [('Transport', 'Transport')]
+            elif s[0] == 'Fee Officer' or 'Fee Manager':
+                return [('Academics', 'Academics')]
+
+        return [('Academics', 'Academics'), ('Transport', 'Transport')]
+
     def getfee_cate(self, cr, uid, ids, fields, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -68,10 +81,7 @@ class class_student_fee_collectt(osv.osv_memory):
               'fee_type': fields.many2one('smsfee.classes.fees.lines', 'Fee Type'),
               'fee_amount': fields.integer('Fee'),
               'late_fee': fields.integer('Late Fee'),
-              'category': fields.selection( string='Category', type='selection',
-                                     selection=[('Academics', 'Academics'), ('Transport', 'Transport'),
-                                                ('Hostel', 'Hostel'), ('Stationary', 'Stationary'),
-                                               ('Portal', 'Portal')])
+              'category': fields.selection(_category_list,method=True,string='Select Fee Type',type='selection',)
                }
 
     _defaults = {'class_id':_get_current_class,'student_id':_get_student}
