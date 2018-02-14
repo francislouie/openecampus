@@ -4,16 +4,17 @@ import  datetime
 _logger = logging.getLogger(__name__)
 
 class class_student_fee_collectt(osv.osv_memory):
-    def _category_list(self, cr, uid, args, context=None):
+
+    def _category_list(self, cr, uid, context=None):
         sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
               on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
         cr.execute(sqluser)
         group_name = cr.fetchall()
-        for s in group_name:
-            if s[0] == 'SMS Transport Manager':
-                return [('Transport', 'Transport')]
-            elif s[0] == 'Fee Officer' or 'Fee Manager':
-                return [('Academics', 'Academics')]
+        # for s in group_name:
+        #     if s[0] == 'SMS Transport Manager':
+        #         return [('Transport', 'Transport')]
+        #     elif s[0] == 'Fee Officer' or 'Fee Manager':
+        #         return [('Academics', 'Academics')]
 
         return [('Academics', 'Academics'), ('Transport', 'Transport')]
 
@@ -39,6 +40,20 @@ class class_student_fee_collectt(osv.osv_memory):
 
         print("student",student)
         return cur_cls
+
+    def _get_session_id(self, cr, uid, ids):
+        obj = self.browse(cr, uid, ids['active_id'])
+        std_id = obj.id
+        session_id = []
+        sql = """select id from sms_session where id=(select  a.session_id from sms_academiccalendar As a  
+    	             inner join sms_student As s on s.current_class=a.id
+    	               where s.id=""" + str(std_id) + """ ) order by id"""
+        cr.execute(sql)
+        _ids = cr.fetchall()
+        print("session_id",_ids)
+        for thisfee in _ids:
+            session_id.append(thisfee[0])
+        return session_id
     def _get_session_months(self, cr, uid, ids):
         obj = self.browse(cr, uid, ids['active_id'])
         std_id = obj.id
@@ -73,18 +88,20 @@ class class_student_fee_collectt(osv.osv_memory):
     _description = "Student's Fee Wizard"
     _columns = {
                'student_id': fields.many2one('sms.student', 'Student', domain="[('state','=','Admitted')]", help="Student"),
-               "class_id": fields.many2one('sms.academiccalendar', 'Class',
+               'class_id': fields.many2one('sms.academiccalendar', 'Class',
                    domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
-              'generic_fee_type':fields.many2one('smsfee.feetypes','Fee type'),
-              'due_month': fields.many2one('sms.session.months', 'Payment Month'),
-              'fee_month': fields.many2one('sms.session.months', 'Fee Month'),
-              'fee_type': fields.many2one('smsfee.classes.fees.lines', 'Fee Type'),
+               'session': fields.many2one('sms.session', 'Session', readonly=True,
+                                   help="Select an academic session"),
+               'generic_fee_type':fields.many2one('smsfee.feetypes','Fee type',domain="[('category','=',category')]"),
+              'due_month': fields.many2one('sms.session.months', 'Payment Month',domain="[('session_id','=',session)]"),
+              'fee_month': fields.many2one('sms.session.months', 'Fee Month',domain="[('session_id','=',session)]"),
+              # 'fee_type': fields.many2one('smsfee.classes.fees.lines', 'Fee Type'),
               'fee_amount': fields.integer('Fee'),
-              'late_fee': fields.integer('Late Fee'),
-              'category': fields.selection(_category_list,method=True,string='Select Fee Type',type='selection',)
+              'category': fields.selection(_category_list,method=True,string='Select Fee Type',type='selection'),
                }
 
-    _defaults = {'class_id':_get_current_class,'student_id':_get_student}
+    _defaults = {'class_id':_get_current_class,'student_id':_get_student,'category':'Academics',
+                 'session':_get_session_id}
 
     def action_pay_student_fee(self, cr, uid, ids, context):
         domain = []
@@ -98,13 +115,11 @@ class class_student_fee_collectt(osv.osv_memory):
             'fee_month': thisform['fee_month'][0],
             'paid_amount': 0,
             'fee_amount': thisform['fee_amount'],
-            'late_fee': thisform['late_fee'],
             'discount': 0,
-            'total_amount': thisform['fee_amount'] + thisform['late_fee'],
             'reconcile': False,
             'state': 'fee_unpaid',
             'generic_fee_type':thisform['generic_fee_type'][0],
-            'fee_type':thisform['fee_type'][0],
+            # 'fee_type':thisform['fee_type'][0],
             'category':thisform['category']
 
         }
