@@ -13,6 +13,7 @@ import datetime
 from lxml import etree
 from openerp.osv.orm import setup_modifiers
 from openerp.pooler import get_pool
+from cookielib import domain_match
 
 _logger = logging.getLogger(__name__)
 
@@ -4995,10 +4996,19 @@ class sms_weekly_plan(osv.osv):
             record = self.pool.get('sms.academiccalendar.subjects').browse(cr, uid, subject)
             result['teacher'] = record.teacher_id.id
         return {'value': result}
-    
+    def onchange_set_domain(self, cr, uid, ids):
+        cr.execute("""select id,job_id from hr_employee where resource_id =(select id from resource_resource where user_id =""" + str(uid) + """  )""")
+        emp_obj = cr.fetchone()
+        tea_emp_id = emp_obj[0]
+        tea_job_id = emp_obj[1]
+        if tea_job_id ==1:
+            return {'domain': {'subject': [('teacher_id', '=', tea_emp_id)]} ,'value':{}}
+        else:
+            return {'domain': {'subject': []} ,'value':{}}
     """This object consists of weekly plan. """
     _name = 'sms.weekly.plan'
     _columns = {
+        'current_tea_id':fields.char('',size=300),
         'subject' : fields.many2one('sms.academiccalendar.subjects','Subject'),
         'teacher' : fields.many2one('hr.employee','Teacher'),
         'week' : fields.many2one('sms.calander.week','Calender Week'),
@@ -5007,6 +5017,7 @@ class sms_weekly_plan(osv.osv):
         'state' : fields.selection([('Draft','Draft'),('Confirm','Confirm')], 'State', required = True),
     }
     _defaults = {
+                 'current_tea_id':onchange_set_domain,
                  'filled_by': get_user,
                  'state': lambda*a :'Draft'}    
     _sql_constraints = []

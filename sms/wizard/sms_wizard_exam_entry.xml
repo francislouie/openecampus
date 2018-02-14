@@ -14,6 +14,7 @@
 						<field name="academiccalendar_id" on_change="onchange_set_domain(exam_type,academiccalendar_id)" />
 						<field name="exam_type" on_change="onchange_set_domain(exam_type,academiccalendar_id)" />
 						<field name="subject_id"/>
+						<field name="aca_id" on_change="filter_on_aca_cal()" invisible="1"/>
 					</group>
                     <footer>
                         <button string="Next" name="exam_entry" type="object" class="oe_highlight"/>
