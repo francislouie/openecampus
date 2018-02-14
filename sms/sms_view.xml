@@ -2704,50 +2704,7 @@
     </record>
 
     <!-- END NEWsms.Class.promotion --> 
- 
-	<!-- sms.student.promotion -->
-    <record model="ir.ui.view" id="sms_student_promotion_form">
-      <field name="name">Student Promotion</field>
-      <field name="model">sms.student.promotion</field>
-      <field name="type">form</field>
-      <field name="arch" type="xml">
-        <form string="Student Promotion">
-		  <field name="registration_no"/>
-          <field name="name"/>
-          <field name="father_name"/>
-		  <field name="obtained_marks"/>
-		  <field name="total_marks"/>
-		  <field name="decision"/>
-        </form>
-      </field>
-    </record>
-
-    <record model="ir.ui.view" id="sms_student_promotion_tree">
-      <field name="name">Student Promotion</field>
-      <field name="model">sms.student.promotion</field>
-      <field name="type">tree</field>
-      <field name="arch" type="xml">
-        <tree string="Student Promotion" editable="top">
-		  <field name="registration_no"/>
-          <field name="name"/>
-          <field name="father_name"/>
-		  <field name="obtained_marks"/>
-		  <field name="total_marks"/>
-		  <field name="decision"/>
-        </tree>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="action_sms_student_promotion">
-      <field name="name">Student Promotion</field>
-      <field name="res_model">sms.student.promotion</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
-    <!-- sms.student.promotion --> 
-
-	<!-- sms.student.change.section -->
+ 	<!-- sms.student.change.section -->
     <record model="ir.ui.view" id="sms_student_change_section_form">
       <field name="name">Student Change Section</field>
       <field name="model">sms.student.change.section</field>
