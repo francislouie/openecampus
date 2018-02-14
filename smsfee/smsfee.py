@@ -1062,12 +1062,16 @@ class smsfee_studentfee(osv.osv):
     def _set_std_fee(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            if f.fee_type.fee_type.subtype == 'Monthly_Fee':
-                month_name = f.fee_month.name
-                year = f.fee_month.name
-                string =  str(f.fee_type.name)+ " ("+str(month_name)+")"
+            if f.fee_type.fee_type:
+                
+                if f.fee_type.fee_type.subtype == 'Monthly_Fee':
+                    month_name = f.fee_month.name
+                    year = f.fee_month.name
+                    string =  str(f.fee_type.name)+ " ("+str(month_name)+")"
+                else:
+                    string = f.fee_type.name
             else:
-                string = f.fee_type.name
+                string = 'Feetype id not found'
             result[f.id] = string
         return result
     
