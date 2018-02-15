@@ -35,7 +35,7 @@
                 <page string="Sessions Years">
                     <field name="session_ids" readonly = "1" nolabel = "1"/>
 			   </page>
-                    <page string="Fee Bill Layout">
+                    <page string="Academics Bill Layout">
                             <separator string="Field for Challan Printing(Header)" colspan="4"/>
 							<group>
 
@@ -50,15 +50,45 @@
 							 <field name="company_cfieldsix"/>
 							 <field name="campus_code" invisible="1"/>
 							</group>
-
-			        </page>
-                    <page string="Financial Accounts">
-                        <separator string="Bank information" colspan="4"/>
+                         <separator string="Bank information" colspan="4"/>
                         <group col="4" colspan="2">
 							 <field name="bank_name1"/>
 							 <field name="bank_acctno1"/>
 							 <field name="bank_name2"/>
 							 <field name="bank_acctno2"/>
+                        </group>
+                         <separator string="Account information" colspan="4"/>
+                        <group col="4" colspan="2">
+							 <field name="fee_journal"/>
+							 <field name="student_fee_income_acc"/>
+							 <field name="student_fee_expense_acc"/>
+							 <field name="fee_reception_account_cash"/>
+                            <field name="fee_reception_account_bank"/>
+                        </group>
+
+
+			        </page>
+                    <page string="Transport Bill Layout">
+                            <separator string="Field for Challan Printing(Header)" colspan="4"/>
+							<group>
+
+							 <field name="company_cfieldone_trans"/>
+							 <field name="company_cfieldtwo_trans"/>
+							 <field name="company_cfieldthree_trans"/>
+							</group>
+                     		<separator string="Field for Challan Printing(Footer)" colspan="4"/>
+							<group col="4" colspan="2">
+						     <field name="company_cfieldfour_trans"/>
+							 <field name="company_cfieldfive_trans"/>
+							 <field name="company_cfieldsix_trans"/>
+							 <field name="campus_code" invisible="1"/>
+							</group>
+                        <separator string="Bank information" colspan="4"/>
+                        <group col="4" colspan="2">
+							 <field name="bank_name1_trans"/>
+							 <field name="bank_acctno1_trans"/>
+							 <field name="bank_name2_trans"/>
+							 <field name="bank_acctno2_trans"/>
                         </group>
                          <separator string="Account information" colspan="4"/>
                         <group col="4" colspan="2">
@@ -2704,50 +2734,7 @@
     </record>
 
     <!-- END NEWsms.Class.promotion --> 
- 
-	<!-- sms.student.promotion -->
-    <record model="ir.ui.view" id="sms_student_promotion_form">
-      <field name="name">Student Promotion</field>
-      <field name="model">sms.student.promotion</field>
-      <field name="type">form</field>
-      <field name="arch" type="xml">
-        <form string="Student Promotion">
-		  <field name="registration_no"/>
-          <field name="name"/>
-          <field name="father_name"/>
-		  <field name="obtained_marks"/>
-		  <field name="total_marks"/>
-		  <field name="decision"/>
-        </form>
-      </field>
-    </record>
-
-    <record model="ir.ui.view" id="sms_student_promotion_tree">
-      <field name="name">Student Promotion</field>
-      <field name="model">sms.student.promotion</field>
-      <field name="type">tree</field>
-      <field name="arch" type="xml">
-        <tree string="Student Promotion" editable="top">
-		  <field name="registration_no"/>
-          <field name="name"/>
-          <field name="father_name"/>
-		  <field name="obtained_marks"/>
-		  <field name="total_marks"/>
-		  <field name="decision"/>
-        </tree>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="action_sms_student_promotion">
-      <field name="name">Student Promotion</field>
-      <field name="res_model">sms.student.promotion</field>
-      <field name="view_type">form</field>
-      <field name="view_mode">tree,form</field>
-    </record>
-
-    <!-- sms.student.promotion --> 
-
-	<!-- sms.student.change.section -->
+ 	<!-- sms.student.change.section -->
     <record model="ir.ui.view" id="sms_student_change_section_form">
       <field name="name">Student Change Section</field>
       <field name="model">sms.student.change.section</field>
