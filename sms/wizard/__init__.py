@@ -28,6 +28,7 @@ import sms_wizard_class_subject_list
 import sms_classlist
 import sms_wizard_student_transfer_in
 import sms_wizard_filter_subject_open
+import sms_wizard_filter_week_plan
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

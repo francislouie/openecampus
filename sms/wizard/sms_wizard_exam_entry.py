@@ -2,7 +2,20 @@ from openerp.osv import fields, osv
 import datetime
 
 class exam_entry(osv.osv_memory):
-
+    def filter_on_aca_cal(self, cr, uid, ids):
+        cr.execute("""select id,job_id from hr_employee where resource_id =(select id from resource_resource where user_id =""" + str(uid) + """  )""")
+        emp_obj = cr.fetchone()
+        tea_emp_id = emp_obj[0]
+        tea_job_id = emp_obj[1]
+        print"Teacher id",tea_emp_id
+        
+        cr.execute("""select academic_calendar from sms_academiccalendar_subjects where  teacher_id =""" + str(tea_emp_id) + """""")
+        ft_ids = cr.fetchall() 
+        if tea_job_id ==1:
+            return {'domain': {'academiccalendar_id': [('id', 'in', ft_ids)]} ,'value':{}}
+        else:
+            return  {'domain': {'academiccalendar_id': []} ,'value':{}}
+        
     def onchange_set_domain(self, cr, uid, ids, exam_type,academiccalendar_id):
         existing_subject_id = []
 
@@ -24,8 +37,10 @@ class exam_entry(osv.osv_memory):
                 'academiccalendar_id': fields.many2one('sms.academiccalendar','Select Class', domain="[('state','=','Active')]", required=True),
                 'exam_type': fields.many2one('sms.exam.datesheet','Exam Type', required=True),
                 'subject_id': fields.many2one('sms.academiccalendar.subjects','Subject', domain="[('academic_calendar','=',academiccalendar_id)]", required=True),
+                'aca_id':fields.char('',size=300),
               }
     _defaults = {
+        'aca_id':filter_on_aca_cal
            }
     
     def exam_entry(self, cr, uid, ids, context=None):
