@@ -276,6 +276,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             if 'student_id' in self.datas['form']:
                #challan is being printed via student form, canlcel all other challans of this sutdent
                challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_id','=',self.datas['form']['student_id'][0]),('state','=','fee_calculated')])
+               print("challans_ids",challan_ids)
             else:
                print "we are not printing via student form "
                cls_id = self.datas['form']['class_id'][0]
@@ -295,7 +296,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                     challan_dict['dbid'] = self.print_challan_dbid(challan.id)
                     if 'fee_receiving_type' in self.datas['form']:
                         if self.datas['form']['fee_receiving_type'] == "Partial":
-                            grand_amt=self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], 'Academics','fee_unpaid')
+                            grand_amt=self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], self.datas['form']['category'],'fee_unpaid')
                             total_amt=self.get_total_amount(challan.id)
                             dues=int(grand_amt)-int(total_amt)
                             challan_dict['Table_1'] = "Table_1"

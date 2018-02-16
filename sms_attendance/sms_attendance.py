@@ -313,8 +313,13 @@ class sms_class_attendance(osv.osv):
 #      return {'domain': {'group':[('id','=',acad_cal_obj.group_id.id ) ]},'value': vals}
     def onchange_set_domain(self, cr, uid , ids, class_id, attendance_date, context=None):
         result = {}
-        cr.execute("""select id from hr_employee where resource_id =(select id from resource_resource where user_id =""" + str(uid) + """  )""")
-        teacher_id = cr.fetchone()[0]
+        user_ids = self.pool.get('hr.employee').search(cr, uid, [('user_id','=',uid)], context=context)
+        if not len(user_ids):
+            raise osv.except_osv(('Error!'), ('Please create an employee and associate it with this user.'))
+        cr.execute("""select id,job_id  from hr_employee where resource_id =(select id from resource_resource where user_id =""" + str(uid) + """  )""")
+        emp_obj = cr.fetchone()
+        teacher_id = emp_obj[0]
+        tea_job_id = emp_obj[1]
         if class_id:
             rec = self.pool.get('sms.academiccalendar').browse(cr ,uid ,[class_id])[0]
             if attendance_date < rec.session_id.start_date or attendance_date > rec.session_id.end_date:
@@ -322,7 +327,10 @@ class sms_class_attendance(osv.osv):
             result['class_teacher'] = rec.class_teacher.id
         else:
             result['class_teacher'] = None
-        return {'domain': {'class_id':[('class_teacher','=',teacher_id) ]},'value': result}
+        if tea_job_id ==1:   
+            return {'domain': {'class_id':[('class_teacher','=',teacher_id) ]},'value': result}
+        else:
+            return {'domain': {'class_id':[('state','=','Active') ]},'value': result}
     
     def _user_get(self,cr,uid,context={}):
         return uid

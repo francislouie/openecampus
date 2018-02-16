@@ -209,7 +209,7 @@
 	<menuitem id="menu_sms_calander_weeks" parent="menu_sms_calander" sequence="1" action="action_sms_calander_week1"
 	groups="group_sms_director,group_sms_principal,group_sms_admission_officer,group_sms_admin,group_sms_admission_manager"/>
 
-	<menuitem id="menu_sms_weekly_plan" parent="menu_sms_calander" sequence="2" action="action_sms_weekly_plan"
+	<menuitem id="menu_sms_weekly_plan" parent="menu_sms_calander" sequence="2" action="ir_actions_server_weekly_plan"
 	groups="group_sms_director,group_sms_principal,group_sms_admission_officer,group_sms_admin,group_sms_admission_manager"/>
 
 <!-- Transactional Log -->

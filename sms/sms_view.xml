@@ -3364,10 +3364,12 @@
 				<group>
                   <group string="Weekly Plan" col="4" colspan="4">
 					  <field name="subject"  on_change="onchange_get_teacher(teacher, subject)" attrs="{'readonly':[('state','=','Confirm')]}" />
-			          <field name="teacher" on_change="onchange_get_teacher(teacher, subject)" attrs="{'readonly':[('state','=','Confirm')]}" />
+			          <field name="teacher" attrs="{'readonly':[('state','=','Confirm')]}"  />
 			          <field name="week" attrs="{'readonly':[('state','=','Confirm')]}" />
-			          <field name="filled_by"  attrs="{'readonly':[('state','=','Confirm')]}" />
+			          <field name="filled_by"  attrs="{'readonly':[('state','=','Confirm')]}" readonly="1" />
 					  <field name="state" readonly="1"/>
+					   <field name="current_tea_id" on_change="onchange_set_domain()" invisible="1"/>
+
                   </group>
 				  <field name="work_guide" attrs="{'readonly':[('state','=','Confirm')]}" />
 				</group>  
@@ -3409,6 +3411,20 @@
             <field name="context">{'search_default_draft': 1}</field>
             <field name="search_view_id" ref="view_sms_weekly_plan_search"/>
         </record>
+        
+        <!--filter.on.week.plan-->
+     <record id="ir_actions_server_weekly_plan" model="ir.actions.server">
+            <field name="sequence" eval="5"/>
+            <field name="state">code</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_sms_filter_week_plan"/>
+            <field name="code">action = pool.get('sms.filter.week.plan').filter_week_plan(cr, uid, None, context)</field>
+            <field name="condition">True</field>
+            <field name="name">Weekly Plan</field>
+        </record>
+        
+        
+        
 <!--END -->
 
 <!-- project_transactional_log 
