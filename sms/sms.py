@@ -4402,6 +4402,7 @@ sms_student_clearance()
 class student_admission_register(osv.osv):
 
     def admit_student(self ,cr ,uid ,ids ,context):
+        
         for f in self.browse(cr,uid,ids):
             #step1
             student_id = self.pool.get('sms.student').create(cr,uid,{
@@ -4453,17 +4454,32 @@ class student_admission_register(osv.osv):
             import random
             random_pass = random.randrange(100, 1000)
             password = str(random_pass)+str(admission_no)
-            self.pool.get('sms.student').write(cr, uid, student_id , {
-                                            'registration_no':admission_no,
-                                            'fee_starting_month':None,
-                                            'fee_type':f.fee_structure.id, 
-                                            'state': 'Admitted', 
-                                            'current_state': 'Current',
-                                            'admitted_to_class':f.student_class.id,
-                                            'admitted_on':datetime.date.today(),
-                                            'current_class':f.student_class.id,
-                                            'login_id':login_id,
-                                            'password':password})
+            
+            sql_query = """Update sms_student set registration_no ="""+str(admission_no)+""",
+                                               
+                                                fee_type="""+str(f.fee_structure.id)+""",
+                                                state ='Admitted',
+                                                current_state =  'Current',
+                                                admitted_to_class = """+str(f.student_class.id)+""",
+                                                admitted_on ='"""+str(datetime.date.today())+"""',
+                                                current_class ="""+str(f.student_class.id)+""",
+                                                login_id = """+str(login_id)+""",
+                                                password =  """+str(password)+"""
+                                                where id ="""+str(student_id)+""" """
+            cr.execute(sql_query)
+            
+            
+#             self.pool.get('sms.student').write(cr, uid, student_id , {
+#                                             'registration_no':admission_no,
+#                                             'fee_starting_month':None,
+#                                             'fee_type':f.fee_structure.id, 
+#                                             'state': 'Admitted', 
+#                                             'current_state': 'Current',
+#                                             'admitted_to_class':f.student_class.id,
+#                                             'admitted_on':datetime.date.today(),
+#                                             'current_class':f.student_class.id,
+#                                             'login_id':login_id,
+#                                             'password':password})
        
         #Step 3----confirm student registraion with classsubjects---------
         register_subjects =self.confirm_student_subjects(cr ,uid ,std_cal_id,student_id,f.id)
