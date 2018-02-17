@@ -84,26 +84,13 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
-        # if len(rescompany_id)>1:
-        #     return ''
-        # company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
-        if self.datas['form']['category'] == 'Academics':
-            query = """select company_cfieldone from sms_academics_session where
-                                    id = (select academic_session_id from sms_session where id=(
-                                    select session_id from sms_academiccalendar where id=(
-                                    select current_class from sms_student where id=""" + str(self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line1 = self.cr.fetchone()[0]
-
-            # line1 = company_recs[0].company_cfieldone
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        if self.datas['form']['category']== 'Academics':
+            line1 = company_recs[0].company_cfieldone
         elif self.datas['form']['category'] == 'Transport':
-            query = """select company_cfieldone_trans from sms_academics_session where
-                                                id = (select academic_session_id from sms_session where id=(
-                                                select session_id from sms_academiccalendar where id=(
-                                                select current_class from sms_student where id=""" + str(self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line1 = self.cr.fetchone()[0]
-            # line1 = company_recs[0].company_cfieldone_trans
+            line1 = company_recs[0].company_cfieldone_trans
         return line1
 
     def get_challan_header_linetwo(self):
@@ -111,27 +98,11 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
         if len(rescompany_id)>1:
             return ''
-        # company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
         if self.datas['form']['category']== 'Academics':
-
-            query = """select company_cfieldtwo
-                    from sms_academics_session where
-                    id = (select academic_session_id from sms_session where id=(
-                    select session_id from sms_academiccalendar where id=(
-                    select current_class from sms_student where id="""+str(self.datas['form']['student_id'][0])+""")))"""
-            self.cr.execute(query)
-            line2 = self.cr.fetchone()[0]
-
-            # line2 = company_recs[0].company_cfieldtwo
+            line2 = company_recs[0].company_cfieldtwo
         elif self.datas['form']['category'] == 'Transport':
-            query = """select company_cfieldtwo_trans
-                       from sms_academics_session where
-                       id = (select academic_session_id from sms_session where id=(
-                       select session_id from sms_academiccalendar where id=(
-                       select current_class from sms_student where id="""+str(self.datas['form']['student_id'][0])+""")))"""
-            self.cr.execute(query)
-            line2 = self.cr.fetchone()[0]
-            # line2 = company_recs[0].company_cfieldtwo_trans
+            line2 = company_recs[0].company_cfieldtwo_trans
         return line2
     
     def get_challan_header_linethree(self):
@@ -139,87 +110,35 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
         if len(rescompany_id)>1:
             return ''
-        # company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
         if self.datas['form']['category']== 'Academics':
-            query = """select company_cfieldthree
-                                   from sms_academics_session where
-                                   id = (select academic_session_id from sms_session where id=(
-                                   select session_id from sms_academiccalendar where id=(
-                                   select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line3 = self.cr.fetchone()[0]
-
-            # line3 = company_recs[0].company_cfieldthree
+            line3 = company_recs[0].company_cfieldthree
         elif self.datas['form']['category'] == 'Transport':
-            query = """select company_cfieldthree_trans
-                                              from sms_academics_session where
-                                              id = (select academic_session_id from sms_session where id=(
-                                              select session_id from sms_academiccalendar where id=(
-                                              select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line3 = self.cr.fetchone()[0]
-            # line3 = company_recs[0].company_cfieldthree_trans
+            line3 = company_recs[0].company_cfieldthree_trans
         return line3
     
     def get_challan_footer_one(self):
-        # rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
-        # if len(rescompany_id)>1:
-        #     return ''
-
-        # company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
         if self.datas['form']['category']== 'Academics':
-            query = """select company_cfieldfour
-                                                         from sms_academics_session where
-                                                         id = (select academic_session_id from sms_session where id=(
-                                                         select session_id from sms_academiccalendar where id=(
-                                                         select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line4 = self.cr.fetchone()[0]
-            # line4 = company_recs[0].company_cfieldfour
+            line4 = company_recs[0].company_cfieldfour
         elif self.datas['form']['category'] == 'Transport':
-            query = """select company_cfieldfour_trans
-                                                                    from sms_academics_session where
-                                                                    id = (select academic_session_id from sms_session where id=(
-                                                                    select session_id from sms_academiccalendar where id=(
-                                                                    select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line4 = self.cr.fetchone()[0]
-            # line4 = company_recs[0].company_cfieldfour_trans
+            line4 = company_recs[0].company_cfieldfour_trans
         return line4
     
     def get_challan_footer_two(self):
-        # rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
-        # #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------
-        # if len(rescompany_id)>1:
-        #     return ''
-
-        # company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
-
+        rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        if len(rescompany_id)>1:
+            return ''
+        company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
         if self.datas['form']['category']== 'Academics':
-            query = """select company_cfieldfive
-                                                                                from sms_academics_session where
-                                                                                id = (select academic_session_id from sms_session where id=(
-                                                                                select session_id from sms_academiccalendar where id=(
-                                                                                select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line5 = self.cr.fetchone()[0]
-            # line5 = company_recs[0].company_cfieldfive
+            line5 = company_recs[0].company_cfieldfive
         elif self.datas['form']['category'] == 'Transport':
-            query = """select company_cfieldfive_trans
-                                                                                            from sms_academics_session where
-                                                                                            id = (select academic_session_id from sms_session where id=(
-                                                                                            select session_id from sms_academiccalendar where id=(
-                                                                                            select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line5 = self.cr.fetchone()[0]
-            # line5 = company_recs[0].company_cfieldfive_trans
+            line5 = company_recs[0].company_cfieldfive_trans
         return line5
      
     def get_today(self):
@@ -233,7 +152,6 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
 
     def get_class_group(self, data):
         if 'student_id' in self.datas['form']:
-            print("fordata",self.datas['form'])
             #user is printing indivual student challan from student form, get class id using student id from wizard form
             cls_id = self.pool.get('sms.student').browse(self.cr,self.uid,self.datas['form']['student_id'][0]).current_class.id
         else:
@@ -276,7 +194,6 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             if 'student_id' in self.datas['form']:
                #challan is being printed via student form, canlcel all other challans of this sutdent
                challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_id','=',self.datas['form']['student_id'][0]),('state','=','fee_calculated')])
-               print("challans_ids",challan_ids)
             else:
                print "we are not printing via student form "
                cls_id = self.datas['form']['class_id'][0]
@@ -296,7 +213,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                     challan_dict['dbid'] = self.print_challan_dbid(challan.id)
                     if 'fee_receiving_type' in self.datas['form']:
                         if self.datas['form']['fee_receiving_type'] == "Partial":
-                            grand_amt=self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], self.datas['form']['category'],'fee_unpaid')
+                            grand_amt=self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], 'Academics','fee_unpaid')
                             total_amt=self.get_total_amount(challan.id)
                             dues=int(grand_amt)-int(total_amt)
                             challan_dict['Table_1'] = "Table_1"
