@@ -132,17 +132,28 @@ class sms_academics_session(osv.osv):
         'company_cfieldfour': fields.char('Footer Line One', size=256),
         'company_cfieldfive': fields.char('Footer Line Two', size=256),
         'company_cfieldsix': fields.char('Footer Line Three', size=256),
+        'bank_name1_trans': fields.char('Bank One Name Transport', size=256),
+        'bank_name2_trans': fields.char('Bank Two Name Transport', size=256),
+        'bank_acctno1_trans': fields.char('Bank One Acc.No Transport'),
+        'bank_acctno2_trans': fields.char('Bank Two Acc.No Transport'),
+        'company_cfieldone_trans': fields.char('Heading Line One Transport', size=256),
+        'company_cfieldtwo_trans': fields.char('Heading Line Two Transport', size=256),
+        'company_cfieldthree_trans': fields.char('Heading Line Three Transport', size=256),
+        'company_cfieldfour_trans': fields.char('Footer Line One Transport', size=256),
+        'company_cfieldfive_trans': fields.char('Footer Line Two Transport', size=256),
+        'company_cfieldsix_trans': fields.char('Footer Line Three Transport', size=256),
         'fee_journal': fields.many2one('account.journal', 'Fee Journal', ondelete="cascade"),
-        'student_fee_income_acc': fields.many2one('account.account', 'Fee Income Account', ondelete="cascade"),
-        'student_fee_expense_acc': fields.many2one('account.account', 'Fee Expense Account', ondelete="cascade"),
-        'fee_reception_account_cash': fields.many2one('account.account', 'Fee Cash Account', ondelete="cascade"),
-        'fee_reception_account_bank': fields.many2one('account.account', 'Fee Bank Account', ondelete="cascade"),
-        'order_of_report': fields.selection([('by_name', 'By Name'), ('by_registration_no', 'By Reg No')],
+        'student_fee_income_acc': fields.many2one('account.account', 'Fee Income Account', 		ondelete="cascade"),
+        'student_fee_expense_acc': fields.many2one('account.account', 'Fee Expense Account', 		ondelete="cascade"),
+        'fee_reception_account_cash': fields.many2one('account.account', 'Fee Cash Account', 		ondelete="cascade"),
+        'fee_reception_account_bank': fields.many2one('account.account', 'Fee Bank Account', 		ondelete="cascade"),
+	 'order_of_report': fields.selection([('by_name', 'By Name'), ('by_registration_no', 		'By Reg No')],
                                             'Order Of Report'),
         'campus_code': fields.char('Campus Code', size=64),
 
+
         #         'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
-    } 
+        } 
     _defaults = {  'state': 'Draft','name':'New Academic Session'}
     _sql_constraints = [('name_unique', 'unique (name,subcate)', """ Academic Session Must be Unique.""")]
 sms_academics_session()
