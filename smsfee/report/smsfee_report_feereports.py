@@ -591,6 +591,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                      """+fa_query+"""
                      AND smsfee_receiptbook.state='Paid'
                      AND smsfee_receiptbook.total_paid_amount>0 ORDER By receipt_date """
+        print('query',sql_rb)
                              
         self.cr.execute(sql_rb)
         rb_ids = self.cr.fetchall()
@@ -621,7 +622,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
            # mydict['class_name'] = class_name
             mydict['student_name'] = student_name
             mydict['fee_received_by'] = user
-            mydict['receipt_no'] = idss[0]
+            mydict['receipt_no'] = idss[5]
             mydict['approved_by'] = appvd_by
             mydict['reg_no'] = reg_no
             mydict['category'] = category

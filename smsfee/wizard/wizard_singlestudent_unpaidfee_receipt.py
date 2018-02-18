@@ -18,8 +18,15 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
         return std_id
     
     def _get_unpaid_fee_months(self, cr, uid, ids):
+
+        # data=self.read(cr,uid,ids,['category'])[0]
+        # print "selff",self.read(cr,uid,ids)[0]
+        # if self.read(cr,uid,ids):
+        #  thisform = self.read(cr, uid, ids)[0]
+        #  category = thisform['category']
         result = []
         obj = self.browse(cr, uid, ids['active_id'])
+        category = "'Academics'"
         sql = """SELECT DISTINCT tab1.fee_month
                 FROM smsfee_studentfee as tab1
                 INNER JOIN smsfee_classes_fees_lines as tab2
@@ -27,8 +34,8 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
                 INNER JOIN smsfee_feetypes as tab3
                 ON tab2.fee_type = tab3.id
                 WHERE tab1.student_id= '"""+str(obj.id)+"""' AND state = 'fee_unpaid'
-                AND tab3.category = 'Academics'"""
-                
+                AND tab3.category = """+str(category)+""" """
+
         cr.execute(sql)
         unpaidfee_ids = cr.fetchall()
         for rec in unpaidfee_ids:
@@ -58,7 +65,32 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
                  'unpaidfee_months_id':_get_unpaid_fee_months,
 #                 'exiting_challan_ids':_get_existing_challans,
                  }
-    
+    def onchange_cat(self,cr, uid, ids,cat,student_id,context=None):
+        result = {}
+        idss=[]
+        print 'onchange works'
+        print(cat,student_id)
+        print 'after obj'
+        category = cat
+        sql = """SELECT DISTINCT tab1.fee_month
+                        FROM smsfee_studentfee as tab1
+                        INNER JOIN smsfee_classes_fees_lines as tab2
+                        ON tab1.fee_type = tab2.id
+                        INNER JOIN smsfee_feetypes as tab3
+                        ON tab2.fee_type = tab3.id
+                        WHERE tab1.student_id= '""" + str(student_id) + """' AND state = 'fee_unpaid'
+                        AND tab3.category = '""" +str(category)+ """' """
+        cr.execute(sql)
+        _ids = cr.fetchall()
+        print '_ids',_ids
+        for id in _ids:
+            idss.append(id[0])
+            print "id[0]",id
+        print('months_ids',idss)
+
+        result['unpaidfee_months_id'] = idss
+        return {'value':result}
+
     def create_unpaid_challans(self, cr, uid, student_id, category, challan_type, month_ids):
         _logger.warning("Deprecated ............................................................................")
         student_id = self.pool.get('sms.student').search(cr,uid,[('id','=',student_id[0])])
@@ -68,8 +100,11 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
 
     def print_singlestudent_unpaidfee_report(self, cr, uid, ids, data):
         thisform = self.read(cr, uid, ids)[0]
+        print("thisform",thisform)
         selected_months = thisform['unpaidfee_months_id']
         category = thisform['category']
+        print('category',category)
+        print()
         #--------------------------------------------------------------------------
         if thisform['fee_receiving_type'] == 'Full':
             self.create_unpaid_challans(cr, uid, thisform['student_id'], category, 'Full', None)

@@ -604,7 +604,7 @@ class sms_student(osv.osv):
         records = self.browse(cr,uid,ids)
         res = {}
         for f in records:
-      
+
             sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
                        inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                         inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
@@ -1113,7 +1113,7 @@ class smsfee_studentfee(osv.osv):
     def getfee_cate(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            result[f.id] = f.fee_type.fee_type.category
+            result[f.id] = f.generic_fee_type.category
         return result
 
     

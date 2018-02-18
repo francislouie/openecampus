@@ -77,35 +77,37 @@
    	 </blockTable>
    	</td></tr>
    	<tr><td>
-	<blockTable   colWidths="40.0,80.0,50.0,50.0,50.0,70.0,50.0,50.0,60.0" style="Table_maintable_header">
+	<blockTable   colWidths="40.0,60.0,100.0,50.0,55.0,70.0,70.0,70.0,90.0" style="Table_maintable_header">
 	<para style="P1">[[repeatIn(daily_fee_report(data['form']),'r')]]</para>
 	<tr>
           <td><para style="P2">S.No</para></td>
-          <td><para style="P2">Date</para></td>
-		  <td><para style="P2">Rec No</para></td>
-	      <td><para style="P2">Student</para></td>
+          <td><para style="P2">Reg.No</para></td>
+          <td><para style="P2">Student</para></td>
+		  <td><para style="P2">Receipt No</para></td>
 		  <td><para style="P2">Amount</para></td>
-	      <td><para style="P2">Approved By</para></td>
+		  <td><para style="P2">Category </para></td>
 		  <td><para style="P2">Received By</para></td>
-		  <td><para style="P2">reg no </para></td>
-		  <td><para style="P2">category </para></td>
+	      <td><para style="P2">Approved By</para></td>
+		  <td><para style="P2">Date </para></td>
+
       </tr>
     </blockTable>
 
 	</td></tr>
 	<tr><td> 
-	<blockTable colWidths="40.0,80.0,50.0,50.0,50.0,70.0,50.0,50.0,60.0" style="Table_maintable">
+	<blockTable colWidths="40.0,60.0,100.0,50.0,55.0,70.0,70.0,70.0,90.0" style="Table_maintable">
 	<para style="P1">[[repeatIn((r['arr']),'s')]]</para> 
    	<tr>
 		<td><para style="P2">[[(s['sno'])]]</para></td>
-          <td><para style="P2">[[(s['receipt_date'])]]</para></td>
-		  <td><para style="P2">[[(s['receipt_no'])]]</para></td>
+          <td><para style="P2">[[(s['reg_no'])]]</para></td>
           <td><para style="P2">[[(s['student_name'])]] </para></td>
+		  <td><para style="P2">[[(s['receipt_no'])]]</para></td>
 		  <td><para style="P2">[[(s['paid_amount'])]]</para></td>
+		   <td><para style="P2">[[(s['category'])]]</para></td>
 	      <td><para style="P2">[[(s['fee_received_by'])]]</para></td>
 	      <td><para style="P2">[[(s['approved_by'])]]</para></td>
-	      <td><para style="P2">[[(s['reg_no'])]]</para></td>
-	      <td><para style="P2">[[(s['category'])]]</para></td>
+	      <td><para style="P2">[[(s['receipt_date'])]]</para></td>
+
 
       </tr>
     </blockTable>
