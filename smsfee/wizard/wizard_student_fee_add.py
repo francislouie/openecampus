@@ -5,7 +5,10 @@ _logger = logging.getLogger(__name__)
 
 class class_student_fee_collectt(osv.osv_memory):
 
+
     def _category_list(self, cr, uid,context=None):
+
+
         sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
               on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
         cr.execute(sqluser)
@@ -49,12 +52,14 @@ class class_student_fee_collectt(osv.osv_memory):
     	             inner join sms_student As s on s.current_class=a.id
     	               where s.id=""" + str(std_id) + """ ) order by id"""
         cr.execute(sql)
+
         _ids = cr.fetchone()
         print("session_idd",_ids)
         for thisfee in _ids:
             session_id.append(thisfee)
             print 'return_session_id',session_id[0]
         return session_id[0]
+
     def _get_session_months(self, cr, uid, ids):
         obj = self.browse(cr, uid, ids['active_id'])
         std_id = obj.id
@@ -94,15 +99,15 @@ class class_student_fee_collectt(osv.osv_memory):
                'session': fields.many2one('sms.session', 'Session', readonly=True,
                                    help="Select an academic session"),
                'generic_fee_type':fields.many2one('smsfee.feetypes','Fee type',domain="[('category','=',category)]"),
-              'due_month': fields.many2one('sms.session.months', 'Payment Month',domain="[('session_id','=',session)]"),
-              'fee_month': fields.many2one('sms.session.months', 'Fee Month',domain="[('session_id','=',session)]"),
-              # 'fee_type': fields.many2one('smsfee.classes.fees.lines', 'Fee Type'),
-              'fee_amount': fields.integer('Fee'),
+
+            
+
 
         'category': fields.selection(string='Category', type='selection',
                                     selection=[('Academics', 'Academics'), ('Transport', 'Transport'),
                                                ('Hostel', 'Hostel'), ('Stationary', 'Stationary'),
                                                ('Portal', 'Portal')]),
+
                }
 
     _defaults = {'class_id':_get_current_class,'student_id':_get_student,'category':'Academics',

@@ -393,40 +393,6 @@ sms_academiccalendar()
 
 class sms_student(osv.osv):
     """This object is used to add fields in sms.student"""
-    
-    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-        
-        for f in self.browse(cr, uid, ids, context=context):
-            if 'fee_type' in vals:
-                
-                student_history_id = self.pool.get('smsfee.structure.history').search(cr, uid, [('student_id','=', f.id)])
-                student_history_obj = self.pool.get('smsfee.structure.history').browse(cr, uid, student_history_id)
-                print"---------------  One Students All Records   -------------- ",student_history_obj
-                if student_history_obj:
-                    sql = """SELECT id FROM smsfee_structure_history WHERE student_id ="""+str(f.id)+""" order by create_date desc limit 1 """
-                    cr.execute(sql)
-                    target_id = cr.fetchone()[0]
-                    result = self.pool.get('smsfee.structure.history').write(cr, uid, target_id, {'deallocation_date': datetime.datetime.now()}, context=context)
-                    print"---------------  Target Id to Change   -------------- ",target_id
-                    
-                fee_type_id = self.pool.get('sms.feestructure').search(cr, uid, [('id','=', vals['fee_type'])])
-                fee_type_obj = self.pool.get('sms.feestructure').browse(cr, uid, fee_type_id[0])
-                print"---------------  fee fee_type_obj   -------------- ",fee_type_obj
-                fee_name = fee_type_obj.name
-                assigned_date = datetime.datetime.now()
-                user = self.pool.get('res.users').browse(cr, uid, uid, )
-                assign_person = user.login
-                historyId = f.id
-                result = self.pool.get('smsfee.structure.history').create(cr, uid, 
-                                                                          {'student_id':historyId,
-                                                                            'name':fee_name, 
-                                                                           'assignment_date':assigned_date,
-                                                                           'assigned_by': assign_person }, context)
-
-        result = super(osv.osv, self).write(cr, uid, ids, vals, context)
-        return result 
-    
-    
     def action_pay_student_fee(self, cr, uid, ids, context=None):
         ctx = {}
         for f in self.pool.get('sms.student').browse(cr,uid,ids):
@@ -1062,8 +1028,7 @@ smsfee_feetypes()
 
 class smsfee_studentfee(osv.osv):
         
-    """ Stores student fee record
-        it stores both academic and transport fees"""
+    """ Stores student fee record"""
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         #*00*************create log for updation in student fee**************************
@@ -1097,16 +1062,12 @@ class smsfee_studentfee(osv.osv):
     def _set_std_fee(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            if f.fee_type.fee_type:
-                
-                if f.fee_type.fee_type.subtype == 'Monthly_Fee':
-                    month_name = f.fee_month.name
-                    year = f.fee_month.name
-                    string =  str(f.fee_type.name)+ " ("+str(month_name)+")"
-                else:
-                    string = f.fee_type.name
+            if f.generic_fee_type.subtype == 'Monthly_Fee':
+                month_name = f.fee_month.name
+                year = f.fee_month.name
+                string =  str(f.fee_type.name)+ " ("+str(month_name)+")"
             else:
-                string = 'Feetype id not found'
+                string = f.fee_type.name
             result[f.id] = string
         return result
     
@@ -1134,11 +1095,14 @@ class smsfee_studentfee(osv.osv):
            2) called by admission register
            3)called by promotion process
            4) called by advance fee management
-           5) adding a single student fee doesont use this method becuase it ignores fee type row
-           later on we will udpate this method and we will remove use of fee_type_row if feasible, only generic fee_id will be used
            
            admin
            """
+        print "Student_Id",std_id
+        print "Current student class",acad_cal
+        print "Fee Type",fee_type_row
+        print "current Month",month
+          
        
         fee_already_exists =  self.pool.get('smsfee.studentfee').search(cr, uid,[('acad_cal_id', '=', acad_cal), ('student_id', '=', std_id), ('fee_type', '=', fee_type_row.id), ('due_month', '=', month)])
         print "Fee Exists_____________",fee_already_exists
@@ -1195,7 +1159,41 @@ class smsfee_studentfee(osv.osv):
                 print"False False False False False False False False False False False False"
                 return False      
     
-            
+    def add_fee_student(self ,cr ,uid ,ids ,context):
+        acd_cal_stu_id = self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('name','=',context['acd_cal_id']),('std_id','=',context['student_id'] )])
+        adm_regis_id = self.pool.get('student.admission.register').search(cr ,uid ,[('name','=',context['student_id']),('student_class','=',context['acd_cal_id']),('fee_structure','=',context['fee_structure'])])
+        for fees_id in self.pool.get('student.admission.register').browse(cr,uid,adm_regis_id):
+            for t in fees_id.fee_id:
+                class_fee_id = t.stu_fee_id.parent_fee_structure_id.id
+                fee_type = t.stu_fee_id.fee_type.subtype
+                fee_type_id = t.stu_fee_id.fee_type.id
+                amount = t.stu_fee_id.amount
+        #************************************************************************#
+                if class_fee_id:
+                    late_fee = 0
+
+                    if fee_type == 'Monthly_Fee':
+                        insert_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_fee(cr,uid,context['student_id'],acd_cal_stu_id[0],context['acd_cal_id'],context['month'],class_fee_id,fee_type_id,amount)
+                    else:
+                        studentfee_id = self.pool.get('smsfee.studentfee').create(cr,uid,{
+                        'student_id': context['student_id'],
+                        'acad_cal_id': int(context['acd_cal_id']),               
+                        'acad_cal_st  print"False False False False False False False False False False False False"d_id': acd_cal_stu_id[0],
+                        'fee_type': class_fee_id , 
+                        'generic_fee_type':fee_type_id,
+                        'date_fee_charged':datetime.date.today(),
+                        'due_month': context['month'],  
+                        'fee_amount': amount,
+                        'paid_amount':0,
+                        'late_fee':0,
+                        'total_amount':amount + late_fee,
+                        'reconcile':False,
+                        'state':'fee_unpaid'
+                        })
+                else:
+                    raise osv.except_osv(('Alert '), ('Fee May be defined but not set for New Class.'))
+        return None
+        
     def _get_total_payables(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -1277,7 +1275,7 @@ class smsfee_studentfee(osv.osv):
         'date_fee_charged':fields.date('Date Fee Charged'),
         'date_fee_paid':fields.date('Date Fee Paid'),
         'fee_type':fields.many2one('smsfee.classes.fees.lines','Fee Type'),
-        'category':fields.function(getfee_cate, method=True,  string='Category',type='selection', selection=[('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],store=True),
+        'category':fields.selection(string='Category',type='selection', selection=[('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],store=True),
         'generic_fee_type':fields.many2one('smsfee.feetypes','G.Feetype'),
         'fee_month':fields.many2one('sms.session.months','Fee Month'),
         'due_month':fields.many2one('sms.session.months','Payment Month'),
@@ -1950,12 +1948,10 @@ class smsfee_receiptbook(osv.osv):
                     self.pool.get('smsfee.receiptbook.lines').create(cr ,uid,feelinesdict)
         return True
      
+    _order = 'id desc'
     #smsfee_receiptbook
     _name = 'smsfee.receiptbook'
     _description = "This object store fee types"
-    _inherit = ['mail.thread']
-    _order = "id desc"
-    
     _columns = {
         'name': fields.char('Bill No', readonly =True,size=15), 
         'counter': fields.char('Bill No.', readonly =True,size=15),    
@@ -3025,6 +3021,59 @@ class smsfee_student_return_fee(osv.osv):
 
 smsfee_student_return_fee()
 
+
+# class student_admission_register(osv.osv):
+#     
+#     def admit_student(self ,cr ,uid ,ids ,context):
+#         fee_amount = 0
+#         #----confirm subjects---------
+#         self.confirm_student_subjects(cr ,uid ,ids,context=None)
+#         #----confirm fee---------
+#         for i in self.browse(cr ,uid ,ids):
+#             create_stu_fee = self.pool.get('smsfee.studentfee').add_fee_student(cr ,uid ,ids,{'acd_cal_id':i.student_class.id ,
+#                                                                              'student_id':i.name.id ,
+#                                                                              'month':i.fee_starting_month.id, 
+#                                                                              'fee_structure':i.fee_structure.id
+#                                                                              })
+#             for fee_sum in i.fee_id :
+#                 fee_amount +=fee_sum.fee_amount
+#                 
+#         self.write(cr, uid, ids, {'state': 'Confirm' ,'total_fee': fee_amount })
+#         return None  
+#     def load_fee_subjects(self ,cr ,uid ,ids ,context):
+#         #-----------write form no-------------------------------
+#         #------load fee----------
+#         self.load_student_fee(cr ,uid ,ids,context=None)
+#         #-------load student---------
+#         self.load_subjects(cr ,uid ,ids,context=None)
+#         self.write(cr, uid, ids, {'state': 'waiting_approval','form_no':ids[0]})
+#         return True
+#     
+#     def load_student_fee(self ,cr ,uid ,ids ,context):
+#         for parent_id in self.browse(cr ,uid ,ids):
+#             class_fee_id = self.pool.get('smsfee.classes.fees').search(cr,uid,[('academic_cal_id','=',parent_id.student_class.id),
+#                                                                       ('fee_structure_id','=',parent_id.fee_structure.id)])
+#             
+#         if class_fee_id:
+#             for class_fee in class_fee_id:
+#                 obj = self.pool.get('smsfee.classes.fees').browse(cr,uid,class_fee_id[0])
+#                 for fee_line in obj.fee_type_ids:
+#                     adm_regis_fee = self.pool.get('admission.register.fees').create(cr ,uid ,{'name': ids[0] ,
+#                                                          'stu_fee_id' : fee_line.id ,
+#                                                          'fee_amount' : fee_line.amount  })
+#         else:
+#             print "No setting found for this feestructure"
+#             raise osv.except_osv(('No Fee Structure'),('No setting found for this feestructure'))
+#         return None
+#     
+#     """This object inherits sms_student_admission_register and adds fields related to fee."""
+#     _name = 'student.admission.register'
+#     _inherit ='student.admission.register'
+#     _columns = {
+#         'fee_id' : fields.one2many('admission.register.fees','name','Student Fee'),
+#     }
+#     _defaults = {  }
+# student_admission_register()
 
 class smsfee_paid_unpaid_adjustments(osv.osv):
         
