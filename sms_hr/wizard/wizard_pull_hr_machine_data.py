@@ -245,7 +245,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                             device_id = att_records['device_id']
                                      
                             date_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
-                            time_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H%M%S')
+                            time_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H:%M:%S')
                             for date in dates:
                                 emp_time = []
                                 if date_stamp == date:
@@ -262,76 +262,36 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                 'empleado_account_id': user_id, 
                 'emp_regno_on_device': biometric_id,})
                                         print '-------------  Times for a Specific Employee on this DAte  ----------------', user_id,'---',emp_time   
-#                                          
-#                                     else:
-#                                         print '-------------  Sign Out  ----------------'
-#                                         recs_found = self.pool.get('hr.attendance').browse(cr,uid,search_rec) 
-#                                         for rec in recs_found:
-#                                             if rec['status'] == 'sign_in':
-#                                                 result = self.pool.get('hr.attendance').create(cr, uid, {
-#                 'attendance_date': date_stamp,
-#                 'attendance_time': time_stamp, 
-#                 'status': 'Sign Out',
-#                 'action':'sign_out',
-#                 'name':'2018-01-29 07:25:00',
-#                 'empleado_account_id': user_id, 
-#                 'emp_regno_on_device': biometric_id,})
-#                                             else:
-#                                                 print '-------------  Sign In  ----------------'
-#                                                 result = self.pool.get('hr.attendance').create(cr, uid, {
-#                 'attendance_date': date_stamp,
-#                 'attendance_time': time_stamp, 
-#                 'status': 'Sign In',
-#                 'action':'sign_in',
-#                 'name':'2018-01-29 07:25:00',
-#                 'empleado_account_id': user_id, 
-#                 'emp_regno_on_device': biometric_id,})
+
                   
                 item += 1
              
             while item2 < len(emp_id):
                 for date in dates:
-                    search_rec1 = self.pool.get('hr.attendance').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2])),('attendance_date', '=', str(date))])                                            
-                    if search_rec1:
-                        recs_found1 = self.pool.get('hr.attendance').browse(cr,uid,search_rec1) 
-                        for rec1 in recs_found1:
-                            emp_time.append(rec1.attendance_time)
-                            
-                        print '--------- emp_time -----------------', emp_time
-                        time_list = sorted(emp_time)
-                        print '--------- SORTED emp_time -----------------', emp_time
-                        emp_time = []
-#                         for time in time_list:
-#                             print '------- times for this Employee on this date', time
-                        print'Records Found in REcs_Found-------------',recs_found1
-                        item3 = 0
-                        signin = True
-                        for rec2 in recs_found1:
-                            while item3 < len(time_list):
-                                print'-------- Time for at the moment ---------',time_list[item3]
+                        search_rec1 = self.pool.get('hr.attendance').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2])),('attendance_date', '=', str(date))])                                            
+                        if search_rec1:
+                            recs_found1 = self.pool.get('hr.attendance').browse(cr,uid,search_rec1) 
+                            for rec1 in recs_found1:
+                                emp_time.append(rec1.attendance_time)
+
+                            time_list = sorted(emp_time)
+                            emp_time = []
+
+                            item3 = 0
+                            signin = True
+                            for rec2 in recs_found1:
                                 if signin == True:
                                     result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign In'})
-                                    
-                                    print '--- True ------', result
                                     signin = False
                                 else:
                                     result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out'}) 
-                                    print '--- True ------', result
                                     signin = True 
-    #                         print "Hello  ---------------- Man =----------------------- How",rec1
-                                item3 +=1
 
-#                         if rec1.attendance_time < 120000:
-#                             print "Hello  ---------------- sign in=----------------------- How"
-#                             att_time1 = str(datetime.strptime(rec1.attendance_time,'%H%M%S').strftime('%H:%M:%S'))
-#                             self.pool.get('hr.attendance').write(cr, uid, rec1.id, {'status': 'Sign In', 'attendance_time': att_time1})
-#                         else:
-#                             print "Hello  ---------------- sign out=----------------------- How"
-#                             att_time1 = str(datetime.strptime(rec1.attendance_time,'%H%M%S').strftime('%H:%M:%S'))
-#                             self.pool.get('hr.attendance').write(cr, uid, rec1.id, {'status': 'Sign Out', 'attendance_time': att_time1})
+
                 item2 += 1
                  
         return True    
+    
     
     
 sms_pull_hr_machine_data()
