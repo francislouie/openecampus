@@ -600,7 +600,7 @@ class sms_student(osv.osv):
         """This was clients requirements to show academis and transport ,and hostel etc fee separately, we made this method to use in 
            each module, this will be called by relavent columns to show fee history of one module only, here this method shows fee
            hisotry for academics only """
-      
+
         records = self.browse(cr,uid,ids)
         res = {}
         for f in records:

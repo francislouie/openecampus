@@ -22,6 +22,12 @@ class class_student_fee_collectt(osv.osv_memory):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             result[f.id] = f.generic_fee_type.category
+        return
+
+    def get_fees_lines_id(self, cr, uid, ids, fields, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            result[f.id] = f.generic_fee_type.category
         return result
 
     def _get_student(self, cr, uid, ids):
@@ -111,6 +117,22 @@ class class_student_fee_collectt(osv.osv_memory):
     def action_pay_student_fee(self, cr, uid, ids, context):
         domain = []
         thisform = self.read(cr, uid, ids)[0]
+        st=thisform['student_id'][0]
+        g_fee_type = thisform['generic_fee_type'][0]
+        current_class=thisform['class_id'][0]
+        print('st',st)
+        std=self.pool.get('sms.student').browse(cr,uid,st)
+        print "queryy", "academic_cal_id", std.current_class.id,"fee_structure_id",std.fee_type.id,"fee_type",g_fee_type
+        print('curretn_class', std.current_class)
+        sql="""select id from smsfee_classes_fees_lines where
+                parent_fee_structure_id =(select id from smsfee_classes_fees where
+                academic_cal_id="""+str(std.current_class.id)+""" and fee_structure_id="""+str(std.fee_type.id)+""")   
+                and fee_type = """+str(g_fee_type)+""" """
+        cr.execute(sql)
+        _id = cr.fetchone()
+        print('_idd',_id)
+
+
         # domain = [('id','>=',thisform['challan_id'][0])]
         fee_dcit = {
             'student_id':thisform['student_id'][0],
@@ -124,7 +146,7 @@ class class_student_fee_collectt(osv.osv_memory):
             'reconcile': False,
             'state': 'fee_unpaid',
             'generic_fee_type':thisform['generic_fee_type'][0],
-            # 'fee_type':thisform['fee_type'][0],
+            'fee_type':_id,
             'category':thisform['category']
 
         }
