@@ -38,8 +38,6 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         times = []
         item = 0
         item2 = 0
-        emp_time = []
- 
  
         import requests
         r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24')
@@ -79,12 +77,9 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                             date_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
                             time_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H:%M:%S')
                             for date in dates:
-                                emp_time = []
                                 if date_stamp == date:
                                     search_rec = self.pool.get('hr.attendance').search(cr,uid,[('attendance_date','=',date_stamp),('attendance_time','=',time_stamp)])   
                                     if not search_rec:
-                                        emp_time.append(time_stamp)
-#                                         print "----------  No Records Found for Attendance of this Employee  ----------",search_rec
                                         result = self.pool.get('hr.attendance').create(cr, uid, {
                 'attendance_date': date_stamp,
                 'attendance_time': time_stamp,                            
@@ -92,9 +87,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                 'action':'sign_in',
                 'name':'2018-01-29 07:25:00',
                 'empleado_account_id': user_id, 
-                'emp_regno_on_device': biometric_id,})
-                                        print '-------------  Times for a Specific Employee on this DAte  ----------------', user_id,'---',emp_time   
-
+                'emp_regno_on_device': biometric_id,})  
                   
                 item += 1
              
@@ -103,15 +96,10 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                         search_rec1 = self.pool.get('hr.attendance').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2])),('attendance_date', '=', str(date))])                                            
                         if search_rec1:
                             recs_found1 = self.pool.get('hr.attendance').browse(cr,uid,search_rec1) 
-#                             for rec1 in recs_found1:
-#                                 emp_time.append(rec1.attendance_time)
-# 
-#                             time_list = sorted(emp_time)
-#                             emp_time = []
-# 
-#                             item3 = 0
+                            emp_time_recs = sorted(recs_found1, key=lambda k: k['attendance_time']) 
+
                             signin = True
-                            for rec2 in recs_found1:
+                            for rec2 in emp_time_recs:
                                 if signin == True:
                                     result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign In'})
                                     signin = False
