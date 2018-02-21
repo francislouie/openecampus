@@ -45,7 +45,7 @@
 
   <!-- action Fee Reports-->
 
-        <record id="action_student_fee_collect_id" model="ir.actions.act_window">
+        <record id="action_student_fee_collect_idd" model="ir.actions.act_window">
             <field name="name">Register New Fee</field>
             <field name="res_model">class.student_fee_collectt</field>
             <field name="view_type">form</field>

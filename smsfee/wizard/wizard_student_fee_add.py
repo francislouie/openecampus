@@ -52,6 +52,7 @@ class class_student_fee_collectt(osv.osv_memory):
 
     def _get_session_id(self, cr, uid, ids):
         obj = self.browse(cr, uid, ids['active_id'])
+        print("objj",obj.id)
         std_id = obj.id
         session_id = []
         sql = """select id from sms_session where id=(select  a.session_id from sms_academiccalendar As a  
@@ -105,9 +106,10 @@ class class_student_fee_collectt(osv.osv_memory):
                'session': fields.many2one('sms.session', 'Session', readonly=True,
                                    help="Select an academic session"),
                'generic_fee_type':fields.many2one('smsfee.feetypes','Fee type',domain="[('category','=',category)]"),
-
-            
-
+              'due_month': fields.many2one('sms.session.months', 'Payment Month',domain="[('session_id','=',session)]"),
+              'fee_month': fields.many2one('sms.session.months', 'Fee Month',domain="[('session_id','=',session)]"),
+               # 'fee_type': fields.many2one('smsfee.classes.fees.lines', 'Fee Type'),
+              'fee_amount': fields.integer('Fee'),
 
         'category': fields.selection(string='Category', type='selection',
                                     selection=[('Academics', 'Academics'), ('Transport', 'Transport'),

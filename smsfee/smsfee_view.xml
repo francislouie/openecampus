@@ -259,7 +259,7 @@
 						<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
 						<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Print Fee Bills" states="Admitted,admission_cancel,drop_out,deceased,passout,slc,Withdraw" type="action" class="oe_highlight" groups=""/>
 						<button name="%(action_student_fee_collect_id)d" string="Receive a Fee Bill" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
-						<button name="%(action_student_fee_collect_id)d" string="Add Student Fee"  type="action" class="oe_highlight" groups=""/>
+						<button name="%(action_student_fee_collect_idd)d" string="Add Student Fee"  type="action"  class="oe_highlight" groups=""/>
 						<notebook>
 						<page string = "Fee Academics">
 							<group>
