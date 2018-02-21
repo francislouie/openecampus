@@ -17,10 +17,12 @@
 						<group col="4" String = "">
                             <field name="category" string="Fee Category" required="1"/>
                             <field name="generic_fee_type" string="Select a fee" required="1"/>
+
                             <field name="due_month" required="1"/>
                             <field name="class_id" readonly="1" required="1"/>
                             <field name="fee_month" required="1"/>
                             <field name="fee_amount" required="1"/>
+
                             <field name="session" invisible="1"/>
                             <!--<field name="fee_type" />-->
 					    </group>
