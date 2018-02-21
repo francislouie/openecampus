@@ -1093,23 +1093,24 @@ class smsfee_studentfee(osv.osv):
                  raise osv.except_osv(('Not Allowed'), ('Only Unpaid Fees can be deleted'))
             
          return result
-    
-    def _set_std_fee(self, cr, uid, ids, fields,args, context=None):
+
+    def _set_std_fee(self, cr, uid, ids, fields, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            if f.fee_type.fee_type:
-                
-                if f.fee_type.fee_type.subtype == 'Monthly_Fee':
-                    month_name = f.fee_month.name
-                    year = f.fee_month.name
-                    string =  str(f.fee_type.name)+ " ("+str(month_name)+")"
-                else:
-                    string = f.fee_type.name
+            month_name = f.fee_month.name
+            if f.generic_fee_type.subtype == 'Monthly_Fee':
+                year = f.fee_month.name
+                string = str(f.fee_type.name) + " (" + str(month_name) + ")"
             else:
-                string = 'Feetype id not found'
+                string = str(f.fee_type.name) + " (" + str(month_name) + ")//"
             result[f.id] = string
         return result
-    
+
+    def getfee_cate(self, cr, uid, ids, fields, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            result[f.id] = f.fee_type.fee_type.category
+        return result
     def getfee_cate(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
