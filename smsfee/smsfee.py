@@ -1062,12 +1062,12 @@ class smsfee_studentfee(osv.osv):
     def _set_std_fee(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
+            month_name = f.fee_month.name
             if f.generic_fee_type.subtype == 'Monthly_Fee':
-                month_name = f.fee_month.name
                 year = f.fee_month.name
                 string =  str(f.fee_type.name)+ " ("+str(month_name)+")"
             else:
-                string = f.fee_type.name
+                string =  str(f.fee_type.name)+ " ("+str(month_name)+")//"
             result[f.id] = string
         return result
     
@@ -1098,11 +1098,6 @@ class smsfee_studentfee(osv.osv):
            
            admin
            """
-        print "Student_Id",std_id
-        print "Current student class",acad_cal
-        print "Fee Type",fee_type_row
-        print "current Month",month
-          
        
         fee_already_exists =  self.pool.get('smsfee.studentfee').search(cr, uid,[('acad_cal_id', '=', acad_cal), ('student_id', '=', std_id), ('fee_type', '=', fee_type_row.id), ('due_month', '=', month)])
         print "Fee Exists_____________",fee_already_exists
