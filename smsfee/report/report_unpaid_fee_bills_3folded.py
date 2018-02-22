@@ -88,49 +88,77 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         #     return ''
         # company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
         if self.datas['form']['category'] == 'Academics':
-            query = """select company_cfieldone from sms_academics_session where
-                                    id = (select academic_session_id from sms_session where id=(
-                                    select session_id from sms_academiccalendar where id=(
-                                    select current_class from sms_student where id=""" + str(self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line1 = self.cr.fetchone()[0]
+            # query_for_individual_student='select current_class from sms_student where id=""" + str(self.datas['form']['student_id'][0]) + """)"
+            if 'student_id' in self.datas['form']:
+                query = """select company_cfieldone from sms_academics_session where
+                                    id = (
+                                    select acad_session_id from sms_academiccalendar where id=(
+                                    select current_class from sms_student where id=""" + str(self.datas['form']['student_id'][0]) + """))"""
+                self.cr.execute(query)
+                line1 = self.cr.fetchone()[0]
+            else:
+                print 'class challans works',self.datas['form']['class_id'][0]
+                query1 = """select company_cfieldone from sms_academics_session where                                                         
+                      id = ( select acad_session_id from sms_academiccalendar where id="""+str(self.datas['form']['class_id'][0])+ """) """
+                
+                self.cr.execute(query1)
+                line1 = self.cr.fetchone()[0]
 
-            # line1 = company_recs[0].company_cfieldone
+
+        # line1 = company_recs[0].company_cfieldone
         elif self.datas['form']['category'] == 'Transport':
-            query = """select company_cfieldone_trans from sms_academics_session where
-                                                id = (select academic_session_id from sms_session where id=(
-                                                select session_id from sms_academiccalendar where id=(
-                                                select current_class from sms_student where id=""" + str(self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line1 = self.cr.fetchone()[0]
-            # line1 = company_recs[0].company_cfieldone_trans
+            if 'student_id' in self.datas['form']:
+                query = """select company_cfieldone_trans from sms_academics_session where id = (select acad_session_id from sms_academiccalendar where id=( select current_class from sms_student where id=""" + str(self.datas['form']['student_id'][0]) + """))"""
+                self.cr.execute(query)
+                line1 = self.cr.fetchone()[0]
+            else:
+                 query = """select company_cfieldone_trans from sms_academics_session where id = (select acad_session_id from sms_academiccalendar where id=""" + str(self.datas['form']['class_id'][0]) + """)"""
+                 self.cr.execute(query)
+                 line1 = self.cr.fetchone()[0]
         return line1
 
     def get_challan_header_linetwo(self):
         rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
-        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
+        #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------
         if len(rescompany_id)>1:
             return ''
         # company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
         if self.datas['form']['category']== 'Academics':
-
-            query = """select company_cfieldtwo
+            if 'student_id' in self.datas['form']:
+             query = """select company_cfieldtwo
                     from sms_academics_session where
-                    id = (select academic_session_id from sms_session where id=(
-                    select session_id from sms_academiccalendar where id=(
-                    select current_class from sms_student where id="""+str(self.datas['form']['student_id'][0])+""")))"""
-            self.cr.execute(query)
-            line2 = self.cr.fetchone()[0]
+                   id = (
+                                    select acad_session_id from sms_academiccalendar where id=(
+                                    select current_class from sms_student where id="""+str(self.datas['form']['student_id'][0])+"""))"""
+             self.cr.execute(query)
+             line2 = self.cr.fetchone()[0]
+            else:
+                query = """select company_cfieldtwo
+                                    from sms_academics_session where
+                                   id = ( select acad_session_id from sms_academiccalendar where
+                                          id=""" + str(self.datas['form']['class_id'][0]) + """)"""
+                self.cr.execute(query)
+                line2 = self.cr.fetchone()[0]
 
-            # line2 = company_recs[0].company_cfieldtwo
+
+
         elif self.datas['form']['category'] == 'Transport':
-            query = """select company_cfieldtwo_trans
-                       from sms_academics_session where
-                       id = (select academic_session_id from sms_session where id=(
-                       select session_id from sms_academiccalendar where id=(
-                       select current_class from sms_student where id="""+str(self.datas['form']['student_id'][0])+""")))"""
-            self.cr.execute(query)
-            line2 = self.cr.fetchone()[0]
+            if 'student_id' in self.datas['form']:
+                query = """select company_cfieldtwo_trans
+                               from sms_academics_session where
+                              id = (
+                                               select acad_session_id from sms_academiccalendar where id=(
+                                               select current_class from sms_student where id=""" + str(
+                    self.datas['form']['student_id'][0]) + """))"""
+                self.cr.execute(query)
+                line2 = self.cr.fetchone()[0]
+            else:
+                query = """select company_cfieldtwo_trans
+                                               from sms_academics_session where
+                                              id = ( select acad_session_id from sms_academiccalendar where
+                                                     id=""" + str(self.datas['form']['class_id'][0]) + """)"""
+                self.cr.execute(query)
+                line2 = self.cr.fetchone()[0]
             # line2 = company_recs[0].company_cfieldtwo_trans
         return line2
     
@@ -141,28 +169,45 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             return ''
         # company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
         if self.datas['form']['category']== 'Academics':
-            query = """select company_cfieldthree
-                                   from sms_academics_session where
-                                   id = (select academic_session_id from sms_session where id=(
-                                   select session_id from sms_academiccalendar where id=(
-                                   select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line3 = self.cr.fetchone()[0]
+            if 'student_id' in self.datas['form']:
+                query = """select company_cfieldthree
+                               from sms_academics_session where
+                              id = (
+                                               select acad_session_id from sms_academiccalendar where id=(
+                                               select current_class from sms_student where id=""" + str(
+                    self.datas['form']['student_id'][0]) + """))"""
+                self.cr.execute(query)
+                line3 = self.cr.fetchone()[0]
+            else:
+                query = """select company_cfieldthree
+                                               from sms_academics_session where
+                                              id = ( select acad_session_id from sms_academiccalendar where
+                                                     id=""" + str(self.datas['form']['class_id'][0]) + """)"""
+                self.cr.execute(query)
+                line3 = self.cr.fetchone()[0]
 
             # line3 = company_recs[0].company_cfieldthree
         elif self.datas['form']['category'] == 'Transport':
-            query = """select company_cfieldthree_trans
-                                              from sms_academics_session where
-                                              id = (select academic_session_id from sms_session where id=(
-                                              select session_id from sms_academiccalendar where id=(
-                                              select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line3 = self.cr.fetchone()[0]
+                if 'student_id' in self.datas['form']:
+                    query = """select company_cfieldthree_trans
+                                   from sms_academics_session where
+                                  id = (
+                                                   select acad_session_id from sms_academiccalendar where id=(
+                                                   select current_class from sms_student where id=""" + str(
+                        self.datas['form']['student_id'][0]) + """))"""
+                    self.cr.execute(query)
+                    line3 = self.cr.fetchone()[0]
+                else:
+                    query = """select company_cfieldthree_trans
+                                                   from sms_academics_session where
+                                                  id = ( select acad_session_id from sms_academiccalendar where
+                                                         id=""" + str(self.datas['form']['class_id'][0]) + """)"""
+                    self.cr.execute(query)
+                    line3 = self.cr.fetchone()[0]
+
             # line3 = company_recs[0].company_cfieldthree_trans
         return line3
-    
+
     def get_challan_footer_one(self):
         # rescompany_id = self.pool.get('res.company').search(self.cr, self.uid,[])
         #-------------Handling Only one Company is There are multiple companies blank space will be returned----------------        
@@ -171,24 +216,40 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
 
         # company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
         if self.datas['form']['category']== 'Academics':
-            query = """select company_cfieldfour
-                                                         from sms_academics_session where
-                                                         id = (select academic_session_id from sms_session where id=(
-                                                         select session_id from sms_academiccalendar where id=(
-                                                         select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line4 = self.cr.fetchone()[0]
+            if 'student_id' in self.datas['form']:
+                query = """select company_cfieldfour
+                               from sms_academics_session where
+                              id = (
+                                               select acad_session_id from sms_academiccalendar where id=(
+                                               select current_class from sms_student where id=""" + str(
+                    self.datas['form']['student_id'][0]) + """))"""
+                self.cr.execute(query)
+                line4 = self.cr.fetchone()[0]
+            else:
+                query = """select company_cfieldfour
+                                               from sms_academics_session where
+                                              id = ( select acad_session_id from sms_academiccalendar where
+                                                     id=""" + str(self.datas['form']['class_id'][0]) + """)"""
+                self.cr.execute(query)
+                line4 = self.cr.fetchone()[0]
             # line4 = company_recs[0].company_cfieldfour
         elif self.datas['form']['category'] == 'Transport':
-            query = """select company_cfieldfour_trans
-                                                                    from sms_academics_session where
-                                                                    id = (select academic_session_id from sms_session where id=(
-                                                                    select session_id from sms_academiccalendar where id=(
-                                                                    select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line4 = self.cr.fetchone()[0]
+            if 'student_id' in self.datas['form']:
+                query = """select company_cfieldfour_trans
+                               from sms_academics_session where
+                              id = (
+                                               select acad_session_id from sms_academiccalendar where id=(
+                                               select current_class from sms_student where id=""" + str(
+                    self.datas['form']['student_id'][0]) + """))"""
+                self.cr.execute(query)
+                line4 = self.cr.fetchone()[0]
+            else:
+                query = """select company_cfieldfour_trans
+                                               from sms_academics_session where
+                                              id = ( select acad_session_id from sms_academiccalendar where
+                                                     id=""" + str(self.datas['form']['class_id'][0]) + """)"""
+                self.cr.execute(query)
+                line4 = self.cr.fetchone()[0]
             # line4 = company_recs[0].company_cfieldfour_trans
         return line4
     
@@ -201,24 +262,42 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         # company_recs = self.pool.get('res.company').browse(self.cr, self.uid, rescompany_id)
 
         if self.datas['form']['category']== 'Academics':
-            query = """select company_cfieldfive
-                                                                                from sms_academics_session where
-                                                                                id = (select academic_session_id from sms_session where id=(
-                                                                                select session_id from sms_academiccalendar where id=(
-                                                                                select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line5 = self.cr.fetchone()[0]
+            if 'student_id' in self.datas['form']:
+                query = """select company_cfieldfive
+                                          from sms_academics_session where
+                                         id = (
+                                                          select acad_session_id from sms_academiccalendar where id=(
+                                                          select current_class from sms_student where id=""" + str(
+                    self.datas['form']['student_id'][0]) + """))"""
+                self.cr.execute(query)
+                line5 = self.cr.fetchone()[0]
+            else:
+                query = """select company_cfieldfive
+                                                          from sms_academics_session where
+                                                         id = ( select acad_session_id from sms_academiccalendar where
+                                                                id=""" + str(
+                    self.datas['form']['class_id'][0]) + """)"""
+                self.cr.execute(query)
+                line5 = self.cr.fetchone()[0]
             # line5 = company_recs[0].company_cfieldfive
         elif self.datas['form']['category'] == 'Transport':
-            query = """select company_cfieldfive_trans
-                                                                                            from sms_academics_session where
-                                                                                            id = (select academic_session_id from sms_session where id=(
-                                                                                            select session_id from sms_academiccalendar where id=(
-                                                                                            select current_class from sms_student where id=""" + str(
-                self.datas['form']['student_id'][0]) + """)))"""
-            self.cr.execute(query)
-            line5 = self.cr.fetchone()[0]
+            if 'student_id' in self.datas['form']:
+                query = """select company_cfieldfive_trans
+                                          from sms_academics_session where
+                                         id = (
+                                                          select acad_session_id from sms_academiccalendar where id=(
+                                                          select current_class from sms_student where id=""" + str(
+                    self.datas['form']['student_id'][0]) + """))"""
+                self.cr.execute(query)
+                line5 = self.cr.fetchone()[0]
+            else:
+                query = """select company_cfieldfive_trans
+                                                          from sms_academics_session where
+                                                         id = ( select acad_session_id from sms_academiccalendar where
+                                                                id=""" + str(
+                    self.datas['form']['class_id'][0]) + """)"""
+                self.cr.execute(query)
+                line5 = self.cr.fetchone()[0]
             # line5 = company_recs[0].company_cfieldfive_trans
         return line5
      

@@ -1240,7 +1240,15 @@ class smsfee_studentfee(osv.osv):
     def onchange_get_amount(self, cr, uid,ids,fee_type):
         cls_fee = self.pool.get('smsfee.classes.fees.lines')
         rec = cls_fee.browse(cr ,uid ,fee_type)
-        val = {'fee_amount':rec.amount,'state':'fee_unpaid','date_fee_charged': time.strftime('%Y-%m-%d')}
+        val = {'fee_amount':rec.amount,'state':'fee_unpaid','date_fee_charged': time.strftime('%Y-%m-%d'),}
+        return {'value': val}
+    def onchange_fee_month(self, cr, uid,ids,fee_month):
+        print 'works_fee'
+        val={}
+        print('change_month',fee_month)
+        months_fee = self.pool.get('sms.session.months')
+        rec = months_fee.browse(cr ,uid ,fee_month)
+        val['fee_month']=fee_month
         return {'value': val}
 
     def create(self, cr, uid, vals, context=None, check=True):
@@ -3117,6 +3125,7 @@ class smsfee_paid_unpaid_adjustments(osv.osv):
  
     def onchange_set_domain(self, cr, uid, ids, student):
         receipt_id = self.pool.get('smsfee.receiptbook').search(cr ,uid , [('student_id','=',student)])
+        # fee_month_id=self.pool.get('smsfee.studentfee').search(cr,uid,[('student_id','=',student)]).fee_month
         return {'domain': {'receipt_no': [('id', 'in', receipt_id)]} ,
                 'value':{}}
 
