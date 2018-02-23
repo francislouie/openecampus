@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <document filename="blank_attendanceShett.pdf">
-  <template pageSize="(792.0,1150.0)" title="Blank Attendance Sheet" author="Ghulam Masood" allowSplitting="20">
+  <template pageSize="(692.0,950.0)" title="Blank Attendance Sheet" author="Ghulam Masood" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="28.0" y1="10.0" width="738" height="1140"/>
+      <frame id="first" x1="28.0" y1="10.0" width="638" height="940"/>
     </pageTemplate>
   </template>
   <stylesheet>
@@ -55,7 +55,7 @@
 			
 			<spacer length="20"/>
 
-			<para style="Heading">Student Attendance Summary </para>
+			<para style="Heading">This task is currently paused  </para>
 
 			<spacer length="20"/>
 
