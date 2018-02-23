@@ -1351,7 +1351,8 @@
 			<div><label for="name"/><h1><field name="name"/></h1></div>
 			<group>
 				<group>
-					<field name="acad_session_id" on_change="onchange_academic_session(acad_session_id)" attrs="{'readonly':[('state','IN',['Active','Complete'])]}"  widget="selection"  />
+					<!--<field name="acad_session_id" on_change="onchange_academic_session(acad_session_id)" attrs="{'readonly':[('state','IN',['Active','Complete'])]}"  widget="selection"  />-->
+					<field name="acad_session_id" on_change="onchange_academic_session(acad_session_id)"   widget="selection"  />
 					<field name="session_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}"  />
 					<field name="class_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}" />
 					<field name="class_teacher" attrs="{'readonly':[('state','IN',['Complete'])]}"/>

@@ -5,7 +5,10 @@ _logger = logging.getLogger(__name__)
 
 class class_student_fee_collectt(osv.osv_memory):
 
-    def _category_list(self, cr, uid, context=None):
+
+    def _category_list(self, cr, uid,context=None):
+
+
         sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
               on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
         cr.execute(sqluser)
@@ -21,7 +24,13 @@ class class_student_fee_collectt(osv.osv_memory):
     def getfee_cate(self, cr, uid, ids, fields, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            result[f.id] = f.fee_type.fee_type.category
+            result[f.id] = f.generic_fee_type.category
+        return
+
+    def get_fees_lines_id(self, cr, uid, ids, fields, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            result[f.id] = f.generic_fee_type.category
         return result
 
     def _get_student(self, cr, uid, ids):
@@ -38,7 +47,6 @@ class class_student_fee_collectt(osv.osv_memory):
         for std in student:
             cur_cls=std.current_class.id
 
-        print("student",student)
         return cur_cls
 
     def _get_session_id(self, cr, uid, ids):
@@ -49,11 +57,12 @@ class class_student_fee_collectt(osv.osv_memory):
     	             inner join sms_student As s on s.current_class=a.id
     	               where s.id=""" + str(std_id) + """ ) order by id"""
         cr.execute(sql)
-        _ids = cr.fetchall()
-        print("session_id",_ids)
+
+        _ids = cr.fetchone()
         for thisfee in _ids:
-            session_id.append(thisfee[0])
-        return session_id
+            session_id.append(thisfee)
+        return session_id[0]
+
     def _get_session_months(self, cr, uid, ids):
         obj = self.browse(cr, uid, ids['active_id'])
         std_id = obj.id
@@ -92,20 +101,37 @@ class class_student_fee_collectt(osv.osv_memory):
                    domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
                'session': fields.many2one('sms.session', 'Session', readonly=True,
                                    help="Select an academic session"),
-               'generic_fee_type':fields.many2one('smsfee.feetypes','Fee type',domain="[('category','=',category')]"),
+               'generic_fee_type':fields.many2one('smsfee.feetypes','Fee type',domain="[('category','=',category)]"),
               'due_month': fields.many2one('sms.session.months', 'Payment Month',domain="[('session_id','=',session)]"),
               'fee_month': fields.many2one('sms.session.months', 'Fee Month',domain="[('session_id','=',session)]"),
-              # 'fee_type': fields.many2one('smsfee.classes.fees.lines', 'Fee Type'),
+               # 'fee_type': fields.many2one('smsfee.classes.fees.lines', 'Fee Type'),
               'fee_amount': fields.integer('Fee'),
-              'category': fields.selection(_category_list,method=True,string='Select Fee Type',type='selection'),
+
+        'category': fields.selection(string='Category', type='selection',
+                                    selection=[('Academics', 'Academics'), ('Transport', 'Transport'),
+                                               ('Hostel', 'Hostel'), ('Stationary', 'Stationary'),
+                                               ('Portal', 'Portal')]),
+
                }
 
-    _defaults = {'class_id':_get_current_class,'student_id':_get_student,'category':'Academics',
-                 'session':_get_session_id}
+    _defaults = {'student_id':_get_student,'class_id':_get_current_class,'category':'Academics'
+                 }
 
     def action_pay_student_fee(self, cr, uid, ids, context):
         domain = []
         thisform = self.read(cr, uid, ids)[0]
+        st=thisform['student_id'][0]
+        g_fee_type = thisform['generic_fee_type'][0]
+        current_class=thisform['class_id'][0]
+        std=self.pool.get('sms.student').browse(cr,uid,st)
+        sql="""select id from smsfee_classes_fees_lines where
+                parent_fee_structure_id =(select id from smsfee_classes_fees where
+                academic_cal_id="""+str(std.current_class.id)+""" and fee_structure_id="""+str(std.fee_type.id)+""")   
+                and fee_type = """+str(g_fee_type)+""" """
+        cr.execute(sql)
+        _id = cr.fetchone()
+
+
         # domain = [('id','>=',thisform['challan_id'][0])]
         fee_dcit = {
             'student_id':thisform['student_id'][0],
@@ -119,7 +145,7 @@ class class_student_fee_collectt(osv.osv_memory):
             'reconcile': False,
             'state': 'fee_unpaid',
             'generic_fee_type':thisform['generic_fee_type'][0],
-            # 'fee_type':thisform['fee_type'][0],
+            'fee_type':_id,
             'category':thisform['category']
 
         }
