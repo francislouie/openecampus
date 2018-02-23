@@ -8,19 +8,21 @@
             <field name="name">class.student_fee_collectt_form</field>
             <field name="model">class.student_fee_collectt</field>
             <field name="arch" type="xml">
-                <form string="Student Fee Receiving" version="7.0">
+                <form string="Register Student Fee" version="7.0">
                     <group>
-                        <h3>
+                        <h2>
 							<field name="student_id" readonly ="1" nolabel = "1" />
-                        </h3>
+                        </h2>
 						<newline/>
 						<group col="4" String = "">
                             <field name="category" string="Fee Category" required="1"/>
                             <field name="generic_fee_type" string="Select a fee" required="1"/>
-                            <field name="due_month"/>
-                            <field name="class_id" readonly="1"/>
-                            <field name="fee_month"/>
-                            <field name="fee_amount"/>
+
+                            <field name="due_month" required="1"/>
+                            <field name="class_id" readonly="1" required="1"/>
+                            <field name="fee_month" required="1"/>
+                            <field name="fee_amount" required="1"/>
+
                             <field name="session" invisible="1"/>
                             <!--<field name="fee_type" />-->
 					    </group>
@@ -43,7 +45,7 @@
 
   <!-- action Fee Reports-->
 
-        <record id="action_student_fee_collect_id" model="ir.actions.act_window">
+        <record id="action_student_fee_collect_idd" model="ir.actions.act_window">
             <field name="name">Register New Fee</field>
             <field name="res_model">class.student_fee_collectt</field>
             <field name="view_type">form</field>

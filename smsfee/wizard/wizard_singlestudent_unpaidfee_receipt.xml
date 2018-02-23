@@ -21,7 +21,8 @@
 					    </group>
 	                </group>    
 					<group colspan="4" col="8">
-					<field name="category"  colspan="4" required="1" on_change="onchange_cat(category,student_id)"/>
+                        <field name="category"  colspan="4" required="1" on_change="onchange_cat(category,student_id)"/>
+
                     <field name="fee_receiving_type"  colspan="4" required="1"/>
                     </group>
                     <group attrs="{'invisible':[('fee_receiving_type', '!=','Dublicate')]}">>
