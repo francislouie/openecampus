@@ -90,25 +90,42 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                 'emp_regno_on_device': biometric_id,})  
                   
                 item += 1
-             
+                
+                
+            sqlQ ="""DELETE FROM hr_employee_attendance"""
+            cr.execute(sqlQ)
+            
             while item2 < len(emp_id):
+                employee_id = self.pool.get('hr.employee').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2]))])
+                employee_rec = self.pool.get('hr.employee').browse(cr,uid,employee_id) 
+                print '-------------HR Employeee Table-------------'
                 for date in dates:
                         search_rec1 = self.pool.get('hr.attendance').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2])),('attendance_date', '=', str(date))])                                            
                         if search_rec1:
                             recs_found1 = self.pool.get('hr.attendance').browse(cr,uid,search_rec1) 
                             emp_time_recs = sorted(recs_found1, key=lambda k: k['attendance_time']) 
-
+                            emptime_list = []
                             signin = True
                             for rec2 in emp_time_recs:
+                                emptime_list.append(rec2.attendance_time)
                                 if signin == True:
                                     result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign In'})
                                     signin = False
                                 else:
                                     result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out'}) 
                                     signin = True 
-
+                            if date:
+                                print'------------- Employee Id -------------- ', employee_rec[0]['id'], str(datetime.strptime(date,'%Y%m%d').strftime('%B')), emptime_list[0], emptime_list[-1]
+                                self.pool.get('hr.employee.attendance').create(cr, uid, {
+                                    'employee_id': employee_rec[0].id,
+                                    'attendance_date': date, 
+                                    'sign_in': emptime_list[0],
+                                    'sign_out': emptime_list[-1],
+                                    'attendance_month': str(datetime.strptime(date,'%Y%m%d').strftime('%B'))})
 
                 item2 += 1
+                
+                
                  
         return True    
     
