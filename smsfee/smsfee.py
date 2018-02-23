@@ -516,7 +516,9 @@ class sms_student(osv.osv):
                             on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                             inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
                             where smsfee_studentfee.state = '""" +str(return_choice)+"""'
+                            and smsfee_studentfee.acad_cal_id = """+str(class_id)+ """
                             and smsfee_studentfee.student_id = """+str(student_id)
+                            
         else:
             sql= """SELECT COALESCE(sum(fee_amount),'0') as fee_amount from smsfee_studentfee
                             inner join smsfee_classes_fees_lines 
@@ -524,6 +526,7 @@ class sms_student(osv.osv):
                             inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
                             where smsfee_feetypes.category = '""" +fee_category+"""'
                             and smsfee_studentfee.state = '""" +str(return_choice)+"""'
+                            and smsfee_studentfee.acad_cal_id = """+str(class_id)+ """
                             and smsfee_studentfee.student_id = """+str(student_id)
                             
         cr.execute(sql)

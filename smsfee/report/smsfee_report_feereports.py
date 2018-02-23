@@ -397,7 +397,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             
             if cls_id:
                 class_str = str(tuple(cls_id))
-                class_str = "AND sms_student.current_class in " + class_str.replace(',)', ')')
+                class_str = "AND sms_academiccalendar_student.name in " + class_str.replace(',)', ')')
             else:
                 class_str = ''
                
@@ -416,7 +416,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
 
             self.cr.execute(sql_academics)
             rec = self.cr.fetchall()
-             
+            print "query result",sql_academics 
             i = 1 
             total_students = 0   
             for student in rec:
