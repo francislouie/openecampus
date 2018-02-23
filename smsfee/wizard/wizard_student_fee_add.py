@@ -114,7 +114,7 @@ class class_student_fee_collectt(osv.osv_memory):
 
                }
 
-    _defaults = {'student_id':_get_student,'class_id':_get_current_class,'category':'Academics'
+    _defaults = {'student_id':_get_student,'class_id':_get_current_class,'category':'Academics','session':_get_session_id
                  }
 
     def action_pay_student_fee(self, cr, uid, ids, context):
