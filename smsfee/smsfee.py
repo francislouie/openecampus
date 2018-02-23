@@ -1063,7 +1063,9 @@ smsfee_feetypes()
 class smsfee_studentfee(osv.osv):
         
     """ Stores student fee record
-        it stores both academic and transport fees"""
+        it stores both academic and transport fees
+        this obnject stores transport aslo
+        """
     
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         #*00*************create log for updation in student fee**************************
