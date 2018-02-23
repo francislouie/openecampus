@@ -47,12 +47,10 @@ class class_student_fee_collectt(osv.osv_memory):
         for std in student:
             cur_cls=std.current_class.id
 
-        print("studenttt",student)
         return cur_cls
 
     def _get_session_id(self, cr, uid, ids):
         obj = self.browse(cr, uid, ids['active_id'])
-        print("objj",obj.id)
         std_id = obj.id
         session_id = []
         sql = """select id from sms_session where id=(select  a.session_id from sms_academiccalendar As a  
@@ -61,10 +59,8 @@ class class_student_fee_collectt(osv.osv_memory):
         cr.execute(sql)
 
         _ids = cr.fetchone()
-        print("session_idd",_ids)
         for thisfee in _ids:
             session_id.append(thisfee)
-            print 'return_session_id',session_id[0]
         return session_id[0]
 
     def _get_session_months(self, cr, uid, ids):
@@ -118,8 +114,8 @@ class class_student_fee_collectt(osv.osv_memory):
 
                }
 
-    _defaults = {'class_id':_get_current_class,'student_id':_get_student,'category':'Academics',
-                 'session':_get_session_id}
+    _defaults = {'student_id':_get_student,'class_id':_get_current_class,'category':'Academics'
+                 }
 
     def action_pay_student_fee(self, cr, uid, ids, context):
         domain = []
@@ -127,17 +123,13 @@ class class_student_fee_collectt(osv.osv_memory):
         st=thisform['student_id'][0]
         g_fee_type = thisform['generic_fee_type'][0]
         current_class=thisform['class_id'][0]
-        print('st',st)
         std=self.pool.get('sms.student').browse(cr,uid,st)
-        print "queryy", "academic_cal_id", std.current_class.id,"fee_structure_id",std.fee_type.id,"fee_type",g_fee_type
-        print('curretn_class', std.current_class)
         sql="""select id from smsfee_classes_fees_lines where
                 parent_fee_structure_id =(select id from smsfee_classes_fees where
                 academic_cal_id="""+str(std.current_class.id)+""" and fee_structure_id="""+str(std.fee_type.id)+""")   
                 and fee_type = """+str(g_fee_type)+""" """
         cr.execute(sql)
         _id = cr.fetchone()
-        print('_idd',_id)
 
 
         # domain = [('id','>=',thisform['challan_id'][0])]
