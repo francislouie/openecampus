@@ -376,7 +376,19 @@ class smsfee_report_feereports(report_sxw.rml_parse):
 
 
     def defaulter_student_list(self, data):  
-            #Prints summary for defaulter students list                                                   
+        
+            idds = self.pool.get('sms.academiccalendar').search(self.cr,self.uid,[])
+            recc = self.pool.get('sms.academiccalendar').browse(self.cr,self.uid,idds)
+            for x in recc:
+                self.pool.get('sms.academiccalendar').write(self.cr,self.uid,[x.id],{'name':str(x.class_id.name)+"-"+str(x.section_id.name)+""+str(x.session_id.name)})
+            
+            idds2 = self.pool.get('sms.session').search(self.cr,self.uid,[])
+            recc2 = self.pool.get('sms.session').browse(self.cr,self.uid,idds2)
+            for x2 in recc2:
+                sdate = x2.start_date
+                year = sdate.split('-')
+                self.pool.get('sms.session').write(self.cr,self.uid,[x2.id],{'name':x2.subcate+"-"+str(year[0])})
+            #Prints summary for defaulter students list               2                                    
             result = []
             result2 = []
             this_form = self.datas['form']

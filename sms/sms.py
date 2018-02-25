@@ -320,7 +320,7 @@ class sms_session(osv.osv):
                 year = sdate.split('-')
                 acad_session = obj.academic_session_id.name
                 arr = acad_session.split('-')
-                result[obj.id] = year[0]+' -(Session: '+str(arr[0][2:])+'-'+str(arr[1][2:])+')'
+                result[obj.id] = obj.subcate+"-"+str(year[0])
         return result
     
     def load_students_from_excel(self, cr, uid, data, context):
@@ -1465,7 +1465,7 @@ class sms_academiccalendar(osv.osv):
             result = {}
             for obj in self.browse(cr, uid, ids, context=context):
                 cls = obj.class_id.name
-                session = obj.acad_session_id.name
+                session = obj.session_id.name
                 section = obj.section_id.name
                 string = str(cls)+' - '+str(section)+' ('+str(session)+')'
                 result[obj.id] = string
