@@ -29,7 +29,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
     #4 Called by individual student Transpor same wizard [Yes]
  
     def __init__(self, cr, uid, name, context):
- 
+
         super(report_unpaid_fee_bills_3folded, self).__init__(cr, uid, name, context)
         self.result_temp=[]
         self.localcontext.update( {
@@ -52,6 +52,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             'get_challan_footer_one':self.get_challan_footer_one,
             'get_challan_footer_two':self.get_challan_footer_two,
             'get_department_logo':self.get_department_logo,
+            'get_vechil_no':self.get_vechil_no,
          })
         self.context = context
 
@@ -332,7 +333,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             rec = self.pool.get('student.admission.register').browse(self.cr,self.uid,data['active_ids'] )
             info_dict = {'name':rec.name,'father_name':rec.father_name,'Class':rec.student_class.name,'semester':''}
             fee_res = []
-            challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':''}
+            challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','total_amount':'','amount_in_words':'','vechil_no':''}
             for fee in rec.fee_ids  :
                 fee_name = str(fee.name.name)+"  "+str(fee.fee_month.name)
                 dict = {'head_name':fee_name,'head_amount':fee.amount}
@@ -342,6 +343,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             challan_dict['candidate_info'] =  [info_dict]
             challan_dict['on_accounts'] = fee_res
             challan_dict['total_amount'] = tlt_amount
+            print('dick_veck',challan_dict['vechil_no'])
             #*******************convert the amount in text form****************************
             user_id = self.pool.get('res.users').browse(self.cr, self.uid,[self.uid])[0]
             cur = user_id.company_id.currency_id.name
@@ -365,7 +367,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
 
-                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':'','dbid':'','grand_total':'','grand_lable':'','partial_lable':'' ,'Table_1':''}
+                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':'','dbid':'','grand_total':'','grand_lable':'','partial_lable':'' ,'Table_1':'','vechil_no':''}
                     challan_dict['challan_number'] = self.get_challan_number(challan.id)
                     challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                     challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
@@ -396,6 +398,24 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
     def get_user_name(self):
         user_name = self.pool.get('res.users').browse(self.cr, self.uid, self.uid, self.context).name
         return   user_name
+
+    def get_vechil_no(self):
+        if self.datas['form']['category'] == 'Academics':
+            vechil_no = None
+        elif self.datas['form']['category'] == 'Transport':
+            if 'student_id' in self.datas['form']:
+                std_id = str(self.datas['form']['student_id'][0])
+                query = """ select vehcile_reg_students_id from sms_student where id=""" + std_id
+                self.cr.execute(query)
+                vechil_no = self.cr.fetchone()[0]
+            else:
+                std_id = str(self.datas['form']['student_id'][0])
+                query = """ select vehcile_reg_students_id from sms_student where current_class="""\
+                        +str(self.datas['form']['class_id'][0])
+                self.cr.execute(query)
+                vechil_no = self.cr.fetchone()[0]
+        print('vechil_no',vechil_no)
+        return vechil_no
  
     def get_vertical_lines(self, data):
         line_dots = []
