@@ -1110,11 +1110,9 @@ class smsfee_studentfee(osv.osv):
                 year = f.fee_month.name
                 string = str(f.fee_type.name) + " (" + str(month_name) + ")"
             else:
-<<<<<<< HEAD
-                string =  str(f.fee_type.name)+ " ("+str(month_name)+")//"
-=======
+
                 string = str(f.fee_type.name) + " (" + str(month_name) + ")//"
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
             result[f.id] = string
         return result
 

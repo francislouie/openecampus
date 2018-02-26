@@ -266,11 +266,9 @@
             <field name="arch" type="xml">
                 <tree string="Schedule Detail" editable="top">
                     <field name="name"/>
-<<<<<<< HEAD
+
                     <field name="employee_id"/>
-=======
-                    <field name="department_id"/>
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
                     <field name="day"/>
                     <field name="dayofweek"/>
                     <field name="date_start"/>

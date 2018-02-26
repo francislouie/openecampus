@@ -41,11 +41,9 @@ DAYOFWEEK_SELECTION = [('0', 'Monday'),
                        ('4', 'Friday'),
                        ('5', 'Saturday'),
                        ('6', 'Sunday'),
-<<<<<<< HEAD
-                        ]
-=======
+
                        ]
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
 
 
 class week_days(osv.Model):
@@ -58,15 +56,6 @@ class week_days(osv.Model):
         'sequence': fields.integer('Sequence', required=True),
     }
 
-<<<<<<< HEAD
-# 
-class hr_schedule(osv.osv):
- 
-    _name = 'hr.schedule'
-    _inherit = ['mail.thread']
-    _description = 'Employee Schedule'
- 
-=======
 
 class hr_schedule(osv.osv):
 
@@ -74,7 +63,7 @@ class hr_schedule(osv.osv):
     _inherit = ['mail.thread']
     _description = 'Employee Schedule'
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
     def _compute_alerts(self, cr, uid, ids, field_name, args, context=None):
         res = dict.fromkeys(ids, '')
         for obj in self.browse(cr, uid, ids, context=context):
@@ -83,11 +72,7 @@ class hr_schedule(osv.osv):
                 [alert_ids.append(a.id) for a in detail.alert_ids]
             res[obj.id] = alert_ids
         return res
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
     _columns = {
         'name': fields.char("Description", size=64, required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'company_id': fields.many2one('res.company', 'Company', readonly=True),
@@ -118,20 +103,12 @@ class hr_schedule(osv.osv):
                 'unlocked', 'Unlocked'),
         ), 'State', required=True, readonly=True),
     }
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
     _defaults = {
         'company_id': lambda self, cr, uid, context: self.pool.get('res.company')._company_default_get(cr, uid, 'hr.schedule', context=context),
         'state': 'draft',
     }
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
     def _schedule_date(self, cr, uid, ids, context=None):
         for schedule in self.browse(cr, uid, ids, context=context):
             cr.execute('SELECT id \
@@ -142,30 +119,18 @@ class hr_schedule(osv.osv):
             if cr.fetchall():
                 return False
         return True
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
     _constraints = [
         (_schedule_date, 'You cannot have schedules that overlap!',
          ['date_start', 'date_end']),
     ]
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
     def get_rest_days(self, cr, uid, employee_id, dt, context=None):
         '''If the rest day(s) have been explicitly specified that's what is returned, otherwise
         a guess is returned based on the week days that are not scheduled. If an explicit
         rest day(s) has not been specified an empty list is returned. If it is able to figure
         out the rest days it will return a list of week day integers with Monday being 0.'''
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
         day = dt.strftime(OE_DTFORMAT)
         ids = self.search(cr, uid, [('employee_id', '=', employee_id),
                                     ('date_start', '<=', day),
@@ -175,40 +140,28 @@ class hr_schedule(osv.osv):
         elif len(ids) > 1:
             raise osv.except_osv(_('Programming Error'), _(
                 'Employee has a scheduled date in more than one schedule.'))
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
         # If the day is in the middle of the week get the start of the week
         if dt.weekday() == 0:
             week_start = dt.strftime(OE_DFORMAT)
         else:
             week_start = (
                 dt + relativedelta(days=-dt.weekday())).strftime(OE_DFORMAT)
-<<<<<<< HEAD
- 
-        return self.get_rest_days_by_id(cr, uid, ids[0], week_start, context=context)
- 
-=======
+
 
         return self.get_rest_days_by_id(cr, uid, ids[0], week_start, context=context)
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
     def get_rest_days_by_id(self, cr, uid, Id, week_start, context=None):
         '''If the rest day(s) have been explicitly specified that's what is returned, otherwise
         a guess is returned based on the week days that are not scheduled. If an explicit
         rest day(s) has not been specified an empty list is returned. If it is able to figure
         out the rest days it will return a list of week day integers with Monday being 0.'''
-<<<<<<< HEAD
- 
-        res = []
- 
-=======
+
 
         res = []
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
         # Set the boundaries of the week (i.e- start of current week and start of next week)
         #
         sched = self.browse(cr, uid, Id, context=context)
@@ -221,11 +174,7 @@ class hr_schedule(osv.osv):
                 '%H:%M:%S') or dtFirstDay.strftime(OE_DTFORMAT)
         dtNextWeek = datetime.strptime(
             date_start, OE_DTFORMAT) + relativedelta(weeks=+1)
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
         # Determine the appropriate rest day list to use
         #
         restday_ids = False
@@ -241,11 +190,7 @@ class hr_schedule(osv.osv):
             restday_ids = sched.restday_ids4
         elif dWeekStart == dSchedStart + relativedelta(days=+28):
             restday_ids = sched.restday_ids5
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
         # If there is explicit rest day data use it, otherwise try to guess based on which
         # days are not scheduled.
         #
@@ -267,19 +212,12 @@ class hr_schedule(osv.osv):
             # days in the week
             if len(res) == 7:
                 res = []
-<<<<<<< HEAD
- 
-        return res
- 
-    def onchange_employee_start_date(self, cr, uid, ids, employee_id, date_start, context=None):
- 
-=======
+
 
         return res
 
     def onchange_employee_start_date(self, cr, uid, ids, employee_id, date_start, context=None):
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
         res = {
             'value': {
                 'name': ''
@@ -299,28 +237,20 @@ class hr_schedule(osv.osv):
             else:
                 dEnd = dStart + relativedelta(days=+6)
                 res['value']['date_end'] = dEnd.strftime('%Y-%m-%d')
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
         if edata['name']:
             res['value']['name'] = edata['name']
             if dStart:
                 res['value']['name'] = res['value']['name'] + ': ' + \
                     dStart.strftime('%Y-%m-%d') + ' Wk ' + str(
                         dStart.isocalendar()[1])
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
         if edata['contract_id']:
             cdata = self.pool.get('hr.contract').read(
                 cr, uid, edata['contract_id'][0], ['schedule_template_id'], context=context)
             if cdata['schedule_template_id']:
                 res['value']['template_id'] = cdata['schedule_template_id']
-<<<<<<< HEAD
+
  
         return res
  
@@ -786,8 +716,7 @@ class hr_department_schedule(osv.osv):
             else:
                 dEnd = dStart + relativedelta(days=+6)
                 res['value']['date_end'] = dEnd.strftime('%Y-%m-%d')
-=======
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
 
         return res
 
@@ -944,7 +873,7 @@ class hr_department_schedule(osv.osv):
         return True
 
     def create(self, cr, uid, vals, context=None):
-<<<<<<< HEAD
+
         print"Data in sms schedule",vals
         
         
@@ -963,26 +892,19 @@ class hr_department_schedule(osv.osv):
             vals['name'] = edata['name'] + ': ' + \
                    dStart.strftime('%Y-%m-%d') + ' Wk ' + str(
                          dStart.isocalendar()[1])
-            my_id = super(hr_department_schedule, self).create(cr, uid, vals, context=context)
-        print"result",my_id
-=======
-
-        my_id = super(hr_schedule, self).create(cr, uid, vals, context=context)
-
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
-        self.create_details(cr, uid, my_id, context=context)
-
+                   
+            dep_schedule_ids = self.pool.get('hr.department.schedule').search(cr,uid, [('department_id','=',vals['department_id']),('employee_id','=',employee)])
+            if not dep_schedule_ids:
+                my_id = super(hr_department_schedule, self).create(cr, uid, vals, context=context)
+#                 self.create_details(cr, uid, my_id, context=context)
         return my_id
 
     def create_mass_schedule(self, cr, uid, context=None):
         '''Creates tentative schedules for all employees based on the
         schedule template attached to their contract. Called from the scheduler.'''
 
-<<<<<<< HEAD
         sched_obj = self.pool.get('hr.department.schedule')
-=======
-        sched_obj = self.pool.get('hr.schedule')
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
         ee_obj = self.pool.get('hr.employee')
 
         # Create a two-week schedule beginning from Monday of next week.
@@ -1051,11 +973,9 @@ class hr_department_schedule(osv.osv):
 
             schedule_ids.append(schedule.id)
 
-<<<<<<< HEAD
+
         return super(hr_department_schedule, self).unlink(cr, uid, schedule_ids, context=context)
-=======
-        return super(hr_schedule, self).unlink(cr, uid, schedule_ids, context=context)
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
 
     def _workflow_common(self, cr, uid, ids, signal, next_state, context=None):
 
@@ -1112,21 +1032,43 @@ class hr_department_schedule(osv.osv):
         return all_locked == False
 
 
-<<<<<<< HEAD
+
 
 class hr_employee(osv.osv):
     _inherit="hr.employee"
 
     def create(self, cr, uid, vals, context=None):
         employee_id =  super(hr_employee, self).create(cr, uid, vals, context=context)
-        dept_id_lst = []
+       
         dep_schedule_ids = self.pool.get('hr.department.schedule').search(cr,uid, [('department_id','=',vals['department_id'])])
-        dep_schedule_objs = self.pool.get('hr.department.schedule').browse(cr,uid, dep_schedule_ids)
-        print"This task in underconstruction "
-        print"department id ",dept_id_lst
-        print"One schedule dp id",dep_schedule_objs[0]['id']
-        print"New employee id",employee_id
-        print"schedule",dep_schedule_objs
+        if dep_schedule_ids:
+            objs = self.pool.get('hr.department.schedule').browse(cr,uid, dep_schedule_ids)
+            my_id =self.pool.get('hr.department.schedule').create(cr, uid, {
+                                    'employee_id':employee_id,
+                                    'date_end':objs[0]['date_end'],
+                                    'date_start':objs[0]['date_start'],
+                                    'name':objs[0]['name'],
+                                    'state':objs[0]['state'],
+                                    'template_id':objs[0]['template_id'].id,
+                                    'department_id':objs[0]['department_id'].id,
+                                    'company_id':objs[0]['company_id'].id},context=context) 
+            if my_id:
+                dep_schedule_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('department_id','=',vals['department_id']),('employee_id','=',objs[0]['employee_id'].id)])
+                schedule_objs = self.pool.get('hr.schedule.detail').browse(cr,uid, dep_schedule_ids)
+                for sch_id in schedule_objs:
+                    my_idd =self.pool.get('hr.schedule.detail').create(cr, uid, {
+                                    'employee_id':employee_id,
+                                    'date_end':sch_id['date_end'],
+                                    'date_start':sch_id['date_start'],
+                                    'name':sch_id['name'],
+                                    'state':sch_id['state'],
+                                    'schedule_id':my_id,
+                                    'dayofweek':sch_id['dayofweek'],
+                                    'department_id':sch_id['department_id'].id,
+                                    'day':sch_id['day']
+                                    },context=context) 
+            
+            
     _columns = {
        
     }
@@ -1134,9 +1076,6 @@ class hr_employee(osv.osv):
 hr_employee()
 
 
-
-=======
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
 class schedule_detail(osv.osv):
     _name = "hr.schedule.detail"
     _description = "Schedule Detail"
@@ -1161,12 +1100,10 @@ class schedule_detail(osv.osv):
         'date_start': fields.datetime('Start Date and Time', required=True),
         'date_end': fields.datetime('End Date and Time', required=True),
         'day': fields.date('Day', required=True, select=1),
-<<<<<<< HEAD
+
 #         'schedule_id': fields.many2one('hr.schedule', 'Schedule', required=True),This line is commented by ibrahim for hr_department_schedule class
         'schedule_id': fields.many2one('hr.department.schedule', 'Schedule', required=True),
-=======
-        'schedule_id': fields.many2one('hr.schedule', 'Schedule', required=True),
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
         'department_id': fields.related('schedule_id', 'department_id', type='many2one',
                                         relation='hr.department', string='Department', store=True),
         'employee_id': fields.related('schedule_id', 'employee_id', type='many2one',
@@ -1198,17 +1135,12 @@ class schedule_detail(osv.osv):
                 return False
         return True
 
-<<<<<<< HEAD
+
 #     _constraints = [
 #         (_detail_date, 'You cannot have scheduled days that overlap!',
 #          ['date_start', 'date_end']),
 #     ]
-=======
-    _constraints = [
-        (_detail_date, 'You cannot have scheduled days that overlap!',
-         ['date_start', 'date_end']),
-    ]
->>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
+
 
     def scheduled_hours_on_day(self, cr, uid, employee_id, contract_id, dt, context=None):
 
