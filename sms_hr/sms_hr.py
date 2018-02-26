@@ -2,7 +2,7 @@ import time
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 from dbus.decorators import method
-from samba.netcmd import domain
+#from samba.netcmd import domain
 
 class hr_biometric_device(osv.osv):
     _name = "hr.biometirc.device"

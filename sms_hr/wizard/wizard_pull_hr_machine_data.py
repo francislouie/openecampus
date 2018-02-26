@@ -115,13 +115,17 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                     result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out'}) 
                                     signin = True 
                             if date:
-                                print'------------- Employee Id -------------- ', employee_rec[0]['id'], str(datetime.strptime(date,'%Y%m%d').strftime('%B')), emptime_list[0], emptime_list[-1]
-                                self.pool.get('hr.employee.attendance').create(cr, uid, {
-                                    'employee_id': employee_rec[0].id,
-                                    'attendance_date': date, 
-                                    'sign_in': emptime_list[0],
-                                    'sign_out': emptime_list[-1],
-                                    'attendance_month': str(datetime.strptime(date,'%Y%m%d').strftime('%B'))})
+                                if employee_rec:
+                                    print'------------- Employee Id -------------- ', employee_rec[0]['id'], str(datetime.strptime(date,'%Y%m%d').strftime('%B')), emptime_list[0], emptime_list[-1]
+                                    
+                                    self.pool.get('hr.employee.attendance').create(cr, uid, {
+                                        'employee_id': employee_rec[0].id,
+                                        'attendance_date': date, 
+                                        'sign_in': emptime_list[0],
+                                        'sign_out': emptime_list[-1],
+                                        'attendance_month': str(datetime.strptime(date,'%Y%m%d').strftime('%B'))})
+                                else:
+                                    print " not found on ERP for emplead acc",employee_rec
 
                 item2 += 1
                 
