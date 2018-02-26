@@ -38,7 +38,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         times = []
         item = 0
         item2 = 0
- 
+        
         import requests
         r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24')
         if(r.status_code == 200):
@@ -48,6 +48,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
              
             print "---------------------------     json response    -----------------------------",read
             for att_record in read['att_records']:
+                print "empleado id",att_record['user_empleado_id']
                 if att_record['user_empleado_id'] not in emp_id:
                     emp_id.append(att_record['user_empleado_id'])
                      
@@ -81,13 +82,15 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                     search_rec = self.pool.get('hr.attendance').search(cr,uid,[('attendance_date','=',date_stamp),('attendance_time','=',time_stamp)])   
                                     if not search_rec:
                                         result = self.pool.get('hr.attendance').create(cr, uid, {
-                'attendance_date': date_stamp,
-                'attendance_time': time_stamp,                            
-                'status': 'Sign In',
-                'action':'sign_in',
-                'name':'2018-01-29 07:25:00',
-                'empleado_account_id': user_id, 
-                'emp_regno_on_device': biometric_id,})  
+                                        'attendance_date': date_stamp,
+                                        'attendance_time': time_stamp,                            
+                                        'status': 'Sign In',
+                                        'action':'sign_in',
+                                        'name':'2018-01-29 07:25:00',
+                                        'empleado_account_id': user_id, 
+                                        'emp_regno_on_device': biometric_id,})  
+                                        
+                                        ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24&ack_id='+str(result))
                   
                 item += 1
                 
@@ -100,6 +103,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                 employee_rec = self.pool.get('hr.employee').browse(cr,uid,employee_id) 
                 print '-------------HR Employeee Table-------------'
                 for date in dates:
+                        print "employee empleado id",str(emp_id[item2])
                         search_rec1 = self.pool.get('hr.attendance').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2])),('attendance_date', '=', str(date))])                                            
                         if search_rec1:
                             recs_found1 = self.pool.get('hr.attendance').browse(cr,uid,search_rec1) 
