@@ -1,6 +1,8 @@
 import time
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
+from dbus.decorators import method
+from samba.netcmd import domain
 
 class hr_biometric_device(osv.osv):
     _name = "hr.biometirc.device"
@@ -40,7 +42,12 @@ class hr_employee(osv.osv):
     _inherit = "hr.employee"
     _description = "Employee"
 
+    def _current_employee(self, cr, uid, ids):
+        
+        return True
+
     _columns = {
+        'employee_attendance_ids': fields.one2many('hr.employee.attendance', 'employee_id','Employee Attendance Record'),
         'emp_regno_on_device': fields.char('Reg No on Device'),
         'empleado_account_id': fields.char('Empleado Acc ID'),
         'default_devicee_id': fields.char('Default Device'),
@@ -48,6 +55,47 @@ class hr_employee(osv.osv):
     _defaults = {
     }
 hr_employee()
+
+
+class hr_employee_attendance(osv.osv):
+    _name = "hr.employee.attendance"
+    _description = "Employee Attendance"
+    
+    def on_change_month(self, cr, uid, ids, monthName):
+        result = 0
+        result = self.search(cr, uid, [()('attendance_month','=',str(monthName))])
+    
+    def get_late_early_arrival(self, cr, uid, ids, context=None):
+        result = 0
+        return result
+    
+    def get_early_late_going(self, cr, uid, ids, context=None):
+        result = 0
+        return result
+    
+    def set_month(self):
+        
+        return True
+
+    _columns = {
+        'employee_id': fields.many2one('hr.employee'),
+      'attendance_date': fields.date('Attendance Date'),
+      'sign_in': fields.char('Sign In'),
+      'sign_out': fields.char('Sign Out'),
+    'late_early_arrival': fields.char('Late/Early Arrival'),
+    'early_late_going': fields.char('Early/Late Departure'),
+#     'late_early_arrival': fields.function(get_late_early_arrival, method=True, string='Late/Early Arrival',type='integer'),
+#     'early_late_going': fields.function(get_early_late_going, method=True, string='Early/Late Departure',type='integer'),
+      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave')], 'Attendance Status'),
+      'attendance_month': fields.char('Attendance Month'),
+      'invoiced': fields.boolean('Invoiced',readonly = 1)
+    }
+    _defaults = {
+        
+    }
+hr_employee()
+
+
 class hr_attendance(osv.osv):
     _name = "hr.attendance"
     _inherit = "hr.attendance"
