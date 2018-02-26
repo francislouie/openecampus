@@ -94,6 +94,7 @@
                                     <field name="sign_out" readonly ="1"/>
                                     <field name="late_early_arrival" readonly ="1"/>
                                      <field name="early_late_going" readonly ="1"/>
+                                    <field name="total_late" readonly ="1"/>
                                     <field name="final_status" readonly ="1"/>
                                     </tree>
                                     </field>
