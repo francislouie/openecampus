@@ -6,6 +6,14 @@ from openerp.tools.translate import _
 from dbus.decorators import method
 #from samba.netcmd import domain
 
+class res_company(osv.osv):
+    
+    """This object inherits res company adds fields related to accounts ."""
+    _name = 'res.company'
+    _inherit ='res.company'
+    _columns = {
+                'empleado_branch_id':fields.char('Branch ID')}
+
 class hr_biometric_device(osv.osv):
     _name = "hr.biometirc.device"
     _description = "Biometric Devices"
@@ -119,10 +127,10 @@ class hr_employee_attendance(osv.osv):
       'attendance_date': fields.date('Attendance Date'),
       'sign_in': fields.char('Sign In'),
       'sign_out': fields.char('Sign Out'),
-      'late_early_arrival': fields.char('Late/Early Arrival'),
-      'early_late_going': fields.char('Early/Late Departure'),
-      'late_early_arrival': fields.function(get_late_early_arrival, method=True, string='Late/Early Arrival',type='integer'),
-      'early_late_going': fields.function(get_early_late_going, method=True, string='Early/Late Departure',type='integer'),
+      'late_early_arrival': fields.char('Late Arrival'),
+      'early_late_going': fields.char('Early Departure'),
+      'late_early_arrival': fields.function(get_late_early_arrival, method=True, string='Late Arrival',type='integer'),
+      'early_late_going': fields.function(get_early_late_going, method=True, string='Early Departure',type='integer'),
       'total_late': fields.function(total_late, method=True, string='Total Late ',type='integer'),
       'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave')], 'Attendance Status'),
       'attendance_month': fields.char('Attendance Month'),
