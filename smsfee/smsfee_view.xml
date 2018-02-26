@@ -620,8 +620,12 @@
 						<group>
 							<field name="fee_type" attrs="{'readonly':[('state','IN',['fee_paid'])]}" on_change="onchange_get_amount(fee_type)"  />
 							<field name="generic_fee_type"   />
+<<<<<<< HEAD
+							<field name="fee_amount" attrs="{'readonly':[('state','IN',['fee_paid'])]}" />
+=======
 							<!--attrs="{'readonly':[('state','IN',['fee_paid'])]}"-->
 							<field name="fee_amount"/>
+>>>>>>> 69d99fa1160641b4c18824aef279fcb78cb8ff5f
 							<field name="net_total" readonly = "1"/>
 							<field name="receipt_no" attrs="{'readonly':[('state','IN',['fee_paid'])]}"/>
 						</group>

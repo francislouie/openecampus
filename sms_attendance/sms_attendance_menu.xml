@@ -23,6 +23,10 @@
 
 		<menuitem id="menu_action_daily_attendance_summary_sheet_id" parent="menu_attendance_reports_id" sequence="2" action="action_sms_daily_attendance_sheet"
 		groups="sms.group_sms_principal,sms.group_sms_director,sms.group_sms_admin,group_sms_attendance_edit,group_sms_attendance_officer"/>
+   
+   
+        <menuitem id="menu_action_total_absent_attendance_summary_sheet_id" parent="menu_attendance_reports_id" sequence="2" action="action_sms_total_absent_attendance_sheet"
+        groups="sms.group_sms_principal,sms.group_sms_director,sms.group_sms_admin,group_sms_attendance_edit,group_sms_attendance_officer"/>
 
 	</data>
 </openerp>

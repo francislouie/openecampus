@@ -24,6 +24,7 @@ class sms_attendance_parser(report_sxw.rml_parse):
             'get_filled_attendance_report_days':self.get_filled_attendance_report_days,
             'get_filled_attendance_report_recs':self.get_filled_attendance_report_recs,
             'get_daily_attendance_report':self.get_daily_attendance_report,
+            'get_total_absent_attendance_report':self.get_total_absent_attendance_report
             })
         self.context = context
           
@@ -394,6 +395,69 @@ class sms_attendance_parser(report_sxw.rml_parse):
 
         result.append(final_dict)
         return result
+    def get_total_absent_attendance_report(self, data):
+        
+        result = []
+        final_dict = {}
+        this_form = self.datas['form']
+        session_id = this_form['session_id'][0]
+        class_id = this_form['class_id'][0]
+        date_str = this_form['date']
+
+        date = datetime.datetime.strptime(str(date_str), '%Y-%m-%d')
+        session_obj = self.pool.get('sms.session').browse(self.cr, self.uid, session_id)
+        final_dict.update({'date': date.strftime('%d-%m-%Y')})
+        final_dict.update({'day': date.strftime('%A')})
+        final_dict.update({'session': session_obj.academic_session_id.name})
+        
+        student_sql = """SELECT name, father_name, registration_no, id
+                        FROM sms_student 
+                        WHERE current_class = """ + str(class_id) + """
+                        """     
+        self.cr.execute(student_sql)
+        studentslist = self.cr.fetchall()
+            
+        
+        
+        academiccalendar_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('session_id','=',session_id)])
+        
+        academiccalendar_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, academiccalendar_ids)
+        
+        
+        ids=1
+        total_students = 0
+        total_presents = 0
+        total_absents = 0
+        total_leaves = 0
+        attendances = []
+        
+        
+        
+        i = 1
+        for student in studentslist:
+            my_dict = {'s_no':'', 'student':'', 'section':'', 'total_students':'', 'present':'', 'absent':'', 'leave':''}
+           
+            my_dict['s_no'] = i + 1
+            my_dict['student'] = student[0]
+            
+            class_attendance =  self.pool.get('sms.academiccalendar').get_attendance_on_date_list(self.cr, self.uid, ids, class_id, date.date())
+            present=class_attendance['present']
+            absent=class_attendance['absent']
+            leave=class_attendance['leave']
+            
+            attendances.append(my_dict)
+       
+        final_dict.update({'attendances': attendances})
+        final_dict.update({'total_students': total_students})
+        final_dict.update({'total_presents': total_presents})
+        final_dict.update({'total_absents': total_absents})
+        final_dict.update({'total_leaves': total_leaves})
+
+        final_dict.update({'date_printed': datetime.datetime.now().strftime('%d-%m-%Y')})
+        final_dict.update({'printed_by': self.pool.get('res.users').browse(self.cr,self.uid,self.uid).name})
+
+        result.append(final_dict)
+        return result
 
 report_sxw.report_sxw('report.smsattendance.blank.attendance.sheet',
                         'sms.academiccalendar',
@@ -403,6 +467,10 @@ report_sxw.report_sxw('report.smsattendance.blank.attendance.sheet',
 report_sxw.report_sxw('report.smsattendance.filled.attendance.sheet',
                         'sms.academiccalendar',
                         'addons/sms_attendance/report/filled_attendance_report.rml', 
+                        parser=sms_attendance_parser, header='external')
+report_sxw.report_sxw('report.smsattendance.total.absent.attendance.sheet',
+                        'sms.academiccalendar',
+                        'addons/sms_attendance/report/total_absent_attendance_report.rml', 
                         parser=sms_attendance_parser, header='external')
 
 report_sxw.report_sxw('report.smsattendance.daily.attendance.sheet',
