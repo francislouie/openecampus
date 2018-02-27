@@ -95,9 +95,9 @@ class hr_employee_attendance(osv.osv):
                 print"time from ffff",f.sign_in
                 FMT = '%H:%M:%S'
                 print"time from datetime",att_time
-                tdelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+                # tdelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
 #             
-            result[f.id] = tdelta
+            result[f.id] = 0
         return result 
     def total_late(self, cr, uid,ids, name, args, context=None):
         result = {}
@@ -120,7 +120,6 @@ class hr_employee_attendance(osv.osv):
     
     
     def set_month(self):
-        
         return True
 
     _columns = {
