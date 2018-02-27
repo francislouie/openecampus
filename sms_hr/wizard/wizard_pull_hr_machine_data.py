@@ -32,6 +32,13 @@ class sms_pull_hr_machine_data(osv.osv_memory):
             
       
     def pull_attendance_device_data(self, cr, uid, ids, data):
+
+        query="""select empleado_branch_id from res_company where 
+            id=(select company_id from res_users where id="""+str(uid)+""" )"""
+        cr.execute(query)
+        branch_id=cr.fetchone()[0]
+        print("branch id",branch_id)
+
         
         emp_id = []
         dates = []
@@ -40,7 +47,10 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         item2 = 0
         
         import requests
-        r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24')
+        # if branch_id:
+        r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=',str(branch_id))
+        # else:
+        #     raise osv.except_osv(('Branch name doesnt exist '), ('Branch number is empty in Company setting'))
         if(r.status_code == 200):
             sqlQ ="""DELETE FROM hr_attendance"""
             cr.execute(sqlQ)

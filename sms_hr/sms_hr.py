@@ -12,7 +12,8 @@ class res_company(osv.osv):
     _name = 'res.company'
     _inherit ='res.company'
     _columns = {
-                'empleado_branch_id':fields.char('Branch ID')}
+                'empleado_branch_id':fields.char('Branch ID')
+                }
 
 class hr_biometric_device(osv.osv):
     _name = "hr.biometirc.device"
@@ -96,7 +97,7 @@ class hr_employee_attendance(osv.osv):
                 print"time from datetime",att_time
                 tdelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
 #             
-            result[f.id] = vari
+            result[f.id] = tdelta
         return result 
     def total_late(self, cr, uid,ids, name, args, context=None):
         result = {}
