@@ -23,12 +23,11 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     
     """
     
-    
     _name = "sms.pull.hr.machine.data"
     _description = "Pull Datat"
     _columns = {
               'pull_for_device': fields.selection([('all','Pull For All Device')],'Device'),
-               }
+              'month': fields.date('Month to Get Absentees')}
             
       
     def pull_attendance_device_data(self, cr, uid, ids, data):
@@ -132,12 +131,13 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                     print " not found on ERP for emplead acc",employee_rec
 
                 item2 += 1
-                
-                
-                 
         return True    
     
-    
+    def compute_attendance_absentees(self, cr, uid, ids, data):
+        
+        #wrte method code here
+        return 
+        
     
 sms_pull_hr_machine_data()
 
