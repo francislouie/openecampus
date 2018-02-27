@@ -14,6 +14,53 @@ class res_company(osv.osv):
     _columns = {
                 'empleado_branch_id':fields.char('Branch ID')}
 
+class hr_contract(osv.osv):
+    _name = 'hr.contract'
+    _inherit = 'hr.contract'
+    _description = 'Contract'
+    
+    def deduct_amount(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            
+            mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('name','=', f.month)])
+            if mss:
+                rec = self.pool.get('hr.monthly.attendance.calculation').browse(cr,uid,mss[0]) 
+                deducted_amount = rec.deducted_amount
+                result[f.id] = deducted_amount 
+            else:
+                result[f.id] = 0.0
+        return result
+    _columns = {
+        'attendance_calc': fields.one2many('hr.monthly.attendance.calculation','contract_id', "Attendance Calc"),
+        'month': fields.char('Month (e.g 02-2018)'),
+        'amount_to_deduct':fields.function(deduct_amount, method=True, string='Deducted Amount',type='float'),
+    }
+
+
+class hr_monthly_attendance_calculation(osv.osv):
+    _name = "hr.monthly.attendance.calculation"
+    _description = "Salary Calculation"
+
+    _columns = {
+        'calendar_month': fields.date('Month', required=True),
+        'name': fields.char('Month Year'),
+        'contract_id': fields.many2one('hr.contract'),
+        'employee_id': fields.many2one('hr.employee'),
+        'twenty_minutes_late': fields.integer('Twenty Minutes late'),
+        'deduction_on_twenty_minutes_late': fields.integer('Deductions Twenty Mintues late(Days)'),
+        'thirty_minutes_late': fields.integer('Thirty Minutes late'),
+        'deduction_on_thirty_minutes_late': fields.integer('Deductions Thirty Mintues late(Days)'),
+        'absentees_this_month': fields.integer('Absentees This month'),
+        'approved_leaves_this_month': fields.integer('Leaves This month'),
+        'net_absentees': fields.integer('Absentees After leaves'),
+        'deducted_absentees_plus_late_comings': fields.integer('Net Deduction'),
+        'deducted_amount':fields.integer('Deducted Amount'),
+    }
+    _defaults = {
+    }
+
+
 class hr_biometric_device(osv.osv):
     _name = "hr.biometirc.device"
     _description = "Biometric Devices"

@@ -4257,27 +4257,14 @@ hr_employee()
 class hr_contract(osv.osv):
     """Stores additional informatin to hr contact"""
     
-    def deduct_amount(self, cr, uid, ids, name, args, context=None):
-        result = {}
-        for f in self.browse(cr, uid, ids, context=context):
-            wage = f.wage
-            if wage >0:
-                per_day = float(wage/30)
-                per_hour = per_day/8
-            else:
-                per_day = 0.0
-                per_hour = 0.0
-            deducted_amount = f.hours_to_deduct * per_hour
-            result[f.id] = deducted_amount 
-        return result
+    
     
     _name = 'hr.contract'
     _inherit ='hr.contract'
-        
+      
     _columns = {
          #this is temp bases placed on employee form, we will add this as one2many, for each month hours to deduct       
         'hours_to_deduct': fields.float('Hours To Deduct'),
-        'amount_to_deduct':fields.function(deduct_amount, method=True, string='Deducted Amount',type='float'),
     }
 hr_contract()
 

@@ -2867,7 +2867,7 @@
 	    </record>
 
 
-		 <!-- hr contracted inherited for adding dedicting hours for attendance-->
+		 <!-- hr contracted inherited for adding dedicting hours for attendance
 		<record id="hr_contract_inherited_form2" model="ir.ui.view">
             <field name="name">hr.contract.fform2</field>
             <field name="model">hr.contract</field>
@@ -2884,7 +2884,7 @@
                     
                 </data>
             </field>
-        </record>
+        </record>-->
         <!-- sms.employee-->
 		<record model="ir.ui.view" id="view_sms_employee_form">
 		      <field name="name">hr.employee.inherit</field>
