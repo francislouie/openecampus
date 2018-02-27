@@ -52,6 +52,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             'get_challan_footer_one':self.get_challan_footer_one,
             'get_challan_footer_two':self.get_challan_footer_two,
             'get_department_logo':self.get_department_logo,
+            # 'get_vechil_no':self.get_vechil_no,
          })
         self.context = context
 
@@ -319,7 +320,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             cls_id = self.datas['form']['class_id'][0]
         class_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, cls_id)
         return class_obj.group_id.name  
-     
+
     def get_challans(self, data):
         #currentlty this parser is set to call for whole class challans orinting
         #both transport and acadmics
@@ -353,19 +354,21 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         else:
            #check if printed via student form
             if 'student_id' in self.datas['form']:
+
                #challan is being printed via student form, canlcel all other challans of this sutdent
                challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_id','=',self.datas['form']['student_id'][0]),('state','=','fee_calculated')])
-               print("challans_ids",challan_ids)
+
+
             else:
                print "we are not printing via student form "
-               cls_id = self.datas['form']['class_id'][0]
-               challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_class_id','=',cls_id),('state','=','fee_calculated')])
-            
+
             if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
 
-                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'','amount_in_words':'','amount_after_due_date':'','dbid':'','grand_total':'','grand_lable':'','partial_lable':'' ,'Table_1':''}
+                    challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'',
+                                'amount_in_words':'','amount_after_due_date':'','dbid':'','grand_total':'','grand_lable':'','partial_lable':'' ,'Table_1':''
+                                ,'vechil_no':''}
                     challan_dict['challan_number'] = self.get_challan_number(challan.id)
                     challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                     challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
@@ -373,6 +376,28 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                     challan_dict['total_amount'] = self.get_total_amount(challan.id)
                     challan_dict['amount_in_words'] = self.get_amount_in_words(challan.id) 
                     challan_dict['dbid'] = self.print_challan_dbid(challan.id)
+                    #adding vechil No phase no and driver number to transport challans this will work for Individual
+                    #as well as class wise challans
+                    if self.datas['form']['category'] == 'Transport':
+                        if 'student_id' in self.datas['form']:
+                            std_id = str(self.datas['form']['student_id'][0])
+                            query = """ select vehcile_no,name from  sms_transport_vehcile
+                                            where id =(select vehcile_reg_students_id from sms_student where id=""" + std_id + """ )"""
+                            self.cr.execute(query)
+                            _result=self.cr.fetchall()[0]
+                            print "_result",_result
+                            challan_dict['vechil_no'] = _result[0]
+                            challan_dict['vechil_name'] = _result[1]
+                        else:
+
+                            class_id = self.datas['form']['class_id'][0]
+                            query = """ select vehcile_no,name from  sms_transport_vehcile
+                                           where id =(select vehcile_reg_students_id from sms_student where current_class=""" \
+                                    + str(self.datas['form']['class_id'][0]) + """)"""
+                            self.cr.execute(query)
+                            _result = self.cr.fetchall()
+                            challan_dict['vechil_no'] = _result[0]
+                            challan_dict['vechil_name'] = _result[1]
                     if 'fee_receiving_type' in self.datas['form']:
                         if self.datas['form']['fee_receiving_type'] == "Partial":
                             grand_amt=self.pool.get('sms.student').total_outstanding_dues(self.cr, self.uid, self.datas['form']['student_id'][0], self.datas['form']['category'],'fee_unpaid')
@@ -396,7 +421,28 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
     def get_user_name(self):
         user_name = self.pool.get('res.users').browse(self.cr, self.uid, self.uid, self.context).name
         return   user_name
- 
+
+    # def get_vechil_no(self):
+    #     if self.datas['form']['category'] == 'Academics':
+    #         vechil_no = None
+    #     elif self.datas['form']['category'] == 'Transport':
+    #         if 'student_id' in self.datas['form']:
+    #             std_id = str(self.datas['form']['student_id'][0])
+    #             query = """ select vehcile_no,name from  sms_transport_vehcile
+    #              where id =(vehcile_reg_students_id from sms_student where id=""" + std_id+""" )"""
+    #             self.cr.execute(query)
+    #             vechil_no = self.cr.fetchone()[0]
+    #         else:
+    #             std_id = str(self.datas['form']['class_id'][0])
+    #             query = """ select vehcile_no,name from  sms_transport_vehcile
+    #              where id =( vehcile_reg_students_id from sms_student where current_class="""\
+    #                     +str(self.datas['form']['class_id'][0])+""")"""
+    #             self.cr.execute(query)
+    #             vechil_no = self.cr.fetchone()[0]
+    #             vechil_no='dummy id'
+    #     print('vechil_no',vechil_no)
+    #     return vechil_no
+
     def get_vertical_lines(self, data):
         line_dots = []
         for num in range(1,30):
