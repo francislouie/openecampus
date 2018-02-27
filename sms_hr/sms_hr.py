@@ -79,33 +79,27 @@ class hr_employee_attendance(osv.osv):
    
     def get_late_early_arrival(self, cr, uid,ids, name, args, context=None):
         result = {}
-        vari=0
         for f in self.browse(cr, uid, ids, context=context):
-            print"employee id ",f.employee_id
-            print"Employee attendance date",f.attendance_date
-            
-            
-            schedule_id_lst = []
-           
+            calcdate = 0
             sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('day','=',str(f.attendance_date))])
             if sch_detail_ids:
                 sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids)
-                att_time = datetime.strptime(sch_detail__objs[0]['date_start'],"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
-                print"time from ffff",f.sign_in
+                att_time = datetime.strptime(sch_detail__objs[0]['date_end'],"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
                 FMT = '%H:%M:%S'
-                print"time from datetime",att_time
-                tdelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
-#             
-            result[f.id] = vari
+                if datetime.strptime(f.sign_in, FMT) > datetime.strptime(att_time, FMT):
+                    print"bio time ",f.sign_in
+                    print"Db time",att_time
+                    print"datebase full time",sch_detail__objs[0]['date_end']
+                    calcdate =  datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+                    print"Difference",calcdate
+            result[f.id] = str(calcdate)
         return result 
+    
     def total_late(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-#              sql = """SELECT COALESCE(count(id),'0') from sms_student
-#                       WHERE current_class = """+str(f.academic_cal_id.id)+""" AND fee_type = """+str(f.fee_structure_id.id)
-#              cr.execute(sql)
-#              row = cr.fetchone()
-             result[f.id] = 43
+             
+            result[f.id] = 43
         return result 
    
 
@@ -113,7 +107,14 @@ class hr_employee_attendance(osv.osv):
     def get_early_late_going(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            result[f.id] = 90
+            calcdate = 0
+            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('day','=',str(f.attendance_date))])
+            if sch_detail_ids:
+                sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids)
+                att_time = datetime.strptime(sch_detail__objs[0]['date_start'],"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                FMT = '%H:%M:%S'
+                calcdate = datetime.strptime(f.sign_out, FMT) - datetime.strptime(att_time, FMT)
+            result[f.id] = str(calcdate)
         return result 
     
     
@@ -123,14 +124,14 @@ class hr_employee_attendance(osv.osv):
         return True
 
     _columns = {
-        'employee_id': fields.many2one('hr.employee'),
+      'employee_id': fields.many2one('hr.employee'),
       'attendance_date': fields.date('Attendance Date'),
       'sign_in': fields.char('Sign In'),
       'sign_out': fields.char('Sign Out'),
       'late_early_arrival': fields.char('Late Arrival'),
       'early_late_going': fields.char('Early Departure'),
-      'late_early_arrival': fields.function(get_late_early_arrival, method=True, string='Late Arrival',type='integer'),
-      'early_late_going': fields.function(get_early_late_going, method=True, string='Early Departure',type='integer'),
+      'late_early_arrival': fields.function(get_late_early_arrival, method=True, string='Late Arrival',type='char'),
+      'early_late_going': fields.function(get_early_late_going, method=True, string='Early Departure',type='char'),
       'total_late': fields.function(total_late, method=True, string='Total Late ',type='integer'),
       'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave')], 'Attendance Status'),
       'attendance_month': fields.char('Attendance Month'),

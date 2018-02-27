@@ -141,4 +141,47 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     
 sms_pull_hr_machine_data()
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
