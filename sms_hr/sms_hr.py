@@ -229,7 +229,6 @@ class hr_employee_attendance(osv.osv):
       'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='selection', selection=DAYOFWEEK_SELECTION),
       'sign_in': fields.char('Sign In'),
       'sign_out': fields.char('Sign Out'),
-
       'late_early_arrival': fields.function(get_late_arrival, method=True, string='Late Arrival',type='integer'),
       'early_late_going': fields.function(get_early_late_going, method=True, string='Early Departure',type='integer'),
       'total_short_minutes': fields.function(total_short_minutes, method=True, string='Short Min ',type='integer'),

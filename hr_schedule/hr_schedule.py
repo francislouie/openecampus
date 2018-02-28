@@ -898,32 +898,40 @@ class hr_department_schedule(osv.osv):
                 my_id = super(hr_department_schedule, self).create(cr, uid, vals, context=context)
 #                 self.create_details(cr, uid, my_id, context=context)
         return my_id
-#   def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-#         objs = self.browse(cr, uid, ids, context=context)
-#         print"objects",vals
-#         val_data = vals['detail_ids']
-#         for value in val_data:
-#             rec_id=value[1]
-#             rec_date=value[2]
-#             if rec_date:
-#                 print"ddddddddddddddd",rec_date
-#                 print"date stat",value[2]
-#                 if rec_date['date_start']:
-#                     print"date_start",rec_date['date_start']
-#                 if rec_date['date_end']:
-#                     print"date_end",rec_date['date_end']
-#             dep_schedule_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('department_id','=',objs[0].department_id.id)])
-#             schedule_objs = self.pool.get('hr.schedule.detail').browse(cr,uid, dep_schedule_ids)
-#             print"schedule id",schedule_objs
-#       
-#         print" vals'date_start'",val_data[0]
-#         var_dat = val_data[0]
-#         print"final data",var_dat[2]['date_start']
-#         print"detail id ",
-#       
-#         for sch_id in schedule_objs:
-#             print"employee id",sch_id.department_id
-#         return True
+    
+
+    
+    
+    
+    
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        new_date_end =0
+        new_date_start=0   
+        if 'detail_ids' in vals:
+            for value in vals['detail_ids']:
+                rec_id=value[1]
+                rec_date=value[2]
+                if value[2]:
+                    if 'date_end' in value[2]:
+                        new_date_end=rec_date['date_end']
+                    if 'date_start' in value[2]:
+                        new_date_start=rec_date['date_start']
+                    if rec_date:
+                        dep_schedule_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('id','=',rec_id)])
+                        for f in self.pool.get('hr.schedule.detail').browse(cr,uid, dep_schedule_ids):
+                            dep_schedule_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('department_id','=',f.department_id.id),('day','=',f.day)])
+                            schedule_objs = self.pool.get('hr.schedule.detail').browse(cr,uid, dep_schedule_ids)
+                            for schedule in schedule_objs:
+                                if new_date_end ==0:
+                                    new_date_end=f.date_end
+                                if new_date_start ==0:
+                                    new_date_start=f.date_start    
+                                if schedule:
+                                    update= self.pool.get('hr.schedule.detail').write(cr, uid, schedule.id, {'date_start':new_date_start,'date_end':new_date_end})
+                            new_date_end =0
+                            new_date_start=0 
+            result = super(osv.osv, self).write(cr, uid, ids, vals, context)
+        return True
     def create_mass_schedule(self, cr, uid, context=None):
         '''Creates tentative schedules for all employees based on the
         schedule template attached to their contract. Called from the scheduler.'''
