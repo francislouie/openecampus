@@ -4,7 +4,18 @@ from datetime import datetime
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 from dbus.decorators import method
+import calendar
 #from samba.netcmd import domain
+
+DAYOFWEEK_SELECTION = [('0', 'Monday'),
+                       ('1', 'Tuesday'),
+                       ('2', 'Wednesday'),
+                       ('3', 'Thursday'),
+                       ('4', 'Friday'),
+                       ('5', 'Saturday'),
+                       ('6', 'Sunday'),
+
+                       ]
 
 class res_company(osv.osv):
     
@@ -124,45 +135,86 @@ class hr_employee_attendance(osv.osv):
   
    
    
-    def get_late_early_arrival(self, cr, uid,ids, name, args, context=None):
+    def get_late_arrival(self, cr, uid,ids, name, args, context=None):
         result = {}
-        vari=0
+        lat_min=0
         for f in self.browse(cr, uid, ids, context=context):
             print"employee id ",f.employee_id
-            print"Employee attendance date",f.attendance_date
+            fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
+            day = fdate.weekday()
+            print"Employee attendance day",day
+            print"Employee attendance day name",day
             
             
             schedule_id_lst = []
            
-            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('day','=',str(f.attendance_date))])
+            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',day)])
+            print "found sechde on this day ",sch_detail_ids
             if sch_detail_ids:
-                sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids)
-                att_time = datetime.strptime(sch_detail__objs[0]['date_start'],"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
-                print"time from ffff",f.sign_in
+                sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
+                att_time = datetime.strptime(sch_detail__objs.date_start,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                print"employee id ",f.employee_id.name
+                print "attendance date:",f.attendance_date
+                print "record id:",sch_detail__objs.id
+                print"time sign in",f.sign_in
                 FMT = '%H:%M:%S'
-                print"time from datetime",att_time
-                tdelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+                print"schedule time",att_time
+                #lat_min = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+                
+                timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+                lat_min = timedelta.days + float(timedelta.seconds) / 60
+                print "***************** late munites",lat_min
 #             
-            result[f.id] = vari
+            result[f.id] = lat_min
         return result 
-    def total_late(self, cr, uid,ids, name, args, context=None):
+    def total_short_minutes(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-#              sql = """SELECT COALESCE(count(id),'0') from sms_student
-#                       WHERE current_class = """+str(f.academic_cal_id.id)+""" AND fee_type = """+str(f.fee_structure_id.id)
-#              cr.execute(sql)
-#              row = cr.fetchone()
-             result[f.id] = 43
+            result[f.id] = f.late_early_arrival + f.early_late_going
         return result 
    
 
     
     def get_early_late_going(self, cr, uid,ids, name, args, context=None):
         result = {}
+        early_minutes=0
         for f in self.browse(cr, uid, ids, context=context):
-            result[f.id] = 90
+            print"employee id ",f.employee_id
+            fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
+            day = fdate.weekday()
+            print"Employee attendance day",day
+            print"Employee attendance day name",day
+            
+            
+            schedule_id_lst = []
+           
+            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',day)])
+            print "found sechde on this day ",sch_detail_ids
+            if sch_detail_ids:
+                sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
+                att_time = datetime.strptime(sch_detail__objs.date_end,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                print"employee id ",f.employee_id.name
+                print "attendance date:",f.attendance_date
+                print "record id:",sch_detail__objs.id
+                print"time sign in",f.sign_in
+                FMT = '%H:%M:%S'
+                print"schedule time",att_time
+                #early_min = datetime.strptime(f.sign_out, FMT) - datetime.strptime(att_time, FMT)
+                
+                timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+                early_minutes = timedelta.days + float(timedelta.seconds) / 60
+                print "***************** late early_minutes",early_minutes
+            result[f.id] = early_minutes
+
         return result 
-    
+    def get_day_ofweek(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            print"employee id ",f.employee_id
+            fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
+            day = fdate.weekday()
+            print"Employee attendance date",fdate.weekday()
+        return result 
     
     
     def set_month(self):
@@ -172,14 +224,13 @@ class hr_employee_attendance(osv.osv):
     _columns = {
         'employee_id': fields.many2one('hr.employee'),
       'attendance_date': fields.date('Attendance Date'),
+      'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='selection', selection=DAYOFWEEK_SELECTION),
       'sign_in': fields.char('Sign In'),
       'sign_out': fields.char('Sign Out'),
-      'late_early_arrival': fields.char('Late Arrival'),
-      'early_late_going': fields.char('Early Departure'),
-      'late_early_arrival': fields.function(get_late_early_arrival, method=True, string='Late Arrival',type='integer'),
+      'late_early_arrival': fields.function(get_late_arrival, method=True, string='Late Arrival',type='integer'),
       'early_late_going': fields.function(get_early_late_going, method=True, string='Early Departure',type='integer'),
-      'total_late': fields.function(total_late, method=True, string='Total Late ',type='integer'),
-      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave')], 'Attendance Status'),
+      'total_short_minutes': fields.function(total_short_minutes, method=True, string='Short Min ',type='integer'),
+      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('Not-Out', 'Not-CheckOut')], 'Status'),
       'attendance_month': fields.char('Attendance Month'),
       'invoiced': fields.boolean('Invoiced',readonly = 1)
     }

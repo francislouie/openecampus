@@ -45,7 +45,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
             times = []
             item = 0
             item2 = 0
-            r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24')
+            r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=25')
             if(r.status_code == 200):
 #                 sqlQ ="""DELETE FROM hr_attendance"""
 #                 cr.execute(sqlQ)
@@ -53,7 +53,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                 print'----------- RAW DATA ------------------',read
                 if(read['status']=='ok'):
                     ack_id = read['acknowledge_id']
-                    ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24&ack_id='+str(ack_id)) 
+                    ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=25&ack_id='+str(ack_id)) 
 #                     print "---------------------------     json response    -----------------------------",read,ack
                     for att_record in read['att_records']:
 #                         print "empleado id",att_record['user_empleado_id']
