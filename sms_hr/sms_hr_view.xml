@@ -90,11 +90,12 @@
                                    </group>
                                    <tree>
                                     <field name="attendance_date" readonly ="1"/>
+                                    <field name="dayofweek" readonly ="1"/>
                                     <field name="sign_in" readonly ="1"/>
                                     <field name="sign_out" readonly ="1"/>
                                     <field name="late_early_arrival" readonly ="1"/>
                                      <field name="early_late_going" readonly ="1"/>
-                                    <field name="total_late" readonly ="1"/>
+                                    <field name="total_short_minutes" readonly ="1"/>
                                     <field name="final_status" readonly ="1"/>
                                     </tree>
                                     </field>
@@ -149,6 +150,54 @@
             <field name="view_id" ref="hr_payroll.view_hr_payslip_tree"/>
              <field name="domain">[('state','in',['Archieved'])]</field>
             <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+        </record>
+	
+	<!-- HR Contract Inherited -->
+	
+	<record id="hr_contract_inherited_" model="ir.ui.view">
+            <field name="name">hr.contract2</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//group[@name='duration_group']" position="before">
+                        <group string="Deductions">
+                            <field name="month" />
+                             <field name="amount_to_deduct" />
+                        </group>
+                    </xpath>
+                    
+                    <xpath expr="//page[@string='Work Permit']" position="after">
+                        <page string = "Attendance Summary">
+                             <field name="attendance_calc" widget="one2many_list" nolabel="1" colspan="4"> 
+						<tree>
+							<field name="name" />
+							
+							<field name="twenty_minutes_late"/>
+							<field name="thirty_minutes_late"/>
+							<field name="absentees_this_month"/>
+							<field name="approved_leaves_this_month"/>
+						</tree>
+						<form delete="false">
+							<field name="name" /><newline/>
+							<field name="twenty_minutes_late"/>
+							<field name="deduction_on_twenty_minutes_late"/>
+							<field name="thirty_minutes_late"/>
+							<field name="deduction_on_thirty_minutes_late"/>
+							<field name="absentees_this_month"/>
+							<field name="approved_leaves_this_month"/>
+							
+							<field name="net_absentees"/>
+							<field name="deducted_absentees_plus_late_comings"/>
+							<field name="deducted_amount"/>
+						</form>
+						</field>
+                        </page>
+                    </xpath>
+                    
+                </data>
+            </field>
         </record>
 	
 	
