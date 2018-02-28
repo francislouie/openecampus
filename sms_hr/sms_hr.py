@@ -262,6 +262,7 @@ class hr_employee_attendance(osv.osv):
         result = {}
         early_minutes=0
         for f in self.browse(cr, uid, ids, context=context):
+
             print"employee id ",f.employee_id
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
@@ -297,6 +298,7 @@ class hr_employee_attendance(osv.osv):
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
             print"Employee attendance date",fdate.weekday()
+
         return result 
     
     
@@ -305,7 +307,7 @@ class hr_employee_attendance(osv.osv):
         return True
 
     _columns = {
-        'employee_id': fields.many2one('hr.employee'),
+      'employee_id': fields.many2one('hr.employee'),
       'attendance_date': fields.date('Attendance Date'),
       'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='selection', selection=DAYOFWEEK_SELECTION),
       'sign_in': fields.char('Sign In'),
