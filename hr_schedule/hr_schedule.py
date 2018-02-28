@@ -1093,8 +1093,10 @@ class schedule_detail(osv.osv):
             for detail in sched.detail_ids:
                 res.append(detail.id)
         return res
-
-    _columns = {
+    
+    
+    
+    _columns = { 
         'name': fields.char("Name", size=64, required=True),
         'dayofweek': fields.selection(DAYOFWEEK_SELECTION, 'Day of Week', required=True, select=True),
         'date_start': fields.datetime('Start Date and Time', required=True),

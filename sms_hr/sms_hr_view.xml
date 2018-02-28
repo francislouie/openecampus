@@ -89,6 +89,7 @@
                                    </tree>
                                    </group>
                                    <tree>
+                                     
                                     <field name="attendance_date" readonly ="1"/>
                                     <field name="dayofweek" readonly ="1"/>
                                     <field name="sign_in" readonly ="1"/>
@@ -173,7 +174,6 @@
                              <field name="attendance_calc" widget="one2many_list" nolabel="1" colspan="4"> 
 						<tree>
 							<field name="name" />
-							
 							<field name="twenty_minutes_late"/>
 							<field name="thirty_minutes_late"/>
 							<field name="absentees_this_month"/>
