@@ -34,7 +34,7 @@ class hr_contract(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             
-            mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('name','=', f.month)])
+            mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('calendar_month','=', '2018-02-01')])
             if mss:
                 rec = self.pool.get('hr.monthly.attendance.calculation').browse(cr,uid,mss[0]) 
                 deducted_amount = rec.deducted_amount
@@ -52,23 +52,106 @@ class hr_contract(osv.osv):
 class hr_monthly_attendance_calculation(osv.osv):
     _name = "hr.monthly.attendance.calculation"
     _description = "Salary Calculation"
-
+    
+    def get_twentry_m_late(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            records = 0
+            t20_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>','2018-02-01'),('attendance_date','<','2018-02-28')])
+            if t20_ids:
+                rect20 = self.pool.get('hr.employee.attendance').browse(cr,uid,t20_ids)
+                for t20 in rect20:
+                    late_m = t20.total_short_minutes
+                    if late_m >=20 and late_m <30:
+                        records = records +1
+        result[f.id] = records
+        return result
+    
+    def get_decuction_twentry_m_late(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            total_late = f.twenty_minutes_late or 0
+            if total_late >=3:
+                day_ded = int(total_late/3)
+            else:
+                day_ded = 0
+            
+            result[f.id] = day_ded
+        return result
+    
+    
+    def get_thirty_m_late(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            records = 0
+            t20_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>','2018-02-01'),('attendance_date','<','2018-02-28')])
+            if t20_ids:
+                rect20 = self.pool.get('hr.employee.attendance').browse(cr,uid,t20_ids)
+                for t20 in rect20:
+                    late_m = t20.total_short_minutes
+                    if late_m >=30:
+                        records = records +1
+            result[f.id] = records
+        return result
+    
+    def get_decuction_thirty_m_late(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            total_late = f.thirty_minutes_late or 0
+            if total_late >=2:
+                day_ded = int(total_late/2)
+            else:
+                day_ded = 0
+            
+            result[f.id] = day_ded
+        return result
+    
+    def get_absentess_leave(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            net= f.absentees_this_month - f.approved_leaves_this_month 
+            if net <0:
+                net = 0
+            result[f.id] = net
+        return result
+    
+    def absentess_plus_late_days(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            net= f.deduction_on_twenty_minutes_late or 0 + f.deduction_on_thirty_minutes_late or 0 + f.net_absentees 
+            if net <0:
+                net = 0
+            result[f.id] = net
+        return result
+    
+    def deducted_amoun(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            final_deducted_days= f.deducted_absentees_plus_late_comings
+            salary = f.contract_id.wage or 0
+            per_day = salary/30
+            total_deductions = per_day * final_deducted_days 
+            result[f.id] = total_deductions
+        return result
+    
     _columns = {
         'calendar_month': fields.date('Month', required=True),
         'name': fields.char('Month Year'),
         'contract_id': fields.many2one('hr.contract'),
         'employee_id': fields.many2one('hr.employee'),
-        'twenty_minutes_late': fields.integer('Twenty Minutes late'),
-        'deduction_on_twenty_minutes_late': fields.integer('Deductions Twenty Mintues late(Days)'),
-        'thirty_minutes_late': fields.integer('Thirty Minutes late'),
-        'deduction_on_thirty_minutes_late': fields.integer('Deductions Thirty Mintues late(Days)'),
+        'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
+        'deduction_on_twenty_minutes_late': fields.function(get_decuction_twentry_m_late, method=True, string='Deduction (Days) On 20min',type='integer'),
+        'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
+        'deduction_on_thirty_minutes_late': fields.function(get_decuction_thirty_m_late, method=True, string='Deduction (Days) On 30min',type='integer'),
         'absentees_this_month': fields.integer('Absentees This month'),
         'approved_leaves_this_month': fields.integer('Leaves This month'),
-        'net_absentees': fields.integer('Absentees After leaves'),
-        'deducted_absentees_plus_late_comings': fields.integer('Net Deduction'),
-        'deducted_amount':fields.integer('Deducted Amount'),
+        'net_absentees': fields.function(get_absentess_leave, method=True, string='Absentees After Leave',type='integer'),
+        'deducted_absentees_plus_late_comings': fields.function(absentess_plus_late_days, method=True, string='Absent Days Plus Late comings ded (Days)',type='integer'),
+        'deducted_amount':fields.function(deducted_amoun, method=True, string='Deducted Amount',type='integer'),
     }
     _defaults = {
+                 'absentees_this_month':0,
+                 'approved_leaves_this_month':0
     }
 
 
@@ -210,12 +293,16 @@ class hr_employee_attendance(osv.osv):
         return result 
     def get_day_ofweek(self, cr, uid,ids, name, args, context=None):
         result = {}
+        days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
+         
         for f in self.browse(cr, uid, ids, context=context):
             print"employee id ",f.employee_id
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
-            print"Employee attendance date",fdate.weekday()
-
+            name_day=days[day]
+           
+            print"Employee attendance date nnnnnnn",name_day
+            result[f.id] = '('+str(name_day)+')'+str(f.attendance_date)
         return result 
     
     
@@ -226,7 +313,7 @@ class hr_employee_attendance(osv.osv):
     _columns = {
       'employee_id': fields.many2one('hr.employee'),
       'attendance_date': fields.date('Attendance Date'),
-      'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='selection', selection=DAYOFWEEK_SELECTION),
+      'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='char'),
       'sign_in': fields.char('Sign In'),
       'sign_out': fields.char('Sign Out'),
       'late_early_arrival': fields.function(get_late_arrival, method=True, string='Late Arrival',type='integer'),
