@@ -536,18 +536,18 @@ class sms_class_section(osv.osv):
     """
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
          result = super(osv.osv, self).write(cr, uid, ids, vals, context)
-         emp_ids = self.pool.get('hr.employee').search(cr,uid,[])
-         if emp_ids:
-             for emp in emp_ids:
-                 contr_ids = self.pool.get('hr.contract').search(cr,uid,[('employee_id','=',emp)])
-                 
-                 print "employee id",emp
-                 if contr_ids:
-                     print "contr_ids",contr_ids[0]
-                     exists = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('employee_id','=',emp),('contract_id','=',contr_ids[0])]) 
-                     
-                     if not exists:
-                        self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp,'contract_id':contr_ids[0],'calendar_month':'2018-02-01'})
+#          emp_ids = self.pool.get('hr.employee').search(cr,uid,[])
+#          if emp_ids:
+#              for emp in emp_ids:
+#                  contr_ids = self.pool.get('hr.contract').search(cr,uid,[('employee_id','=',emp)])
+#                  
+#                  print "employee id",emp
+#                  if contr_ids:
+#                      print "contr_ids",contr_ids[0]
+#                      exists = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('employee_id','=',emp),('contract_id','=',contr_ids[0])]) 
+#                      
+#                      if not exists:
+#                         self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp,'contract_id':contr_ids[0],'calendar_month':'2018-02-01'})
          return True
 
     _name = 'sms.class.section'
