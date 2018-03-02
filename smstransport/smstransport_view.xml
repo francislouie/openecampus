@@ -336,19 +336,23 @@
 					</div>
 					<group name="transport_registration_main">
 						<group col="4" colspan="2">
-							<field name="transport_route" placeholder="Destination"  attrs="{'readonly':[('state',' in',['Draft'])]}"/>
+
+							<field name="transport_route" placeholder="Destination"  attrs="{'readonly':[('state',' in',['Withdrawn'])]}"/>
 							<field name="registration_type" attrs="{'readonly':[('state',' in',['Draft'])]}"/>
 							<newline/>
-							<field name="employee_id" attrs="{'required':[('registration_type','=','Employee')],'readonly':[('state',' in',['Draft'])],'invisible':[('registration_type','=','Student')]}"/>
+							<field name="employee_id" attrs="{'required':[('registration_type','=','Employee')],'readonly':[('state',' in',['Withdrawn'])],'invisible':[('registration_type','=','Student')]}"/>
 							<newline/>
-							<field name="student_reg_no" on_change="onchange_load_student(student_reg_no)" attrs="{'readonly':[('state',' in',['Draft'])],'invisible':[('registration_type','=','Employee')]}"/>
+							<field name="student_reg_no" on_change="onchange_load_student(student_reg_no)" attrs="{'readonly':[('state',' in',['Withdrawn'])],'invisible':[('registration_type','=','Employee')]}"/>
+
 							<newline/>
 							<field name="student_id" domain="[('state','=','Admitted'),('transport_availed','=',False)]" attrs="{'required':[('registration_type','=','Student')],'readonly':[('state',' in',['Draft'])],'invisible':[('registration_type','=','Employee')]}"/>
 							<newline/>
 							<field name="current_vehcile" on_change="onchange_vehcile_load_shift(current_vehcile)" attrs="{'readonly':[('state','in',['Draft'])]}"/>
-							<field name="shift" attrs="{'readonly':[('state','in',['Draft'])]}"/>
-							<field name="reg_start_date" attrs="{'readonly':[('state',' in',['Draft'])]}"/>
-							<field name="reg_end_date" attrs="{'readonly':[('state',' in',['Draft'])]}"/>
+
+							<field name="shift" attrs="{'readonly':[('state','in',['Withdrawn'])]}"/>
+							<field name="reg_start_date" attrs="{'readonly':[('state',' in',['Withdrawn'])]}"/>
+							<field name="reg_end_date" attrs="{'readonly':[('state',' in',['Withdrawn'])]}"/>
+
 						</group>
 					</group>
 					<notebook>

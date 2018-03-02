@@ -52,7 +52,7 @@ Easily create, manage, and track employee schedules.
         'wizard/restday_view.xml',
         'hr_schedule_data.xml',
         'hr_schedule_workflow.xml',
-        'hr_schedule_cron.xml',
+        #'hr_schedule_cron.xml',
         'alert_rule_data.xml',
     ],
     'test': [

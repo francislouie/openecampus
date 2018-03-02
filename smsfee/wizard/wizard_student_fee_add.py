@@ -50,7 +50,7 @@ class class_student_fee_collectt(osv.osv_memory):
         return cur_cls
 
     def _get_session_id(self, cr, uid, ids):
-        obj = self.browse(cr, uid, ids['active_id'])
+        obj = self.browse(cr, uid, 22)
         std_id = obj.id
         session_id = []
         sql = """select id from sms_session where id=(select  a.session_id from sms_academiccalendar As a  
@@ -64,7 +64,7 @@ class class_student_fee_collectt(osv.osv_memory):
         return session_id[0]
 
     def _get_session_months(self, cr, uid, ids):
-        obj = self.browse(cr, uid, ids['active_id'])
+        obj = self.browse(cr, uid, 22)
         std_id = obj.id
         month_ids=[]
         sql = """select id from sms_session_months where session_id=(select  a.session_id from sms_academiccalendar As a  
