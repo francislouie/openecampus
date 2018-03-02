@@ -24,15 +24,12 @@
             <field name="arch" type="xml">
                 <search string="Work Week Schedule Search">
                     <field name="name" string="Week Schedule"/>
-                    <field name="date_start"/>
                     <filter icon="terp-go-today" string="Today" name="today" domain="[('date_start','&gt;=',current_date),('date_start','&lt;=',current_date)]" />
                     <separator/>
                     <filter icon="terp-stock_align_left_24" string="My Schedule" domain="[('employee_id.user_id.id', '=', uid)]" />
-                    <field name="employee_id"/>
                     <field name="department_id"/>
                     <group expand="0" string="Group By...">
                         <filter name="department" string="Department" icon="terp-personal" domain="[]" context="{'group_by':'department_id'}"/>
-                        <filter name="employee" string="Employee" icon="terp-personal" domain="[]" context="{'group_by':'employee_id'}"/>
                         <filter string="Day" icon="terp-go-today" domain="[]" context="{'group_by':'date_start'}"/>
                     </group>
                 </search>
@@ -45,9 +42,6 @@
             <field name="arch" type="xml">
                 <tree string="Schedules">
                     <field name="name"/>
-                    <field name="employee_id"/>
-                    <field name="date_start"/>
-                    <field name="date_end"/>
                     <field name="department_id"/>
                     <field name="company_id" groups="base.group_multi_company"/>
                     <field name="state"/>
@@ -66,21 +60,27 @@
                             <field name="state" widget="statusbar"/>
                         </header>
                         <group col="4">
-                            <field name="employee_id" on_change="onchange_employee_start_date(employee_id, date_start)"/>
                             <field name="template_id"/>
-                            <label for="date_start" string="Duration"/>
-                            <div>
-                                <field name="date_start" class="oe_inline" on_change="onchange_employee_start_date(employee_id, date_start)"/> to
-                                <field name="date_end" class="oe_inline"/>
-                            </div>
+                            
                             <field name="name"/>
                             <field name="department_id"/>
                             <field name="company_id" groups="base.group_multi_company"/>
                         </group>
                         <notebook>
                             <page string="Working Days">
+                                <field name="schedule_lines_ids">
+                                    <tree string="Schedule Detail" editable="bottom">
+                                        <field name="name"/>
+                                        <field name="dayofweek"/>
+                                        <field name="date_start"/>
+                                        <field name="date_end"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                            <page string="Applied on">
                                 <field name="detail_ids">
-                                    <tree string="Schedule Detail" editable="top">
+                                    <tree string="Employees Schedule" >
                                         <field name="name"/>
                                         <field name="dayofweek"/>
                                         <field name="date_start"/>
@@ -124,114 +124,7 @@
                   parent="menu_hr_root_schedule"
                   sequence="10"/>
                   
-                     <!--Department Schedules -->
-
-        <record id="view_hr_department_schedule_filter" model="ir.ui.view">
-            <field name="name">view_hr_department_schedule_filter</field>
-            <field name="model">hr.department.schedule</field>
-            <field name="arch" type="xml">
-                <search string="Work Week Schedule Search">
-                    <field name="name" string="Week Schedule"/>
-                    <field name="date_start"/>
-                    <filter icon="terp-go-today" string="Today" name="today" domain="[('date_start','&gt;=',current_date),('date_start','&lt;=',current_date)]" />
-                    <separator/>
-                    <filter icon="terp-stock_align_left_24" string="My Schedule" domain="[('employee_id.user_id.id', '=', uid)]" />
-                    <field name="employee_id"/>
-                    <field name="department_id"/>
-                    <group expand="0" string="Group By...">
-                        <filter name="department" string="Department" icon="terp-personal" domain="[]" context="{'group_by':'department_id'}"/>
-                        <filter name="employee" string="Employee" icon="terp-personal" domain="[]" context="{'group_by':'employee_id'}"/>
-                        <filter string="Day" icon="terp-go-today" domain="[]" context="{'group_by':'date_start'}"/>
-                    </group>
-                </search>
-            </field>
-        </record>
-    
-        <record id="view_hr_department_schedule_tree" model="ir.ui.view">
-            <field name="name">hr.department.schedule.tree</field>
-            <field name="model">hr.department.schedule</field>
-            <field name="arch" type="xml">
-                <tree string="Schedules">
-                    <field name="name"/>
-                    <field name="employee_id"/>
-                    <field name="date_start"/>
-                    <field name="date_end"/>
-                    <field name="department_id"/>
-                    <field name="company_id" groups="base.group_multi_company"/>
-                    <field name="state"/>
-                </tree>
-            </field>
-        </record>
-
-        <record id="view_hr_department_schedule_form" model="ir.ui.view">
-            <field name="name">hr.department.schedule.form</field>
-            <field name="model">hr.department.schedule</field>
-            <field name="arch" type="xml">
-                <form string="Employee Schedule" version="7.0">
-                    <sheet>
-                        <header>
-                            <button name="signal_validate" type="workflow" states="draft" class="oe_highlight" string="Validate"/>
-                            <field name="state" widget="statusbar"/>
-                        </header>
-                        <group col="4">
-                            <field name="department_id"/>
-                            <field name="template_id"/>
-                            <label for="date_start" string="Duration"/>
-                            <div>
-                                <field name="date_start" class="oe_inline" on_change="onchange_employee_start_date(department_id, date_start)"/> to
-                                <field name="date_end" class="oe_inline"/>
-                            </div>
-                            <field name="name"/>
-                          
-                            <field name="employee_id" invisible="1"/>
-                            <field name="company_id" groups="base.group_multi_company"/>
-                        </group>
-                        <notebook>
-                            <page string="Working Days">
-                                <field name="detail_ids">
-                                    <tree string="Schedule Detail" editable="top">
-                                        <field name="name"/>
-                                        <field name="dayofweek"/>
-                                        <field name="date_start"/>
-                                        <field name="date_end"/>
-                                        <field name="state"/>
-                                    </tree>
-                                </field>
-                            </page>
-                            <page string="Rest Days">
-                                <group>
-                                    <group>
-                                        <field name="restday_ids1" widget="many2many_tags"/>
-                                        <field name="restday_ids2" widget="many2many_tags"/>
-                                        <field name="restday_ids3" widget="many2many_tags"/>
-                                        <field name="restday_ids4" widget="many2many_tags"/>
-                                        <field name="restday_ids5" widget="many2many_tags"/>
-                                    </group>
-                                    <group></group>
-                                </group>
-                            </page>
-                            <page string="Alerts">
-                                <group string="Alerts" colspan="4" cols="5">
-                                    <field name="alert_ids" nolabel="1"/>
-                                </group>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="open_department_schedule_view" model="ir.actions.act_window">
-            <field name="name">Employee Dept Schedules</field>
-            <field name="res_model">hr.department.schedule</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">tree,form</field>
-            <field name="search_view_id" ref="view_hr_department_schedule_filter" />
-        </record>
-        <menuitem action="open_department_schedule_view"
-                  id="menu_schedule_view"
-                  parent="menu_hr_root_schedule"
-                  sequence="10"/>
+                    
         
         <!-- Schedule Detail -->
 
@@ -271,7 +164,7 @@
                     <field name="date_start"/>
                     <field name="date_end"/>
                     <field name="state"/>
-                    <field name="employee_id" invisible="1"/>
+                    <field name="id" readonly="1" string = "Tr#"/>
                 </tree>
             </field>
         </record>
