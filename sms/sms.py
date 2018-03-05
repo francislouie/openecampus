@@ -534,9 +534,21 @@ class sms_class_section(osv.osv):
     """
     This object defines classes section
     """
-#     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-#         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
-#         return result
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
+#          emp_ids = self.pool.get('hr.employee').search(cr,uid,[])
+#          if emp_ids:
+#              for emp in emp_ids:
+#                  contr_ids = self.pool.get('hr.contract').search(cr,uid,[('employee_id','=',emp)])
+#                  
+#                  print "employee id",emp
+#                  if contr_ids:
+#                      print "contr_ids",contr_ids[0]
+#                      exists = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('employee_id','=',emp),('contract_id','=',contr_ids[0])]) 
+#                      
+#                      if not exists:
+#                         self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp,'contract_id':contr_ids[0],'calendar_month':'2018-02-01'})
+         return True
 
     _name = 'sms.class.section'
     _description = "This object store generic section of class"
@@ -4257,27 +4269,14 @@ hr_employee()
 class hr_contract(osv.osv):
     """Stores additional informatin to hr contact"""
     
-    def deduct_amount(self, cr, uid, ids, name, args, context=None):
-        result = {}
-        for f in self.browse(cr, uid, ids, context=context):
-            wage = f.wage
-            if wage >0:
-                per_day = float(wage/30)
-                per_hour = per_day/8
-            else:
-                per_day = 0.0
-                per_hour = 0.0
-            deducted_amount = f.hours_to_deduct * per_hour
-            result[f.id] = deducted_amount 
-        return result
+    
     
     _name = 'hr.contract'
     _inherit ='hr.contract'
-        
+      
     _columns = {
          #this is temp bases placed on employee form, we will add this as one2many, for each month hours to deduct       
         'hours_to_deduct': fields.float('Hours To Deduct'),
-        'amount_to_deduct':fields.function(deduct_amount, method=True, string='Deducted Amount',type='float'),
     }
 hr_contract()
 

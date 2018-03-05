@@ -4,7 +4,18 @@ from datetime import datetime
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 from dbus.decorators import method
+import calendar
 #from samba.netcmd import domain
+
+DAYOFWEEK_SELECTION = [('0', 'Monday'),
+                       ('1', 'Tuesday'),
+                       ('2', 'Wednesday'),
+                       ('3', 'Thursday'),
+                       ('4', 'Friday'),
+                       ('5', 'Saturday'),
+                       ('6', 'Sunday'),
+
+                       ]
 
 class res_company(osv.osv):
     
@@ -14,6 +25,143 @@ class res_company(osv.osv):
     _columns = {
                 'empleado_branch_id':fields.char('Branch ID')
                 }
+
+class hr_contract(osv.osv):
+    _name = 'hr.contract'
+    _inherit = 'hr.contract'
+    _description = 'Contract'
+    
+    def deduct_amount(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            
+            mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('calendar_month','=', '2018-02-01')])
+            if mss:
+                rec = self.pool.get('hr.monthly.attendance.calculation').browse(cr,uid,mss[0]) 
+                deducted_amount = rec.deducted_amount
+                result[f.id] = deducted_amount 
+            else:
+                result[f.id] = 0.0
+        return result
+    _columns = {
+        'attendance_calc': fields.one2many('hr.monthly.attendance.calculation','contract_id', "Attendance Calc"),
+        'month': fields.char('Month (e.g 02-2018)'),
+        'amount_to_deduct':fields.function(deduct_amount, method=True, string='Deducted Amount',type='float'),
+    }
+
+
+class hr_monthly_attendance_calculation(osv.osv):
+    _name = "hr.monthly.attendance.calculation"
+    _description = "Salary Calculation"
+    
+    def get_twentry_m_late(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            records = 0
+            t20_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>','2018-02-01'),('attendance_date','<','2018-02-28')])
+            if t20_ids:
+                rect20 = self.pool.get('hr.employee.attendance').browse(cr,uid,t20_ids)
+                for t20 in rect20:
+                    late_m = t20.total_short_minutes
+                    if late_m >=20 and late_m <30:
+                        records = records +1
+        result[f.id] = records
+        return result
+    
+    def get_decuction_twentry_m_late(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            total_late = f.twenty_minutes_late or 0
+            if total_late >=3:
+                day_ded = int(total_late/3)
+            else:
+                day_ded = 0
+            
+            result[f.id] = day_ded
+        return result
+    
+    
+    def get_thirty_m_late(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            records = 0
+            t20_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>','2018-02-01'),('attendance_date','<','2018-02-28')])
+            if t20_ids:
+                rect20 = self.pool.get('hr.employee.attendance').browse(cr,uid,t20_ids)
+                for t20 in rect20:
+                    late_m = t20.total_short_minutes
+                    if late_m >=30:
+                        records = records +1
+            result[f.id] = records
+        return result
+    
+    def get_decuction_thirty_m_late(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            total_late = f.thirty_minutes_late or 0
+            if total_late >=2:
+                day_ded = int(total_late/2)
+            else:
+                day_ded = 0
+            
+            result[f.id] = day_ded
+        return result
+    
+    def get_absentess_leave(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            net= f.absentees_this_month - f.approved_leaves_this_month 
+            if net <0:
+                net = 0
+            result[f.id] = net
+        return result
+    
+    def absentess_plus_late_days(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            print " f.deduction_on_twenty_minutes_late", f.deduction_on_twenty_minutes_late
+            print " f.deduction_on_thirty_minutes_late", f.deduction_on_thirty_minutes_late
+            print "f.net_absentees ",f.net_absentees 
+            
+            net= f.deduction_on_twenty_minutes_late + f.deduction_on_thirty_minutes_late  + f.net_absentees 
+            print "net ",net
+            if net <0:
+                net = 0
+            result[f.id] = net
+        return result
+    
+    def deducted_amoun(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            final_deducted_days= f.deducted_absentees_plus_late_comings
+            salary = f.contract_id.wage or 0
+            per_day = salary/30
+            total_deductions = per_day * final_deducted_days 
+            result[f.id] = total_deductions
+        return result
+    
+    _columns = {
+        'calendar_month': fields.date('Month', required=True),
+        'name': fields.char('Month Year'),
+        'contract_id': fields.many2one('hr.contract'),
+        'employee_id': fields.many2one('hr.employee'),
+        'twenty_minutes_late':fields.integer('Twenty Minutes late'),
+        'thirty_minutes_late':fields.integer('Thirty_minutes_late'),
+        #'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
+        'deduction_on_twenty_minutes_late': fields.function(get_decuction_twentry_m_late, method=True, string='Deduction (Days) On 20min',type='integer'),
+        #'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
+        'deduction_on_thirty_minutes_late': fields.function(get_decuction_thirty_m_late, method=True, string='Deduction (Days) On 30min',type='integer'),
+        'absentees_this_month': fields.integer('Absentees This month'),
+        'approved_leaves_this_month': fields.integer('Leaves This month'),
+        'net_absentees': fields.function(get_absentess_leave, method=True, string='Absentees After Leave',type='integer'),
+        'deducted_absentees_plus_late_comings': fields.function(absentess_plus_late_days, method=True, string='Absent Days Plus Late comings ded (Days)',type='integer'),
+        'deducted_amount':fields.function(deducted_amoun, method=True, string='Deducted Amount',type='integer'),
+    }
+    _defaults = {
+                 'absentees_this_month':0,
+                 'approved_leaves_this_month':0
+    }
+
 
 class hr_biometric_device(osv.osv):
     _name = "hr.biometirc.device"
@@ -78,61 +226,105 @@ class hr_employee_attendance(osv.osv):
   
    
    
-    def get_late_early_arrival(self, cr, uid,ids, name, args, context=None):
+    def get_late_arrival(self, cr, uid,ids, name, args, context=None):
         result = {}
-        vari=0
+        lat_min=0
         for f in self.browse(cr, uid, ids, context=context):
             print"employee id ",f.employee_id
-            print"Employee attendance date",f.attendance_date
+            fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
+            day = fdate.weekday()
+            print"Employee attendance day",day
+            print"Employee attendance day name",day
             
             
             schedule_id_lst = []
            
-            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('day','=',str(f.attendance_date))])
+            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',day)])
+            print "found sechde on this day ",sch_detail_ids
             if sch_detail_ids:
-                sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids)
-                att_time = datetime.strptime(sch_detail__objs[0]['date_start'],"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
-                print"time from ffff",f.sign_in
+                sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
+                att_time = datetime.strptime(sch_detail__objs.date_start,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                print"employee id ",f.employee_id.name
+                print "attendance date:",f.attendance_date
+                print "record id:",sch_detail__objs.id
+                print"time sign in",f.sign_in
                 FMT = '%H:%M:%S'
-                print"time from datetime",att_time
-                # tdelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+
+                print"schedule time",att_time
+                #lat_min = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+                
+                timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+                lat_min = timedelta.days + float(timedelta.seconds) / 60
+                print "***************** late munites",lat_min
 #             
-            result[f.id] = 0
+            result[f.id] = lat_min
+
         return result 
-    def total_late(self, cr, uid,ids, name, args, context=None):
+    def total_short_minutes(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-#              sql = """SELECT COALESCE(count(id),'0') from sms_student
-#                       WHERE current_class = """+str(f.academic_cal_id.id)+""" AND fee_type = """+str(f.fee_structure_id.id)
-#              cr.execute(sql)
-#              row = cr.fetchone()
-             result[f.id] = 43
+            result[f.id] = f.late_early_arrival + f.early_late_going
         return result 
    
 
     
     def get_early_late_going(self, cr, uid,ids, name, args, context=None):
         result = {}
+        early_minutes=0
         for f in self.browse(cr, uid, ids, context=context):
-            result[f.id] = 90
+
+            print"employee id ",f.employee_id
+            fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
+            day = fdate.weekday()
+            print"Employee attendance day",day
+            print"Employee attendance day name",day
+            
+            
+            schedule_id_lst = []
+           
+            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',day)])
+            print "found sechde on this day ",sch_detail_ids
+            if sch_detail_ids:
+                sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
+                att_time = datetime.strptime(sch_detail__objs.date_end,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                print"employee id ",f.employee_id.name
+                print "attendance date:",f.attendance_date
+                print "record id:",sch_detail__objs.id
+                print"time sign in",f.sign_in
+                FMT = '%H:%M:%S'
+                print"schedule time",att_time
+                #early_min = datetime.strptime(f.sign_out, FMT) - datetime.strptime(att_time, FMT)
+                
+                timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+                early_minutes = timedelta.days + float(timedelta.seconds) / 60
+                print "***************** late early_minutes",early_minutes
+            result[f.id] = early_minutes
+
         return result 
-    
+    def get_day_ofweek(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            print"employee id ",f.employee_id
+            fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
+            day = fdate.weekday()
+            print"Employee attendance date",fdate.weekday()
+
+        return result 
     
     
     def set_month(self):
         return True
 
     _columns = {
-        'employee_id': fields.many2one('hr.employee'),
+      'employee_id': fields.many2one('hr.employee'),
       'attendance_date': fields.date('Attendance Date'),
+      'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='selection', selection=DAYOFWEEK_SELECTION),
       'sign_in': fields.char('Sign In'),
       'sign_out': fields.char('Sign Out'),
-      'late_early_arrival': fields.char('Late Arrival'),
-      'early_late_going': fields.char('Early Departure'),
-      'late_early_arrival': fields.function(get_late_early_arrival, method=True, string='Late Arrival',type='integer'),
+      'late_early_arrival': fields.function(get_late_arrival, method=True, string='Late Arrival',type='integer'),
       'early_late_going': fields.function(get_early_late_going, method=True, string='Early Departure',type='integer'),
-      'total_late': fields.function(total_late, method=True, string='Total Late ',type='integer'),
-      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave')], 'Attendance Status'),
+      'total_short_minutes': fields.function(total_short_minutes, method=True, string='Short Min ',type='integer'),
+      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('Not-Out', 'Not-CheckOut')], 'Status'),
       'attendance_month': fields.char('Attendance Month'),
       'invoiced': fields.boolean('Invoiced',readonly = 1)
     }

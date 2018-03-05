@@ -328,6 +328,10 @@
 		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
 		        		<td><para style="P4-Bold">[[get_vechil_no()]]</para></td>
 		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Vechil No:[[(record['vechil_no']) or removeParentNode('tr') ]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['vechil_name']) or removeParentNode('tr') ]]</para></td>
+		      		</tr>
 		      		</blockTable>
 				</td>
       		</tr>
@@ -487,6 +491,10 @@
 		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
 		        		<td><para style="P4-Bold">Vechil No : [[get_vechil_no() or removeParentNode('para')]]</para></td>
 		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Vechil No:[[(record['vechil_no']) or removeParentNode('tr') ]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['vechil_name']) or removeParentNode('tr') ]]</para></td>
+		      		</tr>
 		      		</blockTable>
 				</td>
       		</tr>
@@ -642,6 +650,10 @@
 		      		<tr>
 		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
 		        		<td><para style="P4-Bold"></para></td>
+		      		</tr>
+		      		<tr>
+		        		<td><para style="P4-Bold">Vechil No:[[(record['vechil_no']) or removeParentNode('tr') ]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['vechil_name']) or removeParentNode('tr') ]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
