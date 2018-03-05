@@ -118,7 +118,12 @@ class hr_monthly_attendance_calculation(osv.osv):
     def absentess_plus_late_days(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            net= f.deduction_on_twenty_minutes_late or 0 + f.deduction_on_thirty_minutes_late or 0 + f.net_absentees 
+            print " f.deduction_on_twenty_minutes_late", f.deduction_on_twenty_minutes_late
+            print " f.deduction_on_thirty_minutes_late", f.deduction_on_thirty_minutes_late
+            print "f.net_absentees ",f.net_absentees 
+            
+            net= f.deduction_on_twenty_minutes_late + f.deduction_on_thirty_minutes_late  + f.net_absentees 
+            print "net ",net
             if net <0:
                 net = 0
             result[f.id] = net
@@ -139,9 +144,11 @@ class hr_monthly_attendance_calculation(osv.osv):
         'name': fields.char('Month Year'),
         'contract_id': fields.many2one('hr.contract'),
         'employee_id': fields.many2one('hr.employee'),
-        'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
+        'twenty_minutes_late':fields.integer('Twenty Minutes late'),
+        'thirty_minutes_late':fields.integer('Thirty_minutes_late'),
+        #'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
         'deduction_on_twenty_minutes_late': fields.function(get_decuction_twentry_m_late, method=True, string='Deduction (Days) On 20min',type='integer'),
-        'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
+        #'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
         'deduction_on_thirty_minutes_late': fields.function(get_decuction_thirty_m_late, method=True, string='Deduction (Days) On 30min',type='integer'),
         'absentees_this_month': fields.integer('Absentees This month'),
         'approved_leaves_this_month': fields.integer('Leaves This month'),
@@ -262,6 +269,7 @@ class hr_employee_attendance(osv.osv):
         result = {}
         early_minutes=0
         for f in self.browse(cr, uid, ids, context=context):
+
             print"employee id ",f.employee_id
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
@@ -297,6 +305,7 @@ class hr_employee_attendance(osv.osv):
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
             print"Employee attendance date",fdate.weekday()
+
         return result 
     
     
@@ -305,7 +314,7 @@ class hr_employee_attendance(osv.osv):
         return True
 
     _columns = {
-        'employee_id': fields.many2one('hr.employee'),
+      'employee_id': fields.many2one('hr.employee'),
       'attendance_date': fields.date('Attendance Date'),
       'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='selection', selection=DAYOFWEEK_SELECTION),
       'sign_in': fields.char('Sign In'),
