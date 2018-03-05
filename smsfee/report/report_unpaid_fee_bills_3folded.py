@@ -353,16 +353,18 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             challan_list.append(challan_dict)                     
         else:
            #check if printed via student form
-            if 'student_id' in self.datas['form']:
+             if 'student_id' in self.datas['form']:
 
-               #challan is being printed via student form, canlcel all other challans of this sutdent
-               challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_id','=',self.datas['form']['student_id'][0]),('state','=','fee_calculated')])
+                #challan is being printed via student form, canlcel all other challans of this sutdent
+                challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_id','=',self.datas['form']['student_id'][0]),('state','=','fee_calculated')])
 
 
-            else:
-               print "we are not printing via student form "
+             else:
+                challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid, [('challan_cat', '=', self.datas['form']['category']),('student_class_id', '=', self.datas['form']['class_id'][0]), ('state', '=', 'fee_calculated')])
 
-            if challan_ids:
+
+
+        if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
 
@@ -389,13 +391,16 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                             challan_dict['vechil_no'] = _result[0]
                             challan_dict['vechil_name'] = _result[1]
                         else:
-
+                            print("class idd",self.datas['form']['class_id'][0])
+                            print "student idd",challan.student_id.id
                             class_id = self.datas['form']['class_id'][0]
                             query = """ select vehcile_no,name from  sms_transport_vehcile
-                                           where id =(select vehcile_reg_students_id from sms_student where current_class=""" \
-                                    + str(self.datas['form']['class_id'][0]) + """)"""
+                                           where id =(select vehcile_reg_students_id from sms_student where id=""" \
+                                    + str(challan.student_id.id) + """)"""
                             self.cr.execute(query)
-                            _result = self.cr.fetchall()
+                            _result = self.cr.fetchall()[0]
+                            print 'reeee',_result
+                            print 'result0',_result[0],'result1',_result[1]
                             challan_dict['vechil_no'] = _result[0]
                             challan_dict['vechil_name'] = _result[1]
                     if 'fee_receiving_type' in self.datas['form']:
