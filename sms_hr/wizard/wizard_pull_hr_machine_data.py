@@ -112,7 +112,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
 #                     print '-------------HR Employeee Table-------------'
                     for date in dates:
 #                             print "employee empleado id",str(emp_id[item2])
-                            search_rec1 = self.pool.get('hr.attendance').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2])),('attendance_date', '=', str(date))])                                            
+                            search_rec1 = self.pool.get('hr.attendance').search(cr,uid,[('empleado_account_id','=',emp_id[item2]),('attendance_date', '=', date)])                                            
                             if search_rec1:
                                 recs_found1 = self.pool.get('hr.attendance').browse(cr,uid,search_rec1) 
                                 emp_time_recs = sorted(recs_found1, key=lambda k: k['attendance_time']) 
@@ -144,9 +144,47 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         return True    
     
     def compute_attendance_absentees(self, cr, uid, ids, data):
+        import datetime, calendar
         
+        emp_id_list = []
+#         date_item = 0
+        dates = []
+        
+        sqlr ="""SELECT * FROM hr_employee"""
+        cr.execute(sqlr)
+        rec_ids = cr.fetchall() 
+        for record in rec_ids:
+            emp_id_list.append(record[0])
+            
+        d = datetime.date.today()
+        year =  d.year
+        month = d.month
+        num_days = calendar.monthrange(year, month)[1]
+        days = [datetime.date(year, month, day) for day in range(1, num_days+1)]
+        
+        for day in days:
+            date_stamp = day.strftime('%Y%m%d')
+            dates.append(date_stamp)
+            
+        for date_item in dates:
+            for emp_idd in emp_id_list:
+                emp_rec_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_idd),('attendance_date', '=', date_item)]) 
+                print'--- record not found','for Date --- Before-----',date_item, emp_rec_ids
+                if not emp_rec_ids:
+                        print'--- record not found','for Date ---After -----',date_item, emp_rec_ids
+                        self.pool.get('hr.employee.attendance').create(cr, uid, {
+                                            'employee_id': emp_idd,
+                                            'attendance_date': date_item, 
+                                            'sign_in': 0,
+                                            'sign_out': 0,
+                                            'attendance_month': str(datetime.datetime.strptime(date_item,'%Y%m%d').strftime('%B')),
+                                            'final_status': 'Absent'})
+
+       
+        print '---------- Employees ---------', emp_id_list,'--- Dates',dates
         #wrte method code here
-        return 
+        return True
+        
         
     
 sms_pull_hr_machine_data()
