@@ -909,10 +909,17 @@ class sms_session_months(osv.osv):
                 veh_rec = self.pool.get('sms.transport.vehcile').browse(cr,uid,vehcle_ids)
                 for this_veh in veh_rec:
                         students_ids = this_veh.registered_students
+
                         for this_student in students_ids:
                             if this_student.transport_availed and this_student.state == 'Admitted':
                                 #call method to add this fee to student
-                                call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student.id, this_student.current_class.id, ftrow, f.id)
+                                ses_id = self.pool.get('sms.academiccalendar').browse(cr, uid,this_student.current_class.id)
+
+                                if ses_id.session_id.id==f.session_id.id:
+                                    print " Done a id ", ses_id.session_id.id, "b id", f.session_id.id
+                                    call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student.id, this_student.current_class.id, ftrow, f.id)
+                                else:
+                                    print "dublicate fee for tranpsort will raise here ", ses_id.session_id.id, "b id", f.session_id.id
                                            
                         #Update fee register object for this month 
                         # search if this month already exists then leav, otherwise create new record
