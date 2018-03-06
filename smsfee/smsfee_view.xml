@@ -94,7 +94,7 @@
 			<field name = "arch" type = "xml">
 				<xpath expr = "//field[@name ='session_id']" position = "after">
 				<field name="state" invisible="1" />
-				<field name="id"  />
+				<field name="id"/>
 				<field name="month_focasted_amount"  />
 				<field name="month_collected_amout"  />
 				<field name="month_recovery_ratio"  />

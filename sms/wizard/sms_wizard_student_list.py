@@ -65,10 +65,7 @@ class sms_student_list(osv.osv_memory):
             else:
                 report = 'sms.withdrawn.student.details'
         elif listtype == 'students_strength':
-            if Faculty_group:
-                raise osv.except_osv(('Teacher is not authorized'), ('Restriction.'))
-            else:
-                report = 'sms.student.strength.report'
+            report = 'sms.student.strength.report'
         else:
             student_cal_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',thisform['acad_cal'].id)])
             if not student_cal_ids:
