@@ -467,6 +467,19 @@ class sms_student(osv.osv):
                 }
 sms_student()
 
+
+class smsfee_receiptbook(osv.osv):
+    
+    def confirm_fee_received(self, cr, uid, ids, context=None):
+        result = super(smsfee_receiptbook, self).confirm_fee_received(cr, uid, ids, context)
+        print "transport method of confimation is called"
+        return result
+    _name = 'smsfee.receiptbook'
+    _description = "This object store fee types"
+    _inherit = 'smsfee.receiptbook'
+    
+    columns = {}
+
 class sms_transportfee_challan_book(osv.osv):
     
     def create(self, cr, uid, vals, context=None, check=True):

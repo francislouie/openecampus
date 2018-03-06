@@ -735,21 +735,16 @@
 		</field>
 	</record>
 
-	<!-- Acadmeic Calendar Inherited View
-	<record model="ir.ui.view" id="inherit_view_sms_transport_acad_calendar">
-		<field name="name">sms.academiccalendar.inherit</field>
-		<field name="model">sms.academiccalendar</field>
-		<field name="inherit_id" ref="sms.view_session_classes_form"/>
-		<field name="type">form</field>
-		<field name="arch" type="xml">
-		<field name="helptxt" position="before">
-			</field>
-				<header>
-					<button name="%(action_fee_receipts_2)d" string="Transport Fee Receipts"  states="Draft,Active" type="action" icon="gtk-print"/>
-				</header>
-			</field>
-	</record>	
-	-->
+	<record id="smsfee_reciptbook_inhirited_form" model="ir.ui.view">
+            <field name="name">smsfee.receiptbook.inherit</field>
+            <field name="model">smsfee.receiptbook</field>
+            <field name="inherit_id" ref="smsfee.view_receiptbook_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='confirm_fee_received']" position="replace">
+                    <button name="confirm_fee_received" string="2:Approve(Receive Fee)" confirm = "Do you confrm!!! Fee received with amount shown on Form?" states="Waiting_Approval" type="object" groups="sms.group_sms_fee_manager,sms.group_sms_director,smstransport.group_sms_transport_manager"  class="button_ok" />
+                </xpath>
+            </field>
+        </record>
 
 	<!-- Inherited res company for challan print settings -->
 	<record model="ir.ui.view" id="view_cms_company_form112">
