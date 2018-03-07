@@ -337,7 +337,9 @@
 					<group name="transport_registration_main">
 						<group col="4" colspan="2">
 
-							<field name="transport_route" placeholder="Destination"  attrs="{'readonly':[('state',' in',['Withdrawn'])]}"/>
+							<!--<field name="transport_route" placeholder="Destination"  attrs="{'readonly':[('state',' in',['Withdrawn'])]}"/>-->
+							<field name="transport_route" placeholder="Destination"/>
+
 							<field name="registration_type" attrs="{'readonly':[('state',' in',['Draft'])]}"/>
 							<newline/>
 							<field name="employee_id" attrs="{'required':[('registration_type','=','Employee')],'readonly':[('state',' in',['Withdrawn'])],'invisible':[('registration_type','=','Student')]}"/>
@@ -356,7 +358,7 @@
 						</group>
 					</group>
 					<notebook>
-						<field name="transportfee_ids" nolabel="1" attrs="{'readonly':[('state','not in',['Draft'])]}"/>
+						<field name="transportfee_ids" nolabel="1" attrs="{'readonly':[('state','in',['Draft'])]}"/>
 						<page string = "Registration Fees">
 						<div class="oe_title"><label for="total_fee_applicable"/>
 							<h2><field name="total_fee_applicable" readonly="1"/></h2>
