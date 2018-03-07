@@ -134,8 +134,8 @@ class fee_defaulters(osv.osv_memory):
                 for this_class in classes:
                     print("this_class.name",this_class.name)
                      
-                    sheet1=book.add_sheet(str(class_ctr)+" "+str(this_class.name),cell_overwrite_ok=True)
-                    title = this_class.name
+                    sheet1=book.add_sheet(str(class_ctr)+" "+str(this_class.class_id.name),cell_overwrite_ok=True)
+                    title = this_class.class_id.name
                     class_ctr = class_ctr + 1
                     _col = (sheet1.col(1)).width = 200 * 15
                     _col = (sheet1.col(2)).width = 300 * 15
