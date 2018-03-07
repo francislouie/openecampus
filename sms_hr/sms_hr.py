@@ -118,16 +118,14 @@ class hr_monthly_attendance_calculation(osv.osv):
     def absentess_plus_late_days(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-<<<<<<< HEAD
-            net= f.deduction_on_twenty_minutes_late or 0 + f.deduction_on_thirty_minutes_late or 0 + f.net_absentees 
-=======
+
             print " f.deduction_on_twenty_minutes_late", f.deduction_on_twenty_minutes_late
             print " f.deduction_on_thirty_minutes_late", f.deduction_on_thirty_minutes_late
             print "f.net_absentees ",f.net_absentees 
             
             net= f.deduction_on_twenty_minutes_late + f.deduction_on_thirty_minutes_late  + f.net_absentees 
             print "net ",net
->>>>>>> ac39b83131e137da9da4ff3064dc94adc6c58633
+
             if net <0:
                 net = 0
             result[f.id] = net
@@ -148,17 +146,13 @@ class hr_monthly_attendance_calculation(osv.osv):
         'name': fields.char('Month Year'),
         'contract_id': fields.many2one('hr.contract'),
         'employee_id': fields.many2one('hr.employee'),
-<<<<<<< HEAD
-        'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
-        'deduction_on_twenty_minutes_late': fields.function(get_decuction_twentry_m_late, method=True, string='Deduction (Days) On 20min',type='integer'),
-        'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
-=======
+
         'twenty_minutes_late':fields.integer('Twenty Minutes late'),
         'thirty_minutes_late':fields.integer('Thirty_minutes_late'),
         #'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
         'deduction_on_twenty_minutes_late': fields.function(get_decuction_twentry_m_late, method=True, string='Deduction (Days) On 20min',type='integer'),
         #'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
->>>>>>> ac39b83131e137da9da4ff3064dc94adc6c58633
+
         'deduction_on_thirty_minutes_late': fields.function(get_decuction_thirty_m_late, method=True, string='Deduction (Days) On 30min',type='integer'),
         'absentees_this_month': fields.integer('Absentees This month'),
         'approved_leaves_this_month': fields.integer('Leaves This month'),

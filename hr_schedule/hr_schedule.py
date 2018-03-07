@@ -16,8 +16,8 @@
 #
 #    You should have received a copy of the GNU Affero General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-#
-#
+
+
 
 import time
 
@@ -64,25 +64,64 @@ class hr_schedule(osv.osv):
     _description = 'Employee Schedule'
 
     def create(self, cr, uid, vals, context=None):
- 
+        print"Employee ids",vals
         schedule = super(hr_schedule, self).create(cr, uid, vals, context=context)
+      
         empids = self.pool.get('hr.employee').search(cr,uid,[('department_id','=',vals['department_id'])])
+        print"Employee ids",empids
         if empids:
+            
             for emp in empids:
+                print"employee id inside the loop",emp
                 self.create_schedule_per_emp_details(cr, uid, schedule,emp, context=context)
- 
+                print"after the function call",
         return schedule
+   
+    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+        print"write method is called"
+        new_date_end =0
+        new_date_start=0   
+        if 'schedule_lines_ids' in vals:
+            for value in vals['schedule_lines_ids']:
+                rec_id=value[1]
+                print"record id",rec_id
+                rec_date=value[2]
+                if value[2]:
+                    if 'New_date_end' in value[2]:
+                        new_date_end=rec_date['New_date_end']
+                    if 'New_date_start' in value[2]:
+                        new_date_start=rec_date['New_date_start']
+                    if rec_date:
+                        dep_schedule_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('id','=',rec_id)])
+                        for f in self.pool.get('hr.schedule.lines').browse(cr,uid, dep_schedule_ids):
+                            
+                            dep_schedule_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('department_id','=',f.department_id.id),('day','=',f.day)])
+                            schedule_objs = self.pool.get('hr.schedule.detail').browse(cr,uid, dep_schedule_ids)
+                            for schedule in schedule_objs:
+                                if new_date_end ==0:
+                                    new_date_end=f.New_date_end
+                                if new_date_start ==0:
+                                    new_date_start=f.New_date_start    
+                                if schedule:
+                                    update= self.pool.get('hr.schedule.detail').write(cr, uid, schedule.id, {'date_start':new_date_start,'date_end':new_date_end})
+                                    print"successfully updated id ",update
+                            new_date_end =0
+                            new_date_start=0 
+            result = super(osv.osv, self).write(cr, uid, ids, vals, context)
+        return True
+   
     
     def _compute_alerts(self, cr, uid, ids, field_name, args, context=None):
         res = dict.fromkeys(ids, '')
-        for obj in self.browse(cr, uid, ids, context=context):
-            alert_ids = []
-            for detail in obj.detail_ids:
-                [alert_ids.append(a.id) for a in detail.alert_ids]
-            res[obj.id] = alert_ids
+#         for obj in self.browse(cr, uid, ids, context=context):
+#             alert_ids = []
+#             for detail in obj.detail_ids:
+#                 [alert_ids.append(a.id) for a in detail.alert_ids]
+#             res[obj.id] = alert_ids
         return res
 
     _columns = {
+        
         'name': fields.char("Description", size=64, required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'company_id': fields.many2one('res.company', 'Company', readonly=True),
         'template_id': fields.many2one('hr.schedule.template', 'Schedule Template', readonly=True, states={'draft': [('readonly', False)]}),
@@ -130,22 +169,26 @@ class hr_schedule(osv.osv):
  
     def create_schedule_per_emp_details(self, cr, uid, sched_id,emp_id,context=None):
  
-        
+        print"create_schedule_per_emp_details method is called"
         sch_lines_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('schedule_id','=',sched_id)])
         if sch_lines_ids:
+            print"Under if condition"
             reclines = self.pool.get('hr.schedule.lines').browse(cr,uid,sch_lines_ids)
-        
+            print"reclines from hr schedule lines"
         for line in reclines:
+            print"Under the for loop"
             mysch =self.pool.get('hr.schedule.detail').create(cr, uid, {
                             'employee_id':emp_id,
-                            'date_end':line.date_end,
-                            'date_start':line.date_start,
+                            'date_end':line.New_date_end,
+                            'date_start':line.New_date_start,
+#                             'date_end':'2018-03-07 12:51:27',
+#                             'date_start':'2018-03-07 08:51:27',
                             'name':line.name,
                             'state':line.state,
                             'schedule_id':sched_id,
                             'dayofweek':line.dayofweek,
                             'department_id':line.department_id.id,
-                            'day':'2018-02-28',
+                            'day':line.day,
                             },context=context)        
         return True
  
@@ -159,7 +202,7 @@ class hr_schedule(osv.osv):
         ee_obj = self.pool.get('hr.employee')
  
         # Create a two-week schedule beginning from Monday of next week.
-        #
+        
         dt = datetime.today()
         days = 7 - dt.weekday()
         dt += relativedelta(days=+days)
@@ -282,7 +325,7 @@ class hr_schedule(osv.osv):
 
 class schedule_lines(osv.osv):
     _name = "hr.schedule.lines"
-    _description = "Schedule Detail"
+    _description = "Schedule lines"
 
     def _day_compute(self, cr, uid, ids, field_name, args, context=None):
         res = dict.fromkeys(ids, '')
@@ -303,16 +346,20 @@ class schedule_lines(osv.osv):
     _columns = { 
         'name': fields.char("Name", size=64, required=True),
         'dayofweek': fields.selection(DAYOFWEEK_SELECTION, 'Day of Week', required=True, select=True),
-        'date_start': fields.datetime('Start Date and Time', required=True),
-        'date_end': fields.datetime('End Date and Time', required=True),
-        'day': fields.date('Day', required=True, select=1),
+        'date_start': fields.datetime('Start Date and Time'),
+        'date_end': fields.datetime('End Date and Time'),
+        'New_date_start': fields.char('Start Date and Time testing', required=True),
+        'New_date_end': fields.char('End Date and Time', required=True),
+        
+        'day': fields.date('Day',required=True,select=1),
 
         'schedule_id': fields.many2one('hr.schedule', 'Schedule', required=True),
 
         'department_id': fields.related('schedule_id', 'department_id', type='many2one',
                                         relation='hr.department', string='Department', store=True),
-        'employee_id': fields.related('schedule_id', 'employee_id', type='many2one',
-                                      relation='hr.employee', string='Employee', store=True),
+        'employee_id': fields.many2one('hr.employee', 'employee'),
+#         'employee_id': fields.related('schedule_id', 'employee_id', type='many2one',
+#                                       relation='hr.employee', string='Employee', store=True),
         'alert_ids': fields.one2many('hr.schedule.alert', 'sched_detail_id', 'Alerts', readonly=True),
         'state': fields.selection((
             ('draft', 'Draft'), (
@@ -370,16 +417,19 @@ class schedule_detail(osv.osv):
     _columns = { 
         'name': fields.char("Name", size=64, required=True),
         'dayofweek': fields.selection(DAYOFWEEK_SELECTION, 'Day of Week', required=True, select=True),
-        'date_start': fields.datetime('Start Date and Time', required=True),
-        'date_end': fields.datetime('End Date and Time', required=True),
+#         'date_start': fields.datetime('Start Date and Time', required=True),
+#         'date_end': fields.datetime('End Date and Time', required=True),
+        'date_start': fields.char('Start Date and Time', required=True),
+        'date_end': fields.char('End Date and Time', required=True),
         'day': fields.date('Day', select=1),
 
         'schedule_id': fields.many2one('hr.schedule', 'Schedule', required=True),
 
         'department_id': fields.related('schedule_id', 'department_id', type='many2one',
                                         relation='hr.department', string='Department', store=True),
-        'employee_id': fields.related('schedule_id', 'employee_id', type='many2one',
-                                      relation='hr.employee', string='Employee', store=True),
+        'employee_id': fields.many2one('hr.employee', 'employee'),
+#         'employee_id': fields.related('schedule_id', 'employee_id', type='many2one',
+#                                       relation='hr.employee', string='Employee', store=True),
         'alert_ids': fields.one2many('hr.schedule.alert', 'sched_detail_id', 'Alerts', readonly=True),
         'state': fields.selection((
             ('draft', 'Draft'), (
@@ -558,29 +608,29 @@ class schedule_detail(osv.osv):
             alert_obj.compute_alerts_by_employee(
                 cr, uid, ee_id, strDay, context=context)
 
-    def create(self, cr, uid, vals, context=None):
-
-        if 'day' not in vals and 'date_start' in vals:
-            # XXX - Someone affected by DST should fix this
-            #
-            user = self.pool.get('res.users').browse(
-                cr, uid, uid, context=context)
-            local_tz = timezone(user.tz)
-            dtStart = datetime.strptime(vals['date_start'], OE_DTFORMAT)
-            locldtStart = local_tz.localize(dtStart, is_dst=False)
-            utcdtStart = locldtStart.astimezone(utc)
-            dDay = utcdtStart.astimezone(local_tz).date()
-            vals.update({'day': dDay})
-
-        res = super(schedule_detail, self).create(
-            cr, uid, vals, context=context)
-
-        obj = self.browse(cr, uid, res, context=context)
-        attendances = [
-            (obj.schedule_id.employee_id.id, fields.date.context_today(self, cr, uid, context=context))]
-        self._recompute_alerts(cr, uid, attendances, context=context)
-
-        return res
+#     def create(self, cr, uid, vals, context=None):
+# 
+#         if 'day' not in vals and 'date_start' in vals:
+#             # XXX - Someone affected by DST should fix this
+#             #
+#             user = self.pool.get('res.users').browse(
+#                 cr, uid, uid, context=context)
+#             local_tz = timezone(user.tz)
+#             dtStart = datetime.strptime(vals['date_start'], OE_DTFORMAT)
+#             locldtStart = local_tz.localize(dtStart, is_dst=False)
+#             utcdtStart = locldtStart.astimezone(utc)
+#             dDay = utcdtStart.astimezone(local_tz).date()
+#             vals.update({'day': dDay})
+# 
+#         res = super(schedule_detail, self).create(
+#             cr, uid, vals, context=context)
+# 
+#         obj = self.browse(cr, uid, res, context=context)
+#         attendances = [
+#             (obj.schedule_id.employee_id.id, fields.date.context_today(self, cr, uid, context=context))]
+#         self._recompute_alerts(cr, uid, attendances, context=context)
+# 
+#         return res
 
     def unlink(self, cr, uid, ids, context=None):
 
@@ -609,24 +659,24 @@ class schedule_detail(osv.osv):
     def write(self, cr, uid, ids, vals, context=None):
 
         # Flag for checking wether we have to recompute alerts
-        trigger_alert = False
-        for k, v in vals.iteritems():
-            if k in ['date_start', 'date_end']:
-                trigger_alert = True
-
-        if trigger_alert:
-            # Remove alerts directly attached to the attendances
-            #
-            attendances = self._remove_direct_alerts(
-                cr, uid, ids, context=context)
+#         trigger_alert = False
+#         for k, v in vals.iteritems():
+#             if k in ['date_start', 'date_end']:
+#                 trigger_alert = True
+# 
+#         if trigger_alert:
+#             # Remove alerts directly attached to the attendances
+#             #
+#             attendances = self._remove_direct_alerts(
+#                 cr, uid, ids, context=context)
 
         res = super(schedule_detail, self).write(
             cr, uid, ids, vals, context=context)
 
-        if trigger_alert:
-            # Remove all alerts for the employee(s) for the day and recompute.
-            #
-            self._recompute_alerts(cr, uid, attendances, context=context)
+#         if trigger_alert:
+#             # Remove all alerts for the employee(s) for the day and recompute.
+#             #
+#             self._recompute_alerts(cr, uid, attendances, context=context)
 
         return res
 
