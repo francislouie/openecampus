@@ -1623,7 +1623,19 @@ class smsfee_receiptbook(osv.osv):
         return
     
     def confirm_fee_received(self, cr, uid, ids, context=None):
-        
+        sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
+                              on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
+        cr.execute(sqluser)
+        group_name = cr.fetchall()
+
+        for s in group_name:
+            print('sss', s[0])
+            IsItFeeManager = True
+            if 'Fee Manager'in s:
+                IsItFeeManager = False
+        if IsItFeeManager:
+            raise osv.except_osv(('Academic Challans'), ('Only Fee Manager is allowed to Approve Challans'))
+
         self.onchange_student(cr, uid, ids, None)
         rec = self.browse(cr, uid, ids, context)
         if rec[0].student_class_id.name == None:

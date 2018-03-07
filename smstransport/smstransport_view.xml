@@ -556,7 +556,7 @@
 					<field name="state" widget="statusbar"/>
 					<button name="load_student_transportfee" string="Show Student Fees" states="Draft" type="object"  class="oe_highlight" />
 					<button name="recive_fee_send_2approve" string="Send for approval (Transport)" confirm="Receive Fee with given amount?" states="fee_calculated" type="object" class="oe_highlight"/>
-					<button name="receive_transportfee" string="Confirm Fee Received (Transport)" confirm="Receive Fee with given amount?" states="waiting_approval" type="object" class="oe_highlight"/>
+					<button name="receive_transportfee" string="Confirm Fee Received (Transport)" confirm="Receive Fee with given amount of Transport?" states="waiting_approval" type="object" class="oe_highlight"/>
 					<button name="cancel_fee_bill" string="[X]Cancel This Fee Bill" confirm = "Are you sure Cancel Fee bill?" states="waiting_approval,Draft,fee_calculated" type="object" class="button_close_statement" />
 					<button name="%(action_transportfee_existing_challans_id)d" string="Print" states="fee_calculated,Cancel" type="action" class="oe_link" groups=""/>
 				</header>

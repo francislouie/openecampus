@@ -35,6 +35,8 @@ class sms_student_list(osv.osv_memory):
         for s in group_name:
             if s[0] == 'Faculty':
                 Faculty_group = True
+        #prent refort for every one
+        Faculty_group=False
 
 
         thisform = self.browse(cr, uid, ids)[0]
