@@ -3,7 +3,7 @@ import datetime
 from datetime import datetime
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
-from dbus.decorators import method
+# from dbus.decorators import method
 import calendar
 #from samba.netcmd import domain
 
