@@ -682,6 +682,18 @@ class sms_transportfee_challan_book(osv.osv):
         return
     
     def receive_transportfee(self, cr, uid, ids, context=None):
+        sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
+                              on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
+        cr.execute(sqluser)
+        group_name = cr.fetchall()
+        for s in group_name:
+            print('sss', s[0])
+            IsItTransportManager = True
+            if 'SMS Transport Manager' in s:
+                IsItTransportManager=False
+        if IsItTransportManager:
+            raise osv.except_osv(('Transport Challans'), ('Only Transport Manager is allowed to Approve Challans'))
+
         self.onchange_student(cr, uid, ids, None)
         rec = self.browse(cr, uid, ids, context)
         paymethod = ''
