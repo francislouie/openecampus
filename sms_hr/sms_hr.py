@@ -23,7 +23,8 @@ class res_company(osv.osv):
     _name = 'res.company'
     _inherit ='res.company'
     _columns = {
-                'empleado_branch_id':fields.char('Branch ID')}
+                'empleado_branch_id':fields.char('Branch ID')
+                }
 
 class hr_contract(osv.osv):
     _name = 'hr.contract'
@@ -248,6 +249,7 @@ class hr_employee_attendance(osv.osv):
                 print "record id:",sch_detail__objs.id
                 print"time sign in",f.sign_in
                 FMT = '%H:%M:%S'
+
                 print"schedule time",att_time
                 #lat_min = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
                 
@@ -256,6 +258,7 @@ class hr_employee_attendance(osv.osv):
                 print "***************** late munites",lat_min
 #             
             result[f.id] = lat_min
+
         return result 
     def total_short_minutes(self, cr, uid, ids, name, args, context=None):
         result = {}
@@ -310,7 +313,6 @@ class hr_employee_attendance(osv.osv):
     
     
     def set_month(self):
-        
         return True
 
     _columns = {
