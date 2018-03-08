@@ -3,7 +3,7 @@ import datetime
 from datetime import datetime
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
-from dbus.decorators import method
+# from dbus.decorators import method
 import calendar
 #from samba.netcmd import domain
 
@@ -257,7 +257,7 @@ class hr_employee_attendance(osv.osv):
 #             
             result[f.id] = lat_min
         return result 
-    def total_short_minutes(self, cr, uid,ids, name, args, context=None):
+    def total_short_minutes(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             result[f.id] = f.late_early_arrival + f.early_late_going
