@@ -24,9 +24,9 @@
             <field name="arch" type="xml">
                 <search string="Work Week Schedule Search">
                     <field name="name" string="Week Schedule"/>
-                    <filter icon="terp-go-today" string="Today" name="today" domain="[('date_start','&gt;=',current_date),('date_start','&lt;=',current_date)]" />
+                    <filter icon="terp-go-today" string="Today" name="today"  />
                     <separator/>
-                    <filter icon="terp-stock_align_left_24" string="My Schedule" domain="[('employee_id.user_id.id', '=', uid)]" />
+                    <filter icon="terp-stock_align_left_24" string="My Schedule" />
                     <field name="department_id"/>
                     <group expand="0" string="Group By...">
                         <filter name="department" string="Department" icon="terp-personal" domain="[]" context="{'group_by':'department_id'}"/>
@@ -61,7 +61,7 @@
                         </header>
                         <group col="4">
                             <field name="template_id"/>
-                            
+        
                             <field name="name"/>
                             <field name="department_id"/>
                             <field name="company_id" groups="base.group_multi_company"/>
@@ -72,13 +72,16 @@
                                     <tree string="Schedule Detail" editable="bottom">
                                         <field name="name"/>
                                         <field name="dayofweek"/>
-                                        <field name="date_start"/>
-                                        <field name="date_end"/>
+                                         <field name="day"/>
+                                        <field name="New_date_start"/>
+                                          <field name="date_start"/>
+                                        <field name="New_date_end"/>
+                                   
                                         <field name="state"/>
                                     </tree>
                                 </field>
                             </page>
-                            <page string="Applied on">
+                            <!-- <page string="Applied on">
                                 <field name="detail_ids">
                                     <tree string="Employees Schedule" >
                                         <field name="name"/>
@@ -88,7 +91,7 @@
                                         <field name="state"/>
                                     </tree>
                                 </field>
-                            </page>
+                            </page> -->
                             <page string="Rest Days">
                                 <group>
                                     <group>
@@ -135,9 +138,9 @@
                 <search string="Work Schedule Detail Search">
                     <field name="name" string="Schedule"/>
                     <field name="date_start"/>
-                    <filter icon="terp-go-today" string="Today" name="today" domain="[('date_start','&gt;=',current_date),('date_start','&lt;=',current_date)]" />
+                    <filter icon="terp-go-today" string="Today" name="today"/>
                     <separator/>
-                    <filter icon="terp-stock_align_left_24" string="My Schedule" domain="[('employee_id.user_id.id', '=', uid)]" />
+                    <filter icon="terp-stock_align_left_24" string="My Schedule"  />
                     <field name="employee_id"/>
                     <field name="department_id"/>
                     <field name="day"/>
@@ -196,7 +199,7 @@
             <field name="name">hr.schedule.detail.calendar</field>
             <field name="model">hr.schedule.detail</field>
             <field name="arch" type="xml">
-                <calendar color="schedule_id" date_start="date_start" date_stop="date_end" string="Employee Schedule">
+                <calendar color="schedule_id" >
                     <field name="name"/>
                 </calendar>
             </field>
