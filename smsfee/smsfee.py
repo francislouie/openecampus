@@ -8,6 +8,8 @@ import time
 import xlwt
 import xlrd
 import math
+from lxml import etree
+from openerp.osv.orm import setup_modifiers
 
 class res_company(osv.osv):
     
@@ -1537,8 +1539,38 @@ class smsfee_fee_adjustment(osv.osv):
 smsfee_fee_adjustment()
 
 class smsfee_receiptbook(osv.osv):
-    """ A fee receopt book, stores fee payments history of students """
-    
+    # def fields_view_get(self, cr, uid, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
+    #     if context is None: context = {}
+    #     res = super(smsfee_receiptbook, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context,
+    #                                        toolbar=toolbar, submenu=False)
+    #     doc = etree.XML(res['arch'])
+    #     # sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel
+    #     # on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
+    #     # cr.execute(sqluser)
+    #     # group_name = cr.fetchall()
+    #     for node in doc.xpath("//button[name='confirm_fee_received']"):
+    #         node.set('string', ' Products')
+    #         setup_modifiers(node)
+    #     res['arch'] = etree.tostring(doc)
+    #     return res
+    #     # for s in group_name:
+    #     #     if s[0] == 'Profile Manager' or 'Principal':
+    #     #         if s[0] == 'Principal':
+    #     #             for node in doc.xpath("//page[@string='Fees Payments']"):
+    #     #                 node.set('invisible', '1')
+    #     #                 setup_modifiers(node)
+    #     #                 for node in doc.xpath("//page[@string='Fees Payments']"):
+    #     #                     node.set('invisible', '1')
+    #     #                     setup_modifiers(node)
+    #     #             for node in doc.xpath("//page[@string='Transport Details']"):
+    #     #                 node.set('invisible', '1')
+    #     #                 setup_modifiers(node)
+    #     #
+    #     #         profile_manager = False
+    #     # # group_name=json.dumps(group_name)
+
+
+    # """ A fee receopt book, stores fee payments history of students """
     def _set_bill_no(self, cr, uid, session_id, fee_month, module):
         #first generate sequnce no
         today = datetime.date.today()
@@ -1623,9 +1655,29 @@ class smsfee_receiptbook(osv.osv):
         return
     
     def confirm_fee_received(self, cr, uid, ids, context=None):
-        
         self.onchange_student(cr, uid, ids, None)
         rec = self.browse(cr, uid, ids, context)
+
+        user = self.pool.get('res.users').browse(cr, uid, uid, context=context)
+        sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
+              on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
+        cr.execute(sqluser)
+        groups = cr.fetchall()
+        IsFeeManager=False
+        IsTransManager=False
+        for group in groups:
+            if 'Fee Manager' in group:
+                IsFeeManager=True
+            if 'SMS Transport Manager' in group:
+                IsTransManager=True
+        if rec[0].challan_cat=='Academics':
+            if not IsFeeManager:
+               raise osv.except_osv(('Only Fee Manager is authorized'), (''))
+        elif rec[0].challan_cat=='Transport':
+            if not IsTransManager:
+                raise osv.except_osv(('Only Transport Manager is authorized'), (''))
+
+
         if rec[0].student_class_id.name == None:
             self.write(cr ,uid ,ids ,{'student_class_id':rec[0].student_id.current_class.id,
                                       'father_name':rec[0].student_id.father_name,
@@ -1670,13 +1722,13 @@ class smsfee_receiptbook(osv.osv):
         generate_receipt = False
         total_paid_amount = 0
         for line in lines_obj:
-
             std_fee_id = line.student_fee_id.id
             late_fee = 0
 
             if line.reconcile:
                 total_paid_amount = total_paid_amount+ line.paid_amount
                 generate_receipt = True
+
                 update_std_fee_obj = self.pool.get('smsfee.studentfee').write(cr, uid, std_fee_id,{
                            'late_fee':late_fee,
                            'paid_amount':line.paid_amount,
