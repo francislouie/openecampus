@@ -23,8 +23,10 @@ class report_payslip_inherited(report_sxw.rml_parse):
         for id in range(len(obj)):
             if obj[id].appears_on_payslip == True:
                 ids.append(obj[id].id)
+                
         if ids:
             res = payslip_line.browse(self.cr, self.uid, ids)
+            print "Test Values for Payslips ----   ", res
         return res
 
 report_sxw.report_sxw('report.payslip_inherited', 'hr.payslip', 'sms_hr/report/report_payslip_inherited.rml', parser=report_payslip_inherited)

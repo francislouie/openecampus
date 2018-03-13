@@ -56,6 +56,7 @@
            	<drawString x="030" y="70">Officer</drawString>
 			<drawString x="330" y="70">Officer</drawString>
 			<drawString x="630" y="70">Officer</drawString>
+			<drawString x="630" y="70">[[get_vechil_no() or removeParentNode()]]</drawString>
 
            	<drawString x="200" y="70">Cashier</drawString>
 			<drawString x="500" y="70">Cashier</drawString>
@@ -325,7 +326,7 @@
 	          		<blockTable colWidths="200.0,60.0">
 		      		<tr>
 		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
-		        		<td><para style="P4-Bold"></para></td>
+		        		<td><para style="P4-Bold">[[get_vechil_no()]]</para></td>
 		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Vechil No:[[(record['vechil_no']) or removeParentNode('tr') ]]</para></td>
@@ -488,7 +489,7 @@
 	          		<blockTable colWidths="200.0,60.0">
 		      		<tr>
 		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
-		        		<td><para style="P4-Bold"></para></td>
+		        		<td><para style="P4-Bold">Vechil No : [[get_vechil_no() or removeParentNode('para')]]</para></td>
 		      		</tr>
 		      		<tr>
 		        		<td><para style="P4-Bold">Vechil No:[[(record['vechil_no']) or removeParentNode('tr') ]]</para></td>

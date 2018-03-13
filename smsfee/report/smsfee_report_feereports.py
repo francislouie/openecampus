@@ -570,13 +570,16 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         result = []
         ####
         this_form = self.datas['form']
+
         #cls_id = this_form['class_id']
         fee_manager = this_form['fee_manager']
         approved_by = this_form['fee_approved_by']
         if this_form['category']:
-            category = this_form['category']
+            category=this_form['category']
+            category_query=""" And challan_cat='"""+str(this_form['category'])
         else:
-            category='Academics'
+            category_query=""""""
+            category='Academics ,Transport'
        # if cls_id:
           #  this_form['class_id'][0]
          #   cls_qry = """AND student_class_id= """+str(this_form['class_id'][0])
@@ -596,11 +599,12 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         
         
         sql_rb = """ SELECT total_paid_amount,student_class_id,student_id,fee_received_by,receipt_date,
-                     id ,fee_approved_by FROM smsfee_receiptbook                              
+                     id ,fee_approved_by,challan_cat FROM smsfee_receiptbook                              
                      WHERE smsfee_receiptbook.receipt_date >= '"""+str(this_form['from_date'])+"""'
                      AND smsfee_receiptbook.receipt_date <= '"""+str(this_form['to_date'])+"""'
                      """+fm_query+"""
                      """+fa_query+"""
+                     """+category_query+"""'
                      AND smsfee_receiptbook.state='Paid'
                      AND smsfee_receiptbook.total_paid_amount>0 ORDER By receipt_date """
         print('query',sql_rb)
@@ -608,7 +612,8 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         self.cr.execute(sql_rb)
         rb_ids = self.cr.fetchall()
         c = 1
-        dict1 = {'total_amount':'','arr':''}
+        dict1 = {'total_amount':'','arr':'','session':'','from_date':str(this_form['from_date']),
+                 'to_date':str(this_form['from_date']),'cat':category,'printed_by':'','dated':''}
         total_amount = 0
         result2 = []
         for idss in rb_ids:
@@ -622,6 +627,10 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                       'reg_no':'',
                       'category':''}
             student_name = self.pool.get('sms.student').browse(self.cr, self.uid,idss[2]).name
+            session_name = self.pool.get('sms.session').browse(self.cr, self.uid, this_form['session'][0]).name
+            dict1['printed_by'] = self.pool.get('res.users').browse(self.cr, self.uid, self.uid).name
+            dict1['dated'] = datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%d-%B-%Y')
+
             reg_no = self.pool.get('sms.student').browse(self.cr, self.uid, idss[2]).registration_no
            # class_name = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,idss[1]).name
             user = self.pool.get('res.users').browse(self.cr, self.uid,idss[3]).name
@@ -637,15 +646,16 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             mydict['receipt_no'] = idss[5]
             mydict['approved_by'] = appvd_by
             mydict['reg_no'] = reg_no
-            mydict['category'] = category
+            mydict['category'] = idss[7]
             c= c + 1
             result2.append(mydict)
         dict1['arr'] = result2 
-        dict1['total_amount'] = total_amount  
+        dict1['total_amount'] = total_amount
+        dict1['session']=session_name
         result.append(dict1)
         return result
 #--------------------------------------------------------------------------------------------------------------------------------------
-    def student_paidfee_receipts(self, data):                                                         
+    def student_paidfee_receipts(self, data):
                 result = []
                 result2 = []
                 """student paid fee receipt from receiptbook"""
