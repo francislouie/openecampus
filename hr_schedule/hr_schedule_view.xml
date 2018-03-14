@@ -72,10 +72,9 @@
                                     <tree string="Schedule Detail" editable="bottom">
                                         <field name="name"/>
                                         <field name="dayofweek"/>
-                                         <field name="day"/>
-                                        <field name="New_date_start"/>
+                                         <field name="day" invisible="True"/>
                                           <field name="date_start"/>
-                                        <field name="New_date_end"/>
+                                        <field name="date_end"/>
                                    
                                         <field name="state"/>
                                     </tree>

@@ -2,6 +2,7 @@ from openerp.osv import fields, osv
 import datetime
 import xlwt
 import locale
+import calendar
 from datetime import datetime
 #from osv import osv
 from reportlab.pdfgen import canvas
@@ -27,7 +28,9 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     _description = "Pull Datat"
     _columns = {
               'pull_for_device': fields.selection([('all','Pull For All Device')],'Device'),
-              'month': fields.date('Month to Get Absentees')}
+              'month': fields.date('Month to Get Absentees'),
+              'month_comp': fields.date('Month For compute Holidays')
+              }
             
       
     def pull_attendance_device_data(self, cr, uid, ids, data):
@@ -150,6 +153,41 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         return 
         
     
+    def compute_attendance_holidays(self, cr, uid, ids, data):
+        month_comp_date = self.read(cr, uid, ids)[0]['month_comp']
+        year = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))
+        mont = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%m'))
+        if(mont <10):
+            month ='0'+str(mont)
+        else:
+            month =''+str(mont) 
+        calc_month = str(month) +'-'+str(year) 
+        mon_days = calendar.monthrange(year,mont)[1]
+        date_from =str(str(year)+'-'+str(month)+'-01')
+        date_to =str(str(year)+'-'+str(month)+'-'+str(mon_days))
+        emp_ids = self.pool.get('hr.employee').search(cr,uid,[])
+       
+        if emp_ids:
+            for emp in emp_ids:
+                twenty_minutes_late=0
+                thirty_minutes_late=0
+                emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
+                for f in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
+                    if(f.total_short_minutes > 20 <30):
+                        twenty_minutes_late=twenty_minutes_late+1
+                    if(f.total_short_minutes < 30):
+                        thirty_minutes_late=thirty_minutes_late+1
+                contr_ids = self.pool.get('hr.contract').search(cr,uid,[('employee_id','=',emp)])
+                print"Tweenty Late ",twenty_minutes_late
+                print"Thirty late ",thirty_minutes_late
+                print "employee id",emp
+                if contr_ids:
+                    print "contr_ids",contr_ids[0]
+                    exists = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('employee_id','=',emp),('name','=',calc_month),('contract_id','=',contr_ids[0])]) 
+                      
+                    if not exists:
+                        self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp,'contract_id':contr_ids[0],'calendar_month':month_comp_date,'name':calc_month,'twenty_minutes_late':twenty_minutes_late,'thirty_minutes_late':thirty_minutes_late})
+        return
 sms_pull_hr_machine_data()
 
 
