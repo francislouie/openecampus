@@ -426,7 +426,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         user_name = self.pool.get('res.users').browse(self.cr, self.uid, self.uid, self.context).name
         return   user_name
 
-   def get_vechil_no(self):
+    def get_vechil_no(self):
         if self.datas['form']['category'] == 'Academics':
             vechil_no = None
         elif self.datas['form']['category'] == 'Transport':
