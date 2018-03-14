@@ -611,7 +611,7 @@ class sms_student(osv.osv):
             sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
                        inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                         inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics' order by smsfee_feetypes.id, fee_month  """
+                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics' order by  fee_month  """
             cr.execute(sql)
             res[f.id] = [x[0] for x in cr.fetchall()]
 #         raise osv.except_osv((res), (sql))
@@ -1623,7 +1623,19 @@ class smsfee_receiptbook(osv.osv):
         return
     
     def confirm_fee_received(self, cr, uid, ids, context=None):
-        
+        sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
+                              on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
+        cr.execute(sqluser)
+        group_name = cr.fetchall()
+
+        for s in group_name:
+            print('sss', s[0])
+            IsItFeeManager = True
+            if 'Fee Manager'in s:
+                IsItFeeManager = False
+        if IsItFeeManager:
+            raise osv.except_osv(('Academic Challans'), ('Only Fee Manager is allowed to Approve Challans'))
+
         self.onchange_student(cr, uid, ids, None)
         rec = self.browse(cr, uid, ids, context)
         if rec[0].student_class_id.name == None:

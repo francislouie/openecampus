@@ -27,6 +27,7 @@
                     </group>
                     <group attrs="{'invisible':[('fee_receiving_type', '!=','Dublicate')]}">>
                         <field name="dupliate_bill_charges"/>
+                        <field name="dupliate_bill_charges"/>
                     </group>
 				    <group attrs="{'invisible':[('fee_receiving_type', '!=', 'Partial')]}">
 			    		<field name="unpaidfee_months_id" widget="many2many_tags"  nolabel="1"/>

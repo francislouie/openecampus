@@ -3,7 +3,7 @@ import datetime
 from datetime import datetime
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
-from dbus.decorators import method
+# from dbus.decorators import method
 import calendar
 #from samba.netcmd import domain
 
@@ -23,7 +23,8 @@ class res_company(osv.osv):
     _name = 'res.company'
     _inherit ='res.company'
     _columns = {
-                'empleado_branch_id':fields.char('Branch ID')}
+                'empleado_branch_id':fields.char('Branch ID')
+                }
 
 class hr_contract(osv.osv):
     _name = 'hr.contract'
@@ -248,7 +249,7 @@ class hr_employee_attendance(osv.osv):
                 print "attendance date:",f.attendance_date
                 print "record id:",sch_detail__objs.id
                 print"time sign in",f.sign_in
-            
+
                 print"schedule time",att_time
                 FMT = '%H:%M:%S'
 #                 lat_min = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
@@ -263,10 +264,9 @@ class hr_employee_attendance(osv.osv):
                 lat_min=0
          
             result[f.id] = lat_min
-            print"result",result
-            print"************************************late_arrival end********************************************"
+
         return result 
-    def total_short_minutes(self, cr, uid,ids, name, args, context=None):
+    def total_short_minutes(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             result[f.id] = f.late_early_arrival + f.early_late_going
@@ -336,7 +336,6 @@ class hr_employee_attendance(osv.osv):
     
     
     def set_month(self):
-        
         return True
 
     _columns = {

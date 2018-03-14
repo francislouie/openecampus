@@ -53,13 +53,13 @@
 			<drawString x="750" y="533">Due Date : [[ get_due_date() ]]</drawString>
 
 			<setFont name="Helvetica-Bold" size="11"/>
-           	<drawString x="030" y="70">Officer</drawString>
-			<drawString x="330" y="70">Officer</drawString>
-			<drawString x="630" y="70">Officer</drawString>
+           	<drawString x="030" y="50">Officer</drawString>
+			<drawString x="330" y="50">Officer</drawString>
+			<drawString x="630" y="50">Officer</drawString>
 
-           	<drawString x="200" y="70">Cashier</drawString>
-			<drawString x="500" y="70">Cashier</drawString>
-			<drawString x="800" y="70">Cashier</drawString>
+           	<drawString x="200" y="50">Cashier</drawString>
+			<drawString x="500" y="50">Cashier</drawString>
+			<drawString x="800" y="50">Cashier</drawString>
 
 			<setFont name="Helvetica" size="9"/>
 
@@ -328,8 +328,8 @@
 		        		<td><para style="P4-Bold"></para></td>
 		      		</tr>
 		      		<tr>
-		        		<td><para style="P4-Bold">Vechil No:[[(record['vechil_no']) or removeParentNode('tr') ]]</para></td>
-		        		<td><para style="P4-Bold">[[(record['vechil_name']) or removeParentNode('tr') ]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['vechil_no'])]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['vechil_name'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -491,8 +491,8 @@
 		        		<td><para style="P4-Bold"></para></td>
 		      		</tr>
 		      		<tr>
-		        		<td><para style="P4-Bold">Vechil No:[[(record['vechil_no']) or removeParentNode('tr') ]]</para></td>
-		        		<td><para style="P4-Bold">[[(record['vechil_name']) or removeParentNode('tr') ]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['vechil_no'])]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['vechil_name'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
@@ -651,8 +651,8 @@
 		        		<td><para style="P4-Bold"></para></td>
 		      		</tr>
 		      		<tr>
-		        		<td><para style="P4-Bold">Vechil No:[[(record['vechil_no']) or removeParentNode('tr') ]]</para></td>
-		        		<td><para style="P4-Bold">[[(record['vechil_name']) or removeParentNode('tr') ]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['vechil_no'])]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['vechil_name'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
 				</td>
