@@ -386,7 +386,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                             query = """ select vehcile_no,name from  sms_transport_vehcile
                                             where id =(select vehcile_reg_students_id from sms_student where id=""" + std_id + """ )"""
                             self.cr.execute(query)
-                            _result=self.cr.fetchall()
+                            _result=self.cr.fetchone()
                             challan_dict['vechil_no'] =  "Vehcile No:"+str(_result[0])
                             challan_dict['vechil_name'] =  "Vehcile Name: "+str(_result[1])
                         else:
