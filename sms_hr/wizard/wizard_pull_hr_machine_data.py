@@ -35,17 +35,19 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         emp_id = []
         dates = []
         times = []
-        item = 0
         item2 = 0
         status = 'ok'
 #         ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24&ack_id=1') 
                     
         while status == 'ok':
-            emp_id = []
-            dates = []
-            times = []
+#             emp_id = []
+#             dates = []
+#             times = []
             item = 0
-            item2 = 0
+#             item2 = 0
+            # Development API
+#             r = requests.get('http://api.smilesn.com/empleado/test_attendance.php?org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24')
+            # Production API
             r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24')
             if(r.status_code == 200):
 #                 sqlQ ="""DELETE FROM hr_attendance"""
@@ -102,17 +104,21 @@ class sms_pull_hr_machine_data(osv.osv_memory):
          
                            
                         item += 1
-                         
-                     
-#                 sqlQ ="""DELETE FROM hr_employee_attendance"""
-#                 cr.execute(sqlQ)
-                  
-                while item2 < len(emp_id):
-                    employee_id = self.pool.get('hr.employee').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2]))])
-                    employee_rec = self.pool.get('hr.employee').browse(cr,uid,employee_id) 
+
+            status = read['status']
+        
+                                 
+                       
+#         sqlQ ="""DELETE FROM hr_employee_attendance"""
+#         cr.execute(sqlQ)
+
+        print'--------- All Dates ----------------------- ' , dates 
+        while item2 < len(emp_id):
+            employee_id = self.pool.get('hr.employee').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2]))])
+            employee_rec = self.pool.get('hr.employee').browse(cr,uid,employee_id) 
 #                     print '-------------HR Employeee Table-------------'
-                    for date in dates:
-#                             print "employee empleado id",str(emp_id[item2])
+            for date in dates:
+#                             print "----------- All Dates -------------", date
                             search_rec1 = self.pool.get('hr.attendance').search(cr,uid,[('empleado_account_id','=',emp_id[item2]),('attendance_date', '=', date)])                                            
                             if search_rec1:
                                 recs_found1 = self.pool.get('hr.attendance').browse(cr,uid,search_rec1) 
@@ -127,21 +133,22 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                     else:
                                         result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out'}) 
                                         signin = True 
-                                if date:
-                                    if employee_rec:
-#                                         print'------------- Employee Id -------------- ', employee_rec[0]['id'], str(datetime.strptime(date,'%Y%m%d').strftime('%B')), emptime_list[0], emptime_list[-1]
-                                          
-                                        self.pool.get('hr.employee.attendance').create(cr, uid, {
+                            
+                                if employee_rec:
+                                    print'------------- Dates for this employee -------------- ', date, ' ---- ',employee_rec[0].id   
+#                                     employee_date = self.pool.get('hr.employee.attendance').search(cr,uid,[('attendance_date','=',date)])
+#                                     if not employee_date:
+                                    self.pool.get('hr.employee.attendance').create(cr, uid, {
                                             'employee_id': employee_rec[0].id,
                                             'attendance_date': date, 
                                             'sign_in': emptime_list[0],
                                             'sign_out': emptime_list[-1],
                                             'attendance_month': str(datetime.strptime(date,'%Y%m%d').strftime('%B'))})
-                                    else:
-                                        print " not found on ERP for emplead acc",employee_rec
-      
-                    item2 += 1
-                status = read['status']
+                                else:
+                                    print " not found on ERP for emplead acc",employee_rec
+       
+            item2 += 1
+            
         return True    
     
     def compute_attendance_absentees(self, cr, uid, ids, data):
