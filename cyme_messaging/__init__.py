@@ -1,0 +1,1 @@
+from openerp.addons.cyme_messaging import cyme_messaging

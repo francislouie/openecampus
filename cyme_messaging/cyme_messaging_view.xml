@@ -1,0 +1,131 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+    
+    <menuitem name="Cyme Messaging" id="cyme_mess_config_id" sequence="3" parent="sms.menu_configuration_id"
+    groups=""/>
+
+    <menuitem name="Cyme Mess" id="sms_mass_basetable_id" sequence="1" parent="cyme_mess_config_id"
+    groups="" action="action_cyme_mess"/>
+    <menuitem name="Cyme Mess subscriber" id="sms_mass_subs_basetable_id" sequence="2" parent="cyme_mess_config_id"
+    groups="" action="action_cyme_mess_subs"/>
+        <!-- mesg main -->
+	<record model="ir.ui.view" id="view_cyme_mess_form">
+		<field name="name">mesg_main.form</field>
+		<field name="model">mesg.main</field>
+		<field name="arch" type="xml">
+			<form string="Cyme Messaging" version="7.0">
+				<header>
+					<!-- <field name="state" widget="statusbar"/>
+					<button name="set_to_waiting" string="Set to Waiting" states="Draft" type="object" groups="" class="oe_highlight"/>
+					<button name="set_to_approve" string="Approve" states="Waiting" type="object" groups="" class="oe_highlight"/> -->
+				</header>
+				<sheet>
+					<group name="mesg_main.sendingBaseTable_main" colspan="4">
+						<field name="title"/>
+						<field name="user_id" />
+						
+						<newline/>
+						<group col="4" colspan="2">
+							<field name="date_initiated"/>
+							<field name="date_approved"/>
+						</group>
+						<newline/>
+						<field name="body" nolabel="1"/> 
+					</group>
+				</sheet>	 	
+			</form>
+		</field>
+	</record>
+
+	<record model="ir.ui.view" id="view_cyme_mess_tree">
+		<field name="name">mesg_main.tree</field>
+		<field name="model">mesg.main</field>
+		<field name="arch" type="xml">
+			<tree string="Cyme Messaging">
+				<field name="title"/>
+				<field name="date_initiated"/>
+				<field name="date_approved"/>
+			</tree>
+		</field>
+	</record>
+
+	<record id="view_cyme_mess_search" model="ir.ui.view">
+		<field name="name">mesg_main.search</field>
+		<field name="model">mesg.main</field>
+		<field name="arch" type="xml">
+			<search string="Cyme Messaging">
+				<field name="title" string="Subject"/>
+				<field name="date_initiated"/>
+			</search>
+		</field>
+	</record>
+	
+	
+     
+	<record model="ir.actions.act_window" id="action_cyme_mess">
+		<field name="name">Cyme Messaging</field>
+		<field name="res_model">mesg.main</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="search_view_id" ref="view_cyme_mess_search"/>
+	</record>
+
+	   <!-- mesg subscriber -->
+	
+	<record model="ir.ui.view" id="view_cyme_mess_subs_form">
+        <field name="name">mesg_subscriber.form</field>
+        <field name="model">mesg.subscriber</field>
+        <field name="arch" type="xml">
+            <form string="Cyme Mess subscriber" version="7.0">
+                
+                <sheet>
+                    <group name="mesg_main.sendingBaseTable_main" colspan="4">
+                        <field name="name"/>
+                        <field name="phone" />
+                           <field name="network" />
+                    </group>
+                </sheet>        
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_cyme_mess_subs_tree">
+        <field name="name">mesg_subscriber.tree</field>
+        <field name="model">mesg.subscriber</field>
+        <field name="arch" type="xml">
+            <tree string="Cyme Messaging">
+                  <field name="name"/>
+                        <field name="phone" />
+                           <field name="network" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_cyme_mess_subs_search" model="ir.ui.view">
+        <field name="name">mesg_subscriber.search</field>
+        <field name="model">mesg.subscriber</field>
+        <field name="arch" type="xml">
+            <search string="Cyme Messaging">
+                <field name="name" />
+                <field name="phone"/>
+            </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_cyme_mess_subs">
+        <field name="name">Cyme Messaging</field>
+        <field name="res_model">mesg.subscriber</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_cyme_mess_subs_search"/>
+    </record>
+	
+	
+	
+	
+	
+    </data>
+</openerp>
