@@ -253,13 +253,13 @@ class hr_employee_attendance(osv.osv):
                 print"schedule time",att_time
                 FMT = '%H:%M:%S'
 #                 lat_min = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
-                
-                timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
-                if(datetime.strptime(f.sign_in, FMT) < datetime.strptime(att_time, FMT)):
-                    lat_min=0
-                else:
-                    lat_min = timedelta.days + float(timedelta.seconds) / 60
-                print "***************** late munites",lat_min
+            if f.sign_in and att_time:
+                    timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
+                    if(datetime.strptime(f.sign_in, FMT) < datetime.strptime(att_time, FMT)):
+                        lat_min=0
+                    else:
+                        lat_min = timedelta.days + float(timedelta.seconds) / 60
+                    print "***************** late munites",lat_min
             else:
                 lat_min=0
          
