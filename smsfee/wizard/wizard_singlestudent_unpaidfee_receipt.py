@@ -91,11 +91,11 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
         result['unpaidfee_months_id'] = idss
         return {'value':result}
 
-    def create_unpaid_challans(self, cr, uid, student_id, category, challan_type, month_ids):
+    def create_unpaid_challans(self, cr, uid, student_id,due_date, category, challan_type, month_ids):
         _logger.warning("Deprecated ............................................................................")
         student_id = self.pool.get('sms.student').search(cr,uid,[('id','=',student_id[0])])
         class_id = self.pool.get('sms.student').browse(cr,uid,student_id)[0].current_class.id
-        self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id, student_id[0], category, challan_type, month_ids)
+        self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id, student_id[0], category, challan_type,due_date, month_ids)
         return True
 
     def print_singlestudent_unpaidfee_report(self, cr, uid, ids, data):
@@ -104,12 +104,11 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
         selected_months = thisform['unpaidfee_months_id']
         category = thisform['category']
         print('category',category)
-        print()
         #--------------------------------------------------------------------------
         if thisform['fee_receiving_type'] == 'Full':
-            self.create_unpaid_challans(cr, uid, thisform['student_id'], category, 'Full', None)
+            self.create_unpaid_challans(cr, uid, thisform['student_id'],thisform['due_date'], category, 'Full', None)
         elif thisform['fee_receiving_type'] == 'Partial':
-            self.create_unpaid_challans(cr, uid, thisform['student_id'], category, 'Partial', selected_months)
+            self.create_unpaid_challans(cr, uid, thisform['student_id'],thisform['due_date'], category, 'Partial', selected_months)
         #--------------------------------------------------------------------------
         report = 'smsfee_print_one_student_per_page'
             #--------------------------------------------------------------------------

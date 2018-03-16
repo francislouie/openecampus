@@ -1898,10 +1898,13 @@ class smsfee_receiptbook(osv.osv):
         result = {}
         records =  self.browse(cr, uid, ids, context)
         for f in records:
-            self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})  
+            if f.cancel_late_fee:
+                if  True: #f.due_date>datetime.date.today():
+                    call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(self, cr, uid,f.student_id.id, f.class_id.id, f.student_fee_id.id,f.fee_month.id)
+            self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})
         return result
     
-    def check_fee_challans_issued(self, cr, uid, class_id, student_id, category, challan_type, month_ids):
+    def check_fee_challans_issued(self, cr, uid, class_id, student_id, category, challan_type,due_date, month_ids):
         # Date 7 may 2017
         #this objects will generate challans if challans are not exists
         # the same method will be used by all modules, may be one more argument will be added, module_id e.g categoty id
@@ -1963,7 +1966,8 @@ class smsfee_receiptbook(osv.osv):
                                                                               'challan_type':challan_type,
                                                                               'state':'fee_calculated',
                                                                               'receipt_date':datetime.date.today(),
-                                                                              'session_id' :session_id})
+                                                                              'session_id' :session_id,
+                                                                              'due_date':due_date})
             std_unpaid_fees = self.pool.get('smsfee.studentfee').browse(cr ,uid ,fee_ids)
             print "challan created or not:",receipt_id
             if receipt_id:
@@ -2023,6 +2027,8 @@ class smsfee_receiptbook(osv.osv):
         'payment_date':fields.function(change_date_format, string='Payment Date.', type ='char', method =True),
         'date_receivd_onsystem':fields.datetime('Received on', readonly =True),
         'approve_date': fields.datetime('Date Approved',readonly=True),
+        'cancel_late_fee': fields.boolean('Recover Late Fee'),
+        'due_date': fields.date('Duee Date'),
     }
     _sql_constraints = [  
         #('Fee Exisits', 'unique (name)', 'Fee Receipt No Must be Unique!')
