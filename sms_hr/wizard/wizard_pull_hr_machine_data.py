@@ -34,7 +34,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
             
       
     def pull_attendance_device_data(self, cr, uid, ids, data):
-
+        import requests
         emp_id = []
         dates = []
         times = []
@@ -65,30 +65,30 @@ class sms_pull_hr_machine_data(osv.osv_memory):
 #                         print "empleado id",att_record['user_empleado_id']
                         if att_record['user_empleado_id'] not in emp_id:
                             emp_id.append(att_record['user_empleado_id'])
-                              
+                               
                     for att_record in read['att_records']:
                         att_value = att_record['att_time']
                         att_date = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
                         if att_date not in dates:
                             dates.append(att_date)
-                      
+                       
                     for att_record in read['att_records']:
                         att_value = att_record['att_time']
                         att_time = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H%M%S')
                         if att_time not in dates:
                             times.append(att_time)
-          
+           
                     while item < len(emp_id):
         #                 print "----------    Data of user No   ---------------------",emp_id[item] 
                         for att_records in read['att_records']: 
-                          
+                           
                                 if att_records['user_empleado_id'] == emp_id[item]:
-                  
+                   
                                     att_value = att_records['att_time']           
                                     biometric_id = att_records['bio_id']
                                     user_id = att_records['user_empleado_id']
                                     device_id = att_records['device_id']
-                                              
+                                               
                                     date_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
                                     time_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H:%M:%S')
                                     for date in dates:
@@ -103,18 +103,18 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                                 'name':'2018-01-29 07:25:00',
                                                 'empleado_account_id': user_id, 
                                                 'emp_regno_on_device': biometric_id,})  
-                                                 
-         
-                           
+                                                  
+          
+                            
                         item += 1
-
+ 
             status = read['status']
-        
-                                 
-                       
+         
+                                  
+                        
 #         sqlQ ="""DELETE FROM hr_employee_attendance"""
 #         cr.execute(sqlQ)
-
+ 
         print'--------- All Dates ----------------------- ' , dates 
         while item2 < len(emp_id):
             employee_id = self.pool.get('hr.employee').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2]))])
@@ -136,7 +136,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                     else:
                                         result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out'}) 
                                         signin = True 
-                            
+                             
                                 if employee_rec:
                                     print'------------- Dates for this employee -------------- ', date, ' ---- ',employee_rec[0].id   
 #                                     employee_date = self.pool.get('hr.employee.attendance').search(cr,uid,[('attendance_date','=',date)])
@@ -149,7 +149,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                             'attendance_month': str(datetime.strptime(date,'%Y%m%d').strftime('%B'))})
                                 else:
                                     print " not found on ERP for emplead acc",employee_rec
-       
+        
             item2 += 1
             
         return True    
