@@ -34,6 +34,9 @@ class sms_pull_hr_machine_data(osv.osv_memory):
             
       
     def pull_attendance_device_data(self, cr, uid, ids, data):
+        month_comp_date = self.read(cr, uid, ids)[0]['month']
+        if not month_comp_date:
+            raise osv.except_osv((),'Date is required')
         import requests
         emp_id = []
         dates = []
@@ -151,14 +154,19 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                     print " not found on ERP for emplead acc",employee_rec
         
             item2 += 1
-
+        self.compute_attendance_absentees(cr, uid, ids, data)
         return True    
     
     def compute_attendance_absentees(self, cr, uid, ids, data):
         import datetime, calendar
-        
+        month_comp_date = self.read(cr, uid, ids)[0]['month']
+        if not month_comp_date:
+            raise osv.except_osv((),'Date is required')
+        year = int(datetime.datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))
+        month = int(datetime.datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%m'))
+
         emp_id_list = []
-#         date_item = 0
+
         dates = []
         
         sqlr ="""SELECT * FROM hr_employee"""
@@ -166,10 +174,6 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         rec_ids = cr.fetchall() 
         for record in rec_ids:
             emp_id_list.append(record[0])
-            
-        d = datetime.date.today()
-        year =  d.year
-        month = d.month
         num_days = calendar.monthrange(year, month)[1]
         days = [datetime.date(year, month, day) for day in range(1, num_days+1)]
         
@@ -195,11 +199,13 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         print '---------- Employees ---------', emp_id_list,'--- Dates',dates
         #wrte method code here
         return True
-        
-        
-    
     def compute_attendance_holidays(self, cr, uid, ids, data):
+        
+        
+        
         month_comp_date = self.read(cr, uid, ids)[0]['month_comp']
+        if not month_comp_date:
+            raise osv.except_osv((),'Date is required')
         year = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))
         mont = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%m'))
         if(mont <10):
@@ -212,26 +218,40 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         date_to =str(str(year)+'-'+str(month)+'-'+str(mon_days))
         emp_ids = self.pool.get('hr.employee').search(cr,uid,[])
        
-        if emp_ids:
+        if emp_ids: 
             for emp in emp_ids:
                 twenty_minutes_late=0
                 thirty_minutes_late=0
+                absent_this_month = 0
+                struct_id = 0
+                aprove_leave=0
                 emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
                 for f in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
-                    if(f.total_short_minutes > 20 <30):
+                    if(f.total_short_minutes >=20 and  f.total_short_minutes< 30):
                         twenty_minutes_late=twenty_minutes_late+1
-                    if(f.total_short_minutes < 30):
+                    if(f.total_short_minutes >= 30):
                         thirty_minutes_late=thirty_minutes_late+1
+                    if(f.final_status == 'Absent'):
+                        absent_this_month=absent_this_month+1    
                 contr_ids = self.pool.get('hr.contract').search(cr,uid,[('employee_id','=',emp)])
                 print"Tweenty Late ",twenty_minutes_late
                 print"Thirty late ",thirty_minutes_late
                 print "employee id",emp
+                sql = """SELECT struct_id from  hr_contract where employee_id = """+str(emp)+ """"""
+                print"query struct_id",sql
+                cr.execute(sql)
+                ft_ids = cr.fetchone() 
+                if ft_ids:
+                    struct_id = ft_ids[0]
+                if struct_id == 11:
+                    absent_this_month =  absent_this_month-1
+                    aprove_leave=1
                 if contr_ids:
                     print "contr_ids",contr_ids[0]
                     exists = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('employee_id','=',emp),('name','=',calc_month),('contract_id','=',contr_ids[0])]) 
                       
                     if not exists:
-                        self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp,'contract_id':contr_ids[0],'calendar_month':month_comp_date,'name':calc_month,'twenty_minutes_late':twenty_minutes_late,'thirty_minutes_late':thirty_minutes_late})
+                        self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp,'contract_id':contr_ids[0],'calendar_month':month_comp_date,'name':calc_month,'twenty_minutes_late':twenty_minutes_late,'thirty_minutes_late':thirty_minutes_late,'absentees_this_month':absent_this_month,'approved_leaves_this_month':aprove_leave})
         return
 sms_pull_hr_machine_data()
 

@@ -252,14 +252,13 @@ class hr_employee_attendance(osv.osv):
 
                 print"schedule time",att_time
                 FMT = '%H:%M:%S'
-#                 lat_min = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
-            if f.sign_in and att_time:
+                if f.sign_in and att_time:
                     timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
                     if(datetime.strptime(f.sign_in, FMT) < datetime.strptime(att_time, FMT)):
                         lat_min=0
                     else:
                         lat_min = timedelta.days + float(timedelta.seconds) / 60
-                    print "***************** late munites",lat_min
+                print "***************** late munites",lat_min
             else:
                 lat_min=0
          
@@ -304,17 +303,17 @@ class hr_employee_attendance(osv.osv):
                 FMT = '%H:%M:%S'
                 print"schedule time",att_time
                 #early_min = datetime.strptime(f.sign_out, FMT) - datetime.strptime(att_time, FMT)
-                
-                timedelta = datetime.strptime(att_time, FMT) - datetime.strptime(f.sign_out, FMT)
-                if(datetime.strptime(att_time, FMT) < datetime.strptime(f.sign_out, FMT)):
-                    early_minutes=0
-                else:
-                    print"New time",timedelta
-                    print"New time day",timedelta.days
-                    print"New time mints",timedelta.seconds
-                    print"New time second",float(timedelta.seconds) / 60
-                    early_minutes = timedelta.days + float(timedelta.seconds) / 60
-                    print "***************** late early_minutes",early_minutes
+                if f.sign_out and att_time:
+                    timedelta = datetime.strptime(att_time, FMT) - datetime.strptime(f.sign_out, FMT)
+                    if(datetime.strptime(att_time, FMT) < datetime.strptime(f.sign_out, FMT)):
+                        early_minutes=0
+                    else:
+                        print"New time",timedelta
+                        print"New time day",timedelta.days
+                        print"New time mints",timedelta.seconds
+                        print"New time second",float(timedelta.seconds) / 60
+                        early_minutes = timedelta.days + float(timedelta.seconds) / 60
+                        print "***************** late early_minutes",early_minutes
             else:
                 early_minutes=0
             result[f.id] = early_minutes
