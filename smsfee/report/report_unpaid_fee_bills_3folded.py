@@ -386,7 +386,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                             query = """ select vehcile_no,name from  sms_transport_vehcile
                                             where id =(select vehcile_reg_students_id from sms_student where id=""" + std_id + """ )"""
                             self.cr.execute(query)
-                            _result=self.cr.fetchall()
+                            _result=self.cr.fetchone()
                             challan_dict['vechil_no'] =  "Vehcile No:"+str(_result[0])
                             challan_dict['vechil_name'] =  "Vehcile Name: "+str(_result[1])
                         else:
@@ -423,26 +423,24 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         user_name = self.pool.get('res.users').browse(self.cr, self.uid, self.uid, self.context).name
         return   user_name
 
-    # def get_vechil_no(self):
-    #     if self.datas['form']['category'] == 'Academics':
-    #         vechil_no = None
-    #     elif self.datas['form']['category'] == 'Transport':
-    #         if 'student_id' in self.datas['form']:
-    #             std_id = str(self.datas['form']['student_id'][0])
-    #             query = """ select vehcile_no,name from  sms_transport_vehcile
-    #              where id =(vehcile_reg_students_id from sms_student where id=""" + std_id+""" )"""
-    #             self.cr.execute(query)
-    #             vechil_no = self.cr.fetchone()[0]
-    #         else:
-    #             std_id = str(self.datas['form']['class_id'][0])
-    #             query = """ select vehcile_no,name from  sms_transport_vehcile
-    #              where id =( vehcile_reg_students_id from sms_student where current_class="""\
-    #                     +str(self.datas['form']['class_id'][0])+""")"""
-    #             self.cr.execute(query)
-    #             vechil_no = self.cr.fetchone()[0]
-    #             vechil_no='dummy id'
-    #     print('vechil_no',vechil_no)
-    #     return vechil_no
+    def get_vechil_no(self):
+        if self.datas['form']['category'] == 'Academics':
+            vechil_no = None
+        elif self.datas['form']['category'] == 'Transport':
+            if 'student_id' in self.datas['form']:
+                std_id = str(self.datas['form']['student_id'][0])
+                query = """ select vehcile_reg_students_id from sms_student where id=""" + std_id
+                self.cr.execute(query)
+                vechil_no = self.cr.fetchone()[0]
+            else:
+                std_id = str(self.datas['form']['student_id'][0])
+                query = """ select vehcile_reg_students_id from sms_student where current_class="""\
+                        +str(self.datas['form']['class_id'][0])
+                self.cr.execute(query)
+                vechil_no = self.cr.fetchone()[0]
+        print('vechil_no',vechil_no)
+        return vechil_no
+
 
     def get_vertical_lines(self, data):
         line_dots = []

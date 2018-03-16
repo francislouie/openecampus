@@ -151,7 +151,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                     print " not found on ERP for emplead acc",employee_rec
         
             item2 += 1
-            
+
         return True    
     
     def compute_attendance_absentees(self, cr, uid, ids, data):

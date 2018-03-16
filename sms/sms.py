@@ -829,7 +829,7 @@ class sms_student(osv.osv):
         res = super(sms_student, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=False)
         doc = etree.XML(res['arch'])
         #nodes = doc.xpath("//page[@name='contact_information']")
-        
+        print"000000000000000000000000",res
         sqluser=""" select res_groups.name from res_groups inner join res_groups_users_rel 
         on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid="""+str(uid)
         cr.execute(sqluser)

@@ -1155,6 +1155,7 @@ class smsfee_studentfee(osv.osv):
         print "Fee Exists_____________",fee_already_exists
         if not fee_already_exists:
             print"Under the if condition "
+
             # at this stage is assued that fee month and dues month are same for all cases, due month may change in exceptional cases, i.e when fee of all prevoius
             #month is registered in current month against a student, this case due month for all fees will be current month to avoid fine,
             fee_month = month
@@ -1192,7 +1193,8 @@ class smsfee_studentfee(osv.osv):
                         'discount':0,
                         'total_amount':fee_amount + 0, 
                         'reconcile':False,
-                        'state':'fee_unpaid'
+                        'state':'fee_unpaid',
+                        'generic_fee_type':fee_type_row.fee_type.id
                      }
            
             create_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit) 
