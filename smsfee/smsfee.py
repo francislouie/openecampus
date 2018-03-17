@@ -1887,20 +1887,44 @@ class smsfee_receiptbook(osv.osv):
                 sql = """SELECT receipt_date from smsfee_receiptbook where id= """+str(f.id)
                 cr.execute(sql)
                 rdate = cr.fetchone()[0]
-                date_convt = datetime.datetime.strptime(str(rdate) , '%Y-%m-%d')
+                date_convt = datetime.datetime.strptime(str(rdate) , '%Y-%m-%d') #date convertion
                 date_str = str(date_convt.strftime('%d-%b-%Y'))
                 result[f.id] = date_str
             else:
                 result[f.id] = '--'
         return result
-    
     def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
+        # sql=""" Select id from smsfee_feetypes where subtype='Late Fee'bilal """
         result = {}
         records =  self.browse(cr, uid, ids, context)
         for f in records:
             if f.cancel_late_fee:
-                if  True: #f.due_date>datetime.date.today():
-                    call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(self, cr, uid,f.student_id.id, f.class_id.id, f.student_fee_id.id,f.fee_month.id)
+                print "today", datetime.date.today(), "due date", f.due_date
+                date_convt = datetime.datetime.strptime(str(f.due_date), '%Y-%m-%d')
+                late_fee_id = self.pool.get('smsfee.feetypes').search(cr, uid, [('subtype', '=', 'Late Fee')])
+                print 'late fee',late_fee_id
+                print 'converted date ',date_convt,"datetime.datetime.now()",datetime.datetime.now()
+                if  date_convt<datetime.datetime.now(): #class id issue
+                    fee_dcit = {
+                        'student_id': f.student_id.id,
+                        'acad_cal_id': f.student_class_id.id,
+                        'fee_type': '',
+                        'date_fee_charged': datetime.date.today(),
+                        'due_month': 0,
+                        'fee_month': 0,
+                        'paid_amount': 0,
+                        'fee_amount': f.late_fee,
+                        'late_fee': 0,
+                        'discount': 0,
+                        'total_amount': 0,
+                        'reconcile': False,
+                        'state': 'fee_unpaid',
+                        'generic_fee_type': late_fee_id[0]
+                    }
+
+                    create_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit)
+
+                    # call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(self, cr, uid,f.student_id, f.student_class_id, late_fee_id,f.student_class_id )
             self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})
         return result
     
@@ -1945,7 +1969,7 @@ class smsfee_receiptbook(osv.osv):
             print "we are canceling challans:",challan_ids
             if challan_ids:
                 for challan_id in challan_ids:
-                    note="this fee bill is cancel by system on creation of new fee bill on date",datetime.datetime.now()
+                    note="this fee bill is cancelled by system on creation of new fee bill on date",datetime.datetime.now()
                     self.pool.get('smsfee.receiptbook').write(cr ,uid ,challan_id, {'state':'Cancel',
                                                                                     'note_at_receive':note,
                                                                                     'cancel_date':datetime.datetime.now()
@@ -1982,7 +2006,9 @@ class smsfee_receiptbook(osv.osv):
                     'receipt_book_id': receipt_id,
                     'fee_amount':unpaidfee.fee_amount,
                     'late_fee':0,
-                    'total':unpaidfee.fee_amount}
+                    'total':unpaidfee.fee_amount,
+                    'due_date':due_date
+                    }
                     print "book line dic ",feelinesdict
                     self.pool.get('smsfee.receiptbook.lines').create(cr ,uid,feelinesdict)
         return True
@@ -1992,10 +2018,9 @@ class smsfee_receiptbook(osv.osv):
     _description = "This object store fee types"
     _inherit = ['mail.thread']
     _order = "id desc"
-    
     _columns = {
         'name': fields.char('Bill No', readonly =True,size=15), 
-        'counter': fields.char('Bill No.', readonly =True,size=15),    
+        'counter': fields.char('Bill No.', readonly =True,size=15),
         'challan_cat':fields.selection([('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],'Fee Category',readonly=True),
         'session_id':fields.many2one('sms.academics.session', 'Session'),
         'fee_structure': fields.char(string = 'Fee Structure',size = 100),
