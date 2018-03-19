@@ -61,6 +61,7 @@
 			<drawString x="500" y="60">Cashier</drawString>
 			<drawString x="800" y="60">Cashier</drawString>
 
+
 			<setFont name="Helvetica" size="9"/>
 
            	<drawString x="002" y="35">[[get_challan_footer_one()]]</drawString>

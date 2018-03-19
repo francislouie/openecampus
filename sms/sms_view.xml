@@ -2828,6 +2828,7 @@
 	      <field name="inherit_id" ref="base.view_company_form"/>
 	      <field name="type">form</field>
 	      <field name="arch" type="xml">
+
 	        <notebook>
 	          <page string="School Management" position="after">
 	            <notebook>

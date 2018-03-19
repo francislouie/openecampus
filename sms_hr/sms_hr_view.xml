@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <openerp>
     <data>
-    
+  
     <record id="view_biometric_device_form" model="ir.ui.view">
             <field name="name">hr.biometirc.device.form</field>
             <field name="model">hr.biometirc.device</field>

@@ -33,6 +33,7 @@ class class_fee_receipts_unpaid(osv.osv_memory):
         _logger.warning("Deprecated, usle c............................................................................")
         student_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',class_id[0]),('state','=','Current')])
         if student_ids:
+            print 'student_ids',student_ids
             recstudent = self.pool.get('sms.academiccalendar.student').browse(cr,uid,student_ids)
             for student in recstudent:
                 #----------Passing 'Full' as an argument. Since this challan is for whole class so we don't need to pass the option of Partial here ----- 

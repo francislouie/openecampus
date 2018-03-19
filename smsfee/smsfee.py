@@ -613,7 +613,7 @@ class sms_student(osv.osv):
             sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
                        inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
                         inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics' order by smsfee_feetypes.id, fee_month  """
+                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics' order by  fee_month  """
             cr.execute(sql)
             res[f.id] = [x[0] for x in cr.fetchall()]
 #         raise osv.except_osv((res), (sql))
@@ -1157,6 +1157,7 @@ class smsfee_studentfee(osv.osv):
         print "Fee Exists_____________",fee_already_exists
         if not fee_already_exists:
             print"Under the if condition "
+
             # at this stage is assued that fee month and dues month are same for all cases, due month may change in exceptional cases, i.e when fee of all prevoius
             #month is registered in current month against a student, this case due month for all fees will be current month to avoid fine,
             fee_month = month
@@ -1194,7 +1195,8 @@ class smsfee_studentfee(osv.osv):
                         'discount':0,
                         'total_amount':fee_amount + 0, 
                         'reconcile':False,
-                        'state':'fee_unpaid'
+                        'state':'fee_unpaid',
+                        'generic_fee_type':fee_type_row.fee_type.id
                      }
            
             create_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit) 
@@ -1655,6 +1657,7 @@ class smsfee_receiptbook(osv.osv):
         return
     
     def confirm_fee_received(self, cr, uid, ids, context=None):
+
         self.onchange_student(cr, uid, ids, None)
         rec = self.browse(cr, uid, ids, context)
 
