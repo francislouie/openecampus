@@ -1899,19 +1899,16 @@ class smsfee_receiptbook(osv.osv):
         records =  self.browse(cr, uid, ids, context)
         for f in records:
             if f.cancel_late_fee:
-                print "today", datetime.date.today(), "due date", f.due_date
                 date_convt = datetime.datetime.strptime(str(f.due_date), '%Y-%m-%d')
                 late_fee_id = self.pool.get('smsfee.feetypes').search(cr, uid, [('subtype', '=', 'Late Fee')])
-                print 'late fee',late_fee_id
-                print 'converted date ',date_convt,"datetime.datetime.now()",datetime.datetime.now()
                 if  date_convt<datetime.datetime.now(): #class id issue
                     fee_dcit = {
                         'student_id': f.student_id.id,
                         'acad_cal_id': f.student_class_id.id,
                         'fee_type': '',
                         'date_fee_charged': datetime.date.today(),
-                        'due_month': 0,
-                        'fee_month': 0,
+                        'due_month': f.student_id.fee_starting_month,
+                        'fee_month': f.student_id.fee_starting_month,
                         'paid_amount': 0,
                         'fee_amount': f.late_fee,
                         'late_fee': 0,
