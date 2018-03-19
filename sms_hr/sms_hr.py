@@ -5,6 +5,7 @@ from openerp.osv import fields, osv
 from openerp.tools.translate import _
 # from dbus.decorators import method
 import calendar
+from pdftools.pdfdefs import false
 #from samba.netcmd import domain
 
 DAYOFWEEK_SELECTION = [('0', 'Monday'),
@@ -34,18 +35,32 @@ class hr_contract(osv.osv):
     def deduct_amount(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            
-            mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('calendar_month','=', '2018-02-01')])
+            print"Function id", f.id
+            mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('is_invoiced','=', False)])
+            print"mss",mss
             if mss:
                 rec = self.pool.get('hr.monthly.attendance.calculation').browse(cr,uid,mss[0]) 
                 deducted_amount = rec.deducted_amount
+               
                 result[f.id] = deducted_amount 
             else:
                 result[f.id] = 0.0
         return result
+    
+    def deduct_amount_month(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('is_invoiced','=', False)])
+            if mss:
+                rec = self.pool.get('hr.monthly.attendance.calculation').browse(cr,uid,mss[0]) 
+                cur_cal_month = rec.name
+                result[f.id] = cur_cal_month 
+            else:
+                result[f.id] = 'Not set'
+        return result
     _columns = {
         'attendance_calc': fields.one2many('hr.monthly.attendance.calculation','contract_id', "Attendance Calc"),
-        'month': fields.char('Month (e.g 02-2018)'),
+        'month': fields.function(deduct_amount_month, method=True, string='Month (e.g 02-2018)',type='char'),
         'amount_to_deduct':fields.function(deduct_amount, method=True, string='Deducted Amount',type='float'),
     }
 
@@ -120,10 +135,10 @@ class hr_monthly_attendance_calculation(osv.osv):
     def absentess_plus_late_days(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-
             print " f.deduction_on_twenty_minutes_late", f.deduction_on_twenty_minutes_late
             print " f.deduction_on_thirty_minutes_late", f.deduction_on_thirty_minutes_late
             print "f.net_absentees ",f.net_absentees 
+            print"month date ",f.calendar_month
             
             net= f.deduction_on_twenty_minutes_late + f.deduction_on_thirty_minutes_late  + f.net_absentees 
             print "net ",net
@@ -132,7 +147,13 @@ class hr_monthly_attendance_calculation(osv.osv):
                 net = 0
             result[f.id] = net
         return result
-    
+#     def cur_cal_month(self, cr, uid,ids, name, args, context=None):
+#         result = {}
+#         for f in self.browse(cr, uid, ids, context=context):
+#             print"calendar month",f.calendar_month
+#             result[f.id] = f.name
+#         return result
+#     
     def deducted_amoun(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -161,10 +182,13 @@ class hr_monthly_attendance_calculation(osv.osv):
         'net_absentees': fields.function(get_absentess_leave, method=True, string='Absentees After Leave',type='integer'),
         'deducted_absentees_plus_late_comings': fields.function(absentess_plus_late_days, method=True, string='Absent Days Plus Late comings ded (Days)',type='integer'),
         'deducted_amount':fields.function(deducted_amoun, method=True, string='Deducted Amount',type='integer'),
+#         'cur_cal_month':fields.function(cur_cal_month, method=True,type='char'),
+        'is_invoiced':fields.boolean('is invoiced'),
     }
     _defaults = {
                  'absentees_this_month':0,
-                 'approved_leaves_this_month':0
+                 'approved_leaves_this_month':0,
+                 'is_invoiced':False
     }
 
 

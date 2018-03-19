@@ -178,6 +178,7 @@
 							<field name="thirty_minutes_late"/>
 							<field name="absentees_this_month"/>
 							<field name="approved_leaves_this_month"/>
+							<field name="is_invoiced"/>
 						</tree>
 						<form delete="false">
 							<field name="name" /><newline/>
