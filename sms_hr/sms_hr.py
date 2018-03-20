@@ -14,9 +14,7 @@ DAYOFWEEK_SELECTION = [('0', 'Monday'),
                        ('3', 'Thursday'),
                        ('4', 'Friday'),
                        ('5', 'Saturday'),
-                       ('6', 'Sunday'),
-
-                       ]
+                       ('6', 'Sunday'),]
 
 class res_company(osv.osv):
     
@@ -377,7 +375,7 @@ class hr_employee_attendance(osv.osv):
     _defaults = {
         
     }
-hr_employee()
+hr_employee_attendance()
 
 
 class hr_attendance(osv.osv):

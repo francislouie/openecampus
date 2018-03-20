@@ -20,6 +20,11 @@
                   parent="hr.menu_hr_main"
                   action="action_pull_hr_data" 
                   groups=""/>
+     <menuitem id="menu_sms_hr_attendance_report"
+                  sequence="10"
+                  parent="hr_attendance.menu_hr_attendance"
+                  action="action_sms_hr_attendance_report" 
+                  groups=""/>
       
 	</data>
 </openerp>
