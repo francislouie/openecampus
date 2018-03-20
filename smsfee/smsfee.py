@@ -609,10 +609,9 @@ class sms_student(osv.osv):
         records = self.browse(cr,uid,ids)
         res = {}
         for f in records:
-
+            
             sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
-                       inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_studentfee.generic_fee_type
                      WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics' order by  fee_month  """
             cr.execute(sql)
             res[f.id] = [x[0] for x in cr.fetchall()]
@@ -1055,7 +1054,7 @@ class smsfee_feetypes(osv.osv):
         'name': fields.char(string = 'Fee Type',size = 100,required = True),
         'fs_id':fields.many2one('sms.feestructure'),      
         'description': fields.char(string = 'Description',size = 100),
-        'subtype': fields.selection([('Monthly_Fee','Monthly Fee'),('at_admission','Charged at The Time of Admission'),('Promotion_Fee','Promotion Fee'),('Annual_fee','Annual Fee'),('Refundable','Refundable'),('Other','Other')],'Repetition',required = True),
+        'subtype': fields.selection([('Monthly_Fee','Monthly Fee'),('at_admission','Charged at The Time of Admission'),('Promotion_Fee','Promotion Fee'),('Annual_fee','Annual Fee'),('Refundable','Refundable'),('Late_Fee','Late Fee'),('Other','Other')],'Repetition',required = True),
         'category':fields.selection([('Academics','Academics'),('Transport','Transport'),('Hostel','Hostel'),('Stationary','Stationary'),('Portal','Portal')],'Fee Category',required=True),
         'display_sequence':fields.integer('Display Order'),
         'refundable':fields.boolean('Refundable')
@@ -1108,7 +1107,9 @@ class smsfee_studentfee(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             month_name = f.fee_month.name
-            if f.generic_fee_type.subtype == 'Monthly_Fee':
+            if f.generic_fee_type.subtype == 'Late_Fee':
+                string = f.description
+            elif f.generic_fee_type.subtype == 'Monthly_Fee':
                 year = f.fee_month.name
                 string = str(f.fee_type.name) + " (" + str(month_name) + ")"
             else:
@@ -1118,18 +1119,14 @@ class smsfee_studentfee(osv.osv):
             result[f.id] = string
         return result
 
-    def getfee_cate(self, cr, uid, ids, fields, args, context=None):
-        result = {}
-        for f in self.browse(cr, uid, ids, context=context):
-            result[f.id] = f.fee_type.fee_type.category
-        return result
     def getfee_cate(self, cr, uid, ids, fields,args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            result[f.id] = f.generic_fee_type.category
+            if f.generic_fee_type:
+                # for some record gen fee id is till null, 20 march 2018
+                result[f.id] = f.generic_fee_type.category
         return result
-
-    
+        
     def get_student_total_paybles(self, cr, uid, ids, acad_std_id,context=None):
         
         sql = """SELECT COALESCE(sum(net_total),'0') FROM smsfee_studentfee WHERE student_id ="""+str(ids)+"""
@@ -1293,6 +1290,7 @@ class smsfee_studentfee(osv.osv):
     _order = 'display_order,due_month'
     _columns = {
         'name':fields.function(_set_std_fee, method=True,  string='Student Fee',type='char'),
+        'description':fields.char('Details'),
         'receipt_no':fields.many2one('smsfee.receiptbook','Receipt No'),
         'student_id':fields.many2one('sms.student','Student'),
         'acad_cal_id': fields.many2one('sms.academiccalendar','Academic Calendar'),
@@ -1934,24 +1932,43 @@ class smsfee_receiptbook(osv.osv):
             else:
                 result[f.id] = '--'
         return result
-    def cancel_fee_bill(self, cr, uid, ids, context={}, arg=None, obj=None):
+    def cancel_fee_bill(self, cr, uid, ids, arg=None, obj=None):
         # sql=""" Select id from smsfee_feetypes where subtype='Late Fee'bilal """
         result = {}
-        records =  self.browse(cr, uid, ids, context)
+        records =  self.browse(cr, uid, ids)
+        user = self.pool.get('res.users').browse(cr,uid,uid)
         for f in records:
-            if f.cancel_late_fee:
-                date_convt = datetime.datetime.strptime(str(f.due_date), '%Y-%m-%d')
-                late_fee_id = self.pool.get('smsfee.feetypes').search(cr, uid, [('subtype', '=', 'Late Fee')])
+                    self.cancel_fee_bills_all(cr,uid,f.id,'Fee is Canceld By User:'+str(user.name))
+        return result
+    
+    def cancel_fee_bills_all(self, cr, uid, bill_id, note):
+        """
+        This is the centrail fee bill cancelation method should be called by all methods that are going to cancel a fee bill
+        Crrently called from 
+        1) Challan craetion method which cancel exsiting open challans
+        2) Cancel method when user clicks on cancel challan
+        """
+        result = {}
+        f =  self.browse(cr, uid, bill_id)
+        
+        if not f.donot_charge_late_fee:
+            print "we are going to fine this student on late fee"
+            late_fee_amount = f.student_class_id.acad_session_id.late_fee_amount
+            date_convt = datetime.datetime.strptime(str(f.due_date), '%Y-%m-%d')
+            late_fee_id = self.pool.get('smsfee.feetypes').search(cr, uid, [('subtype', '=', 'Late_Fee')])
+            if late_fee_id:
                 if  date_convt<datetime.datetime.now(): #class id issue
+                    print "this fee is going to be late fee charged"
                     fee_dcit = {
                         'student_id': f.student_id.id,
                         'acad_cal_id': f.student_class_id.id,
                         'fee_type': '',
+                        'description':'Late fee for Bill No.'+str(f.counter),
                         'date_fee_charged': datetime.date.today(),
-                        'due_month': f.student_id.fee_starting_month,
-                        'fee_month': f.student_id.fee_starting_month,
+                        'due_month': None,#seeting monnths null for late fee only,
+                        'fee_month': None,
                         'paid_amount': 0,
-                        'fee_amount': f.late_fee,
+                        'fee_amount': late_fee_amount,
                         'late_fee': 0,
                         'discount': 0,
                         'total_amount': 0,
@@ -1959,12 +1976,15 @@ class smsfee_receiptbook(osv.osv):
                         'state': 'fee_unpaid',
                         'generic_fee_type': late_fee_id[0]
                     }
-
+                    print "crated fee dict:",fee_dcit
                     create_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit)
-
-                    # call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(self, cr, uid,f.student_id, f.student_class_id, late_fee_id,f.student_class_id )
-            self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid})
+                    
+            else:
+                raise osv.except_osv(('Late Fee Not found in Class Fee setting'), ('Cancelling this fee bills will charge late fee against student, but late fee is not found in your fee setting.\n Goto Fee setting and create a fee with subtype = Late Fee'))    
+                # call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(self, cr, uid,f.student_id, f.student_class_id, late_fee_id,f.student_class_id )
+        self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid, 'note_at_receive':note,'cancel_date':datetime.datetime.now()})
         return result
+
     
     def check_fee_challans_issued(self, cr, uid, class_id, student_id, category, challan_type,due_date, month_ids):
         # Date 7 may 2017
@@ -1980,10 +2000,10 @@ class smsfee_receiptbook(osv.osv):
             month_str = "AND smsfee_studentfee.fee_month in " + month_str.replace(',)', ')')
         else:
             month_str = """"""
-            
+        #this query will be changed at start of april 2018, inner join classes fees lines and classes fees will be removed and it will
+        #be inner joind to smsfee_feetypes on generic ids once we are sure that generic fee id is not null for all records    
         sql = """SELECT distinct smsfee_studentfee.id from smsfee_studentfee
-                  inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-                  inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                  inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_studentfee.generic_fee_type
                   where smsfee_feetypes.category = '"""+str(category)+"""'
                   and smsfee_studentfee.student_id = """+str(student_id)+ """ and smsfee_studentfee.state ='fee_unpaid'""" + month_str
         
@@ -1992,7 +2012,6 @@ class smsfee_receiptbook(osv.osv):
         print sql
         for thisfee in _ids:
             fee_ids.append(thisfee[0])
-            print "transport fees found ids..............................................:",thisfee
 
         #fee_ids = self.pool.get('smsfee.studentfee').search(cr ,uid ,[('student_id','=',226),('state','=','fee_unpaid'),('category','=','Transport')])
 #         raise osv.except_osv((_ids), (fee_ids))
@@ -2008,10 +2027,7 @@ class smsfee_receiptbook(osv.osv):
             if challan_ids:
                 for challan_id in challan_ids:
                     note="this fee bill is cancelled by system on creation of new fee bill on date",datetime.datetime.now()
-                    self.pool.get('smsfee.receiptbook').write(cr ,uid ,challan_id, {'state':'Cancel',
-                                                                                    'note_at_receive':note,
-                                                                                    'cancel_date':datetime.datetime.now()
-                                                                                    })
+                    self.pool.get('smsfee.receiptbook').cancel_fee_bills_all(cr ,uid ,challan_id, note)
                     
                 #---------------------- if old_val is not equal to new_val than create reciept -----------------------------
                 
@@ -2020,7 +2036,7 @@ class smsfee_receiptbook(osv.osv):
                 student_id = student_id[0]
             session_id = self.pool.get('sms.student').browse(cr, uid, student_id).current_class.acad_session_id.id
             counter = self._set_bill_no(cr, uid,session_id,None,None)
-            print "priting for challan category:for parent challan",category
+            print "challan due date",due_date
             receipt_id = self.pool.get('smsfee.receiptbook').create(cr ,uid , {'student_id':student_id,
                                                                               'student_class_id':class_id,
                                                                               'counter':counter,
@@ -2090,8 +2106,8 @@ class smsfee_receiptbook(osv.osv):
         'payment_date':fields.function(change_date_format, string='Payment Date.', type ='char', method =True),
         'date_receivd_onsystem':fields.datetime('Received on', readonly =True),
         'approve_date': fields.datetime('Date Approved',readonly=True),
-        'cancel_late_fee': fields.boolean('Recover Late Fee'),
-        'due_date': fields.date('Duee Date'),
+        'donot_charge_late_fee': fields.boolean('Donot charge late fee'),
+        'due_date': fields.date('Due Date'),
     }
     _sql_constraints = [  
         #('Fee Exisits', 'unique (name)', 'Fee Receipt No Must be Unique!')

@@ -15,16 +15,25 @@ class class_fee_receipts_unpaid(osv.osv_memory):
         std_id =  obj.id
         return std_id
     
+    def _get_amount(self, cr, uid, ids):
+        amount = 200
+#         thisform = self.read(cr, uid, ids)[0]
+#         class_id = thisform['class_id']
+#         if class_id:
+#             acad_cal_obj = self.pool.get('sms.academiccalendar').browse(cr,uid,class_id)
+#             amount =  acad_cal_obj.class_id.acad_session_id.late_fee_amount
+        return amount
+    
     _name = "class.fee.receipts.unpaid"
     _description = "admits student in a selected class"
     _columns = {
-            "Dublicate": fields.boolean('Dublicate Challans'),
+            "Dublicate": fields.boolean('Duplicate Fee Bill'),
               "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
               'due_date': fields.date('Due Date', required=True),
-              'amount_after_due_date': fields.integer('Fine After Due Date'),
+              'amount_after_due_date': fields.integer('Fine After Due Date',readonly=True),
                'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category',required=True),
                }
-    _defaults = {'class_id':_get_class,'amount_after_due_date':200,'category':'Academics'}
+    _defaults = {'class_id':_get_class,'amount_after_due_date':_get_amount,'category':'Academics'}
     
     def create_unpaid_challans(self, cr, uid, class_id,due_date,category):
         print "create upaid challans"

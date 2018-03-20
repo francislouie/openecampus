@@ -122,6 +122,7 @@ class sms_academics_session(osv.osv):
         'closed_by':fields.many2one('res.users','Closed By',readonly = True),
         'state': fields.selection([('Draft', 'Draft'),('Active', 'Active'),('Closed', 'Closed')], 'State', readonly = True),
         'program_category_id':fields.many2one('sms.program.category','Program category'),
+        'late_fee_amount': fields.integer('Late fee After Due Date', required = True),
         'bank_name1': fields.char('Bank One Name', size=256),
         'bank_name2': fields.char('Bank Two Name', size=256),
         'bank_acctno1': fields.char('Bank One Acc.No'),
@@ -147,7 +148,7 @@ class sms_academics_session(osv.osv):
         'student_fee_expense_acc': fields.many2one('account.account', 'Fee Expense Account', 		ondelete="cascade"),
         'fee_reception_account_cash': fields.many2one('account.account', 'Fee Cash Account', 		ondelete="cascade"),
         'fee_reception_account_bank': fields.many2one('account.account', 'Fee Bank Account', 		ondelete="cascade"),
-	 'order_of_report': fields.selection([('by_name', 'By Name'), ('by_registration_no', 		'By Reg No')],
+	    'order_of_report': fields.selection([('by_name', 'By Name'), ('by_registration_no', 		'By Reg No')],
                                             'Order Of Report'),
         'campus_code': fields.char('Campus Code', size=64),
 
