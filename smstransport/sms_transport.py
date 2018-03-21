@@ -422,7 +422,7 @@ hr_employee()
 
 class sms_student(osv.osv):
     
-    """This object is used to add fields in sms.student"""
+    """This object is used to add fields in sms.student for transport"""
     def get_student_fee_views(self, cr, uid, ids, field_names, arg=None, context=None):
         """This was clients requirements to show academis and transport ,and hostel etc fee separately, we made this method to use in 
            each module, this will be called by relavent columns to show fee history of one module only, here this method shows fee
@@ -431,8 +431,7 @@ class sms_student(osv.osv):
         res = {}
         for f in records:
             sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
-                       inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
+                      inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_studentfee.generic_fee_type
                      WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Transport' order by fee_month """
             cr.execute(sql)
             res[f.id] = [x[0] for x in cr.fetchall()]
