@@ -29,7 +29,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     _columns = {
               'pull_for_device': fields.selection([('all','Pull For All Device')],'Device'),
               'month': fields.date('Month to Get Absentees'),
-              'month_comp': fields.date('Month For compute Holidays'),
+              'month_comp': fields.date('Month For computing absentees'),
               'fetch_all_records': fields.boolean('Get All Previous Records')
               }
             
