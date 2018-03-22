@@ -1952,32 +1952,32 @@ class smsfee_receiptbook(osv.osv):
         f =  self.browse(cr, uid, bill_id)
         
         if not f.donot_charge_late_fee:
-            print "we are going to fine this student on late fee"
-            late_fee_amount = f.student_class_id.acad_session_id.late_fee_amount
-            date_convt = datetime.datetime.strptime(str(f.due_date), '%Y-%m-%d')
-            late_fee_id = self.pool.get('smsfee.feetypes').search(cr, uid, [('subtype', '=', 'Late_Fee')])
-            if late_fee_id:
-                if  date_convt<datetime.datetime.now(): #class id issue
-                    print "this fee is going to be late fee charged"
-                    fee_dcit = {
-                        'student_id': f.student_id.id,
-                        'acad_cal_id': f.student_class_id.id,
-                        'fee_type': '',
-                        'description':'Late fee for Bill No.'+str(f.counter),
-                        'date_fee_charged': datetime.date.today(),
-                        'due_month': None,#seeting monnths null for late fee only,
-                        'fee_month': None,
-                        'paid_amount': 0,
-                        'fee_amount': late_fee_amount,
-                        'late_fee': 0,
-                        'discount': 0,
-                        'total_amount': 0,
-                        'reconcile': False,
-                        'state': 'fee_unpaid',
-                        'generic_fee_type': late_fee_id[0]
-                    }
-                    print "crated fee dict:",fee_dcit
-                    create_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit)
+            if f.due_date:
+                late_fee_amount = f.student_class_id.acad_session_id.late_fee_amount
+                date_convt = datetime.datetime.strptime(str(f.due_date), '%Y-%m-%d')
+                late_fee_id = self.pool.get('smsfee.feetypes').search(cr, uid, [('subtype', '=', 'Late_Fee')])
+                if late_fee_id:
+                    if  date_convt<datetime.datetime.now(): #class id issue
+                        print "this fee is going to be late fee charged"
+                        fee_dcit = {
+                            'student_id': f.student_id.id,
+                            'acad_cal_id': f.student_class_id.id,
+                            'fee_type': '',
+                            'description':'Late fee for Bill No.'+str(f.counter),
+                            'date_fee_charged': datetime.date.today(),
+                            'due_month': None,#seeting monnths null for late fee only,
+                            'fee_month': None,
+                            'paid_amount': 0,
+                            'fee_amount': late_fee_amount,
+                            'late_fee': 0,
+                            'discount': 0,
+                            'total_amount': 0,
+                            'reconcile': False,
+                            'state': 'fee_unpaid',
+                            'generic_fee_type': late_fee_id[0]
+                        }
+                        print "crated fee dict:",fee_dcit
+                        create_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit)
                     
             else:
                 raise osv.except_osv(('Late Fee Not found in Class Fee setting'), ('Cancelling this fee bills will charge late fee against student, but late fee is not found in your fee setting.\n Goto Fee setting and create a fee with subtype = Late Fee'))    
