@@ -1979,8 +1979,8 @@ class smsfee_receiptbook(osv.osv):
                         print "crated fee dict:",fee_dcit
                         create_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit)
                     
-            else:
-                raise osv.except_osv(('Late Fee Not found in Class Fee setting'), ('Cancelling this fee bills will charge late fee against student, but late fee is not found in your fee setting.\n Goto Fee setting and create a fee with subtype = Late Fee'))    
+                else:
+                    raise osv.except_osv(('Late Fee Not found in Class Fee setting'), ('Cancelling this fee bills will charge late fee against student, but late fee is not found in your fee setting.\n Goto Fee setting and create a fee with subtype = Late Fee'))    
                 # call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(self, cr, uid,f.student_id, f.student_class_id, late_fee_id,f.student_class_id )
         self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid, 'note_at_receive':note,'cancel_date':datetime.datetime.now()})
         return result
