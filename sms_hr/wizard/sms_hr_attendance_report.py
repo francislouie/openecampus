@@ -41,7 +41,7 @@ class sms_hr_attendance_report(osv.osv_memory):
         employee_id = 0
         department_id = 0
         record = self.read(cr, uid, ids)[0]
-        print"This is form date",record
+
         if record['employee_id']:
             employee_id= record['employee_id']
         if record['department_id']:    
@@ -49,16 +49,8 @@ class sms_hr_attendance_report(osv.osv_memory):
         start_date= record['start_date']   
         end_date= record['end_date'] 
         options= record['options'] 
-        print"Employee id",employee_id
-        print"department id",department_id
-        print"start_date ",start_date
-        print"end_date ",end_date
-        print"options ",options
-        
-        
-        
-        result = []
-        print "slipssssssssssssssssssssssssssssssssssssssssssssssssssssss method called"
+
+
         book=xlwt.Workbook()
         
         header_top =  xlwt.Style.easyxf('font: bold on, color white,  height 450;'
@@ -103,50 +95,169 @@ class sms_hr_attendance_report(osv.osv_memory):
                              )
         
         
-
         
+        # This option generates Department wise Attendance Report
+        if options == '1':
+            emp_names= []
+            sql0 = """SELECT id,name_related from hr_employee where department_id = """ +  str(department_id) 
+            cr.execute(sql0)
+            emp_details = cr.fetchall()
+
+            for detail in emp_details:
+                if not detail[1] in emp_names:
+                    
+                    emp_names.append(detail[1])
+                    rec_id = self.pool.get('hr.employee.attendance').search(cr,uid, [('employee_id','=', detail[0]),('attendance_date','>=',start_date),('attendance_date','<=',end_date)])
+
+                    emp_dates = self.pool.get('hr.employee.attendance').browse(cr,uid, rec_id)
+                    emp_dates = sorted(emp_dates, key=lambda k: k['attendance_date']) 
+
+                      
+                    sheet1=book.add_sheet(str(detail[1]),cell_overwrite_ok=True)
+          
+                    _col = (sheet1.col(2)).width = 300 * 20
+                    _col = (sheet1.col(3)).width = 300 * 20
+                    _col = (sheet1.col(4)).width = 300 * 20
+                    _col = (sheet1.col(5)).width = 300 * 20
+                    _col = (sheet1.col(6)).width = 300 * 20
+                    _col = (sheet1.col(7)).width = 300 * 20
+
+                    _col = (sheet1.row(0)).height = 100 * 15
+                    _col = (sheet1.row(1)).height = 60 * 15
+                      
+                    row = 0
+                    sheet1.write_merge(row, row, 2, 7, 'Attendance Details for '+ detail[1] + ' from ' + str(datetime.strptime(start_date, '%Y-%m-%d').strftime('%d-%m-%Y')) + ' to '+ str(datetime.strptime(end_date, '%Y-%m-%d').strftime('%d-%m-%Y')), header_top)
+                    sheet1.write(row+1, 2, 'Attendance Date', header_months) 
+                    sheet1.write(row+1, 3, 'Sign In Time', header_months) 
+                    sheet1.write(row+1, 4, 'Sign Out Time', header_months) 
+                    sheet1.write(row+1, 5, 'Late Arrival', header_months)
+                    sheet1.write(row+1, 6, 'Early Departure', header_months)
+                    sheet1.write(row+1, 7, 'Total Short Minutes', header_months)
+                    row = 2
+                    for sline in emp_dates:
+
+                        sheet1.write(row, 2, datetime.strptime(sline.attendance_date, '%Y-%m-%d').strftime('%d-%m-%Y'), student_allowances_rows)    
+                        sheet1.write(row, 3, sline.sign_in, student_allowances_rows)  
+                        sheet1.write(row, 4, sline.sign_out, student_allowances_rows)  
+                        sheet1.write(row, 5, sline.late_early_arrival, student_allowances_rows) 
+                        sheet1.write(row, 6, sline.early_late_going, student_allowances_rows) 
+                        sheet1.write(row, 7, sline.total_short_minutes, student_allowances_rows) 
+                        row = row + 1  
+                      
+                path = os.path.join(os.path.expanduser('~'),'attendance_report.xls')
+                book.save(path)
+        
+        
+        
+        # This option generates Attendance Report for all Active Employees
+        if options == '2':
+            emp_names= []
+            sql0 = """SELECT id,name_related from hr_employee where isactive = true"""
+            cr.execute(sql0)
+            emp_details = cr.fetchall()
+
+            for detail in emp_details:
+                if not detail[1] in emp_names:
+                    
+                    emp_names.append(detail[1])
+                    rec_id = self.pool.get('hr.employee.attendance').search(cr,uid, [('employee_id','=', detail[0]),('attendance_date','>=',start_date),('attendance_date','<=',end_date)])
+
+                    emp_dates = self.pool.get('hr.employee.attendance').browse(cr,uid, rec_id)
+                    emp_dates = sorted(emp_dates, key=lambda k: k['attendance_date']) 
+                      
+                    sheet1=book.add_sheet(str(detail[1]),cell_overwrite_ok=True)
+          
+                    _col = (sheet1.col(2)).width = 300 * 20
+                    _col = (sheet1.col(3)).width = 300 * 20
+                    _col = (sheet1.col(4)).width = 300 * 20
+                    _col = (sheet1.col(5)).width = 300 * 20
+                    _col = (sheet1.col(6)).width = 300 * 20
+                    _col = (sheet1.col(7)).width = 300 * 20
+
+                    _col = (sheet1.row(0)).height = 100 * 15
+                    _col = (sheet1.row(1)).height = 60 * 15
+                      
+                    row = 0
+                    sheet1.write_merge(row, row, 2, 7, 'Attendance Details for '+ detail[1] + ' from ' + str(datetime.strptime(start_date, '%Y-%m-%d').strftime('%d-%m-%Y')) + ' to '+ str(datetime.strptime(end_date, '%Y-%m-%d').strftime('%d-%m-%Y')), header_top)
+                    sheet1.write(row+1, 2, 'Attendance Date', header_months) 
+                    sheet1.write(row+1, 3, 'Sign In Time', header_months) 
+                    sheet1.write(row+1, 4, 'Sign Out Time', header_months) 
+                    sheet1.write(row+1, 5, 'Late Arrival', header_months)
+                    sheet1.write(row+1, 6, 'Early Departure', header_months)
+                    sheet1.write(row+1, 7, 'Total Short Minutes', header_months)
+                    row = 2
+                    
+                    for sline in emp_dates:
+
+                        sheet1.write(row, 2, datetime.strptime(sline.attendance_date, '%Y-%m-%d').strftime('%d-%m-%Y'), student_allowances_rows)    
+                        sheet1.write(row, 3, sline.sign_in, student_allowances_rows)  
+                        sheet1.write(row, 4, sline.sign_out, student_allowances_rows)  
+                        sheet1.write(row, 5, sline.late_early_arrival, student_allowances_rows) 
+                        sheet1.write(row, 6, sline.early_late_going, student_allowances_rows) 
+                        sheet1.write(row, 7, sline.total_short_minutes, student_allowances_rows) 
+                        row = row + 1  
+                      
+                path = os.path.join(os.path.expanduser('~'),'attendance_report.xls')
+                book.save(path)    
+       
+        
+        
+        
+        # This option generates Attendance Report for all Selected Employees
         if options == '3':
             for employee in employee_id:
+                
                 sql0 = """SELECT name_related from hr_employee where id = """ +  str(employee) 
                 cr.execute(sql0)
                 emp_name = cr.fetchone()[0]
-                print'-------- Employee Name ---------', emp_name
-                sql = """SELECT attendance_date,sign_in,sign_out from hr_employee_attendance where employee_id = """ +  str(employee) + """ and attendance_date >= '""" + str(start_date) + """' and attendance_date <= '""" + str(end_date) + """'"""
-#                 select attendance_date,sign_in,sign_out from hr_employee_attendance where employee_id = 8 and attendance_date >='2018-03-01' and attendance_date <='2018-03-31'
-                cr.execute(sql)
-                emp_dates = cr.fetchall()
+                
+                rec_id = self.pool.get('hr.employee.attendance').search(cr,uid, [('employee_id','=', employee),('attendance_date','>=',start_date),('attendance_date','<=',end_date)])
+
+                emp_dates = self.pool.get('hr.employee.attendance').browse(cr,uid, rec_id)
+                emp_dates = sorted(emp_dates, key=lambda k: k['attendance_date']) 
+
+#                 sql = """SELECT attendance_date,sign_in,sign_out from hr_employee_attendance where employee_id = """ +  str(employee) + """ and attendance_date >= '""" + str(start_date) + """' and attendance_date <= '""" + str(end_date) + """'"""
+#                 cr.execute(sql)
+#                 emp_dates = cr.fetchall()
                 
                 sheet1=book.add_sheet(str(emp_name),cell_overwrite_ok=True)
     
-                _col = (sheet1.col(2)).width = 400 * 20
-                _col = (sheet1.col(3)).width = 400 * 20
-                _col = (sheet1.col(4)).width = 400 * 20
-                _col = (sheet1.col(5)).width = 200 * 20
-                _col = (sheet1.col(6)).width = 200 * 20
-                _col = (sheet1.col(7)).width = 200 * 20
-                _col = (sheet1.col(8)).width = 200 * 20
-                _col = (sheet1.col(9)).width = 200 * 20
-                _col = (sheet1.col(10)).width = 200 * 20
-                _col = (sheet1.col(11)).width = 200 * 20
-                _col = (sheet1.col(12)).width = 200 * 20
+                _col = (sheet1.col(2)).width = 300 * 20
+                _col = (sheet1.col(3)).width = 300 * 20
+                _col = (sheet1.col(4)).width = 300 * 20
+                _col = (sheet1.col(5)).width = 300 * 20
+                _col = (sheet1.col(6)).width = 300 * 20
+                _col = (sheet1.col(7)).width = 300 * 20
+                
                 _col = (sheet1.row(0)).height = 100 * 15
                 _col = (sheet1.row(1)).height = 60 * 15
                 
                 row = 0
-                sheet1.write_merge(row, row, 2, 4, 'Attendance Details for '+ emp_name + ' from ' + start_date + ' to '+end_date, header_top)
+                sheet1.write_merge(row, row, 2, 7, 'Attendance Details for '+ emp_name + ' from ' + str(datetime.strptime(start_date, '%Y-%m-%d').strftime('%d-%m-%Y')) + ' to '+ str(datetime.strptime(end_date, '%Y-%m-%d').strftime('%d-%m-%Y')), header_top)
                 sheet1.write(row+1, 2, 'Attendance Date', header_months) 
                 sheet1.write(row+1, 3, 'Sign In Time', header_months) 
-                sheet1.write(row+1, 4, 'Sing Out Time', header_months) 
+                sheet1.write(row+1, 4, 'Sign Out Time', header_months) 
+                sheet1.write(row+1, 5, 'Late Arrival', header_months)
+                sheet1.write(row+1, 6, 'Early Departure', header_months)
+                sheet1.write(row+1, 7, 'Total Short Minutes', header_months)
                 row = 2
+                
                 for sline in emp_dates:
-                    print'-------- Sline --------', sline
-                    sheet1.write(row, 2, sline[0], student_allowances_rows)    
-                    sheet1.write(row, 3, sline[1], student_allowances_rows)  
-                    sheet1.write(row, 4, sline[2], student_allowances_rows)  
+
+                    sheet1.write(row, 2, datetime.strptime(sline.attendance_date, '%Y-%m-%d').strftime('%d-%m-%Y'), student_allowances_rows)    
+                    sheet1.write(row, 3, sline.sign_in, student_allowances_rows)  
+                    sheet1.write(row, 4, sline.sign_out, student_allowances_rows)  
+                    sheet1.write(row, 5, sline.late_early_arrival, student_allowances_rows) 
+                    sheet1.write(row, 6, sline.early_late_going, student_allowances_rows) 
+                    sheet1.write(row, 7, sline.total_short_minutes, student_allowances_rows) 
                     row = row + 1  
                 
             path = os.path.join(os.path.expanduser('~'),'attendance_report.xls')
             book.save(path)
+        
+        
+
+         
         return True
     
 sms_hr_attendance_report()
