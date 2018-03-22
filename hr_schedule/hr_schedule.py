@@ -25,6 +25,7 @@ import netsvc
 
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+
 from pytz import timezone, utc
 
 from osv import fields, osv
@@ -62,35 +63,44 @@ class hr_schedule(osv.osv):
     _name = 'hr.schedule'
     _inherit = ['mail.thread']
     _description = 'Employee Schedule'
-
+    
+    def convert_datetime_timezone(self,dt, tz1, tz2):
+        import datetime
+        import pytz
+        tz1 = pytz.timezone(tz1)
+        tz2 = pytz.timezone(tz2)
+    
+        dt = datetime.datetime.strptime(dt,"%Y-%m-%d %H:%M:%S")
+        dt = tz1.localize(dt)
+        dt = dt.astimezone(tz2)
+        dt = dt.strftime("%Y-%m-%d %H:%M:%S")
+    
+        return dt
     def create(self, cr, uid, vals, context=None):
-        print"Employee ids",vals
-        schedule = super(hr_schedule, self).create(cr, uid, vals, context=context)
-      
+        exists = self.search(cr,uid,[('department_id','=',vals['department_id'])]) 
+        if  exists:
+            raise osv.except_osv(('Not Allowed'), ('Schedule for the department you selected is already Exist'))
+        else:
+            schedule = super(hr_schedule, self).create(cr, uid, vals, context=context)
         empids = self.pool.get('hr.employee').search(cr,uid,[('department_id','=',vals['department_id'])])
-        print"Employee ids",empids
         if empids:
             
             for emp in empids:
-                print"employee id inside the loop",emp
                 self.create_schedule_per_emp_details(cr, uid, schedule,emp, context=context)
-                print"after the function call",
         return schedule
    
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-        print"write method is called"
         new_date_end =0
         new_date_start=0   
         if 'schedule_lines_ids' in vals:
             for value in vals['schedule_lines_ids']:
                 rec_id=value[1]
-                print"record id",rec_id
                 rec_date=value[2]
                 if value[2]:
-                    if 'New_date_end' in value[2]:
-                        new_date_end=rec_date['New_date_end']
-                    if 'New_date_start' in value[2]:
-                        new_date_start=rec_date['New_date_start']
+                    if 'date_end' in value[2]:
+                        new_date_end=rec_date['date_end']
+                    if 'date_start' in value[2]:
+                        new_date_start=rec_date['date_start']
                     if rec_date:
                         dep_schedule_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('id','=',rec_id)])
                         for f in self.pool.get('hr.schedule.lines').browse(cr,uid, dep_schedule_ids):
@@ -99,9 +109,9 @@ class hr_schedule(osv.osv):
                             schedule_objs = self.pool.get('hr.schedule.detail').browse(cr,uid, dep_schedule_ids)
                             for schedule in schedule_objs:
                                 if new_date_end ==0:
-                                    new_date_end=f.New_date_end
+                                    new_date_end=f.date_end
                                 if new_date_start ==0:
-                                    new_date_start=f.New_date_start    
+                                    new_date_start=f.date_start    
                                 if schedule:
                                     update= self.pool.get('hr.schedule.detail').write(cr, uid, schedule.id, {'date_start':new_date_start,'date_end':new_date_end})
                                     print"successfully updated id ",update
@@ -169,26 +179,20 @@ class hr_schedule(osv.osv):
  
     def create_schedule_per_emp_details(self, cr, uid, sched_id,emp_id,context=None):
  
-        print"create_schedule_per_emp_details method is called"
         sch_lines_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('schedule_id','=',sched_id)])
         if sch_lines_ids:
-            print"Under if condition"
             reclines = self.pool.get('hr.schedule.lines').browse(cr,uid,sch_lines_ids)
-            print"reclines from hr schedule lines"
         for line in reclines:
-            print"Under the for loop"
             mysch =self.pool.get('hr.schedule.detail').create(cr, uid, {
                             'employee_id':emp_id,
-                            'date_end':line.New_date_end,
-                            'date_start':line.New_date_start,
-#                             'date_end':'2018-03-07 12:51:27',
-#                             'date_start':'2018-03-07 08:51:27',
+                            'date_end':line.date_end,
+                            'date_start':line.date_start,
                             'name':line.name,
                             'state':line.state,
                             'schedule_id':sched_id,
                             'dayofweek':line.dayofweek,
                             'department_id':line.department_id.id,
-                            'day':line.day,
+                            'day':'2018-03-07',
                             },context=context)        
         return True
  
@@ -346,12 +350,9 @@ class schedule_lines(osv.osv):
     _columns = { 
         'name': fields.char("Name", size=64, required=True),
         'dayofweek': fields.selection(DAYOFWEEK_SELECTION, 'Day of Week', required=True, select=True),
-        'date_start': fields.datetime('Start Date and Time'),
-        'date_end': fields.datetime('End Date and Time'),
-        'New_date_start': fields.char('Start Date and Time testing', required=True),
-        'New_date_end': fields.char('End Date and Time', required=True),
-        
-        'day': fields.date('Day',required=True,select=1),
+        'date_start': fields.datetime('Start Date and Time', required=True),
+        'date_end': fields.datetime('End Date and Time', required=True),
+        'day': fields.date('Day',select=1),
 
         'schedule_id': fields.many2one('hr.schedule', 'Schedule', required=True),
 
