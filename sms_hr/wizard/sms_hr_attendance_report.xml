@@ -13,13 +13,13 @@
 						<field name="start_date" />
 						<newline/><field name="end_date" />
 						<field name="options" />
-						        <field name="department_id" attrs="{'invisible':[('options','!=','val1')]}" />
-						          <field name="employee_id"  attrs="{'invisible':[('options','!=','val3')]}"/>
+						        <field name="department_id" attrs="{'invisible':[('options','!=','1')]}" />
+						          <field name="employee_id"  attrs="{'invisible':[('options','!=','3')]}"/>
 	                    </group>
 	                </group>
 					
                     <footer>
-                        <button string="Save" name="print_sms_hr_attendance_report" type="object" class="oe_highlight"/>
+                        <button string="Print Report" name="print_sms_hr_attendance_report" type="object" class="oe_highlight"/>
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
                </form>

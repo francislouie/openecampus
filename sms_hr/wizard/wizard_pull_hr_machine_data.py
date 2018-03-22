@@ -29,15 +29,20 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     _columns = {
               'pull_for_device': fields.selection([('all','Pull For All Device')],'Device'),
               'month': fields.date('Month to Get Absentees'),
-              'month_comp': fields.date('Month For compute Holidays')
+              'month_comp': fields.date('Month For compute Holidays'),
+              'fetch_all_records': fields.boolean('Get All Previous Records')
               }
             
       
     def pull_attendance_device_data(self, cr, uid, ids, data):
-        month_comp_date = self.read(cr, uid, ids)[0]['month']
+        import requests
+        month_comp_date = self.read(cr, uid, ids)[0]['month_comp']
         if not month_comp_date:
             raise osv.except_osv((),'Date is required')
-        import requests
+        all_records = self.read(cr, uid, ids)[0]['fetch_all_records']
+        if all_records:
+            ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24&ack_id=1')
+            
         emp_id = []
         dates = []
         times = []
@@ -46,11 +51,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
 #         ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24&ack_id=1') 
                     
         while status == 'ok':
-#             emp_id = []
-#             dates = []
-#             times = []
             item = 0
-#             item2 = 0
             # Development API
 #             r = requests.get('http://api.smilesn.com/empleado/test_attendance.php?org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24')
             # Production API
@@ -142,9 +143,9 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                              
                                 if employee_rec:
                                     print'------------- Dates for this employee -------------- ', date, ' ---- ',employee_rec[0].id   
-#                                     employee_date = self.pool.get('hr.employee.attendance').search(cr,uid,[('attendance_date','=',date)])
-#                                     if not employee_date:
-                                    self.pool.get('hr.employee.attendance').create(cr, uid, {
+                                    employee_date = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',employee_rec[0].id),('attendance_date','=',date)])
+                                    if not employee_date:
+                                        self.pool.get('hr.employee.attendance').create(cr, uid, {
                                             'employee_id': employee_rec[0].id,
                                             'attendance_date': date, 
                                             'sign_in': emptime_list[0],
@@ -159,7 +160,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     
     def compute_attendance_absentees(self, cr, uid, ids, data):
         import datetime, calendar
-        month_comp_date = self.read(cr, uid, ids)[0]['month']
+        month_comp_date = self.read(cr, uid, ids)[0]['month_comp']
         if not month_comp_date:
             raise osv.except_osv((),'Date is required')
         year = int(datetime.datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))

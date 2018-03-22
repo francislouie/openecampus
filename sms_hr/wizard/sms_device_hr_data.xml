@@ -12,9 +12,8 @@
                     <group>
 						<group>
 						<field name="pull_for_device" />
-					<!-- 	<field name="month" /> -->
-						<!--   <field name="month_comp" /> -->
-						
+						  <field name="month_comp" />
+						  <field name="fetch_all_records" />
 	                    </group>
 	                </group>
 					
