@@ -25,11 +25,11 @@
 	                    
 					</group>
 					<group>
-					   <field name="fee_type_list"  widget="many2many_tags" placeholder="Fee Types" nolabel="1"/>
+					   <field name="fee_type_list"  widget="many2many_tags" required="1" placeholder="Fee Types" nolabel="1"/>
 					</group>
 					<group>
 						
-	                      	<field name="class_id" placeholder="Classes" nolabel="1"/>
+	                      	<field name="class_id" placeholder="Classes" required="1" nolabel="1"/>
 	                    </group>
                     <footer>
                         <button string="Defaulter Sutdents Summary" name="print_defaulter_summary" type="object" class="oe_highlight"/>

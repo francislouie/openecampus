@@ -26,7 +26,7 @@ class class_fee_receipts_unpaid(osv.osv_memory):
                }
     _defaults = {'class_id':_get_class,'amount_after_due_date':200,'category':'Academics'}
     
-    def create_unpaid_challans(self, cr, uid, class_id,category):
+    def create_unpaid_challans(self, cr, uid, class_id,due_date,category):
         print "create upaid challans"
         # create unpaid challans for category academic when called for academics, or crete for transp[ort when called for transpoert
         
@@ -37,7 +37,7 @@ class class_fee_receipts_unpaid(osv.osv_memory):
             recstudent = self.pool.get('sms.academiccalendar.student').browse(cr,uid,student_ids)
             for student in recstudent:
                 #----------Passing 'Full' as an argument. Since this challan is for whole class so we don't need to pass the option of Partial here ----- 
-                self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id[0], student.std_id.id, category, 'Full', None)
+                self.pool.get('smsfee.receiptbook').check_fee_challans_issued(cr, uid, class_id[0], student.std_id.id, category, 'Full',due_date, None)
         return True
 
     def check_challan_print_type(self, cr, uid, thisform):
@@ -63,13 +63,13 @@ class class_fee_receipts_unpaid(osv.osv_memory):
                 print "dublicate vate",thisform['Dublicate']
                 if thisform['Dublicate']==False:
 
-                    self.create_unpaid_challans(cr, uid, thisform['class_id'],'Academics')
+                    self.create_unpaid_challans(cr, uid, thisform['class_id'],thisform['due_date'],'Academics')
                 
             elif checking_challan == 'print_one_on_one':
                 report = 'smsfee_print_one_student_per_page'
                 thisform = self.read(cr, uid, ids)[0]
                 if thisform['Dublicate'] == False:
-                    self.create_unpaid_challans(cr, uid, thisform['class_id'],'Academics')
+                    self.create_unpaid_challans(cr, uid, thisform['class_id'],thisform['due_date'],'Academics')
                 
                 
             datas = {
@@ -93,14 +93,14 @@ class class_fee_receipts_unpaid(osv.osv_memory):
                 report = 'smsfee_print_three_student_per_page' #here parser of academics also called for transport, threee students one page
                 thisform = self.read(cr, uid, ids)[0]
                 if thisform['Dublicate'] == False:
-                    self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')
+                    self.create_unpaid_challans(cr, uid, thisform['class_id'],thisform['due_date'],'Transport')
         
             elif checking_challan == 'print_one_on_one':  
                 #report = 'smstransport_print_one_student_per_page'
                 report = 'smsfee_print_one_student_per_page'
                 thisform = self.read(cr, uid, ids)[0]
                 if thisform['Dublicate'] == False:
-                    self.create_unpaid_challans(cr, uid, thisform['class_id'],'Transport')
+                    self.create_unpaid_challans(cr, uid, thisform['class_id'],thisform['due_date'],'Transport')
             
             datas = {
                  'ids': [],
@@ -116,7 +116,7 @@ class class_fee_receipts_unpaid(osv.osv_memory):
         else:
             thisform = self.read(cr, uid, ids)[0]
             if thisform['Dublicate'] == False:
-                self.create_unpaid_challans(cr, uid, thisform['class_id'])
+                self.create_unpaid_challans(cr, uid, thisform['class_id'],thisform['due_date'])
             report = 'smsfee_print_one_student_per_page'        
             datas = {
                  'ids': [],

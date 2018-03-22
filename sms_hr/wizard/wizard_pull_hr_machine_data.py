@@ -201,9 +201,9 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         return True
     def compute_attendance_holidays(self, cr, uid, ids, data):
         
+        print"Compute attendance holidays method is called"
         
-        
-        month_comp_date = self.read(cr, uid, ids)[0]['month_comp']
+        month_comp_date =data
         if not month_comp_date:
             raise osv.except_osv((),'Date is required')
         year = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))

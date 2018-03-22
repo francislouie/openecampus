@@ -386,9 +386,11 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                             query = """ select vehcile_no,name from  sms_transport_vehcile
                                             where id =(select vehcile_reg_students_id from sms_student where id=""" + std_id + """ )"""
                             self.cr.execute(query)
-                            _result=self.cr.fetchone()
+
+                            _result=self.cr.fetchall()
                             challan_dict['vechil_no'] =  "Vehcile No:"+str(_result[0])
-                            challan_dict['vechil_name'] =  "Vehcile Name: "+str(_result[1])
+                            challan_dict['vechil_name'] =  "Vehcile : "+str(_result[1])
+
                         else:
                             print("class idd",self.datas['form']['class_id'][0])
                             print "student idd",challan.student_id.id
@@ -399,7 +401,9 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                             self.cr.execute(query)
                             _result1 = self.cr.fetchall()[0]
                             challan_dict['vechil_no'] = "Vehcile No:"+str(_result1[0])
+
                             challan_dict['vechil_name'] = "Vehcile Name: "+str(_result1[1])
+
 
                         if 'fee_receiving_type' in self.datas['form']:
                                 if self.datas['form']['fee_receiving_type'] == "Partial":
