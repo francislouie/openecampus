@@ -139,9 +139,10 @@ class sms_hr_attendance_report(osv.osv_memory):
                         sheet1.write(row, 2, datetime.strptime(sline.attendance_date, '%Y-%m-%d').strftime('%d-%m-%Y'), student_allowances_rows)    
                         sheet1.write(row, 3, sline.sign_in, student_allowances_rows)  
                         sheet1.write(row, 4, sline.sign_out, student_allowances_rows)  
-                        sheet1.write(row, 5, sline.late_early_arrival, student_allowances_rows) 
-                        sheet1.write(row, 6, sline.early_late_going, student_allowances_rows) 
-                        sheet1.write(row, 7, sline.total_short_minutes, student_allowances_rows) 
+                        sheet1.write(row, 5, int(sline.late_early_arrival), student_allowances_rows) 
+                        sheet1.write(row, 6, int(sline.early_late_going), student_allowances_rows) 
+                        sheet1.write(row, 7, int(sline.total_short_minutes), student_allowances_rows) 
+
                         row = row + 1  
                       
                 path = os.path.join(os.path.expanduser('~'),'attendance_report.xls')
@@ -192,9 +193,9 @@ class sms_hr_attendance_report(osv.osv_memory):
                         sheet1.write(row, 2, datetime.strptime(sline.attendance_date, '%Y-%m-%d').strftime('%d-%m-%Y'), student_allowances_rows)    
                         sheet1.write(row, 3, sline.sign_in, student_allowances_rows)  
                         sheet1.write(row, 4, sline.sign_out, student_allowances_rows)  
-                        sheet1.write(row, 5, sline.late_early_arrival, student_allowances_rows) 
-                        sheet1.write(row, 6, sline.early_late_going, student_allowances_rows) 
-                        sheet1.write(row, 7, sline.total_short_minutes, student_allowances_rows) 
+                        sheet1.write(row, 5, int(sline.late_early_arrival), student_allowances_rows) 
+                        sheet1.write(row, 6, int(sline.early_late_going), student_allowances_rows) 
+                        sheet1.write(row, 7, int(sline.total_short_minutes), student_allowances_rows) 
                         row = row + 1  
                       
                 path = os.path.join(os.path.expanduser('~'),'attendance_report.xls')
@@ -247,9 +248,9 @@ class sms_hr_attendance_report(osv.osv_memory):
                     sheet1.write(row, 2, datetime.strptime(sline.attendance_date, '%Y-%m-%d').strftime('%d-%m-%Y'), student_allowances_rows)    
                     sheet1.write(row, 3, sline.sign_in, student_allowances_rows)  
                     sheet1.write(row, 4, sline.sign_out, student_allowances_rows)  
-                    sheet1.write(row, 5, sline.late_early_arrival, student_allowances_rows) 
-                    sheet1.write(row, 6, sline.early_late_going, student_allowances_rows) 
-                    sheet1.write(row, 7, sline.total_short_minutes, student_allowances_rows) 
+                    sheet1.write(row, 5, int(sline.late_early_arrival), student_allowances_rows) 
+                    sheet1.write(row, 6, int(sline.early_late_going), student_allowances_rows) 
+                    sheet1.write(row, 7, int(sline.total_short_minutes), student_allowances_rows) 
                     row = row + 1  
                 
             path = os.path.join(os.path.expanduser('~'),'attendance_report.xls')
