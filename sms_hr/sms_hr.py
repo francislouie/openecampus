@@ -258,31 +258,29 @@ class hr_employee_attendance(osv.osv):
         lat_min=0
         print"************************************late_arrival start********************************************"
         for f in self.browse(cr, uid, ids, context=context):
-            print"employee id ",f.employee_id
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
-            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',day)])
-            print "found sechdule on this day ",sch_detail_ids
+            print "this day",day
+            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',day-1)])
             if sch_detail_ids:
                 sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
                 attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_start, "UTC", "Asia/Karachi")
-                att_time = datetime.strptime(attendance_time,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                schedule_signin = datetime.strptime(sch_detail__objs.date_start,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
                 print"employee id ",f.employee_id.name
                 print "attendance date:",f.attendance_date
-                print "record id:",sch_detail__objs.id
-                print"time sign in",f.sign_in
+                print"time sign in on",f.sign_in
 
-                print"schedule time",att_time
+                print"schedule sign in time",schedule_signin
                 FMT = '%H:%M:%S'
-                if f.sign_in and att_time:
-                    timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(att_time, FMT)
-                    if(datetime.strptime(f.sign_in, FMT) < datetime.strptime(att_time, FMT)):
+                if f.sign_in and attendance_time:
+                    timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(schedule_signin, FMT)
+                    if(datetime.strptime(f.sign_in, FMT) < datetime.strptime(schedule_signin, FMT)):
                         lat_min=0
                     else:
                         lat_min = timedelta.days + float(timedelta.seconds) / 60
                 print "***************** late munites",lat_min
             else:
-                lat_min=0
+                lat_min=-10000
          
             result[f.id] = lat_min
 
@@ -295,7 +293,7 @@ class hr_employee_attendance(osv.osv):
    
 
     
-    def get_early_late_going(self, cr, uid,ids, name, args, context=None):
+    def get_early_leaving(self, cr, uid,ids, name, args, context=None):
         result = {}
         early_minutes=0
         for f in self.browse(cr, uid, ids, context=context):
@@ -308,51 +306,43 @@ class hr_employee_attendance(osv.osv):
             
             schedule_id_lst = []
            
-            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',day)])
+            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',day-1)])
             print "found sechdule on this day ",sch_detail_ids
             if sch_detail_ids:
                 sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
-                
-                attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_end, "UTC", "Asia/Karachi")
-                att_time = datetime.strptime(attendance_time,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                print "****date end before conversion",sch_detail__objs.date_end
+                #attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_end, "UTC", "Asia/Karachi")
+                #print "date end in mid while",attendance_time
+                #schedule_time_signin_ = datetime.strptime(sch_detail__objs.date_start,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                schedule_time_signout_ = datetime.strptime(sch_detail__objs.date_end,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                #print "schedule sign in time",schedule_time_signin_
                 
 #                 att_time = datetime.strptime(sch_detail__objs.date_end,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
-                print"employee id ",f.employee_id.name
-                print "attendance date:",f.attendance_date
-                print "record id:",sch_detail__objs.id
-                print"time sign in",f.sign_in
-                print"time sign out ",f.sign_out
+                print" ****employee sign out on: ",f.sign_out
+                print "and schedule_time_signout",schedule_time_signout_
                 FMT = '%H:%M:%S'
-                print"schedule time",att_time
                 #early_min = datetime.strptime(f.sign_out, FMT) - datetime.strptime(att_time, FMT)
-                if f.sign_out and att_time:
-                    timedelta = datetime.strptime(att_time, FMT) - datetime.strptime(f.sign_out, FMT)
-                    if(datetime.strptime(att_time, FMT) < datetime.strptime(f.sign_out, FMT)):
+                if f.sign_out and schedule_time_signout_:
+                    timedelta = datetime.strptime(schedule_time_signout_, FMT) - datetime.strptime(f.sign_out, FMT)
+                    if(datetime.strptime(schedule_time_signout_, FMT) < datetime.strptime(f.sign_out, FMT)):
                         early_minutes=0
                     else:
-                        print"New time",timedelta
-                        print"New time day",timedelta.days
-                        print"New time mints",timedelta.seconds
-                        print"New time second",float(timedelta.seconds) / 60
                         early_minutes = timedelta.days + float(timedelta.seconds) / 60
-                        print "***************** late early_minutes",early_minutes
+                        print "***************** Employee Left Earlly (in munutes)",early_minutes
             else:
-                early_minutes=0
+                early_minutes = -10000
             result[f.id] = early_minutes
 
         return result 
     def get_day_ofweek(self, cr, uid,ids, name, args, context=None):
         result = {}
         days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
-         
         for f in self.browse(cr, uid, ids, context=context):
             print"employee id ",f.employee_id
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
             name_day=days[day]
-           
-            print"Employee attendance date nnnnnnn",name_day
-            result[f.id] = '('+str(name_day)+')'+str(f.attendance_date)
+            result[f.id] = name_day.upper()
         return result 
     
     
@@ -361,12 +351,12 @@ class hr_employee_attendance(osv.osv):
 
     _columns = {
       'employee_id': fields.many2one('hr.employee'),
-      'attendance_date': fields.date('Attendance Date'),
+      'attendance_date': fields.date('Date'),
       'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='char'),
       'sign_in': fields.char('Sign In'),
       'sign_out': fields.char('Sign Out'),
       'late_early_arrival': fields.function(get_late_arrival, method=True, string='Late Arrival',type='integer'),
-      'early_late_going': fields.function(get_early_late_going, method=True, string='Early Departure',type='integer'),
+      'early_late_going': fields.function(get_early_leaving, method=True, string='Early Departure',type='integer'),
       'total_short_minutes': fields.function(total_short_minutes, method=True, string='Short Min ',type='integer'),
       'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('Not-Out', 'Not-CheckOut')], 'Status'),
       'attendance_month': fields.char('Attendance Month'),
