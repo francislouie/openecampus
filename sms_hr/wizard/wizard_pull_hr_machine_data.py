@@ -29,7 +29,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     _columns = {
               'pull_for_device': fields.selection([('all','Pull For All Device')],'Device'),
               'month': fields.date('Month to Get Absentees'),
-              'month_comp': fields.date('Month For compute Holidays'),
+              'month_comp': fields.date('Month For computing absentees'),
               'fetch_all_records': fields.boolean('Get All Previous Records')
               }
             
@@ -144,6 +144,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                 if employee_rec:
                                     print'------------- Dates for this employee -------------- ', date, ' ---- ',employee_rec[0].id   
                                     employee_date = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',employee_rec[0].id),('attendance_date','=',date)])
+                                    
                                     if not employee_date:
                                         self.pool.get('hr.employee.attendance').create(cr, uid, {
                                             'employee_id': employee_rec[0].id,
@@ -160,6 +161,9 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     
     def compute_attendance_absentees(self, cr, uid, ids, data):
         import datetime, calendar
+        
+        date_today = datetime.datetime.today().strftime('%Y%m%d')
+        
         month_comp_date = self.read(cr, uid, ids)[0]['month_comp']
         if not month_comp_date:
             raise osv.except_osv((),'Date is required')
@@ -180,21 +184,22 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         
         for day in days:
             date_stamp = day.strftime('%Y%m%d')
-            dates.append(date_stamp)
-            
+            if date_stamp <= date_today:
+                dates.append(date_stamp)
+        print'------ Attendance Date List --------', dates    
         for date_item in dates:
-            for emp_idd in emp_id_list:
-                emp_rec_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_idd),('attendance_date', '=', date_item)]) 
-                print'--- record not found','for Date --- Before-----',date_item, emp_rec_ids
-                if not emp_rec_ids:
-                        print'--- record not found','for Date ---After -----',date_item, emp_rec_ids
-                        self.pool.get('hr.employee.attendance').create(cr, uid, {
-                                            'employee_id': emp_idd,
-                                            'attendance_date': date_item, 
-                                            'sign_in': 0,
-                                            'sign_out': 0,
-                                            'attendance_month': str(datetime.datetime.strptime(date_item,'%Y%m%d').strftime('%B')),
-                                            'final_status': 'Absent'})
+                for emp_idd in emp_id_list:
+                    emp_rec_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_idd),('attendance_date', '=', date_item)]) 
+#                     print'--- record not found','for Date --- Before-----',date_item, emp_rec_ids
+                    if not emp_rec_ids:
+                            print'--- record not found','for Date ---After -----',date_item, emp_rec_ids
+                            self.pool.get('hr.employee.attendance').create(cr, uid, {
+                                                'employee_id': emp_idd,
+                                                'attendance_date': date_item, 
+                                                'sign_in': 0,
+                                                'sign_out': 0,
+                                                'attendance_month': str(datetime.datetime.strptime(date_item,'%Y%m%d').strftime('%B')),
+                                                'final_status': 'Absent'})
 
        
         print '---------- Employees ---------', emp_id_list,'--- Dates',dates
@@ -202,9 +207,9 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         return True
     def compute_attendance_holidays(self, cr, uid, ids, data):
         
+        print"Compute attendance holidays method is called"
         
-        
-        month_comp_date = self.read(cr, uid, ids)[0]['month_comp']
+        month_comp_date =data
         if not month_comp_date:
             raise osv.except_osv((),'Date is required')
         year = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))
