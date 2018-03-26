@@ -824,134 +824,8 @@ sms_student_certificate()
 
 class sms_student(osv.osv):
     
+  
     
-    def fields_view_get(self, cr, uid, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
-        if context is None:context = {}
-        res = super(sms_student, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context, toolbar=toolbar, submenu=False)
-        doc = etree.XML(res['arch'])
-        #nodes = doc.xpath("//page[@name='contact_information']")
-        print"000000000000000000000000",res
-        sqluser=""" select res_groups.name from res_groups inner join res_groups_users_rel 
-        on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid="""+str(uid)
-        cr.execute(sqluser)
-        group_name=cr.fetchall()
-        profile_manager = True
-        for s in group_name:
-            if s[0] == 'Profile Manager' or 'Principal' :
-                if s[0] == 'Principal':
-                    for node in doc.xpath("//page[@string='Fees Payments']"):
-                        node.set('invisible', '1')
-                        setup_modifiers(node)
-                        for node in doc.xpath("//page[@string='Fees Payments']"):
-                            node.set('invisible', '1')
-                            setup_modifiers(node)
-                    for node in doc.xpath("//page[@string='Transport Details']"):
-                        node.set('invisible', '1')
-                        setup_modifiers(node)
-
-                profile_manager = False
-        # group_name=json.dumps(group_name)
-        if profile_manager:
-            for node in doc.xpath("//field[@name='father_occupation']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='registration_no']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='father_name']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='gender']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='father_nic']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='father_occupation']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='religion']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='birthday']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-               #setup_modifiers(node)
-            for node in doc.xpath("//field[@name='Contact']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='phone']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='cell_no']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='fax_no']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='email']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='nationality']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='permanent_address']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='permanent_city']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='permanent_country']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='cur_address']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='cur_city']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='cur_country']"):
-                node.set('readonly', '1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='cell_no']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='fax_no']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='email']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='nationality']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='name']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='subcate']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='start_date']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='session_ids']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='start_date']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='id']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='subcate']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-            for node in doc.xpath("//field[@name='fee_type']"):
-                node.set('readonly','1')
-                setup_modifiers(node)
-                
-        res['arch'] = etree.tostring(doc)
-        return res
     
     """ This object defines students of an institute """
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
@@ -995,10 +869,7 @@ class sms_student(osv.osv):
         }
         return result 
     
-    def action_admit_student(self, cr, uid, ids, context=None):
-        print "action_admit_student"
-        return None 
-    
+      
     def unlink(self, cr, uid, ids, context={}, check=True):
         for rec in self.browse(cr, uid, ids, context):
             if rec.state == 'Draft':
