@@ -61,6 +61,19 @@
                 </data>
             </field>
         </record>
+            
+        <!--Inherit hr attendance search view-->
+    <record id="view_hr_attendance_inherit_filter" model="ir.ui.view">
+      <field name="name">hr_attendance</field>
+      <field name="model">hr.attendance</field>
+      <field name="inherit_id" ref="hr_attendance.view_hr_attendance_filter"/>
+      <field name="arch" type="xml">
+        <xpath expr="//search" position="inside">
+        
+          <field name="attendance_date" string="Attendance Date"/>
+        </xpath>
+      </field>
+    </record>
         
         
          <record id="hr_attendance_tree2" model="ir.ui.view">
@@ -82,6 +95,12 @@
                     </data>
             </field>
         </record>
+        
+        
+    
+        
+        
+        
         
         <record id="hr_employee_form10" model="ir.ui.view">
             <field name="name">hr.employee.form10</field>

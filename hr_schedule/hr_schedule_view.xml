@@ -75,7 +75,7 @@
                                          <field name="day" invisible="True"/>
                                           <field name="date_start"/>
                                         <field name="date_end"/>
-                                   
+                                           <field name="natureofday"/>
                                         <field name="state"/>
                                     </tree>
                                 </field>
@@ -163,6 +163,7 @@
 
                     <field name="day"/>
                     <field name="dayofweek"/>
+                    <field name="natureofday"/>
                     <field name="date_start"/>
                     <field name="date_end"/>
                     <field name="state"/>
@@ -184,6 +185,7 @@
                         <field name="schedule_id"/>
                         <field name="name"/>
                         <field name="dayofweek"/>
+                        <field name="natureofday"/>
                         <field name="date_start"/>
                         <field name="date_end"/>
                     </group>

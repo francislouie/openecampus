@@ -169,6 +169,7 @@ class hr_schedule(osv.osv):
                             'state':line.state,
                             'schedule_id':sched_id,
                             'dayofweek':line.dayofweek,
+                            'natureofday':line.natureofday,
                             'department_id':line.department_id.id,
                             'day':'2018-03-07',
                             },context=context)        
@@ -328,6 +329,7 @@ class schedule_lines(osv.osv):
     _columns = { 
         'name': fields.char("Name", size=64, required=True),
         'dayofweek': fields.selection(DAYOFWEEK_SELECTION, 'Day of Week', required=True, select=True),
+        'natureofday':fields.selection((('Wording_day', 'Wording day'), ('holiday', 'Holiday')), 'Day Nature'),
         'date_start': fields.datetime('Start Date and Time', required=True),
         'date_end': fields.datetime('End Date and Time', required=True),
         'day': fields.date('Day',select=1),
@@ -352,6 +354,7 @@ class schedule_lines(osv.osv):
 
     _defaults = {
         'dayofweek': '0',
+        'natureofday': 'Wording_day',
         'state': 'draft',
     }
 
@@ -396,6 +399,7 @@ class schedule_detail(osv.osv):
     _columns = { 
         'name': fields.char("Name", size=64, required=True),
         'dayofweek': fields.selection(DAYOFWEEK_SELECTION, 'Day of Week', required=True, select=True),
+        'natureofday':fields.selection((('Wording_day', 'Wording day'), ('holiday', 'Holiday')), 'Day Nature'),
 #         'date_start': fields.datetime('Start Date and Time', required=True),
 #         'date_end': fields.datetime('End Date and Time', required=True),
         'date_start': fields.char('Start Date and Time', required=True),
