@@ -135,10 +135,10 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                 for rec2 in emp_time_recs:
                                     emptime_list.append(rec2.attendance_time)
                                     if signin == True:
-                                        result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign In'})
+                                        result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign In', 'employee_id': employee_rec[0].id})
                                         signin = False
                                     else:
-                                        result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out'}) 
+                                        result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out', 'employee_id': employee_rec[0].id}) 
                                         signin = True 
                              
                                 if employee_rec:
