@@ -374,6 +374,7 @@ class hr_attendance(osv.osv):
     _description = "Attendance"
 
     _columns = {
+        'employee_name': fields.char('Employee'),
         'status':fields.char('Status'),
         'attendance_date':fields.date('Attendance Date'),
         'attendance_time':fields.char('Attendance Time'),

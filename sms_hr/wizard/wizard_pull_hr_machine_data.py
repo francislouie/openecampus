@@ -41,7 +41,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
             raise osv.except_osv((),'Date is required')
         all_records = self.read(cr, uid, ids)[0]['fetch_all_records']
         if all_records:
-            ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24&ack_id=1')
+            ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24&ack_id=0')
             
         emp_id = []
         dates = []
@@ -83,8 +83,11 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                             times.append(att_time)
            
                     while item < len(emp_id):
-        #                 print "----------    Data of user No   ---------------------",emp_id[item] 
-                        for att_records in read['att_records']: 
+                        employee_id = self.pool.get('hr.employee').search(cr,uid,[('empleado_account_id','=',str(emp_id[item]))])
+                        employee_rec = self.pool.get('hr.employee').browse(cr,uid,employee_id)
+                        if employee_rec:
+#                             print "----------    Data of user with ID   ---------------------",employee_rec[0].name_related
+                            for att_records in read['att_records']: 
                            
                                 if att_records['user_empleado_id'] == emp_id[item]:
                    
@@ -106,8 +109,10 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                                 'action':'sign_in',
                                                 'name':'2018-01-29 07:25:00',
                                                 'empleado_account_id': user_id, 
-                                                'emp_regno_on_device': biometric_id,})  
-                                                  
+                                                'emp_regno_on_device': biometric_id,
+                                                'employee_name': employee_rec[0].name_related
+                                                })  
+#                                                   
           
                             
                         item += 1
@@ -119,7 +124,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
 #         sqlQ ="""DELETE FROM hr_employee_attendance"""
 #         cr.execute(sqlQ)
  
-        print'--------- All Dates ----------------------- ' , dates 
+#         print'--------- All Dates ----------------------- ' , dates 
         while item2 < len(emp_id):
             employee_id = self.pool.get('hr.employee').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2]))])
             employee_rec = self.pool.get('hr.employee').browse(cr,uid,employee_id) 
@@ -135,14 +140,14 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                 for rec2 in emp_time_recs:
                                     emptime_list.append(rec2.attendance_time)
                                     if signin == True:
-                                        result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign In', 'employee_id': employee_rec[0].id})
+                                        result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign In'})
                                         signin = False
                                     else:
-                                        result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out', 'employee_id': employee_rec[0].id}) 
+                                        result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out'}) 
                                         signin = True 
                              
                                 if employee_rec:
-                                    print'------------- Dates for this employee -------------- ', date, ' ---- ',employee_rec[0].id   
+#                                     print'------------- Dates for this employee -------------- ', date, ' ---- ',employee_rec[0].id   
                                     employee_date = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',employee_rec[0].id),('attendance_date','=',date)])
                                     
                                     if not employee_date:
@@ -202,7 +207,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                                 'final_status': 'Absent'})
 
        
-        print '---------- Employees ---------', emp_id_list,'--- Dates',dates
+#         print '---------- Employees ---------', emp_id_list,'--- Dates',dates
         #wrte method code here
         return True
     def compute_attendance_holidays(self, cr, uid, ids, data):
