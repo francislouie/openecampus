@@ -395,14 +395,20 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                             print("class idd",self.datas['form']['class_id'][0])
                             print "student idd",challan.student_id.id
                             class_id = self.datas['form']['class_id'][0]
+                            
+                            
                             query = """ select vehcile_no,name from  sms_transport_vehcile
                                            where id =(select vehcile_reg_students_id from sms_student where id=""" \
                                     + str(challan.student_id.id) + """)"""
                             self.cr.execute(query)
-                            _result1 = self.cr.fetchall()[0]
-                            challan_dict['vechil_no'] = "Vehcile No:"+str(_result1[0])
-
-                            challan_dict['vechil_name'] = "Vehcile Name: "+str(_result1[1])
+                            _result1 = self.cr.fetchall()
+                            if len(_result1) > 0:
+                                _result2 = _result1[0]
+                                challan_dict['vechil_no'] = "Vehcile No:"+str(_result2[0])
+                                challan_dict['vechil_name'] = "Vehcile Name: "+str(_result2[1])
+                            else:
+                                 challan_dict['vechil_no'] = '--'
+                                 challan_dict['vechil_name'] = '--'
 
 
                         if 'fee_receiving_type' in self.datas['form']:
