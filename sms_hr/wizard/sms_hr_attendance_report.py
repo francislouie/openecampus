@@ -142,6 +142,7 @@ class sms_hr_attendance_report(osv.osv_memory):
                         sheet1.write(row, 5, int(sline.late_early_arrival), student_allowances_rows) 
                         sheet1.write(row, 6, int(sline.early_late_going), student_allowances_rows) 
                         sheet1.write(row, 7, int(sline.total_short_minutes), student_allowances_rows) 
+
                         row = row + 1  
                       
                 path = os.path.join(os.path.expanduser('~'),'attendance_report.xls')

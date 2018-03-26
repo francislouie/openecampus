@@ -777,7 +777,7 @@
 			<header>
 			<button name="load_std_fee" string="1. Show Student Fees" states="Draft" type="object"  class="oe_highlight" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_fee_officer,sms.group_sms_director" />
 			<button name="send_for_approval" string="1. Receive Fee (Send For Approval)" states="fee_calculated" type="object" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_fee_officer,sms.group_sms_director" class="oe_highlight" />
-			<button name="confirm_fee_received" string="2. Approve(Receive Fee)" confirm = "Receive Fee with given amount?" states="Waiting_Approval" type="object" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_director"  class="button_ok" />
+			<button name="confirm_fee_received" string="2.Approve(Receive Fee)" confirm = "Receive Fee with given amount?" states="Waiting_Approval" type="object" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_director"  class="button_ok" />
 			<button name="send_back_for_correction" string="2. Send Back For Correction" confirm = "If you think this Fee Bill needs correction, send it back to your account officer" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_director"  states="waiting_approval" type="object" class="button_back_to_statement"   />
 			<button name="cancel_fee_bill" string="[X]Cancel This Fee Bill" confirm = "Are you sure Cancel Fee bill?" states="Waiting_Approval,fee_calculated" type="object" class="button_close_statement" />
 			<button name="%(print_paid_fee_receipt_id)d" string="Print Receipt" states="Paid" type="action" class="oe_highlight" groups=""/>
@@ -791,11 +791,17 @@
 				</group>
 				<group>
 				<h2><field name="counter" readonly ="1"  nolabel ="1" /></h2>
+				<newline/>
+				<field name="donot_charge_late_fee"  attrs="{'readonly':[('state','IN',['Waiting_Approval'])]}" />
+				<field name="due_date" readonly="1"/>
 				</group>
 			</group>
 			<group >
 					<group>
 					<field name="receive_whole_amount" attrs="{'readonly':[('state','!=','fee_calculated')]}" />	
+					<!-- <field name="cancel_late_fee"  attrs="{'invisible':[('state','IN',['Waiting_Approval'])]}" />
+					<field name="due_date"/> -->
+
 					<!--late fee will be atuo filled when late calcultion is up-->
 					<field name="late_fee" attrs="{'readonly':[('state','in',['Paid','Cancel','Adjusted'])]}"/>
 					<field name="challan_type" readonly="1"/>

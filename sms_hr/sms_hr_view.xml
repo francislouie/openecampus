@@ -2,6 +2,23 @@
 <openerp>
     <data>
   
+<!--Company inherited view-->
+        <record model="ir.ui.view" id="view_cms_company_form1">
+          <field name="name">res.company.form.inherit</field>
+          <field name="model">res.company</field>
+          <field name="inherit_id" ref="base.view_company_form"/>
+          <field name="type">form</field>
+          <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//field[@name='partner_id']" position="after">
+                        <field name="empleado_branch_id"/>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
+
     <record id="view_biometric_device_form" model="ir.ui.view">
             <field name="name">hr.biometirc.device.form</field>
             <field name="model">hr.biometirc.device</field>
@@ -81,6 +98,7 @@
                     </xpath>
                  <xpath expr="//page[@string='HR Settings']" position="after">
                         <page string="Attendance">
+                        <p> -10000 = Schedule on selected day is not found. Goto employee schedule and create schedule.</p>
                                 <group>
                                    <field name="employee_attendance_ids" nolabel="1" widget="one2many_list">
                                    <group>
