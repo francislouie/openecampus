@@ -356,13 +356,8 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
 
                 #challan is being printed via student form, canlcel all other challans of this sutdent
                 challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_id','=',self.datas['form']['student_id'][0]),('state','=','fee_calculated')])
-
-
              else:
                 challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid, [('challan_cat', '=', self.datas['form']['category']),('student_class_id', '=', self.datas['form']['class_id'][0]), ('state', '=', 'fee_calculated')])
-
-
-
         if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
@@ -500,9 +495,17 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         lines_ids = self.pool.get('smsfee.receiptbook.lines').search(self.cr, self.uid, [('receipt_book_id','=',data)])
         if lines_ids:
             challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr, self.uid, lines_ids)
-        for challan in challans:
-            dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
-            result.append(dict) 
+            if len(lines_ids)>10:
+                title = ''
+                whole_amount = 0
+                for challan in challans:
+                    title += challan.fee_name +':'+str(challan.fee_amoun)+','
+                    whole_amount = int(whole_amount) + int(challan.fee_amount)
+                dict = {'head_name':title,'head_amount':whole_amount}
+            else:
+                for challan in challans:
+                    dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
+        result.append(dict) 
         return result
     
     def print_challan_dbid(self, data):
