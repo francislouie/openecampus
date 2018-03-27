@@ -265,16 +265,16 @@ class hr_employee_attendance(osv.osv):
             sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',str(day))])
             if sch_detail_ids:
                 sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
-#                 attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_start, "UTC", "Asia/Karachi")
-                attendance_time =sch_detail__objs.date_start
-                schedule_signin = datetime.strptime(sch_detail__objs.date_start,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_start, "UTC", "Asia/Karachi")
+#                 attendance_time =sch_detail__objs.date_start
+                schedule_signin = datetime.strptime(attendance_time,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
                 print"employee id ",f.employee_id.name
                 print "attendance date:",f.attendance_date
                 print"time sign in on",f.sign_in
 
                 print"schedule sign in time",schedule_signin
                 FMT = '%H:%M:%S'
-                if f.sign_in and attendance_time:
+                if f.sign_in and schedule_signin:
                     timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(schedule_signin, FMT)
                     if(datetime.strptime(f.sign_in, FMT) < datetime.strptime(schedule_signin, FMT)):
                         lat_min=0
@@ -296,7 +296,9 @@ class hr_employee_attendance(osv.osv):
 
     
     def get_early_leaving(self, cr, uid,ids, name, args, context=None):
+        print "***************** Early Going start*************************"
         result = {}
+        FMT = '%H:%M:%S'
         early_minutes=0
         for f in self.browse(cr, uid, ids, context=context):
           
@@ -315,16 +317,16 @@ class hr_employee_attendance(osv.osv):
             if sch_detail_ids:
                 sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
                 print "****date end before conversion",sch_detail__objs.date_end
-                #attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_end, "UTC", "Asia/Karachi")
+                attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_end, "UTC", "Asia/Karachi")
                 #print "date end in mid while",attendance_time
                 #schedule_time_signin_ = datetime.strptime(sch_detail__objs.date_start,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
-                schedule_time_signout_ = datetime.strptime(sch_detail__objs.date_end,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
+                schedule_time_signout_ = datetime.strptime(attendance_time,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
                 #print "schedule sign in time",schedule_time_signin_
                 
 #                 att_time = datetime.strptime(sch_detail__objs.date_end,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
                 print" ****employee sign out on: ",f.sign_out
                 print "and schedule_time_signout",schedule_time_signout_
-                FMT = '%H:%M:%S'
+            
                 #early_min = datetime.strptime(f.sign_out, FMT) - datetime.strptime(att_time, FMT)
                 if f.sign_out and schedule_time_signout_:
                     timedelta = datetime.strptime(schedule_time_signout_, FMT) - datetime.strptime(f.sign_out, FMT)
@@ -333,11 +335,18 @@ class hr_employee_attendance(osv.osv):
                     else:
                         early_minutes = timedelta.days + float(timedelta.seconds) / 60
                         print "***************** Employee Left Earlly (in munutes)",early_minutes
+            
+                else:
+                    early_minutes=0
             else:
                 early_minutes = -10000
             result[f.id] = early_minutes
-
-        return result 
+        print "***************** Early Going End*************************"
+        return result
+    
+    
+    
+     
     def get_day_ofweek(self, cr, uid,ids, name, args, context=None):
         result = {}
         days = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]
