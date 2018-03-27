@@ -327,6 +327,7 @@
 					<field name="state" widget="statusbar"/>
 					<button name="load_transport_fee" string="1.Proceed Registration" states="Draft" type="object" class="oe_highlight" groups=""/>
 					<button name="register_person" string="Register" states="waiting_approval" class="oe_highlight" type="object" group=""/>
+					<button name="withdraw_from_transprot" string="Withdraw From Transport" confirm="Student will be permanentl removed from Transport. Click OK if you want to proceed." states="Registered" class="oe_highlight" type="object" group=""/>
 				</header>
 				<sheet>
 		            <field name="picture" widget='image' nolabel="1" class="oe_left oe_avatar"/>

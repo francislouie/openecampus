@@ -1539,36 +1539,7 @@ class smsfee_fee_adjustment(osv.osv):
 smsfee_fee_adjustment()
 
 class smsfee_receiptbook(osv.osv):
-    # def fields_view_get(self, cr, uid, view_id=None, view_type='form', context=None, toolbar=False, submenu=False):
-    #     if context is None: context = {}
-    #     res = super(smsfee_receiptbook, self).fields_view_get(cr, uid, view_id=view_id, view_type=view_type, context=context,
-    #                                        toolbar=toolbar, submenu=False)
-    #     doc = etree.XML(res['arch'])
-    #     # sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel
-    #     # on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
-    #     # cr.execute(sqluser)
-    #     # group_name = cr.fetchall()
-    #     for node in doc.xpath("//button[name='confirm_fee_received']"):
-    #         node.set('string', ' Products')
-    #         setup_modifiers(node)
-    #     res['arch'] = etree.tostring(doc)
-    #     return res
-    #     # for s in group_name:
-    #     #     if s[0] == 'Profile Manager' or 'Principal':
-    #     #         if s[0] == 'Principal':
-    #     #             for node in doc.xpath("//page[@string='Fees Payments']"):
-    #     #                 node.set('invisible', '1')
-    #     #                 setup_modifiers(node)
-    #     #                 for node in doc.xpath("//page[@string='Fees Payments']"):
-    #     #                     node.set('invisible', '1')
-    #     #                     setup_modifiers(node)
-    #     #             for node in doc.xpath("//page[@string='Transport Details']"):
-    #     #                 node.set('invisible', '1')
-    #     #                 setup_modifiers(node)
-    #     #
-    #     #         profile_manager = False
-    #     # # group_name=json.dumps(group_name)
-
+    
 
     # """ A fee receopt book, stores fee payments history of students """
     def _set_bill_no(self, cr, uid, session_id, fee_month, module):
