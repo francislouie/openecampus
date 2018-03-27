@@ -799,7 +799,9 @@
 			<group >
 					<group>
 					<field name="receive_whole_amount" attrs="{'readonly':[('state','!=','fee_calculated')]}" />	
-					
+					<!-- <field name="cancel_late_fee"  attrs="{'invisible':[('state','IN',['Waiting_Approval'])]}" />
+					<field name="due_date"/> -->
+
 					<!--late fee will be atuo filled when late calcultion is up-->
 					<field name="late_fee" attrs="{'readonly':[('state','in',['Paid','Cancel','Adjusted'])]}"/>
 					<field name="challan_type" readonly="1"/>
