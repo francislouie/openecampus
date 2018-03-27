@@ -16,7 +16,7 @@
 						<field name="payslip_start_date" />
 						<newline/><field name="payslip_end_date" />
 						 <newline/><field name="order_by" required="1"/>
-						 <newline/><field name="search_filter_salary_str" colspan="4" />
+						 <!-- <newline/><field name="search_filter_salary_str" colspan="4" /> -->
 	                    </group>
 	                    <group>
 							

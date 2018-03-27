@@ -11,7 +11,7 @@
 	   <report
             auto="False"
             id="payslip_report_inherited2"
-            model="hr.payslip"
+            model="sms.hr.payslips.reports"
             name="payslip_inherited"
             rml="sms_hr/report/report_payslip_inherited.rml"
             string="Employee PaySlip cbt3" />

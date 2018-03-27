@@ -1932,6 +1932,7 @@ class smsfee_receiptbook(osv.osv):
             else:
                 result[f.id] = '--'
         return result
+
     def cancel_fee_bill(self, cr, uid, ids, arg=None, obj=None):
         # sql=""" Select id from smsfee_feetypes where subtype='Late Fee'bilal """
         result = {}
@@ -1984,8 +1985,6 @@ class smsfee_receiptbook(osv.osv):
                 # call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(self, cr, uid,f.student_id, f.student_class_id, late_fee_id,f.student_class_id )
         self.write(cr, uid, f.id, {'state':'Cancel','challan_cancel_by':uid, 'note_at_receive':note,'cancel_date':datetime.datetime.now()})
         return result
-
-    
     def check_fee_challans_issued(self, cr, uid, class_id, student_id, category, challan_type,due_date, month_ids):
         # Date 7 may 2017
         #this objects will generate challans if challans are not exists
