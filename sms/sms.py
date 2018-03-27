@@ -824,9 +824,6 @@ sms_student_certificate()
 
 class sms_student(osv.osv):
     
-  
-    
-    
     """ This object defines students of an institute """
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
             #******************to maintain log**********************************************
