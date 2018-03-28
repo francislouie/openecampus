@@ -158,14 +158,17 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                 if employee_rec:
 #                                     print'------------- Dates for this employee -------------- ', date, ' ---- ',employee_rec[0].id   
                                     employee_date = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',employee_rec[0].id),('attendance_date','=',date)])
-                                     
                                     if not employee_date:
+                                        if(emptime_list[0] == emptime_list[-1]):
+                                            f_status = 'Status Not Clear'
+                                        else:
+                                            f_status = 'Present'
                                         self.pool.get('hr.employee.attendance').create(cr, uid, {
                                             'employee_id': employee_rec[0].id,
                                             'attendance_date': date, 
                                             'sign_in': emptime_list[0],
                                             'sign_out': emptime_list[-1],
-                                            'final_status': 'Present',
+                                            'final_status': f_status,
                                             'attendance_month': str(datetime.strptime(date,'%Y%m%d').strftime('%B'))})
                                 else:
                                     print " not found on ERP for emplead acc",employee_rec
