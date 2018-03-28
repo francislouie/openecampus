@@ -125,11 +125,11 @@
                                 <group>
                                    <field name="employee_attendance_ids" nolabel="1" widget="one2many_list">
                                    <group>
-                                   <tree editable = "top" >
+                                   <tree editable = "top">
                                        <field name="attendance_month" readonly="0" />
                                    </tree>
                                    </group>
-                                   <tree>
+                                   <tree default_order='attendance_date'>
                                      
                                     <field name="attendance_date" readonly ="1"/>
                                     <field name="dayofweek" readonly ="1"/>
