@@ -54,7 +54,7 @@ class hr_contract(osv.osv):
                 cur_cal_month = rec.name
                 result[f.id] = cur_cal_month 
             else:
-                result[f.id] = 'Not set'
+                result[f.id] = 'Invoiced'
         return result
     _columns = {
         'attendance_calc': fields.one2many('hr.monthly.attendance.calculation','contract_id', "Attendance Calc"),
@@ -67,19 +67,19 @@ class hr_monthly_attendance_calculation(osv.osv):
     _name = "hr.monthly.attendance.calculation"
     _description = "Salary Calculation"
     
-    def get_twentry_m_late(self, cr, uid,ids, name, args, context=None):
-        result = {}
-        for f in self.browse(cr, uid, ids, context=context):
-            records = 0
-            t20_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>','2018-02-01'),('attendance_date','<','2018-02-28')])
-            if t20_ids:
-                rect20 = self.pool.get('hr.employee.attendance').browse(cr,uid,t20_ids)
-                for t20 in rect20:
-                    late_m = t20.total_short_minutes
-                    if late_m >=20 and late_m <30:
-                        records = records +1
-        result[f.id] = records
-        return result
+#     def get_twentry_m_late(self, cr, uid,ids, name, args, context=None):
+#         result = {}
+#         for f in self.browse(cr, uid, ids, context=context):
+#             records = 0
+#             t20_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>','2018-02-01'),('attendance_date','<','2018-02-28')])
+#             if t20_ids:
+#                 rect20 = self.pool.get('hr.employee.attendance').browse(cr,uid,t20_ids)
+#                 for t20 in rect20:
+#                     late_m = t20.total_short_minutes
+#                     if late_m >=20 and late_m <30:
+#                         records = records +1
+#         result[f.id] = records
+#         return result
     
     def get_decuction_twentry_m_late(self, cr, uid,ids, name, args, context=None):
         result = {}
@@ -95,19 +95,19 @@ class hr_monthly_attendance_calculation(osv.osv):
         return result
     
     
-    def get_thirty_m_late(self, cr, uid,ids, name, args, context=None):
-        result = {}
-        for f in self.browse(cr, uid, ids, context=context):
-            records = 0
-            t20_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>','2018-02-01'),('attendance_date','<','2018-02-28')])
-            if t20_ids:
-                rect20 = self.pool.get('hr.employee.attendance').browse(cr,uid,t20_ids)
-                for t20 in rect20:
-                    late_m = t20.total_short_minutes
-                    if late_m >=30:
-                        records = records +1
-            result[f.id] = records
-        return result
+#     def get_thirty_m_late(self, cr, uid,ids, name, args, context=None):
+#         result = {}
+#         for f in self.browse(cr, uid, ids, context=context):
+#             records = 0
+#             t20_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>','2018-02-01'),('attendance_date','<','2018-02-28')])
+#             if t20_ids:
+#                 rect20 = self.pool.get('hr.employee.attendance').browse(cr,uid,t20_ids)
+#                 for t20 in rect20:
+#                     late_m = t20.total_short_minutes
+#                     if late_m >=30:
+#                         records = records +1
+#             result[f.id] = records
+#         return result
     
     def get_decuction_thirty_m_late(self, cr, uid,ids, name, args, context=None):
         result = {}

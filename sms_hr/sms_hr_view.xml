@@ -206,6 +206,9 @@
                     <xpath expr="//group[@name='duration_group']" position="before">
                         <group string="Deductions">
                             <field name="month" />
+                            
+                            
+                            
                              <field name="amount_to_deduct" />
                         </group>
                     </xpath>
