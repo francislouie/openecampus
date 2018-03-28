@@ -208,7 +208,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                     fdate = datetime.datetime.strptime(date_item,'%Y%m%d')
                     day = fdate.weekday()
                     if (day==5 or day==6):
-                        final_status='Hodilday'
+                        final_status='Holiday'
                     else:    
                         final_status='Absent'
 

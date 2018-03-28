@@ -267,8 +267,8 @@ class hr_employee_attendance(osv.osv):
             sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',str(day))])
             if sch_detail_ids:
                 sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
-#                 attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_start, "UTC", "Asia/Karachi")
-                attendance_time =sch_detail__objs.date_start
+                attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_start, "UTC", "Asia/Karachi")
+#                 attendance_time =sch_detail__objs.date_start
                 schedule_signin = datetime.strptime(attendance_time,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
                 print"employee id ",f.employee_id.name
                 print "attendance date:",f.attendance_date
@@ -319,8 +319,8 @@ class hr_employee_attendance(osv.osv):
             if sch_detail_ids:
                 sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
                 print "****date end before conversion",sch_detail__objs.date_end
-#                 attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_end, "UTC", "Asia/Karachi")
-                attendance_time =sch_detail__objs.date_end
+                attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_end, "UTC", "Asia/Karachi")
+#                 attendance_time =sch_detail__objs.date_end
                 #schedule_time_signin_ = datetime.strptime(sch_detail__objs.date_start,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
                 schedule_time_signout_ = datetime.strptime(attendance_time,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
                 #print "schedule sign in time",schedule_time_signin_
@@ -373,7 +373,7 @@ class hr_employee_attendance(osv.osv):
       'late_early_arrival': fields.function(get_late_arrival, method=True, string='Late Arrival',type='integer'),
       'early_late_going': fields.function(get_early_leaving, method=True, string='Early Departure',type='integer'),
       'total_short_minutes': fields.function(total_short_minutes, method=True, string='Short Min ',type='integer'),
-      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('Hodilday', 'Hodilday'),('Not-Out', 'Not-CheckOut')], 'Status'),
+      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('Holiday', 'Holiday'),('Not-Out', 'Not-CheckOut')], 'Status'),
       'attendance_month': fields.char('Attendance Month'),
       'invoiced': fields.boolean('Invoiced',readonly = 1)
     }
