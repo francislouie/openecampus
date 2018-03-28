@@ -296,7 +296,11 @@ class hr_employee_attendance(osv.osv):
     def total_short_minutes(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            result[f.id] = f.late_early_arrival + f.early_late_going
+            if(f.final_status=='Status Not Clear'):
+                print"Status Not Clear "
+                result[f.id]=0
+            else:    
+                result[f.id] = f.late_early_arrival + f.early_late_going
         return result 
    
 
@@ -374,7 +378,7 @@ class hr_employee_attendance(osv.osv):
       'late_early_arrival': fields.function(get_late_arrival, method=True, string='Late Arrival',type='integer'),
       'early_late_going': fields.function(get_early_leaving, method=True, string='Early Departure',type='integer'),
       'total_short_minutes': fields.function(total_short_minutes, method=True, string='Short Min ',type='integer'),
-      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('Holiday', 'Holiday'),('Not-Out', 'Not-CheckOut')], 'Status'),
+      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('Holiday', 'Holiday'),('Not-Out', 'Not-CheckOut'),('Status Not Clear','Status Not Clear')], 'Status'),
       'attendance_month': fields.char('Attendance Month'),
       'invoiced': fields.boolean('Invoiced',readonly = 1)
     }
