@@ -161,6 +161,8 @@ class hr_schedule(osv.osv):
         if sch_lines_ids:
             reclines = self.pool.get('hr.schedule.lines').browse(cr,uid,sch_lines_ids)
         for line in reclines:
+#             date_start =self.pool.get('hr.schedule').convert_datetime_timezone(line.date_start, "UTC", "Asia/Karachi")
+#             date_end =self.pool.get('hr.schedule').convert_datetime_timezone(line.date_end, "UTC", "Asia/Karachi")
             mysch =self.pool.get('hr.schedule.detail').create(cr, uid, {
                             'employee_id':emp_id,
                             'date_end':line.date_end,

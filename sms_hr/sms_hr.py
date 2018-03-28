@@ -245,6 +245,7 @@ hr_employee()
 
 class hr_employee_attendance(osv.osv):
     _name = "hr.employee.attendance"
+    _order = "attendance_date desc" 
     _description = "Employee Attendance"
     
     def on_change_month(self, cr, uid, ids, monthName):

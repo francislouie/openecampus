@@ -217,7 +217,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                             print'--- record not found','for Date ---After -----',date_item, emp_rec_ids
                             self.pool.get('hr.employee.attendance').create(cr, uid, {
                                                 'employee_id': emp_idd,
-                                                'attendance_date': date_item, 
+                                                'attendance_date': str(datetime.datetime.strptime(date_item,'%Y%m%d').strftime('%d%m%Y')),
                                                 'sign_in': '00:00:00',
                                                 'sign_out':'00:00:00',
                                                 'attendance_month': str(datetime.datetime.strptime(date_item,'%Y%m%d').strftime('%B')),
