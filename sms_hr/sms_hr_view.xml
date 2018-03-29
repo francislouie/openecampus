@@ -125,11 +125,11 @@
                                 <group>
                                    <field name="employee_attendance_ids" nolabel="1" widget="one2many_list">
                                    <group>
-                                   <tree editable = "top" >
+                                   <tree editable = "top">
                                        <field name="attendance_month" readonly="0" />
                                    </tree>
                                    </group>
-                                   <tree>
+                                   <tree default_order='attendance_date'>
                                      
                                     <field name="attendance_date" readonly ="1"/>
                                     <field name="dayofweek" readonly ="1"/>
@@ -147,7 +147,6 @@
                 </data>
             </field>
         </record>
-        
          <record id="hr_patslip_form_inherit1" model="ir.ui.view">
             <field name="name">hr.payslip.form10</field>
             <field name="model">hr.payslip</field>
@@ -157,6 +156,20 @@
                     
                     <xpath expr="//button[@name='cancel_sheet']" position="after">
                         <button string="Archieve" name="send_to_archieve" states="done,cancel"/>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
+         <record id="hr_payslip_run_form_inherit" model="ir.ui.view">
+            <field name="name">hr_payslip_run</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//button[@name='close_payslip_run']" position="after">
+                       <button name="%(action_hr_compute_salarys)d" type="action" states="draft" string="Compute Salary" class="oe_highlight"/>
                     </xpath>
                     
                 </data>
@@ -206,6 +219,9 @@
                     <xpath expr="//group[@name='duration_group']" position="before">
                         <group string="Deductions">
                             <field name="month" />
+                            
+                            
+                            
                              <field name="amount_to_deduct" />
                         </group>
                     </xpath>
