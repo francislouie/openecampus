@@ -214,7 +214,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                     if (day==5 or day==6):
                         final_status='Holiday'
                     else:    
-                        final_status='Leave'
+                        final_status='Absent'
 
 #                     print'--- record not found','for Date --- Before-----',date_item, emp_rec_ids
                     if not emp_rec_ids:
