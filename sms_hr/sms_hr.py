@@ -335,16 +335,19 @@ class hr_employee_attendance(osv.osv):
                 print "and schedule_time_signout",schedule_time_signout_
             
                 #early_min = datetime.strptime(f.sign_out, FMT) - datetime.strptime(att_time, FMT)
-                if f.sign_out and schedule_time_signout_:
-                    timedelta = datetime.strptime(schedule_time_signout_, FMT) - datetime.strptime(f.sign_out, FMT)
-                    if(datetime.strptime(schedule_time_signout_, FMT) < datetime.strptime(f.sign_out, FMT)):
-                        early_minutes=0
-                    else:
-                        early_minutes = timedelta.days + float(timedelta.seconds) / 60
-                        print "***************** Employee Left Earlly (in munutes)",early_minutes
-            
-                else:
+                if f.sign_out =='00:00:00':
                     early_minutes=0
+                else:
+                    if f.sign_out and schedule_time_signout_:
+                        timedelta = datetime.strptime(schedule_time_signout_, FMT) - datetime.strptime(f.sign_out, FMT)
+                        if(datetime.strptime(schedule_time_signout_, FMT) < datetime.strptime(f.sign_out, FMT)):
+                            early_minutes=0
+                        else:
+                            early_minutes = timedelta.days + float(timedelta.seconds) / 60
+                            print "***************** Employee Left Earlly (in munutes)",early_minutes
+                
+                    else:
+                        early_minutes=0
             else:
                 early_minutes = -10000
             result[f.id] = early_minutes
@@ -401,6 +404,18 @@ class hr_attendance(osv.osv):
         'emp_regno_on_device': fields.char('Reg No on Device'),
         'empleado_account_id': fields.char('Empleado Acc ID'),
         'device_odoo_config_id': fields.many2one('hr.biometirc.device', "Odoo Device Parent"),
+    }
+    _defaults = {
+    }
+    
+    
+class hr_payslip_run(osv.osv):
+    _name = "hr.payslip.run"
+    _inherit = "hr.payslip.run"
+    _description = "hr payslip run"
+
+    _columns = {
+ 
     }
     _defaults = {
     }
