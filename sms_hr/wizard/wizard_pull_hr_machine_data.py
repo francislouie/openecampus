@@ -208,6 +208,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         for date_item in dates:
                 for emp_idd in emp_id_list:
                     emp_rec_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_idd),('attendance_date', '=', date_item)]) 
+                    
                     fdate = datetime.datetime.strptime(date_item,'%Y%m%d')
                     day = fdate.weekday()
                     if (day==5 or day==6):
@@ -275,7 +276,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                 if ft_ids:
                     struct_id = ft_ids[0]
                 if struct_id == 11:
-                    absent_this_month =  absent_this_month-1
+#                     absent_this_month =  absent_this_month-1
                     aprove_leave=1
                 if contr_ids:
                     print "contr_ids",contr_ids[0]
