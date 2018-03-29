@@ -356,13 +356,8 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
 
                 #challan is being printed via student form, canlcel all other challans of this sutdent
                 challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid,[('challan_cat','=',self.datas['form']['category']),('student_id','=',self.datas['form']['student_id'][0]),('state','=','fee_calculated')])
-
-
              else:
                 challan_ids = self.pool.get('smsfee.receiptbook').search(self.cr, self.uid, [('challan_cat', '=', self.datas['form']['category']),('student_class_id', '=', self.datas['form']['class_id'][0]), ('state', '=', 'fee_calculated')])
-
-
-
         if challan_ids:
                 rec_challan_ids = self.pool.get('smsfee.receiptbook').browse(self.cr, self.uid,challan_ids) 
                 for challan in rec_challan_ids:
@@ -395,14 +390,20 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                             print("class idd",self.datas['form']['class_id'][0])
                             print "student idd",challan.student_id.id
                             class_id = self.datas['form']['class_id'][0]
+                            
+                            
                             query = """ select vehcile_no,name from  sms_transport_vehcile
                                            where id =(select vehcile_reg_students_id from sms_student where id=""" \
                                     + str(challan.student_id.id) + """)"""
                             self.cr.execute(query)
-                            _result1 = self.cr.fetchall()[0]
-                            challan_dict['vechil_no'] = "Vehcile No:"+str(_result1[0])
-
-                            challan_dict['vechil_name'] = "Vehcile Name: "+str(_result1[1])
+                            _result1 = self.cr.fetchall()
+                            if len(_result1) > 0:
+                                _result2 = _result1[0]
+                                challan_dict['vechil_no'] = "Vehcile No:"+str(_result2[0])
+                                challan_dict['vechil_name'] = "Vehcile Name: "+str(_result2[1])
+                            else:
+                                 challan_dict['vechil_no'] = '--'
+                                 challan_dict['vechil_name'] = '--'
 
 
                         if 'fee_receiving_type' in self.datas['form']:
@@ -494,9 +495,18 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         lines_ids = self.pool.get('smsfee.receiptbook.lines').search(self.cr, self.uid, [('receipt_book_id','=',data)])
         if lines_ids:
             challans = self.pool.get('smsfee.receiptbook.lines').browse(self.cr, self.uid, lines_ids)
-        for challan in challans:
-            dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
-            result.append(dict) 
+            if len(lines_ids)>10:
+                title = ''
+                whole_amount = 0
+                for challan in challans:
+                    title += challan.fee_name +':'+str(challan.fee_amount)+','
+                    whole_amount = int(whole_amount) + int(challan.fee_amount)
+                dict = {'head_name':title,'head_amount':whole_amount}
+                result.append(dict) 
+            else:
+                for challan in challans:
+                    dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
+                    result.append(dict) 
         return result
     
     def print_challan_dbid(self, data):
