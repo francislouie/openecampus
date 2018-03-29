@@ -208,16 +208,18 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         for date_item in dates:
                 for emp_idd in emp_id_list:
                     emp_rec_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_idd),('attendance_date', '=', date_item)]) 
-                    
                     fdate = datetime.datetime.strptime(date_item,'%Y%m%d')
                     day = fdate.weekday()
-
-                    if (day==5):
-                        final_status='Holiday'
-                    elif(day==6):
-                        final_status='Holiday'
+                    print" date ",date_item
+                    attendance_date =datetime.datetime.strptime(date_item,'%Y%m%d').strftime('%Y-%m-%d')
+                    hr_holiday_rec = self.pool.get('hr.public.holiday').search(cr, uid, [('holiday_date','=', attendance_date)])
+                    if hr_holiday_rec:
+                        final_status='public_holiday'
                     else:    
-                        final_status='Absent'
+                        if(day==5or 6):
+                            final_status='Holiday'
+                        else:    
+                            final_status='Absent'
 
 #                     print'--- record not found','for Date --- Before-----',date_item, emp_rec_ids
                     if not emp_rec_ids:
