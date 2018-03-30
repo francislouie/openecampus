@@ -211,12 +211,17 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                     fdate = datetime.datetime.strptime(date_item,'%Y%m%d')
                     day = fdate.weekday()
 
-                    if (day==5):
-                        final_status='Holiday'
-                    elif(day==6):
-                        final_status='Holiday'
+                    print" date ",date_item
+                    attendance_date =datetime.datetime.strptime(date_item,'%Y%m%d').strftime('%Y-%m-%d')
+                    hr_holiday_rec = self.pool.get('hr.public.holiday').search(cr, uid, [('holiday_date','=', attendance_date)])
+                    if hr_holiday_rec:
+                        final_status='public_holiday'
+
                     else:    
-                        final_status='Leave'
+                        if(day==5or 6):
+                            final_status='Holiday'
+                        else:    
+                            final_status='Absent'
 
 #                     print'--- record not found','for Date --- Before-----',date_item, emp_rec_ids
                     if not emp_rec_ids:
@@ -277,7 +282,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                 if ft_ids:
                     struct_id = ft_ids[0]
                 if struct_id == 11:
-                    absent_this_month =  absent_this_month-1
+#                     absent_this_month =  absent_this_month-1
                     aprove_leave=1
                 if contr_ids:
                     print "contr_ids",contr_ids[0]
