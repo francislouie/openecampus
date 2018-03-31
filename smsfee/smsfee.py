@@ -491,7 +491,7 @@ class sms_student(osv.osv):
                             where smsfee_feetypes.category = '""" +fee_category+"""'
                             and smsfee_studentfee.state = 'fee_unpaid'
                             and smsfee_studentfee.student_id = """+str(student_id)
-                            
+        print "total outstanding dues method called on student menu"                    
         cr.execute(sql)
         rec = cr.fetchone() 
         return int(rec[0])
@@ -530,7 +530,7 @@ class sms_student(osv.osv):
                             and smsfee_studentfee.state = '""" +str(return_choice)+"""'
                             and smsfee_studentfee.acad_cal_id = """+str(class_id)+ """
                             and smsfee_studentfee.student_id = """+str(student_id)
-                            
+        print "total outstanding dues method called on student menu2222"                    
         cr.execute(sql)
         rec = cr.fetchone() 
         return int(rec[0])
@@ -587,6 +587,7 @@ class sms_student(osv.osv):
             cr.execute(sql)
             amount = float(cr.fetchone()[0])
         result[f.id] = amount
+        print "3333333"
         return result
     
     def set_paid_amount(self, cr, uid, ids, context={}, arg=None, obj=None):
@@ -616,7 +617,7 @@ class sms_student(osv.osv):
             cr.execute(sql)
             res[f.id] = [x[0] for x in cr.fetchall()]
 #         raise osv.except_osv((res), (sql))
-          
+        print "4444444"  
         return res
     #sms_student    
     _name = 'sms.student'
