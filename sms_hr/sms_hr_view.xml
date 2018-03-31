@@ -246,10 +246,16 @@
 							<field name="deduction_on_thirty_minutes_late"/>
 							<field name="absentees_this_month"/>
 							<field name="approved_leaves_this_month"/>
-							
 							<field name="net_absentees"/>
 							<field name="deducted_absentees_plus_late_comings"/>
-							<field name="deducted_amount"/>
+							<field name="half_days"/>
+							<newline/>
+							<field name="amount_deducted_absentees"/>
+							<newline/>
+							<field name="amount_deducted_half_days"/>
+							<newline/>
+							<field name="final_deduced_amount"/>
+							<p><font color = "red"><field name="remarks"/></font></p>
 						</form>
 						</field>
                         </page>
