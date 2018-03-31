@@ -76,17 +76,18 @@
     </record>
         
         
-         <record id="hr_attendance_tree2" model="ir.ui.view">
+        <record id="hr_attendance_tree2" model="ir.ui.view">
             <field name="name">hr.attendancetree</field>
             <field name="model">hr.attendance</field>
-            <field name="inherit_id" ref="hr_timesheet_sheet.view_attendance_tree_who"/>
+            <field name="inherit_id" ref="hr_attendance.view_attendance_form"/>
             <field name="arch" type="xml">
             <data>
-                  <xpath expr="//field[@name='sheet_id']" position="replace">
+                  <xpath expr="//field[@name='action']" position="after">
                             <field name="emp_regno_on_device"/>
                             <field name="attendance_date"/>
                             <field name="attendance_time"/>
                             <field name="status"/>
+                            <field name="empleado_account_id"/>
                     </xpath>
                        <xpath expr="//field[@name='employee_id']" position="replace">
                             <field name="employee_name"/>
@@ -161,7 +162,7 @@
                 </data>
             </field>
         </record>
-         <record id="hr_payslip_run_form_inherit" model="ir.ui.view">
+         <!--<record id="hr_payslip_run_form_inherit" model="ir.ui.view">
             <field name="name">hr_payslip_run</field>
             <field name="model">hr.payslip.run</field>
             <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
@@ -174,7 +175,7 @@
                     
                 </data>
             </field>
-        </record>
+        </record>-->
         
         
 	<!-- Show draft pay slips -->
