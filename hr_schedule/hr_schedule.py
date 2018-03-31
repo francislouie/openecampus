@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 from pytz import timezone, utc
-
+import openerp.netsvc as netsvc
 from osv import fields, osv
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT as OE_DTFORMAT
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as OE_DFORMAT
@@ -34,7 +34,16 @@ class week_days(osv.Model):
         'name': fields.char('Name', size=64, required=True),
         'sequence': fields.integer('Sequence', required=True),
     }
+class hr_public_holiday(osv.Model):
 
+    _name = 'hr.public.holiday'
+    _description = 'hr public holiday'
+
+    _columns = {
+        'name': fields.char('Name', size=64, required=True),
+        'holiday_date': fields.date('Public holiday'),
+        'schedule_id': fields.many2one('hr.schedule', 'Schedule', required=True),
+    }
 
 class hr_schedule(osv.osv):
 
@@ -113,6 +122,7 @@ class hr_schedule(osv.osv):
         'name': fields.char("Description", size=64, required=True, readonly=True, states={'draft': [('readonly', False)]}),
         'company_id': fields.many2one('res.company', 'Company', readonly=True),
         'template_id': fields.many2one('hr.schedule.template', 'Schedule Template', readonly=True, states={'draft': [('readonly', False)]}),
+        'public_holiday_ids': fields.one2many('hr.public.holiday', 'schedule_id', 'Public Holiday'),
         'detail_ids': fields.one2many('hr.schedule.detail', 'schedule_id', 'Schedule Detail', readonly=True, states={'draft': [('readonly', False)]}),
         'schedule_lines_ids': fields.one2many('hr.schedule.lines', 'schedule_id', 'Create Schedule', readonly=True, states={'draft': [('readonly', False)]}),
         'department_id': fields.many2one('hr.department', 'Department',readonly=True, states={'draft': [('readonly', False)]}),
@@ -161,6 +171,8 @@ class hr_schedule(osv.osv):
         if sch_lines_ids:
             reclines = self.pool.get('hr.schedule.lines').browse(cr,uid,sch_lines_ids)
         for line in reclines:
+#             date_start =self.pool.get('hr.schedule').convert_datetime_timezone(line.date_start, "UTC", "Asia/Karachi")
+#             date_end =self.pool.get('hr.schedule').convert_datetime_timezone(line.date_end, "UTC", "Asia/Karachi")
             mysch =self.pool.get('hr.schedule.detail').create(cr, uid, {
                             'employee_id':emp_id,
                             'date_end':line.date_end,
