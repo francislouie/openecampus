@@ -272,9 +272,9 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                     #if we follow this way, then we have to pull again again if we want to re-calcualte attendance
                     # ihave also added half day to this code, but we will remove this code from here and move it fields .function
                     
-                    if(f.total_short_minutes >=20 and  f.total_short_minutes< 30):
+                    if(f.total_short_minutes >=20 and  f.total_short_minutes< 30) and f.final_status !='Status Not Clear':
                         twenty_minutes_late=twenty_minutes_late+1
-                    if(f.total_short_minutes >= 30):
+                    if(f.total_short_minutes >= 30 and f.final_status !='Status Not Clear'):
                         thirty_minutes_late=thirty_minutes_late+1
                     if(f.final_status == 'Absent'):
                         absent_this_month=absent_this_month+1  
