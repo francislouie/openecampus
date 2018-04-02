@@ -222,7 +222,8 @@
                             <field name="month" />
                             
                             
-                            
+                        	<field name="deduction_choice" />
+							<field name="punched_deduction" />
                              <field name="amount_to_deduct" />
                         </group>
                     </xpath>

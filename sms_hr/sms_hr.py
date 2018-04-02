@@ -33,16 +33,18 @@ class hr_contract(osv.osv):
     def deduct_amount(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            print"Record  id", f.id
-            mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('is_invoiced','=', False)])
-            print"mss",mss
-            if mss:
-                rec = self.pool.get('hr.monthly.attendance.calculation').browse(cr,uid,mss[0]) 
-                deducted_amount = rec.final_deduced_amount 
-               
-                result[f.id] = deducted_amount 
+            if f.deduction_choice == 'auto':
+                mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('is_invoiced','=', False)])
+                print"mss",mss
+                if mss:
+                    rec = self.pool.get('hr.monthly.attendance.calculation').browse(cr,uid,mss[0]) 
+                    deducted_amount = rec.final_deduced_amount 
+                    result[f.id] = deducted_amount 
+                else:
+                    result[f.id] = 0.0
             else:
-                result[f.id] = 0.0
+                deducted_amount = f.punched_deduction  
+                result[f.id] = deducted_amount 
         return result
     
     def deduct_amount_month(self, cr, uid, ids, name, args, context=None):
@@ -59,6 +61,8 @@ class hr_contract(osv.osv):
     _columns = {
         'attendance_calc': fields.one2many('hr.monthly.attendance.calculation','contract_id', "Attendance Calc"),
         'month': fields.function(deduct_amount_month, method=True, string='Month (e.g 02-2018)',type='char'),
+        'punched_deduction':fields.integer('Punch to Deduct'),
+        'deduction_choice':fields.selection([('manual','Manual Deduction'),('auto','Calculate from Attendance')],'Deduction Type'),
         'amount_to_deduct':fields.function(deduct_amount, method=True, string='Deducted Amount',type='float'),
     }
 
