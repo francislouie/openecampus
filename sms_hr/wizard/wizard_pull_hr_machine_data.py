@@ -216,7 +216,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                     if hr_holiday_rec:
                         final_status='public_holiday'
                     else:    
-                        if(day==5or 6):
+                        if(day==5or day==6):
                             final_status='Holiday'
                         else:    
                             final_status='Absent'
