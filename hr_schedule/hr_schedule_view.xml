@@ -80,6 +80,15 @@
                                     </tree>
                                 </field>
                             </page>
+                              <page string="pulic Holidays">
+                                <field name="public_holiday_ids">
+                                    <tree string="pulic Holidays" editable="bottom">
+                                        <field name="name"/>
+                                        <field name="holiday_date"/>
+                                       
+                                    </tree>
+                                </field>
+                            </page>
                             <!-- <page string="Applied on">
                                 <field name="detail_ids">
                                     <tree string="Employees Schedule" >
