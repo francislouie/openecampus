@@ -377,14 +377,18 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                     #as well as class wise challans
                     if self.datas['form']['category'] == 'Transport':
                         if 'student_id' in self.datas['form']:
-                            std_id = str(self.datas['form']['student_id'][0])
-                            query = """ select vehcile_no,name from  sms_transport_vehcile
-                                            where id =(select vehcile_reg_students_id from sms_student where id=""" + std_id + """ )"""
-                            self.cr.execute(query)
-
-                            _result=self.cr.fetchall()
-                            challan_dict['vechil_no'] =  "Vehcile No:"+str(_result[0])
-                            challan_dict['vechil_name'] =  "Vehcile : "+str(_result[1])
+                            print "hello"
+#                             std_id = str(self.datas['form']['student_id'][0])
+#                             student_rec = self.pool.get('sms.student').browse(self.cr,self.uid,std_id)
+#                             print "........................... vecgudke ud",student_rec[0].vehcile_reg_students_id.id
+#                             query = """ select vehcile_no,name from  sms_transport_vehcile
+#                                             where id =(select vehcile_reg_students_id from sms_student where id=""" + std_id + """ )"""
+#                             self.cr.execute(query)
+                            # _result=self.cr.fetchall()
+                            #veh_reg_id = self.pool.get('sms.transport.vehcile').browse(self.cr,self.uid,student_rec.vehcile_reg_students_id.id)
+                           
+#                             challan_dict['vechil_no'] =  "Vehcile No:"+str(veh_reg_id.vehcile_no)
+#                             challan_dict['vechil_name'] =  "Vehcile : "+str(veh_reg_id.name)
 
                         else:
                             print("class idd",self.datas['form']['class_id'][0])
