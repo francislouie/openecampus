@@ -241,6 +241,7 @@
 						</tree>
 						<form delete="false">
 							<field name="name" /><newline/>
+							<field name="calendar_month"/>
 							<field name="twenty_minutes_late"/>
 							<field name="deduction_on_twenty_minutes_late"/>
 							<field name="thirty_minutes_late"/>
