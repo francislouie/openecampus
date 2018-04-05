@@ -76,17 +76,18 @@
     </record>
         
         
-         <record id="hr_attendance_tree2" model="ir.ui.view">
+        <record id="hr_attendance_tree2" model="ir.ui.view">
             <field name="name">hr.attendancetree</field>
             <field name="model">hr.attendance</field>
-            <field name="inherit_id" ref="hr_timesheet_sheet.view_attendance_tree_who"/>
+            <field name="inherit_id" ref="hr_attendance.view_attendance_form"/>
             <field name="arch" type="xml">
             <data>
-                  <xpath expr="//field[@name='sheet_id']" position="replace">
+                  <xpath expr="//field[@name='action']" position="after">
                             <field name="emp_regno_on_device"/>
                             <field name="attendance_date"/>
                             <field name="attendance_time"/>
                             <field name="status"/>
+                            <field name="empleado_account_id"/>
                     </xpath>
                        <xpath expr="//field[@name='employee_id']" position="replace">
                             <field name="employee_name"/>
@@ -161,7 +162,7 @@
                 </data>
             </field>
         </record>
-         <record id="hr_payslip_run_form_inherit" model="ir.ui.view">
+  <record id="hr_payslip_run_form_inherit" model="ir.ui.view">
             <field name="name">hr_payslip_run</field>
             <field name="model">hr.payslip.run</field>
             <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
@@ -221,7 +222,8 @@
                             <field name="month" />
                             
                             
-                            
+                        	<field name="deduction_choice" />
+							<field name="punched_deduction" />
                              <field name="amount_to_deduct" />
                         </group>
                     </xpath>
@@ -239,16 +241,23 @@
 						</tree>
 						<form delete="false">
 							<field name="name" /><newline/>
+							<field name="calendar_month"/>
 							<field name="twenty_minutes_late"/>
 							<field name="deduction_on_twenty_minutes_late"/>
 							<field name="thirty_minutes_late"/>
 							<field name="deduction_on_thirty_minutes_late"/>
 							<field name="absentees_this_month"/>
 							<field name="approved_leaves_this_month"/>
-							
 							<field name="net_absentees"/>
 							<field name="deducted_absentees_plus_late_comings"/>
-							<field name="deducted_amount"/>
+							<field name="half_days"/>
+							<newline/>
+							<field name="amount_deducted_absentees"/>
+							<newline/>
+							<field name="amount_deducted_half_days"/>
+							<newline/>
+							<field name="final_deduced_amount"/>
+							<p><font color = "red"><field name="remarks"/></font></p>
 						</form>
 						</field>
                         </page>

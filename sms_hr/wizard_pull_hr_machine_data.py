@@ -257,7 +257,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                     exists = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('employee_id','=',emp),('name','=',calc_month),('contract_id','=',contr_ids[0])]) 
                       
                     if not exists:
-                        self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp,'contract_id':contr_ids[0],'calendar_month':month_comp_date,'name':calc_month,'twenty_minutes_late':twenty_minutes_late,'thirty_minutes_late':thirty_minutes_late,'absentees_this_month':absent_this_month,'approved_leaves_this_month':aprove_leave})
+                        self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp,'contract_id':contr_ids[0],'calendar_month':month_comp_date,'name':calc_month,'thirty_minutes_late':thirty_minutes_late,'absentees_this_month':absent_this_month,'approved_leaves_this_month':aprove_leave})
         return
 sms_pull_hr_machine_data()
 

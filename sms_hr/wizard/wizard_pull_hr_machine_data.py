@@ -175,9 +175,11 @@ class sms_pull_hr_machine_data(osv.osv_memory):
          
             item2 += 1
         self.compute_attendance_absentees(cr, uid, ids, data)
+#         self.compute_attendance_holidays(cr, uid, ids, data)
         return True    
     
     def compute_attendance_absentees(self, cr, uid, ids, data):
+        print "compute abesentee method called ..................."
         import datetime, calendar
         
         date_today = datetime.datetime.today().strftime('%Y%m%d')
@@ -210,11 +212,13 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                     emp_rec_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_idd),('attendance_date', '=', date_item)]) 
                     fdate = datetime.datetime.strptime(date_item,'%Y%m%d')
                     day = fdate.weekday()
+
                     print" date ",date_item
                     attendance_date =datetime.datetime.strptime(date_item,'%Y%m%d').strftime('%Y-%m-%d')
                     hr_holiday_rec = self.pool.get('hr.public.holiday').search(cr, uid, [('holiday_date','=', attendance_date)])
                     if hr_holiday_rec:
                         final_status='public_holiday'
+
                     else:    
                         if(day==5or day==6):
                             final_status='Holiday'
@@ -238,7 +242,8 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     def compute_attendance_holidays(self, cr, uid, ids, data):
         
         print"Compute attendance holidays method is called"
-        
+        #this place was giving error when i called it on abve method of pulling attendance, it should be rectified, for the time i am giving static dates
+#         month_comp_date ='2018-03-01'
         month_comp_date =data
         if not month_comp_date:
             raise osv.except_osv((),'Date is required')
@@ -259,35 +264,28 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                 twenty_minutes_late=0
                 thirty_minutes_late=0
                 absent_this_month = 0
-                struct_id = 0
-                aprove_leave=0
+                half_days = 0
                 emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
                 for f in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
-                    if(f.total_short_minutes >=20 and  f.total_short_minutes< 30):
-                        twenty_minutes_late=twenty_minutes_late+1
-                    if(f.total_short_minutes >= 30):
-                        thirty_minutes_late=thirty_minutes_late+1
+                    #@ubaid, why the following few lines code are removed and f.fucntion? and you are inseting it at the time of pulling
+                    #if we follow this way, then we have to pull again again if we want to re-calcualte attendance
+                    # ihave also added half day to this code, but we will remove this code from here and move it fields .function
+                    print"testing"
+#                     if(f.total_short_minutes >=20 and  f.total_short_minutes< 30) and f.final_status !='Status Not Clear':
+#                         twenty_minutes_late=twenty_minutes_late+1
+#                     if(f.total_short_minutes >= 30 and f.final_status !='Status Not Clear'):
+#                         thirty_minutes_late=thirty_minutes_late+1
                     if(f.final_status == 'Absent'):
-                        absent_this_month=absent_this_month+1    
+                        absent_this_month=absent_this_month+1  
+#                     if(f.final_status == 'Status Not Clear'):
+#                         half_days=half_days+1    
                 contr_ids = self.pool.get('hr.contract').search(cr,uid,[('employee_id','=',emp)])
-                print"Tweenty Late ",twenty_minutes_late
-                print"Thirty late ",thirty_minutes_late
-                print "employee id",emp
-                sql = """SELECT struct_id from  hr_contract where employee_id = """+str(emp)+ """"""
-                print"query struct_id",sql
-                cr.execute(sql)
-                ft_ids = cr.fetchone() 
-                if ft_ids:
-                    struct_id = ft_ids[0]
-                if struct_id == 11:
-#                     absent_this_month =  absent_this_month-1
-                    aprove_leave=1
                 if contr_ids:
-                    print "contr_ids",contr_ids[0]
                     exists = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('employee_id','=',emp),('name','=',calc_month),('contract_id','=',contr_ids[0])]) 
                       
                     if not exists:
-                        self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp,'contract_id':contr_ids[0],'calendar_month':month_comp_date,'name':calc_month,'twenty_minutes_late':twenty_minutes_late,'thirty_minutes_late':thirty_minutes_late,'absentees_this_month':absent_this_month,'approved_leaves_this_month':aprove_leave})
+                        self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp,'contract_id':contr_ids[0],'calendar_month':month_comp_date,'name':calc_month,'absentees_this_month':absent_this_month})
+                        print "creating new record in attendance calculation table for "+str(emp)
         return
 sms_pull_hr_machine_data()
 
