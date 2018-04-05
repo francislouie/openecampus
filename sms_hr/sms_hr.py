@@ -34,7 +34,6 @@ class hr_contract(osv.osv):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
             if f.deduction_choice == 'auto':
-#             if True:
                 mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('is_invoiced','=', False)])
                 print"mss",mss
                 if mss:
@@ -100,7 +99,6 @@ class hr_monthly_attendance_calculation(osv.osv):
             
             result[f.id] = deducted_amount
         return result
-    
 #     def get_half_days(self, cr, uid,ids, name, args, context=None):
 #         result = {}
 #         for f in self.browse(cr, uid, ids, context=context):
@@ -213,7 +211,6 @@ class hr_monthly_attendance_calculation(osv.osv):
                 net = 0
             result[f.id] = net
         return result
-
     def final_deducted_amount(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -263,7 +260,7 @@ class hr_monthly_attendance_calculation(osv.osv):
         #'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
 
         'deduction_on_thirty_minutes_late': fields.function(get_decuction_thirty_m_late, method=True, string='Deduction (Days) On 30min',type='integer'),
-
+        'half_days': fields.integer('No. of Half Days'),
         'amount_deducted_half_days': fields.function(get_deducted_amount_on_half_days, method=True, string='Deduction On Half Days',type='integer'),
         'absentees_this_month': fields.integer('Absentees This month'),
         'amount_deducted_absentees': fields.function(get_deducted_amount_on_absentees, method=True, string='Deduction On Absentees',type='integer'),
@@ -271,6 +268,7 @@ class hr_monthly_attendance_calculation(osv.osv):
         'net_absentees': fields.function(get_absentess_leave, method=True, string='Absentees After Leave',type='integer'),
         'deducted_absentees_plus_late_comings': fields.function(absentess_plus_late_days, method=True, string='Absent Days Plus Late comings ded (Days)',type='integer'),
         'final_deduced_amount':fields.function(final_deducted_amount, method=True, string='Final Deducted Amount',type='integer'),
+#         'cur_cal_month':fields.function(cur_cal_month, method=True,type='char'),
         'is_invoiced':fields.boolean('is invoiced'),
     }
     _defaults = {
