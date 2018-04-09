@@ -464,11 +464,9 @@ class sms_student(osv.osv):
     _inherit ='sms.student'
         
     _columns = {
-<<<<<<< HEAD
-            'vehcile_reg_students_id':fields.many2one('sms.transport.vehcile','Vechile Registration',readonly = True),
-=======
+
             'vehcile_reg_students_id':fields.many2one('sms.transport.vehcile','Vehicle',readonly = True),
->>>>>>> 8bfc226cc0b30b777d6fd78c30e696e8d30b60b6
+
             'view_transport_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Transport Fee'),
             'transport_availed':fields.boolean('Transport Availed?',readonly = True),
             'transport_fee_history':fields.float('Fee History',readonly = True),
