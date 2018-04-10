@@ -61,7 +61,7 @@ class class_std_admfee_receipts_unpaid(osv.osv_memory):
         result = []
         thisform = self.read(cr, uid, ids)[0]
         #create_challans = self.create_unpaid_challans(cr, uid, ids[0],data['active_id'])
-        report = 'smsfee_unpaidfee_receipt_name'
+        report = 'smsfee_print_one_student_per_page'
  
         datas = {
              'ids': [],

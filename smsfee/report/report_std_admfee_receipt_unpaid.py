@@ -17,7 +17,7 @@ result_acc=[]
 """This is the main parsor that prints challans for academics and transport with 1 student per page 
    class wise, other parsers that prints class wise challans, should be rmeoved """
 
-class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
+class report_std_admfee_receipt_unpaid(report_sxw.rml_parse):
     #this will be the only challans parsser called for
     # acadimc fee, transport fee and other 
     # currently called for clasess wside fees for trasport and academics
@@ -30,7 +30,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
  
     def __init__(self, cr, uid, name, context):
 
-        super(report_unpaid_fee_bills_3folded, self).__init__(cr, uid, name, context)
+        super(report_std_admfee_receipt_unpaid, self).__init__(cr, uid, name, context)
         self.result_temp=[]
         self.localcontext.update( {
             'get_today':self.get_today,
@@ -324,10 +324,11 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         #currentlty this parser is set to call for whole class challans orinting
         #both transport and acadmics
         #later on this will be set to call this parser for single students also, both academics challans and transprot challans (3-10-2017)
-        print"3 floded method is called"
+        print"get challans is called"
         challan_list = []
-        ###########print challan at the time of admission for paying fee (it is before admitting student)
+        print "challan at the time of admission for paying fee (it is before admitting student)"
         if data['model'] == 'student.admission.register':
+            print"this is student admission model"
             tlt_amount = 0
             rec = self.pool.get('student.admission.register').browse(self.cr,self.uid,data['active_ids'] )
             info_dict = {'name':rec.name,'father_name':rec.father_name,'Class':rec.student_class.name,'semester':''}
@@ -530,4 +531,4 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         return return_value
      
 
-report_sxw.report_sxw('report.smsfee_print_one_student_per_page', 'smsfee.classfees.register', 'addons/smsfee/report_unpaid_fee_bills_3folded.rml',parser = report_unpaid_fee_bills_3folded, header=None)
+report_sxw.report_sxw('report.smsfee_std_admfee_receipt_unpaid', 'student.admission.register', 'addons/smsfee/report_std_admfee_receipt_unpaid.rml',parser = report_std_admfee_receipt_unpaid, header=None)
