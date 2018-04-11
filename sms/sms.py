@@ -2318,22 +2318,31 @@ class sms_academiccalendar_student(osv.osv):
                 'date_registered':datetime.date.today(),
                 'state':'Current' })
         if std_cal_id:
-           # srep3:Add subjects to student
-           acad_subs = self.pool.get('sms.academiccalendar.subjects').search(cr,uid,[('academic_calendar','=',class_of_admin),('state','!=','Complete')])
-           for sub in acad_subs:
+            # srep3:Add subjects to student
+            acad_subs = self.pool.get('sms.academiccalendar.subjects').search(cr,uid,[('academic_calendar','=',class_of_admin),('state','!=','Complete')])
+            for sub in acad_subs:
                 add_subs = self.pool.get('sms.student.subject').create(cr,uid,{
                 'student': std_cal_id,
                 'student_id': student_id,
                 'subject': sub,
                 'subject_status': 'Current'})
                 
-           #step3: Set Admission No
-           admn_no = self.pool.get('sms.academiccalendar.student')._set_admission_no(cr, uid, std_cal_id, acad_cal_obj.id)
-           self.pool.get('sms.student').write(cr, uid, student_id, {'state': 'Admitted', 'current_state': 'Current','admitted_to_class':class_of_admin,'admitted_on':datetime.date.today(),'current_class':class_of_admin})
-           #return true if class is created, its ok if subjects are not assinged or some of them assigned, they can be later on assigned
-           return True
+            #step3: Set Admission No
+            admn_no = self.pool.get('sms.academiccalendar.student')._set_admission_no(cr, uid, std_cal_id, acad_cal_obj.id)
+         
+            sql_query = """Update sms_student set state ='Admitted',
+                                                 current_state='Current',
+                                                 admitted_to_class = """+str(class_of_admin)+""",
+                                                 admitted_on ='"""+str(datetime.date.today())+"""',
+                                                 current_class ="""+str(class_of_admin)+"""
+                                                 where id ="""+str(student_id)+""""""
+            cr.execute(sql_query)
+            print"update is working", cr.execute(sql_query)
+#             self.pool.get('sms.student').write(cr, uid, student_id, {'state': 'Admitted', 'current_state': 'Current','admitted_to_class':class_of_admin,'admitted_on':datetime.date.today(),'current_class':class_of_admin})
+            #return true if class is created, its ok if subjects are not assinged or some of them assigned, they can be later on assigned
+            return True
         else:
-           return False  
+            return False  
     
     
     
