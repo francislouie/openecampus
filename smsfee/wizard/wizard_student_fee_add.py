@@ -129,6 +129,8 @@ class class_student_fee_collectt(osv.osv_memory):
         category = thisform['category']
         std=self.pool.get('sms.student').browse(cr,uid,st)
         
+#         transport_exists = self.pool.get('sms.transport.registrations').search(cr, uid, [('student_id', '=', st)])
+        
         if std.transport_availed == False and category == 'Transport':
             raise osv.except_osv(('Transport is not availed by this student.'), 'Please select another fee category!')
         

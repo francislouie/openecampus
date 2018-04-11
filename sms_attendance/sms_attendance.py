@@ -327,9 +327,9 @@ class sms_class_attendance(osv.osv):
             result['class_teacher'] = rec.class_teacher.id
         else:
             result['class_teacher'] = None
-        if tea_job_id ==1:   
-            return {'domain': {'class_id':[('class_teacher','=',teacher_id) ]},'value': result}
-        else:
+#         if tea_job_id ==1:   
+#             return {'domain': {'class_id':[('class_teacher','=',teacher_id) ]},'value': result}
+#         else:
             return {'domain': {'class_id':[('state','=','Active') ]},'value': result}
     
     def _user_get(self,cr,uid,context={}):
