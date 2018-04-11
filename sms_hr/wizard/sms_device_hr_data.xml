@@ -15,6 +15,7 @@
 						  <field name="branch_id" readonly="1"/>
 						  <field name="month_comp" />
 						  <field name="fetch_all_records" />
+						  <field name="exempted_attendance" readonly="1"/>
 						  <field name="inactive_employees" readonly="1"/>
 						  <field name="missing_empleado" readonly="1"/>
 						  <field name="department_not_set" readonly="1"/>

@@ -290,8 +290,10 @@ class hr_employee(osv.osv):
         'emp_regno_on_device': fields.char('Reg No on Device'),
         'empleado_account_id': fields.char('Empleado Acc ID'),
         'default_devicee_id': fields.char('Default Device'),
+        'punch_attendance':fields.selection([('yes','Yes'),('no','No')],'Attendance Punching Allowed ?')
     }
     _defaults = {
+        'punch_attendance': 'yes'
     }
 hr_employee()
 

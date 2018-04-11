@@ -113,7 +113,9 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <data>
-                    
+                    <xpath expr="//field[@name='coach_id']" position="after">
+                        <field name="punch_attendance" required="1"/>
+                    </xpath>
                     <xpath expr="//field[@name='active']" position="after">
                         <group string="Biometric Setting">
                             <field name="emp_regno_on_device"/>

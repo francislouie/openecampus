@@ -36,7 +36,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     # Display all inactive employees in wizard
     def _get_inactive_employees(self, cr, uid, ids): 
         inactive_employees = ''        
-        inactive_recs = self.pool.get('hr.employee').search(cr, uid, [('isactive','=',False)])
+        inactive_recs = self.pool.get('hr.employee').search(cr, uid, [('isactive','=',False),('punch_attendance','=','yes')])
         if inactive_recs:
             for id in inactive_recs:
                 rec = self.pool.get('hr.employee').browse(cr, uid, id)
@@ -48,7 +48,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     # Display all employees with missing Empleado Ids in wizard
     def _get_missing_empleado_employees(self, cr, uid, ids): 
         empleado_missing_employees = ''        
-        empleado_recs = self.pool.get('hr.employee').search(cr, uid, [('empleado_account_id','=', None)])
+        empleado_recs = self.pool.get('hr.employee').search(cr, uid, [('empleado_account_id','=', None),('punch_attendance','=','yes')])
         if empleado_recs:
             for id in empleado_recs:
                 rec = self.pool.get('hr.employee').browse(cr, uid, id)
@@ -60,7 +60,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     # Display all employees with missing Department Ids in wizard
     def _get_missing_department_employees(self, cr, uid, ids): 
         missing_department_employees = ''        
-        department_recs = self.pool.get('hr.employee').search(cr, uid, [('department_id','=', None)])
+        department_recs = self.pool.get('hr.employee').search(cr, uid, [('department_id','=', None), ('punch_attendance','=','yes')])
         if department_recs:
             for id in department_recs:
                 rec = self.pool.get('hr.employee').browse(cr, uid, id)
@@ -96,6 +96,22 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     
     
     
+    
+    # Display all employees with Attendance Punching Allowed ? set to Yes in Public Information of Employee
+    def _get_exempted_employees(self, cr, uid, ids): 
+        exempted_employees = ''        
+        exempted_recs = self.pool.get('hr.employee').search(cr, uid, [('punch_attendance','=','no')])
+        if exempted_recs:
+            for _id in exempted_recs:
+                rec = self.pool.get('hr.employee').browse(cr, uid, _id)
+                exempted_employees += rec.name_related + ', '
+
+        return exempted_employees
+    
+    
+    
+    
+    
     _name = "sms.pull.hr.machine.data"
     _description = "Pull Data"
     _columns = {
@@ -103,6 +119,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
               'month': fields.date('Month to Get Absentees'),
               'month_comp': fields.date('Month For computing absentees'),
               'fetch_all_records': fields.boolean('Get All Previous Records'),
+              'exempted_attendance': fields.text('Exempted from Biometric Attendance'),
               'inactive_employees': fields.text('Inactive Employees'),
               'missing_empleado': fields.text('Employees with Missing Empleado IDs'),
               'branch_id': fields.char(string='Current Branch ID'),
@@ -118,6 +135,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         'department_not_set':_get_missing_department_employees,
         'schedules_not_set':_get_department_missing_schedules,
         'last_pull':_get_last_pull,
+        'exempted_attendance': _get_exempted_employees,
                 }
             
       
