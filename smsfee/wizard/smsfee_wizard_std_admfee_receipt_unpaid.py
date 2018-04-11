@@ -17,9 +17,10 @@ class class_std_admfee_receipts_unpaid(osv.osv_memory):
     _columns = {
               "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
               'due_date': fields.date('Due Date'),
-              
+              'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category',required=True),
+              'bank_info':fields.text('Bank Info',size = 50),
                }
-    _defaults = {'class_id':_get_class}
+    _defaults = {'class_id':_get_class,'category':'Academics','bank_info':'Bank of Punjab (6020031466300014)'}
     
 #     def create_unpaid_challans(self, cr, uid ,class_id,std_id):
 #         rec = self.pool.get('student.admission.register').browse(cr,uid,std_id)
@@ -61,7 +62,7 @@ class class_std_admfee_receipts_unpaid(osv.osv_memory):
         result = []
         thisform = self.read(cr, uid, ids)[0]
         #create_challans = self.create_unpaid_challans(cr, uid, ids[0],data['active_id'])
-        report = 'smsfee_print_one_student_per_page'
+        report = 'smsfee_std_admfee_receipt_unpaid'
  
         datas = {
              'ids': [],

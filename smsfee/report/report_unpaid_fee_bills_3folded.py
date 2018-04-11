@@ -324,7 +324,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         #currentlty this parser is set to call for whole class challans orinting
         #both transport and acadmics
         #later on this will be set to call this parser for single students also, both academics challans and transprot challans (3-10-2017)
-        print"3 floded method is called"
+        
         challan_list = []
         ###########print challan at the time of admission for paying fee (it is before admitting student)
         if data['model'] == 'student.admission.register':
