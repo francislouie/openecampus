@@ -1474,7 +1474,7 @@ class smsfee_std_withdraw(osv.osv):
         'student_id': fields.many2one('sms.student','Student',required = True),
         'father_name': fields.char(string = 'Father',size = 100,readonly = True),
         'reason_withdraw':fields.text('Reason Withdraw'),
-        'request_type':fields.selection([('Withdraw','Withdraw'),('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),('slc','School Leaving Certificate'), ('transfer_out','Transfer Out')],'Request Type'),
+        'request_type':fields.selection([('Withdraw','Withdraw'),('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),('slc','School Leaving Certificate'), ('transfer_out','Transfer Out'),('pass_out','Pass Out')],'Request Type'),
         'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type'),
         'transfer_campus': fields.many2one('sms.transfer.in', 'Campus'),
         'transfer_fee': fields.float('Transfer Fee'),

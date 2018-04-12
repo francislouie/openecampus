@@ -11,7 +11,8 @@
 					<group colspan="4">
 						<field name="session_id" requried="1"/>
 					    <field name="class_id" requried="1"/> 
-                        <field name="date" requried="1"/>
+                        <field name="date_from" requried="1"/>
+                        <field name="date_to" requried="1"/>
                     </group>
 
                     <footer>

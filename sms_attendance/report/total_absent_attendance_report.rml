@@ -43,11 +43,7 @@
     <paraStyle name="P7" fontName="Helvetica" fontSize="12.0" leading="13" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P10" fontName="Helvetica" fontSize="10.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P11" fontName="Helvetica" fontSize="11.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P11R" fontName="Helvetica" fontSize="12.0" leading="13" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P20" fontName="Helvetica" fontSize="14.0" leading="13" alignment="CENTER" spaceBefore="10.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P19" fontName="Helvetica" fontSize="13.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P18" fontName="Helvetica" fontSize="12.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P41" fontName="Helvetica" fontSize="8.0" leading="14" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P11R" fontName="Helvetica" fontSize="10.0" leading="13" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <images/>
   </stylesheet>
   <story>
@@ -55,61 +51,70 @@
 			
 			<spacer length="20"/>
 
-			<para style="Heading">This task is currently paused  </para>
-
-			<spacer length="20"/>
+			<!--<para style="Heading">This task is now resumed </para> -->
 
 			<para style="P1">[[repeatIn(get_total_absent_attendance_report(data['form']),'r')]]</para>
 
-     	<blockTable colWidths="40.0,100.0,260.0,50.0,80.0" style="WhiteTable">
+     	<blockTable colWidths="100.0,120.0,60.0,100.0,120.0" style="WhiteTable">
 			<tr>
-		      <td><para style="P5">Date:</para></td>
-		      <td><para style="P5">[[(r['date'])]]</para></td>
-			  <td><para style="P5"> </para></td>
+			 <td><para style="P5">Class Name:</para></td>
+              <td><para style="P5">[[(r['class_name'])]]</para></td>
+              <td><para style="P5"></para></td>
 			  <td><para style="P5">Session:</para></td>
 			  <td><para style="P5">[[(r['session'])]]</para></td>
+			  
 	      	</tr>	
 	      	<tr>
-		      <td><para style="P5">Day:</para></td>
-		      <td><para style="P5">[[(r['day'])]]</para></td>
-			  <td><para style="P5"> </para></td>
-			  <td><para style="P5"> </para></td>
-			  <td><para style="P5"> </para></td>
-	      	</tr> 
-	 
+             <td><para style="P5">Date From:</para></td>
+              <td><para style="P5">[[(r['date_f'])]]</para></td>
+               <td><para style="P5"></para></td>
+              <td><para style="P5">Date To:</para></td>
+              <td><para style="P5">[[(r['date_t'])]]</para></td>
+              
+            </tr>
+            <tr>
+            <td><para style="P5">Total Students:</para></td>
+              <td><para style="P5">[[(r['total_students'])]]</para></td>
+               <td><para style="P5"></para></td>
+              <td><para style="P5">Class Teacher:</para></td>
+              <td><para style="P5">[[(r['class_teacher'])]]</para></td>
+               
+            </tr>
+
     	</blockTable>
     	<spacer length="20"/>
 
 	</section>
     <section>
-	    <blockTable colWidths="40.0,100.0,100.0,70.0,70.0,70.0,70.0" repeatRows="1" style="Table2">
+	    <blockTable colWidths="30.0,40.0,170.0,60.0,60.0,60.0,100.0" repeatRows="1" style="Table2">
 			<tr>      
 				<td><para style="P1">S.No</para></td>
-				<td><para style="P1">Class</para></td>
-				<td><para style="P1">Section</para></td>	
-				<td><para style="P1">Total Students</para></td>
+				<td><para style="P1">Reg</para></td>
+				<td><para style="P1">Student</para></td>	
 				<td><para style="P1">Present</para></td>
 				<td><para style="P1">Absent</para></td>
 				<td><para style="P1">Leave</para></td>
+				<td><para style="P1">Contact</para></td>
 			</tr>
 		</blockTable>
 	</section>
     <section>
 		<para style="P1">[[repeatIn(r['attendances'],'s')]]</para>
-			<blockTable colWidths="40.0,100.0,100.0,70.0,70.0,70.0,70.0" repeatRows="1" style="Table3">
+			<blockTable colWidths="30.0,40.0,170.0,60.0,60.0,60.0,100.0" repeatRows="1" style="Table3">
 				<tr>
 					<td><para style="P11R"> [[(s['s_no'])]]</para></td>
+					<td><para style="P11R">[[(s['reg'])]]</para></td>
 					<td><para style="P11">[[(s['student'])]]</para></td>
-					<td><para style="P11">[[(s['section'])]]</para></td>
-					<td><para style="P11R">[[(s['class_students'])]]</para></td>
 					<td><para style="P11R">[[(s['present'])]]</para></td>
 					<td><para style="P11R">[[(s['absent'])]]</para></td>
 					<td><para style="P11R">[[(s['leave'])]]</para></td>
+					<td><para style="P11R">[[(s['contact'])]]</para></td>
 				</tr>
 			</blockTable>
 	</section>
 
 	<section>
+	<!--
 		<spacer length="20"/>
 
 		<blockTable colWidths="400.0, 60.0,60.0" style="WhiteTable">
@@ -134,7 +139,7 @@
 			  <td><para style="P11">[[(r['total_leaves'])]]</para></td>
     	</tr> 
     	</blockTable>
-
+-->
     	<spacer length="20"/>
 
     	<blockTable colWidths="80.0,100.0,200.0,40.0,80.0" style="WhiteTable">

@@ -249,6 +249,33 @@ sms_academiccalendar_student()
 ####
 class sms_student(osv.osv):
     
+    def get_attendance_on_period_selection(self, cr, uid, ids, student_id, date_from, date_to):
+            print"get_attendance_on_date_list method is called from sms"
+            sql = """SELECT 
+                    COALESCE(sum(CASE WHEN present THEN 1 ELSE 0 END),0) as present, 
+                    COALESCE(sum(CASE WHEN absent THEN 1 ELSE 0 END),0) as absent, 
+                    COALESCE(sum(CASE WHEN leave THEN 1 ELSE 0 END),0) as leave
+                    FROM sms_class_attendance_lines AS l, sms_class_attendance AS a,sms_academiccalendar_student AS std
+                    where a.id = l.parent_id 
+                    and l.student_class_id = std.id
+                    and std.state='Current'
+                    and l.student_name = %s 
+                    and a.attendance_date >=  %s 
+                    and a.attendance_date <=  %s 
+                    """
+    
+            args = [student_id, date_from, date_to]
+            cr.execute(sql, args)
+            rec = cr.fetchone()
+    
+            result = {}
+            result.update({'present': rec[0]})
+            result.update({'absent': rec[1]})
+            result.update({'leave': rec[2]})
+    
+            return result
+        
+        
     _name = 'sms.student'
     _inherit = 'sms.student'
     _columns = {

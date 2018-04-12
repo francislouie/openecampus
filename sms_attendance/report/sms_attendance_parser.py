@@ -402,57 +402,57 @@ class sms_attendance_parser(report_sxw.rml_parse):
         this_form = self.datas['form']
         session_id = this_form['session_id'][0]
         class_id = this_form['class_id'][0]
-        date_str = this_form['date']
+        date_from_str = this_form['date_from']
+        date_to_str = this_form['date_to']
 
-        date = datetime.datetime.strptime(str(date_str), '%Y-%m-%d')
+        date_from = datetime.datetime.strptime(str(date_from_str), '%Y-%m-%d')
+        date_to = datetime.datetime.strptime(str(date_to_str), '%Y-%m-%d')
+        
+        final_dict.update({'date_f': date_from.strftime('%Y-%m-%d')})
+        final_dict.update({'date_t': date_to.strftime('%Y-%m-%d')})
+
         session_obj = self.pool.get('sms.session').browse(self.cr, self.uid, session_id)
-        final_dict.update({'date': date.strftime('%d-%m-%Y')})
-        final_dict.update({'day': date.strftime('%A')})
         final_dict.update({'session': session_obj.academic_session_id.name})
         
-        student_sql = """SELECT name, father_name, registration_no, id
+        student_sql = """SELECT registration_no, name, cell_no, id
                         FROM sms_student 
                         WHERE current_class = """ + str(class_id) + """
                         """     
         self.cr.execute(student_sql)
         studentslist = self.cr.fetchall()
-            
+        final_dict.update({'total_students': str(len(studentslist))})
         
-        
-        academiccalendar_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('session_id','=',session_id)])
-        
+        academiccalendar_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('id','=',class_id)])
         academiccalendar_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, academiccalendar_ids)
+        final_dict.update({'class_name': academiccalendar_obj[0].name})
         
-        
+        class_teacher = academiccalendar_obj[0].class_teacher.name_related
+        final_dict.update({'class_teacher': class_teacher})
+
         ids=1
-        total_students = 0
-        total_presents = 0
-        total_absents = 0
-        total_leaves = 0
         attendances = []
-        
-        
         
         i = 1
         for student in studentslist:
-            my_dict = {'s_no':'', 'student':'', 'section':'', 'total_students':'', 'present':'', 'absent':'', 'leave':''}
-           
+            
+            student_id = student[3]
+            class_attendance =  self.pool.get('sms.student').get_attendance_on_period_selection(self.cr, self.uid, ids, student_id, date_from.date(), date_to.date())
+            
+            my_dict = {'s_no':'', 'reg':'', 'student':'', 'present':'', 'absent':'', 'leave':'', 'contact':''}
             my_dict['s_no'] = i + 1
-            my_dict['student'] = student[0]
+            my_dict['reg'] = student[0]
+            my_dict['student'] = student[1]
+            my_dict['present'] = class_attendance['present']
+            my_dict['absent'] = class_attendance['absent']
+            my_dict['leave'] = class_attendance['leave']
+            my_dict['contact'] = student[2]
             
-            class_attendance =  self.pool.get('sms.academiccalendar').get_attendance_on_date_list(self.cr, self.uid, ids, class_id, date.date())
-            present=class_attendance['present']
-            absent=class_attendance['absent']
-            leave=class_attendance['leave']
             
-            attendances.append(my_dict)
-       
-        final_dict.update({'attendances': attendances})
-        final_dict.update({'total_students': total_students})
-        final_dict.update({'total_presents': total_presents})
-        final_dict.update({'total_absents': total_absents})
-        final_dict.update({'total_leaves': total_leaves})
+#             class_attendance =  self.pool.get('sms.academiccalendar').get_attendance_on_date_list(self.cr, self.uid, ids, class_id, date.date())
 
+            attendances.append(my_dict)
+            
+        final_dict.update({'attendances': attendances})
         final_dict.update({'date_printed': datetime.datetime.now().strftime('%d-%m-%Y')})
         final_dict.update({'printed_by': self.pool.get('res.users').browse(self.cr,self.uid,self.uid).name})
 
