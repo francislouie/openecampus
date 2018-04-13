@@ -19,9 +19,9 @@
 #
 #
 
-import netsvc
-
-from osv import fields, osv
+from openerp import netsvc
+from datetime import datetime
+from openerp.osv import fields, osv
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -37,7 +37,6 @@ class department_selection(osv.osv_memory):
     }
 
     def view_schedules(self, cr, uid, ids, context=None):
-
         data = self.read(cr, uid, ids, context=context)[0]
         return {
             'view_type': 'form',
@@ -51,7 +50,6 @@ class department_selection(osv.osv_memory):
         }
 
     def do_validate(self, cr, uid, ids, context=None):
-
         wkf_service = netsvc.LocalService('workflow')
         data = self.read(cr, uid, ids, context=context)[0]
         sched_ids = self.pool.get('hr.schedule').search(cr, uid,

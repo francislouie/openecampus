@@ -6,11 +6,12 @@ from dateutil.relativedelta import relativedelta
 
 from pytz import timezone, utc
 import openerp.netsvc as netsvc
-from osv import fields, osv
+from openerp.osv import fields, osv
 from openerp.tools import DEFAULT_SERVER_DATETIME_FORMAT as OE_DTFORMAT
 from openerp.tools import DEFAULT_SERVER_DATE_FORMAT as OE_DFORMAT
 from openerp.tools.translate import _
 import logging
+import pytz
 _logger = logging.getLogger(__name__)
 
 DAYOFWEEK_SELECTION = [('0', 'Monday'),
@@ -52,60 +53,59 @@ class hr_schedule(osv.osv):
     _description = 'Employee Schedule'
     
     def convert_datetime_timezone(self,dt, tz1, tz2):
-        import datetime
-        import pytz
         tz1 = pytz.timezone(tz1)
         tz2 = pytz.timezone(tz2)
     
-        dt = datetime.datetime.strptime(dt,"%Y-%m-%d %H:%M:%S")
+        dt = datetime.strptime(dt,"%Y-%m-%d %H:%M:%S")
         dt = tz1.localize(dt)
         dt = dt.astimezone(tz2)
         dt = dt.strftime("%Y-%m-%d %H:%M:%S")
     
         return dt
     def create(self, cr, uid, vals, context=None):
-        exists = self.search(cr,uid,[('department_id','=',vals['department_id'])]) 
+        
+        exists = self.search(cr,uid,[('department_id','=',vals['department_id']),('state','!=','locked')]) 
         if  exists:
-            raise osv.except_osv(('Not Allowed'), ('Schedule for the department you selected is already Exist'))
+            raise osv.except_osv(('Schedule is already in confirm state for this department'), ('First move it to lock state or remove it '))
         else:
             schedule = super(hr_schedule, self).create(cr, uid, vals, context=context)
-        empids = self.pool.get('hr.employee').search(cr,uid,[('department_id','=',vals['department_id'])])
-        if empids:
-            
-            for emp in empids:
-                self.create_schedule_per_emp_details(cr, uid, schedule,emp, context=context)
+#         empids = self.pool.get('hr.employee').search(cr,uid,[('department_id','=',vals['department_id'])])
+#         if empids:
+#             
+#             for emp in empids:
+#                 self.create_schedule_per_emp_details(cr, uid, schedule,emp, context=context)
         return schedule
    
-    def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
-        new_date_end =0
-        new_date_start=0   
-        if 'schedule_lines_ids' in vals:
-            for value in vals['schedule_lines_ids']:
-                rec_id=value[1]
-                rec_date=value[2]
-                if value[2]:
-                    if 'date_end' in value[2]:
-                        new_date_end=rec_date['date_end']
-                    if 'date_start' in value[2]:
-                        new_date_start=rec_date['date_start']
-                    if rec_date:
-                        dep_schedule_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('id','=',rec_id)])
-                        for f in self.pool.get('hr.schedule.lines').browse(cr,uid, dep_schedule_ids):
-                            
-                            dep_schedule_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('department_id','=',f.department_id.id),('day','=',f.day)])
-                            schedule_objs = self.pool.get('hr.schedule.detail').browse(cr,uid, dep_schedule_ids)
-                            for schedule in schedule_objs:
-                                if new_date_end ==0:
-                                    new_date_end=f.date_end
-                                if new_date_start ==0:
-                                    new_date_start=f.date_start    
-                                if schedule:
-                                    update= self.pool.get('hr.schedule.detail').write(cr, uid, schedule.id, {'date_start':new_date_start,'date_end':new_date_end})
-                                    print"successfully updated id ",update
-                            new_date_end =0
-                            new_date_start=0 
-            result = super(osv.osv, self).write(cr, uid, ids, vals, context)
-        return True
+#     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
+#         new_date_end =0
+#         new_date_start=0   
+#         if 'schedule_lines_ids' in vals:
+#             for value in vals['schedule_lines_ids']:
+#                 rec_id=value[1]
+#                 rec_date=value[2]
+#                 if value[2]:
+#                     if 'date_end' in value[2]:
+#                         new_date_end=rec_date['date_end']
+#                     if 'date_start' in value[2]:
+#                         new_date_start=rec_date['date_start']
+#                     if rec_date:
+#                         dep_schedule_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('id','=',rec_id)])
+#                         for f in self.pool.get('hr.schedule.lines').browse(cr,uid, dep_schedule_ids):
+#                             
+#                             dep_schedule_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('department_id','=',f.department_id.id),('day','=',f.day)])
+#                             schedule_objs = self.pool.get('hr.schedule.detail').browse(cr,uid, dep_schedule_ids)
+#                             for schedule in schedule_objs:
+#                                 if new_date_end ==0:
+#                                     new_date_end=f.date_end
+#                                 if new_date_start ==0:
+#                                     new_date_start=f.date_start    
+#                                 if schedule:
+#                                     update= self.pool.get('hr.schedule.detail').write(cr, uid, schedule.id, {'date_start':new_date_start,'date_end':new_date_end})
+#                                     print"successfully updated id ",update
+#                             new_date_end =0
+#                             new_date_start=0 
+#         result = super(osv.osv, self).write(cr, uid, ids, vals, context)
+#         return True
    
     
     def _compute_alerts(self, cr, uid, ids, field_name, args, context=None):
@@ -147,6 +147,7 @@ class hr_schedule(osv.osv):
 
     _defaults = {
         'state': 'draft',
+        'company_id': lambda self, cr, uid, context: self.pool.get('res.company')._company_default_get(cr, uid, 'resource.calendar', context=context)
     }
 
     
@@ -271,12 +272,17 @@ class hr_schedule(osv.osv):
             for detail in sched.detail_ids:
                 wkf.trg_validate(
                     uid, 'hr.schedule.detail', detail.id, signal, cr)
-            self.write(
-                cr, uid, sched.id, {'state': next_state}, context=context)
+                wkf.trg_validate(
+                    uid, 'hr.schedule.lines', detail.id, signal, cr)
+#             self.write(
+#                 cr, uid, sched.id, {'state': next_state}, context=context)
+            sql_query = """Update hr_schedule_lines set state ='validate' where schedule_id ="""+str(sched.id)+""""""
+            cr.execute(sql_query)
+            sql_query = """Update hr_schedule set state ='validate' where id ="""+str(sched.id)+""""""
+            cr.execute(sql_query)
         return True
  
     def workflow_validate(self, cr, uid, ids, context=None):
- 
         return self._workflow_common(cr, uid, ids, 'signal_validate', 'validate', context=context)
  
     def details_locked(self, cr, uid, ids, context=None):
@@ -287,6 +293,51 @@ class hr_schedule(osv.osv):
                     return False
  
         return True
+    def Schedule_lines_Rec_lock(self, cr, uid, ids, context=None):
+        for sched in self.browse(cr, uid, ids, context=context):
+            for sched_lines in sched.schedule_lines_ids:
+                sql_query = """Update hr_schedule_lines set state ='locked' where id ="""+str(sched_lines.id)+""""""
+                cr.execute(sql_query)
+            if sched_lines.state != 'locked':
+                    return False       
+ 
+        return True
+    def Schedule_Rec_lock(self, cr, uid, ids, context=None):
+        '''This method is use to lock  hr schedule and schedule lines record.'''
+        all_locked = True
+        for sched in self.browse(cr, uid, ids, context=context):
+            if self.Schedule_lines_Rec_lock(cr, uid, [sched.id], context):
+                sql_query = """Update hr_schedule set state ='locked' where id ="""+str(sched.id)+""""""
+                cr.execute(sql_query)
+            else:
+                all_locked = False
+        return all_locked           
+ 
+    def Schedule_lines_backto_confirm(self, cr, uid, ids, context=None):
+        for sched in self.browse(cr, uid, ids, context=context):
+            for sched_lines in sched.schedule_lines_ids:
+                sql_query = """Update hr_schedule_lines set state ='validate' where id ="""+str(sched_lines.id)+""""""
+                cr.execute(sql_query)
+            if sched_lines.state != 'validate':
+                    return False       
+ 
+        return True
+    def Schedule_backto_confirm(self, cr, uid, ids, context=None):
+        '''This method is use to lock  hr schedule and schedule lines record.'''
+        all_locked = True
+        for sched in self.browse(cr, uid, ids, context=context):
+            
+            exists = self.search(cr,uid,[('department_id','=',sched.department_id.id),('state','=','validate')]) 
+            if  exists:
+                raise osv.except_osv(('Schedule is already in confirm state for this department'), ('First move it to lock state or remove it '))
+            else:
+                if self.Schedule_lines_backto_confirm(cr, uid, [sched.id], context):
+                    print"schedule id",sched.id
+                    sql_query = """Update hr_schedule set state ='validate' where id ="""+str(sched.id)+""""""
+                    cr.execute(sql_query)
+                else:
+                    all_locked = False
+        return all_locked
  
     def workflow_lock(self, cr, uid, ids, context=None):
         '''Lock the Schedule Record. Expects to be called by its schedule detail

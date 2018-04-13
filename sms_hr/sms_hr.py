@@ -347,31 +347,29 @@ class hr_employee_attendance(osv.osv):
         result = {}
         FMT = '%H:%M:%S'
         lat_min=0
+        emp_dep_id=0
         print"************************************late_arrival start********************************************"
         for f in self.browse(cr, uid, ids, context=context):
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
-            print "this day",day
-          
-            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',str(day))])
-            if sch_detail_ids:
-                sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
-                attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_start, "UTC", "Asia/Karachi")
-#                 attendance_time =sch_detail__objs.date_start
+            emp_dep_ids = self.pool.get('hr.employee').search(cr,uid, [('id','=',f.employee_id.id)])
+            for emp in self.pool.get('hr.employee').browse(cr,uid, emp_dep_ids):
+                if (emp.department_id):
+                    print"department is assign"
+                    emp_dep_id=emp.department_id.id
+                else:
+                    print"department is not assign"     
+            sch_lines_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('department_id','=',emp_dep_id),('dayofweek','=',str(day))])
+            if sch_lines_ids:
+                sch_lines__objs = self.pool.get('hr.schedule.lines').browse(cr,uid, sch_lines_ids[0])
+                attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_lines__objs.date_start, "UTC", "Asia/Karachi")
                 schedule_signin = datetime.strptime(attendance_time,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
-                print"employee id ",f.employee_id.name
-                print "attendance date:",f.attendance_date
-                print"time sign in on",f.sign_in
-
-                print"schedule sign in time",schedule_signin
-             
                 if f.sign_in and schedule_signin:
                     timedelta = datetime.strptime(f.sign_in, FMT) - datetime.strptime(schedule_signin, FMT)
                     if(datetime.strptime(f.sign_in, FMT) < datetime.strptime(schedule_signin, FMT)):
                         lat_min=0
                     else:
                         lat_min = timedelta.days + float(timedelta.seconds) / 60
-                    print "***************** late munites",lat_min
                 else:
                     lat_min=0
             
@@ -399,27 +397,21 @@ class hr_employee_attendance(osv.osv):
         FMT = '%H:%M:%S'
         early_minutes=0
         for f in self.browse(cr, uid, ids, context=context):
-          
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
             
-            sch_detail_ids = self.pool.get('hr.schedule.detail').search(cr,uid, [('employee_id','=',f.employee_id.id),('dayofweek','=',str(day))])
-            print "found sechdule on this day ",sch_detail_ids
-            print "Schedule on date ",fdate
-            if sch_detail_ids:
-                sch_detail__objs = self.pool.get('hr.schedule.detail').browse(cr,uid, sch_detail_ids[0])
-                print "****date end before conversion",sch_detail__objs.date_end
+            emp_dep_ids = self.pool.get('hr.employee').search(cr,uid, [('id','=',f.employee_id.id)])
+            for emp in self.pool.get('hr.employee').browse(cr,uid, emp_dep_ids):
+                if (emp.department_id):
+                    print"department is assign"
+                    emp_dep_id=emp.department_id.id
+                else:
+                    print"department is not assign"     
+            sch_lines_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('department_id','=',emp_dep_id),('dayofweek','=',str(day))])
+            if sch_lines_ids:
+                sch_detail__objs = self.pool.get('hr.schedule.lines').browse(cr,uid, sch_lines_ids[0])
                 attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_end, "UTC", "Asia/Karachi")
-#                 attendance_time =sch_detail__objs.date_end
-                #schedule_time_signin_ = datetime.strptime(sch_detail__objs.date_start,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
                 schedule_time_signout_ = datetime.strptime(attendance_time,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
-                #print "schedule sign in time",schedule_time_signin_
-                
-#                 att_time = datetime.strptime(sch_detail__objs.date_end,"%Y-%m-%d %H:%M:%S").strftime('%H:%M:%S')
-                print" ****employee sign out on: ",f.sign_out
-                print "and schedule_time_signout",schedule_time_signout_
-            
-                #early_min = datetime.strptime(f.sign_out, FMT) - datetime.strptime(att_time, FMT)
                 if f.sign_out =='00:00:00':
                     early_minutes=0
                 else:
@@ -429,7 +421,6 @@ class hr_employee_attendance(osv.osv):
                             early_minutes=0
                         else:
                             early_minutes = timedelta.days + float(timedelta.seconds) / 60
-                            print "***************** Employee Left Earlly (in munutes)",early_minutes
                 
                     else:
                         early_minutes=0
