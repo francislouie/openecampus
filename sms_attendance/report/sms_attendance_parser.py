@@ -402,14 +402,18 @@ class sms_attendance_parser(report_sxw.rml_parse):
         this_form = self.datas['form']
         session_id = this_form['session_id'][0]
         class_id = this_form['class_id'][0]
-        date_from_str = this_form['date_from']
-        date_to_str = this_form['date_to']
-
-        date_from = datetime.datetime.strptime(str(date_from_str), '%Y-%m-%d')
-        date_to = datetime.datetime.strptime(str(date_to_str), '%Y-%m-%d')
+        input_date = this_form['date']
         
-        final_dict.update({'date_f': date_from.strftime('%d-%m-%Y')})
-        final_dict.update({'date_t': date_to.strftime('%d-%m-%Y')})
+        year = int(datetime.datetime.strptime(str(input_date), '%Y-%m-%d').strftime('%Y'))
+        month = int(datetime.datetime.strptime(str(input_date), '%Y-%m-%d').strftime('%m')) 
+               
+        num_days = calendar.monthrange(year, month)[1]
+        days = [datetime.date(year, month, day) for day in range(1, num_days+1)]
+
+        date_from = days[0]
+        date_to = days[-1]
+        
+        final_dict.update({'date': days[0].strftime('%B, %Y')})
 
         session_obj = self.pool.get('sms.session').browse(self.cr, self.uid, session_id)
         final_dict.update({'session': session_obj.academic_session_id.name})
@@ -420,6 +424,7 @@ class sms_attendance_parser(report_sxw.rml_parse):
                         """     
         self.cr.execute(student_sql)
         studentslist = self.cr.fetchall()
+        studentslist = sorted(studentslist, key=lambda k: k[0])
         final_dict.update({'total_students': str(len(studentslist))})
         
         academiccalendar_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('id','=',class_id)])
@@ -429,6 +434,9 @@ class sms_attendance_parser(report_sxw.rml_parse):
         class_teacher = academiccalendar_obj[0].class_teacher.name_related
         final_dict.update({'class_teacher': class_teacher})
 
+        total_classes_ids = self.pool.get('sms.class.attendance').search(self.cr, self.uid, [('class_id','=',class_id),('attendance_date','>=',str(date_from)),('attendance_date','<=',str(date_to))])
+        final_dict.update({'total_classes': str(len(total_classes_ids))})
+        
         ids=1
         attendances = []
         
@@ -436,7 +444,7 @@ class sms_attendance_parser(report_sxw.rml_parse):
         for student in studentslist:
             
             student_id = student[3]
-            class_attendance =  self.pool.get('sms.student').get_attendance_on_period_selection(self.cr, self.uid, ids, student_id, date_from.date(), date_to.date())
+            class_attendance =  self.pool.get('sms.student').get_attendance_on_period_selection(self.cr, self.uid, ids, student_id, date_from, date_to)
             
             my_dict = {'s_no':'', 'reg':'', 'student':'', 'present':'', 'absent':'', 'leave':'', 'contact':''}
             my_dict['s_no'] = i

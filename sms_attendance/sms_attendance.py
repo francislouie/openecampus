@@ -258,7 +258,7 @@ class sms_student(osv.osv):
                     FROM sms_class_attendance_lines AS l, sms_class_attendance AS a,sms_academiccalendar_student AS std
                     where a.id = l.parent_id 
                     and l.student_class_id = std.id
-                    and std.state='Current'
+                    and (std.state='Current' OR std.state='Suspended')
                     and l.student_name = %s 
                     and a.attendance_date >=  %s 
                     and a.attendance_date <=  %s 

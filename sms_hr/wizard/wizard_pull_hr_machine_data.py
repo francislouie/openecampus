@@ -86,7 +86,8 @@ class sms_pull_hr_machine_data(osv.osv_memory):
     
     
     # Display the last pull date and time in wizard
-    def _get_last_pull(self, cr, uid, ids): 
+    def _get_last_pull(self, cr, uid, ids):
+        last_pull_date = None 
         pull_ids = self.pool.get('hr.device.pull.log').search(cr, uid, [])
         if pull_ids:
             last_id = pull_ids and max(pull_ids)

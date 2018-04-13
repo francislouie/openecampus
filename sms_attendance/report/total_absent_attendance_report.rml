@@ -56,27 +56,24 @@
 
 			<para style="P1">[[repeatIn(get_total_absent_attendance_report(data['form']),'r')]]</para>
 
-     	<blockTable colWidths="100.0,120.0,60.0,100.0,120.0" style="WhiteTable">
+     	<blockTable colWidths="100.0,150.0,100.0,150.0" style="Table3">
 			<tr>
 			 <td><para style="P5">Class Name:</para></td>
               <td><para style="P5">[[(r['class_name'])]]</para></td>
-              <td><para style="P5"></para></td>
 			  <td><para style="P5">Session:</para></td>
 			  <td><para style="P5">[[(r['session'])]]</para></td>
 			  
 	      	</tr>	
 	      	<tr>
-             <td><para style="P5">Date From:</para></td>
-              <td><para style="P5">[[(r['date_f'])]]</para></td>
-               <td><para style="P5"></para></td>
-              <td><para style="P5">Date To:</para></td>
-              <td><para style="P5">[[(r['date_t'])]]</para></td>
+             <td><para style="P5">Month:</para></td>
+              <td><para style="P5">[[(r['date'])]]</para></td>
+              <td><para style="P5">Total Classes Punched:</para></td>
+              <td><para style="P5">[[(r['total_classes'])]]</para></td>
               
             </tr>
             <tr>
             <td><para style="P5">Total Students:</para></td>
               <td><para style="P5">[[(r['total_students'])]]</para></td>
-               <td><para style="P5"></para></td>
               <td><para style="P5">Class Teacher:</para></td>
               <td><para style="P5">[[(r['class_teacher'])]]</para></td>
                
