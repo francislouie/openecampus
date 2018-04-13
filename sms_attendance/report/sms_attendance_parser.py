@@ -408,8 +408,8 @@ class sms_attendance_parser(report_sxw.rml_parse):
         date_from = datetime.datetime.strptime(str(date_from_str), '%Y-%m-%d')
         date_to = datetime.datetime.strptime(str(date_to_str), '%Y-%m-%d')
         
-        final_dict.update({'date_f': date_from.strftime('%Y-%m-%d')})
-        final_dict.update({'date_t': date_to.strftime('%Y-%m-%d')})
+        final_dict.update({'date_f': date_from.strftime('%d-%m-%Y')})
+        final_dict.update({'date_t': date_to.strftime('%d-%m-%Y')})
 
         session_obj = self.pool.get('sms.session').browse(self.cr, self.uid, session_id)
         final_dict.update({'session': session_obj.academic_session_id.name})
@@ -439,18 +439,32 @@ class sms_attendance_parser(report_sxw.rml_parse):
             class_attendance =  self.pool.get('sms.student').get_attendance_on_period_selection(self.cr, self.uid, ids, student_id, date_from.date(), date_to.date())
             
             my_dict = {'s_no':'', 'reg':'', 'student':'', 'present':'', 'absent':'', 'leave':'', 'contact':''}
-            my_dict['s_no'] = i + 1
+            my_dict['s_no'] = i
             my_dict['reg'] = student[0]
             my_dict['student'] = student[1]
-            my_dict['present'] = class_attendance['present']
-            my_dict['absent'] = class_attendance['absent']
-            my_dict['leave'] = class_attendance['leave']
+            
+            if not class_attendance['present']:
+                my_dict['present'] = '-'
+            else:   
+                my_dict['present'] = class_attendance['present']
+                
+            if not class_attendance['absent']:
+                my_dict['absent'] = '-'
+            else:     
+                my_dict['absent'] = class_attendance['absent']
+                
+            if not class_attendance['leave']:
+                my_dict['leave'] = '-'
+            else:    
+                my_dict['leave'] = class_attendance['leave']
+                
             my_dict['contact'] = student[2]
             
             
 #             class_attendance =  self.pool.get('sms.academiccalendar').get_attendance_on_date_list(self.cr, self.uid, ids, class_id, date.date())
 
             attendances.append(my_dict)
+            i += 1
             
         final_dict.update({'attendances': attendances})
         final_dict.update({'date_printed': datetime.datetime.now().strftime('%d-%m-%Y')})

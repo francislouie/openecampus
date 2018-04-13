@@ -44,6 +44,7 @@
     <paraStyle name="P10" fontName="Helvetica" fontSize="10.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P11" fontName="Helvetica" fontSize="11.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <paraStyle name="P11R" fontName="Helvetica" fontSize="10.0" leading="13" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P11C" fontName="Helvetica" fontSize="10.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
     <images/>
   </stylesheet>
   <story>
@@ -102,12 +103,12 @@
 		<para style="P1">[[repeatIn(r['attendances'],'s')]]</para>
 			<blockTable colWidths="30.0,40.0,170.0,60.0,60.0,60.0,100.0" repeatRows="1" style="Table3">
 				<tr>
-					<td><para style="P11R"> [[(s['s_no'])]]</para></td>
-					<td><para style="P11R">[[(s['reg'])]]</para></td>
+					<td><para style="P11C"> [[(s['s_no'])]]</para></td>
+					<td><para style="P11C">[[(s['reg'])]]</para></td>
 					<td><para style="P11">[[(s['student'])]]</para></td>
-					<td><para style="P11R">[[(s['present'])]]</para></td>
-					<td><para style="P11R">[[(s['absent'])]]</para></td>
-					<td><para style="P11R">[[(s['leave'])]]</para></td>
+					<td><para style="P11C">[[(s['present'])]]</para></td>
+					<td><para style="P11C">[[(s['absent'])]]</para></td>
+					<td><para style="P11C">[[(s['leave'])]]</para></td>
 					<td><para style="P11R">[[(s['contact'])]]</para></td>
 				</tr>
 			</blockTable>
