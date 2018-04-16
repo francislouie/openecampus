@@ -71,20 +71,6 @@ class hr_monthly_attendance_calculation(osv.osv):
     _name = "hr.monthly.attendance.calculation"
     _description = "Salary Calculation"
     
-#     def get_twentry_m_late(self, cr, uid,ids, name, args, context=None):
-#         result = {}
-#         for f in self.browse(cr, uid, ids, context=context):
-#             records = 0
-#             t20_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>','2018-02-01'),('attendance_date','<','2018-02-28')])
-#             if t20_ids:
-#                 rect20 = self.pool.get('hr.employee.attendance').browse(cr,uid,t20_ids)
-#                 for t20 in rect20:
-#                     late_m = t20.total_short_minutes
-#                     if late_m >=20 and late_m <30:
-#                         records = records +1
-#         result[f.id] = records
-#         return result
-    
     def get_decuction_twentry_m_late(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -95,7 +81,7 @@ class hr_monthly_attendance_calculation(osv.osv):
                 day_ded = 0
             
             result[f.id] = day_ded
-            print"result",result
+            print"resrrrrrrrrrrrult",result
         return result
     
     def get_deducted_amount_on_half_days(self, cr, uid,ids, name, args, context=None):
@@ -113,7 +99,6 @@ class hr_monthly_attendance_calculation(osv.osv):
             
             result[f.id] = deducted_amount
         return result
-    
 #     def get_half_days(self, cr, uid,ids, name, args, context=None):
 #         result = {}
 #         for f in self.browse(cr, uid, ids, context=context):
@@ -126,21 +111,75 @@ class hr_monthly_attendance_calculation(osv.osv):
 #             result[f.id] = day_ded
 #             print"result",result
 #         return result
+
+    def get_half_days(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            month_comp_date =f.calendar_month
+            year = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))
+            mont = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%m'))
+            if(mont <10):
+                month ='0'+str(mont)
+            else:
+                month =''+str(mont) 
+            mon_days = calendar.monthrange(year,mont)[1]
+            date_from =str(str(year)+'-'+str(month)+'-01')
+            date_to =str(str(year)+'-'+str(month)+'-'+str(mon_days))
+       
+            
+            half_days=0
+            emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
+            for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
+                if(emp.final_status == 'Status Not Clear'):
+                        half_days=half_days+1
+            result[f.id] = half_days
+        return result
+
+    def get_twentry_m_late(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            month_comp_date =f.calendar_month
+            year = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))
+            mont = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%m'))
+            if(mont <10):
+                month ='0'+str(mont)
+            else:
+                month =''+str(mont) 
+            mon_days = calendar.monthrange(year,mont)[1]
+            date_from =str(str(year)+'-'+str(month)+'-01')
+            date_to =str(str(year)+'-'+str(month)+'-'+str(mon_days))
+       
+            
+            twenty_minutes_late=0
+            emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
+            for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
+                if(emp.total_short_minutes >=20 and  emp.total_short_minutes< 30) and emp.final_status !='Status Not Clear':
+                    twenty_minutes_late=twenty_minutes_late+1
+            result[f.id] = twenty_minutes_late
+        return result
     
-    
-#     def get_thirty_m_late(self, cr, uid,ids, name, args, context=None):
-#         result = {}
-#         for f in self.browse(cr, uid, ids, context=context):
-#             records = 0
-#             t20_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>','2018-02-01'),('attendance_date','<','2018-02-28')])
-#             if t20_ids:
-#                 rect20 = self.pool.get('hr.employee.attendance').browse(cr,uid,t20_ids)
-#                 for t20 in rect20:
-#                     late_m = t20.total_short_minutes
-#                     if late_m >=30:
-#                         records = records +1
-#             result[f.id] = records
-#         return result
+    def get_thirty_m_late(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            month_comp_date =f.calendar_month
+            year = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))
+            mont = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%m'))
+            if(mont <10):
+                month ='0'+str(mont)
+            else:
+                month =''+str(mont) 
+            mon_days = calendar.monthrange(year,mont)[1]
+            date_from =str(str(year)+'-'+str(month)+'-01')
+            date_to =str(str(year)+'-'+str(month)+'-'+str(mon_days))
+
+            print"Employee id",f.employee_id.id
+            thirty_minutes_late=0
+            emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
+            for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
+                if(emp.total_short_minutes >= 30 and emp.final_status !='Status Not Clear'):
+                    thirty_minutes_late=thirty_minutes_late+1
+            result[f.id] = thirty_minutes_late
+        return result
     
     def get_decuction_thirty_m_late(self, cr, uid,ids, name, args, context=None):
         result = {}
@@ -172,14 +211,6 @@ class hr_monthly_attendance_calculation(osv.osv):
                 net = 0
             result[f.id] = net
         return result
-#     def cur_cal_month(self, cr, uid,ids, name, args, context=None):
-#         result = {}
-#         for f in self.browse(cr, uid, ids, context=context):
-#             print"calendar month",f.calendar_month
-#             result[f.id] = f.name
-#         return result
-#     
-    
     def final_deducted_amount(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
@@ -222,7 +253,9 @@ class hr_monthly_attendance_calculation(osv.osv):
         'remarks': fields.function(get_remarks, method=True, string='Remarks',type='char'),
         'twenty_minutes_late':fields.integer('Twenty Minutes late'),
         'thirty_minutes_late':fields.integer('Thirty_minutes_late'),
-        #'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
+#         'half_days': fields.integer('No. of Half Days'),
+        'half_days': fields.function(get_half_days, method=True, string='Half dayse',type='integer'),
+#         'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
         'deduction_on_twenty_minutes_late': fields.function(get_decuction_twentry_m_late, method=True, string='Deduction (Days) On 20min',type='integer'),
         #'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
 

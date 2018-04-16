@@ -164,6 +164,7 @@
                 </data>
             </field>
         </record>
+
          <!--<record id="hr_payslip_run_form_inherit" model="ir.ui.view">
             <field name="name">hr_payslip_run</field>
             <field name="model">hr.payslip.run</field>
