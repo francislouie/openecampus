@@ -16,8 +16,70 @@ class sms_report_withdraw_register(report_sxw.rml_parse):
     def report_title(self, data):  
         string = "Withdraw Register \n "
         return string
+    def print_withdrawal_register(self, data):
+      
+        result = []
+        ftlist = []
+        this_form = self.datas['form']
+        order_by = this_form['order_by']
+     
+        Ses_id = this_form['session_ids']
+
+            
+        if Ses_id:
+            Session_str = str(tuple(Ses_id))
+            Session_str = "sms_academiccalendar.session_id in " + Session_str.replace(',)', ')')
+        else:
+            Session_str = ''
+   
+        sql = """ SELECT sms_academiccalendar.id FROM sms_academiccalendar
+                INNER JOIN sms_classes ON
+                sms_classes.id = sms_academiccalendar.class_id
+                WHERE  """+ Session_str + """
+                """
+             
+        self.cr.execute(sql)
+        rows = self.cr.fetchall()
+        
+        for cls_id in rows:
+            ftlist.append(cls_id[0])
+        ftlist = tuple(ftlist)
+        ftlist = str(ftlist).rstrip(',)')
+        ftlist = ftlist+')'
+        print "rows:",ftlist
+      
+      
+        if rows:
+            sql2 = """SELECT id from sms_student 
+                where admitted_to_class IN"""+str(ftlist) + """ 
+                AND sms_student.state != 'deleted'
+                order by """+str(order_by)+""""""
+            self.cr.execute(sql2)
+            rows2 = self.cr.fetchall()
+            sno = 1
+            for std in rows2:
+                print "std:",std[0]
+                std_rec = self.pool.get('sms.student').browse(self.cr, self.uid,std[0])
+                if std_rec:
+                    mydict = {'sno':'','reg_no':'','student':'','dob':'','father':'','occupation':'','address':'','date_admitted':'--','admitted_to':'--','date_withdraw':'--'}
+                    mydict['sno'] = sno
+                    mydict['student'] = std_rec.name
+                    mydict['dob'] = std_rec.birthday
+                    mydict['address'] = str(std_rec.cur_address) + "-"+str(std_rec.cur_city)
+                    mydict['father'] = std_rec.father_name
+                    mydict['reg_no'] = std_rec.registration_no
+                    mydict['date_admitted'] = std_rec.admitted_on
+                    mydict['admitted_to'] =self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,std_rec.admitted_to_class.id).name 
+                    mydict['date_withdraw'] = std_rec.date_withdraw
+                    sno = sno + 1
+                    result.append(mydict)
+                
     
-    def print_withdrawal_register(self, data):                                                         
+        return result
+    
+        
+        
+    def print_withdrawal_register_old(self, data):                                                         
         
         print "session"
         
@@ -27,6 +89,8 @@ class sms_report_withdraw_register(report_sxw.rml_parse):
         session_id = this_form['session_id'][0]
         print "session ",session_id
         class_cat = this_form['class_cat']
+        class_cat = 'Primary'
+      
         
 #         sql = """SELECT sms_student.id FROM sms_student
 #             INNER JOIN sms_academiccalendar
@@ -87,6 +151,7 @@ class sms_report_withdraw_register(report_sxw.rml_parse):
                 where admitted_to_class IN"""+str(ftlist) + """ 
                 AND sms_student.state != 'deleted'
                 order by registration_counter"""
+                
             self.cr.execute(sql2)
             rows2 = self.cr.fetchall()
             sno = 1

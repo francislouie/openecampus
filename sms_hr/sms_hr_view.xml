@@ -1,0 +1,273 @@
+<?xml version="1.0" ?>
+<openerp>
+    <data>
+  
+<!--Company inherited view-->
+        <record model="ir.ui.view" id="view_cms_company_form1">
+          <field name="name">res.company.form.inherit</field>
+          <field name="model">res.company</field>
+          <field name="inherit_id" ref="base.view_company_form"/>
+          <field name="type">form</field>
+          <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//field[@name='partner_id']" position="after">
+                        <field name="empleado_branch_id"/>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
+
+    <record id="view_biometric_device_form" model="ir.ui.view">
+            <field name="name">hr.biometirc.device.form</field>
+            <field name="model">hr.biometirc.device</field>
+            <field name="arch" type="xml">
+                <form string="Biometric Device" version="7.0">
+                    <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="campus_name"/>
+                        <field name="device_id"/>
+                        <field name="location_within_campus"/>
+                    </group>
+                    <group>
+                        <field name="date_installed"/>
+                        <field name="provider"/>
+                        <field name="company"/>
+                        <field name="support_contact"/>
+                    </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    
+			<record id="hr_attendance_" model="ir.ui.view">
+            <field name="name">hr.attendancefform2</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.view_attendance_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//field[@name='action_desc']" position="after">
+                        <group string="Biometric Setting">
+                            <field name="emp_regno_on_device"/>
+                            <field name="empleado_account_id"/>
+                            <field name="device_odoo_config_id"/>
+                            <field name="status"/>
+                        </group>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
+            
+        <!--Inherit hr attendance search view-->
+    <record id="view_hr_attendance_inherit_filter" model="ir.ui.view">
+      <field name="name">hr_attendance</field>
+      <field name="model">hr.attendance</field>
+      <field name="inherit_id" ref="hr_attendance.view_hr_attendance_filter"/>
+      <field name="arch" type="xml">
+        <xpath expr="//search" position="inside">
+        
+          <field name="attendance_date" string="Attendance Date"/>
+        </xpath>
+      </field>
+    </record>
+        
+        
+        <record id="hr_attendance_tree2" model="ir.ui.view">
+            <field name="name">hr.attendancetree</field>
+            <field name="model">hr.attendance</field>
+            <field name="inherit_id" ref="hr_attendance.view_attendance_form"/>
+            <field name="arch" type="xml">
+            <data>
+                  <xpath expr="//field[@name='action']" position="after">
+                            <field name="emp_regno_on_device"/>
+                            <field name="attendance_date"/>
+                            <field name="attendance_time"/>
+                            <field name="status"/>
+                            <field name="empleado_account_id"/>
+                    </xpath>
+                       <xpath expr="//field[@name='employee_id']" position="replace">
+                            <field name="employee_name"/>
+
+                    </xpath>
+                        <xpath expr="//field[@name='action']" position="replace">
+                            <field name="empleado_account_id"/>
+                    </xpath>
+                    
+                    </data>
+            </field>
+        </record>
+        
+        
+    
+        
+        
+        
+        
+        <record id="hr_employee_form10" model="ir.ui.view">
+            <field name="name">hr.employee.form10</field>
+            <field name="model">hr.employee</field>
+            <field name="inherit_id" ref="hr.view_employee_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//field[@name='active']" position="after">
+                        <group string="Biometric Setting">
+                            <field name="emp_regno_on_device"/>
+                            <field name="empleado_account_id"/>
+                        </group>
+                    </xpath>
+                 <xpath expr="//page[@string='HR Settings']" position="after">
+                        <page string="Attendance">
+                        <p> -10000 = Schedule on selected day is not found. Goto employee schedule and create schedule.</p>
+                                <group>
+                                   <field name="employee_attendance_ids" nolabel="1" widget="one2many_list">
+                                   <group>
+                                   <tree editable = "top">
+                                       <field name="attendance_month" readonly="0" />
+                                   </tree>
+                                   </group>
+                                   <tree default_order='attendance_date'>
+                                     
+                                    <field name="attendance_date" readonly ="1"/>
+                                    <field name="dayofweek" readonly ="1"/>
+                                    <field name="sign_in" readonly ="1"/>
+                                    <field name="sign_out" readonly ="1"/>
+                                    <field name="late_early_arrival" readonly ="1"/>
+                                     <field name="early_late_going" readonly ="1"/>
+                                    <field name="total_short_minutes" readonly ="1"/>
+                                    <field name="final_status" readonly ="1"/>
+                                    </tree>
+                                    </field>
+                                </group>
+                        </page>
+                    </xpath>
+                </data>
+            </field>
+        </record>
+         <record id="hr_patslip_form_inherit1" model="ir.ui.view">
+            <field name="name">hr.payslip.form10</field>
+            <field name="model">hr.payslip</field>
+            <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//button[@name='cancel_sheet']" position="after">
+                        <button string="Archieve" name="send_to_archieve" states="done,cancel"/>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
+
+         <!--<record id="hr_payslip_run_form_inherit" model="ir.ui.view">
+            <field name="name">hr_payslip_run</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//button[@name='close_payslip_run']" position="after">
+                       <button name="%(action_hr_compute_salarys)d" type="action" states="draft" string="Compute Salary" class="oe_highlight"/>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>-->
+        
+        
+	<!-- Show draft pay slips -->
+	<record id="action_view_hr_payslip_inprocess_form" model="ir.actions.act_window">
+            <field name="name">Slips (Inprocess)</field>
+            <field name="res_model">hr.payslip</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_payroll.view_hr_payslip_tree"/>
+             <field name="domain">[('state','in',['draft','verify'])]</field>
+            <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+        </record>
+        
+    <!-- Show confirmed pay slips -->
+	<record id="action_view_hr_new_payslip_confirmed_form" model="ir.actions.act_window">
+            <field name="name">Slips (Confirmed)</field>
+            <field name="res_model">hr.payslip</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_payroll.view_hr_payslip_tree"/>
+             <field name="domain">[('state','in',['done'])]</field>
+            <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+        </record>
+	
+	 <!-- Show archieved pay slips (means confirmed slips of old months) -->
+	<record id="action_view_hr_payslip_archieved_confirmed_form" model="ir.actions.act_window">
+            <field name="name">Archieved (Confirmed)</field>
+            <field name="res_model">hr.payslip</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="hr_payroll.view_hr_payslip_tree"/>
+             <field name="domain">[('state','in',['Archieved'])]</field>
+            <field name="search_view_id" ref="hr_payroll.view_hr_payslip_filter"/>
+        </record>
+	
+	<!-- HR Contract Inherited -->
+	
+	<record id="hr_contract_inherited_" model="ir.ui.view">
+            <field name="name">hr.contract2</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//group[@name='duration_group']" position="before">
+                        <group string="Deductions">
+                            <field name="month" />
+                            
+                            
+                        	<field name="deduction_choice" />
+							<field name="punched_deduction" />
+                             <field name="amount_to_deduct" />
+                        </group>
+                    </xpath>
+                    
+                    <xpath expr="//page[@string='Work Permit']" position="after">
+                        <page string = "Attendance Summary">
+                             <field name="attendance_calc" widget="one2many_list" nolabel="1" colspan="4"> 
+						<tree>
+							<field name="name" />
+							<field name="twenty_minutes_late"/>
+							<field name="thirty_minutes_late"/>
+							<field name="absentees_this_month"/>
+							<field name="approved_leaves_this_month"/>
+							<field name="is_invoiced"/>
+						</tree>
+						<form delete="false">
+							<field name="name" /><newline/>
+							<field name="calendar_month"/>
+							<field name="twenty_minutes_late"/>
+							<field name="deduction_on_twenty_minutes_late"/>
+							<field name="thirty_minutes_late"/>
+							<field name="deduction_on_thirty_minutes_late"/>
+							<field name="absentees_this_month"/>
+							<field name="approved_leaves_this_month"/>
+							<field name="net_absentees"/>
+							<field name="deducted_absentees_plus_late_comings"/>
+							<field name="half_days"/>
+							<newline/>
+							<field name="amount_deducted_absentees"/>
+							<newline/>
+							<field name="amount_deducted_half_days"/>
+							<newline/>
+							<field name="final_deduced_amount"/>
+							<p><font color = "red"><field name="remarks"/></font></p>
+						</form>
+						</field>
+                        </page>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>
+	
+	
+	</data>
+</openerp>

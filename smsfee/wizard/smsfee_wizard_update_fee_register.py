@@ -46,6 +46,8 @@ class update_fee_register(osv.osv_memory):
     
     
     def update_feeregister(self, cr, uid, ids, data):
+        
+        raise osv.except_osv(('sssdsdsdsd'),('Please Define a Fee For Selected Class'))
         result = []
         for f in self.browse(cr, uid, ids):
             action = f.action
@@ -96,9 +98,6 @@ class update_fee_register(osv.osv_memory):
                                     for feetype in monthly_feeids:
                                         print "fee type id::",feetype[0]
                                         cls_fee_obj = self.pool.get('smsfee.classes.fees').browse(cr,uid,feetype[0])
-                                        print "fee_month:",month
-                                        print "std_id:",std_id
-                                        print "fts:",ft
                                         #check if student is already charged with fee then only uodate record otherwiase insert his fee    
                                         std_fee_ids = self.pool.get('smsfee.studentfee').search(cr,uid,[('student_id','=',std_id),('generic_fee_type','=',ft),('fee_month','=',month)])
                                         if not std_fee_ids:

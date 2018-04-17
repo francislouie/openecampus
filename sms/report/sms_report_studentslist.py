@@ -18,7 +18,11 @@ class sms_report_studentslist(report_sxw.rml_parse):
             'get_student_biodata' : self.get_student_biodata,
             'get_withdrawn_student_info':self.get_withdrawn_student_info,
             'print_student_se_passes':self.print_student_se_passes,
+            'get_student_strength':self.get_student_strength,            
             'get_date_range':self.get_date_range,
+            'get_student_strength_message':self.get_student_strength_message,
+            'get_user_name':self.get_user_name,
+            'get_today':self.get_today
         })
         self.base_amount = 0.00
     
@@ -29,7 +33,23 @@ class sms_report_studentslist(report_sxw.rml_parse):
         return string
     
     def class_name(self, form): 
-        return self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,form['acad_cal'][0] ).name
+        if form['class_form']:
+            acad_cal = form['class_id'][0]
+        else:
+            acad_cal = form['acad_cal'][0]
+        return self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, acad_cal).name
+    
+    
+    def get_user_name(self,form):
+            user_name = self.pool.get('res.users').browse(self.cr, self.uid, self.uid).name
+            result = 'Printed By'+ '    '+user_name
+            return  result
+    
+    def get_today(self,form):
+            today =datetime.datetime.today().strftime('%d-%m-%Y')
+          
+            result = 'Date'+ '    '+today
+            return result 
     
     def get_student_contacts(self, data):                                                         
         result = []
@@ -56,6 +76,49 @@ class sms_report_studentslist(report_sxw.rml_parse):
             result.append(mydict)
         return result
 
+    def get_student_strength_message(self, form):                                                         
+        this_form = self.datas['form']
+        draft_boolean = this_form['display_draft_waitapprov']
+        if draft_boolean is True:
+            return 'The total sum of current students shows sum of all stdudents in Draft, Waiting Approval and Current State'
+        else:
+            return ''
+
+    def get_student_strength(self, form):                                                         
+        result = []
+        result = []
+        this_form = self.datas['form']
+#         draft_boolean = this_form['display_draft_waitapprov']
+        class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','in',['Active','Draft'])], order='disp_order, section_id')
+        class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_ids)
+        i = 1
+        total_cur_strength = 0
+        total_pending_admission = 0   
+        overall_total = 0     
+        for class_obj in class_objs:
+            mydict = {'s_no':'', 'class':'', 'pendingadmits':'','admited':'', 'strength':''}
+         
+            mydict['s_no']  = i
+            mydict['class']     = class_obj.name
+            mydict['pendingadmits']  = class_obj.pendingadmits
+            mydict['admited']  = class_obj.cur_strength
+            
+            total_cur_strength = total_cur_strength +class_obj.cur_strength
+            total_pending_admission = total_pending_admission + class_obj.pendingadmits
+            total = mydict['pendingadmits'] + mydict['admited']
+            mydict['strength']  =  total
+            overall_total = overall_total + total
+            i += 1
+            result.append(mydict)
+            
+        mydict = {'s_no':'', 'class':'', 'pendingadmits':'','admited':'', 'strength':''}
+        mydict['class']     = 'Total Students'
+        mydict['pendingadmits']  = total_pending_admission
+        mydict['admited']  = total_cur_strength
+        mydict['strength']  = overall_total
+        result.append(mydict)
+        return result
+    
     def get_withdrawn_student_info(self,form):                                                         
         result = []
         this_form = self.datas['form']
@@ -77,14 +140,17 @@ class sms_report_studentslist(report_sxw.rml_parse):
                 result.append(mydict)
         return result
   
-    def print_students_class_list(self,form):                                                         
+    def print_students_class_list(self, form):                                                         
         result = []
+        if form['class_form']:
+            acad_cal = form['class_id'][0]
+        else:
+            acad_cal = form['acad_cal'][0]
         students = """SELECT registration_no,name,father_name,birthday,cell_no,phone
-                          FROM sms_student WHERE current_class ="""+str(form['acad_cal'][0])+"""
+                          FROM sms_student WHERE current_class ="""+str(acad_cal)+"""
                           AND state not in('admission_cancel','drop_out','deleted','slc') ORDER BY name"""
         self.cr.execute(students)
         rows = self.cr.fetchall() 
-        
         i = 1
         for row in rows:
             mydict = {'sno':'','admsn_no':'','student':'','father':''}
@@ -186,66 +252,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
     
     def get_student_biodata(self,form):
         
-        sql = """update sms_academiccalendar set display_order = (select sequence from sms_classes where
-             id = (select sms_academiccalendar.class_id))"""
-        self.cr.execute(sql)
-        self.cr.commit()
-         
-        #------  To Populate admission confirmation date in student_admission_register object ------------------
-        sql = """SELECT sms_student.id, sms_student.admitted_on, student_admission_register.id
-                FROM sms_student
-                INNER JOIN student_admission_register
-                ON sms_student.admission_form_no = student_admission_register.id
-                """
-        self.cr.execute(sql)
-        studentrecs = self.cr.fetchall()
-         
-        # now reset order of smsfee_studentfee
-        fees = self.pool.get('smsfee.studentfee').search(self.cr, self.uid, [])
-        feerec = self.pool.get('smsfee.studentfee').browse(self.cr, self.uid,fees)
-        for thisfee in feerec:
-            if thisfee.fee_type is not None:
-                if thisfee.fee_type.fee_type is not None:
-                    self.pool.get('smsfee.studentfee').write(self.cr, self.uid, thisfee.id, {'display_order':thisfee.fee_type.fee_type.display_sequence})
-         
-        for rec in studentrecs:
-            updating = self.pool.get('student.admission.register').write(self.cr, self.uid, rec[2], {'date_admission_confirmed':rec[1]})
-            if updating:
-                print 'success'
-        #-----------Update login Ids for students----------------------------
-#         sql_query = """SELECT campus_code from res_company"""
-#         self.cr.execute(sql_query)
-#         campus_code = self.cr.fetchone()
-#         student_ids = self.pool.get('sms.student').search(self.cr, self.uid, [])
-#         srudent_recs = self.pool.get('sms.student').browse(self.cr, self.uid, student_ids)
-#         for rec in srudent_recs:
-#             registration_no = rec.registration_no
-#             login_id = str(campus_code[0])+str(registration_no)
-#             import random
-#             random_pass = random.randrange(100, 1000)
-#             password = str(random_pass)+str(registration_no)
-#             update=self.pool.get('sms.student').write(self.cr, self.uid, rec.id, {'login_id':login_id, 'password':password})
-#             if update:
-#                 print 'Done'
-                
-#        temporary query to set students security fee
-        sql0 = """SELECT smsfee_studentfee.id,student_id,receipt_no,paid_amount FROM smsfee_studentfee
-              inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-              inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-            WHERE smsfee_feetypes.refundable = True  and smsfee_studentfee.state = 'fee_paid'"""
-        self.cr.execute(sql0)
-        feeids = self.cr.fetchall()
-        if feeids:
-            for booklines_rw in feeids:
-              
-                addfee = self.pool.get('smsfee.studentfee.refundable').create(self.cr,self.uid,{
-                                        'student_id':booklines_rw[1],
-                                        'receipt_no':booklines_rw[2],
-                                        'amount_received':booklines_rw[3],
-                                        'amount_paid_back':0,
-                                        'student_fee_id':booklines_rw[0],
-                                        'state':'to_be_paid'})
-        
+        call_fees_lines = self.pool.get('sms.student').get_student_fees_lines(self.cr,self.uid,22,70,'Academics','fee_paid')
+        print "fee return liens",call_fees_lines
         res = []
         s_no = 0
         _ids = self.pool.get('sms.academiccalendar.student').search(self.cr ,self.uid ,[('name','=',form['acad_cal'][0])])
@@ -346,7 +354,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
                     if rec.image:
                         picture = rec.image
                     else:
-                        picture = 'No Picture'
+                        picture = None
                       
                     my_dict['id' + str((i%2)+1)] = i
                     my_dict['name' + str((i%2)+1)] = rec.name
@@ -375,5 +383,6 @@ report_sxw.report_sxw('report.sms.std_admission_statistics.name', 'sms.student',
 report_sxw.report_sxw('report.sms.students.biodata', 'sms.student', 'addons/sms/rml_studentsbiodata.rml',parser=sms_report_studentslist, header='external')
 report_sxw.report_sxw('report.sms_students_securuty_cards_name', 'sms.student', 'addons/sms/report/rml_student_remp_sec_cards.rml',parser=sms_report_studentslist, header=False)
 report_sxw.report_sxw('report.sms.withdrawn.student.details', 'sms.student', 'addons/sms/report/rml_withdrawnstudentsdata.rml',parser=sms_report_studentslist, header='external')
+report_sxw.report_sxw('report.sms.student.strength.report', 'sms.academiccalendar', 'addons/sms/report/rml_studentstrength.rml',parser=sms_report_studentslist, header='external')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

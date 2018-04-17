@@ -3,6 +3,7 @@ from openerp import tools
 from openerp import addons
 import xlwt
 import xlrd
+import calendar
 from datetime import datetime, timedelta
 from datetime import datetime
 from dateutil import parser
@@ -11,7 +12,9 @@ import datetime
 
 class sms_collabrator(osv.osv):
     
-    """ Servers as bridge among sms and external apps """
+    """ Servers as bridge among sms and external apps
+    
+        this is a test changed to see how git works """
     _name = 'sms.collabrator'
     _columns = {}
            
@@ -23,15 +26,24 @@ class sms_collabrator(osv.osv):
             cr.execute(get_campus_code)
             sql_rec_ = cr.fetchone()
             obj = self.pool.get('sms.student').browse(cr, uid, student_id)
+            if obj[0].image:
+                pic = obj[0].image
+            else:
+                pic = 'pic-not-av'
+            
+            if 'transport_availed' in obj[0]:
+                transport = obj[0].transport_availed
+            else:
+                transport = False
             my_dict = {
                         'registration_no':obj[0].registration_no,
                         'stdname':obj[0].name,
                         'fathername':obj[0].father_name,
                         'class_id':obj[0].current_class.id,
                         'class_name':obj[0].current_class.name,
-                        'pic':obj[0].image,
+                        'pic':pic,
                         'std_id':obj[0].id,
-                        'transport_availed':obj[0].transport_availed,
+                        'transport_availed':transport,
                         'campus_code':sql_rec_[0],
                         'state':obj[0].state,
                         'login_status':1
@@ -55,29 +67,103 @@ class sms_collabrator(osv.osv):
                 disp_cntct_prtal = 0
             else:
                 disp_cntct_prtal = 1
+            if obj[0].image:
+                pic = obj[0].image
+            else:
+                pic = 'Info not available'
+                
+                
+                
+            if obj[0].registration_no:
+                registration_no = obj[0].registration_no
+            else:
+                registration_no = ' Info not available'
+                
+                
+               
+            if obj[0].name:
+                stdname = obj[0].name
+            else:
+                stdname = ' Info not available' 
+            if obj[0].father_name:
+                father_name = obj[0].father_name
+            else:
+                father_name = ' Info not available'    
+            if obj[0].current_class.name:
+                class_name = obj[0].current_class.name
+            else:
+                class_name = ' Info not available'       
+            if obj[0].gender:
+                gender = obj[0].gender
+            else:
+                gender = ' Info not available'      
+                   
+                   
+            if obj[0].phone:
+                contact_no_1 = obj[0].phone
+            else:
+                contact_no_1 = ' Info not available'      
+                          
+            if obj[0].cell_no:
+                contact_no_2 = obj[0].cell_no
+            else:
+                contact_no_2 = ' Info not available'      
+            if obj[0].email:
+                email = obj[0].email
+            else:
+                email = ' Info not available'                            
+                   
+            if obj[0].state:
+                state = obj[0].state
+            else:
+                state = 'Info not available'    
+                
+            if obj[0].cur_address:
+                cur_address = obj[0].cur_address
+            else:
+                cur_address = ' Info not available'      
+                
+                
+            if obj[0].cur_city:
+                cur_city = obj[0].cur_city
+            else:
+                cur_city = ' Info not available'       
+                
+            if obj[0].info_portal == False or obj[0].info_portal == None:
+                display_state = 1
+            else:
+                display_state = 0   
+            
+            if 'transport_availed' in obj[0]:
+                transport = obj[0].transport_availed
+            else:
+                transport = False     
             my_dict = {
-                        'registration_no':obj[0].registration_no,
-                        'stdname':obj[0].name,
-                        'fathername':obj[0].father_name,
-                        'class_id':obj[0].current_class.id,
-                        'class_name':obj[0].current_class.name,
-                        'pic':obj[0].image,
-                        'std_id':obj[0].id,
-                        'state':obj[0].state,
-                        'blood_group':obj[0].blood_grp,
-                        'gender':obj[0].gender,
-                        'date_of_birth':obj[0].birthday,
-                        'father_nic':obj[0].father_nic,
-                        'contact_no_1':obj[0].phone,
-                        'contact_no_2':obj[0].cell_no,
-                        'email':obj[0].email,
-                        'transport_availed':obj[0].transport_availed,
-                        'address':obj[0].cur_address,
-                        'city':obj[0].cur_city,
-                        'display_contact_info':disp_cntct_prtal,
-                        'login_status':1
-                    }
+                            'registration_no':registration_no,
+                            'stdname':stdname,
+                            'fathername':father_name,
+                            'class_id':obj[0].current_class.id,
+                            'class_name':class_name,
+                            'pic':pic,
+                            'std_id':obj[0].id,
+                            'state':state,
+                            'blood_group':obj[0].blood_grp,
+                            'gender':obj[0].gender,
+                            'date_of_birth':obj[0].birthday,
+                            'father_nic':obj[0].father_nic,
+                            'contact_no_1':contact_no_1,
+                            'contact_no_2':contact_no_2,
+                            'email':email,
+                            'transport_availed':transport,
+                            'address':cur_address,
+                            'city':cur_city,
+                            'display_contact_info':disp_cntct_prtal,
+                            'login_status':1,
+                            'display_status': display_state
+                        }
             result.append(my_dict)
+            
+            print"Result",result
         return result
 
     def getstudent_notifications(self, cr, uid, student_id):
@@ -86,9 +172,11 @@ class sms_collabrator(osv.osv):
                 SELECT id, name ,state, body 
                 FROM sms_mass 
                 WHERE student_id = """+str(student_id)+""" 
+                AND state = 'Approved'
                 ORDER BY id""" 
         cr.execute(sql)
         sql_recs = cr.fetchall()
+        print sql_recs
         if sql_recs:
             for rec in sql_recs:
                 if not rec[1]:
@@ -320,15 +408,20 @@ class sms_collabrator(osv.osv):
                     receipt_no = this_recipt.manual_recpt_no
                 else:
                     receipt_no = 'Null'
-                    
+                recept_date = datetime.datetime.strptime(str(this_recipt.receipt_date), '%Y-%m-%d').strftime('%d-%m-%Y')
+                
+                recept_month = datetime.datetime.strptime(str(this_recipt.receipt_date), '%Y-%m-%d').strftime('%m') 
+        
+                mname = self.pool.get('sms.session').get_month_name(cr,uid,int(recept_month))
+               
                 my_dict = {
                             'id':this_recipt.id,
                             'name':this_recipt.name,
-                            'receipt_date':this_recipt.receipt_date,
+                            'receipt_date':recept_date,
                             'manual_receipt_no':receipt_no,
                             'total_paybles':this_recipt.total_paybles,
                             'total_paid_amount':this_recipt.total_paid_amount,
-                            'due_date':'2017-01-01',
+                            'due_date':mname,
                             'state':this_recipt.state,
                             'challan_cat':this_recipt.challan_cat,
                             'return_status':1,
@@ -445,7 +538,37 @@ class sms_collabrator(osv.osv):
                         }
             result.append(my_dict)
         return result  
+    def sms_exam_marksheet_test(self, cr, uid, student_id, class_id):
+        result="hhhhhhhhhhhhhhhhhh"
+        return result
 
+    def monthly_class_attendence(self, cr,uid,stdid,datefrom):
+        year = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%Y'))
+        mont = int(datetime.datetime.strptime(str(datefrom), '%Y-%m-%d').strftime('%m'))
+       
+        mon_days = calendar.monthrange(year,mont)[1]
+        if(mont <10):
+            month ='-0'+str(mont)
+        else:
+            month ='-'+str(mont)   
+        att_date_from =str(str(year)+str(month)+'-01')
+        att_date_to =str(str(year)+str(month)+'-'+str(mon_days))
+   
+
+        result=self.pool.get('sms.attendance').get_student_monthly_attendence(cr,stdid,att_date_from,att_date_to)
+        
+        
+        print"Monthly attendance",result
+        return result
+    
+    
+    def get_student_fees(self, cr, uid, student_id,fee_category,return_choice):
+
+         result=self.pool.get('sms.student').get_student_fees_lines(cr, uid, student_id,fee_category,return_choice)
+
+         return result
+    
+    
     def sms_exam_marksheet(self, cr, uid, student_id, class_id):
         result = []
         get_portal_setting = """SELECT exammark_prtal FROM sms_student WHERE id= """+str(student_id)

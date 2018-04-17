@@ -18,7 +18,8 @@
 						<p style = "color:blue;">An Academic Session may have multiple years, depends on start and end date of an academic session</p>
 							<group>
 							<group string="" >
-								 <field name="subcate" />
+								<!--  <field name="subcate" /> -->
+								<field name="program_category_id" />
 								<field name="start_date" />
 								<field name="date_started" readonly ="1"/>
 								<field name="started_by" readonly ="1"/>
@@ -28,11 +29,76 @@
 								<field name="date_closed" readonly ="1"/>
 								<field name="closed_by" readonly ="1"/>
 						   </group>
-						   </group>
+                          </group>
+
 				<notebook>
                 <page string="Sessions Years">
                     <field name="session_ids" readonly = "1" nolabel = "1"/>
 			   </page>
+                    <page string="Academics Bill Layout">
+                            <separator string="Field for Challan Printing(Header)" colspan="4"/>
+							<group>
+							<field name="late_fee_amount"/>
+							 <field name="company_cfieldone"/>
+							 <field name="company_cfieldtwo"/>
+							 <field name="company_cfieldthree"/>
+							</group>
+                     		<separator string="Field for Challan Printing(Footer)" colspan="4"/>
+							<group col="4" colspan="2">
+						     <field name="company_cfieldfour"/>
+							 <field name="company_cfieldfive"/>
+							 <field name="company_cfieldsix"/>
+							 <field name="campus_code" invisible="1"/>
+							</group>
+                         <separator string="Bank information" colspan="4"/>
+                        <group col="4" colspan="2">
+							 <field name="bank_name1"/>
+							 <field name="bank_acctno1"/>
+							 <field name="bank_name2"/>
+							 <field name="bank_acctno2"/>
+                        </group>
+                         <separator string="Account information" colspan="4"/>
+                        <group col="4" colspan="2">
+							 <field name="fee_journal"/>
+							 <field name="student_fee_income_acc"/>
+							 <field name="student_fee_expense_acc"/>
+							 <field name="fee_reception_account_cash"/>
+                            <field name="fee_reception_account_bank"/>
+                        </group>
+
+
+			        </page>
+                    <page string="Transport Bill Layout">
+                            <separator string="Field for Challan Printing(Header)" colspan="4"/>
+							<group>
+
+							 <field name="company_cfieldone_trans"/>
+							 <field name="company_cfieldtwo_trans"/>
+							 <field name="company_cfieldthree_trans"/>
+							</group>
+                     		<separator string="Field for Challan Printing(Footer)" colspan="4"/>
+							<group col="4" colspan="2">
+						     <field name="company_cfieldfour_trans"/>
+							 <field name="company_cfieldfive_trans"/>
+							 <field name="company_cfieldsix_trans"/>
+							 <field name="campus_code" invisible="1"/>
+							</group>
+                        <separator string="Bank information" colspan="4"/>
+                        <group col="4" colspan="2">
+							 <field name="bank_name1_trans"/>
+							 <field name="bank_acctno1_trans"/>
+							 <field name="bank_name2_trans"/>
+							 <field name="bank_acctno2_trans"/>
+                        </group>
+                         <separator string="Account information" colspan="4"/>
+                        <group col="4" colspan="2">
+							 <field name="fee_journal"/>
+							 <field name="student_fee_income_acc"/>
+							 <field name="student_fee_expense_acc"/>
+							 <field name="fee_reception_account_cash"/>
+                            <field name="fee_reception_account_bank"/>
+                        </group>
+                    </page>
 			   </notebook>
 			</sheet>	 	
               </form>
@@ -66,7 +132,7 @@
         </record>
 
         <record model="ir.actions.act_window" id="action_academic_session">
-            <field name="name">Academic Session</field>
+            <field name="name">Academic Programs</field>
             <field name="res_model">sms.academics.session</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
@@ -106,6 +172,7 @@
                 	
                   </group>
                   <field name="session_admissions_closed"/>
+                  <field name="subcate"/>
                 	<field name="state"/>
 				</group>  
 				<group></group>
@@ -142,6 +209,7 @@
 						<field name="academic_session_id"/>
 						<field name="start_date"/>
                     	<field name="end_date"/>
+                    	  <field name="subcate"/>
                     	<field name="state"/>
 						<field name="id" string = "Code" readonly ="1"/>
                 </tree>
@@ -149,7 +217,7 @@
         </record>
 
         <record id="view_session_search" model="ir.ui.view">
-            <field name="name">session.search</field>
+            <field name="name">session search</field>
             <field name="model">sms.session</field>
             <field name="arch" type="xml">
                 <search string="Search Session Record">
@@ -158,16 +226,109 @@
                 </search>
             </field>
         </record>
-
         <record model="ir.actions.act_window" id="action_session">
             <field name="name">Session Years</field>
             <field name="res_model">sms.session</field>
             <field name="type">ir.actions.act_window</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-            <field name="context">{'search_default_draft': 1}</field>
-            <field name="search_view_id" ref="view_session_search"/>
+          <field name="context">{'search_default_draft': 1}</field>
+        <field name="search_view_id" ref="view_session_search"/>
         </record>
+
+
+
+        
+         <!-- academic.session.term -->
+         
+        <record model="ir.ui.view" id="view_term_form">
+         <field name="name">term.form</field>
+         <field name="model">academic.session.term</field>
+         <field name="arch" type="xml">
+            <form string="Academic Session Terms" version="7.0">
+                <sheet>
+                 <group string="Term" >
+                  <group >
+                    <field name="name" required="1"/>
+                    <field name="start_date" required="1"/>
+                    <field name="end_date" required="1"/>
+                    <field name="state" required="1"/>
+                  </group>
+                </group>  
+            </sheet>        
+              </form>
+            </field>
+        </record>
+        
+             <record model="ir.ui.view" id="view_term_tree">
+            <field name="name">session.term.tree</field>
+            <field name="model">academic.session.term</field>
+            <field name="arch" type="xml">
+                <tree colors="red:state =='Previous';blue:state=='Active'" string="Term">
+                        <field name="name" />
+                        <field name="start_date" />
+                        <field name="end_date" />
+                        <field name="state" />
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_session_term">
+            <field name="name">Session Term</field>
+            <field name="res_model">academic.session.term</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+  <!-- Program.Category -->
+
+        <record model="ir.ui.view" id="view_program_form">
+         <field name="name">program.form</field>
+         <field name="model">sms.program.category</field>
+         <field name="arch" type="xml">
+            <form string="Program Form" version="7.0">
+                <sheet>
+                 <group string="Program" >
+                  <group >
+                    <field name="name" string="Name" required="1"/>
+                    <field name="category_code" required="1"/>
+                    <field name="offered_in_inst"/>
+                  </group>
+                </group>
+            </sheet>
+              </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="view_program_tree">
+            <field name="name">program.category.tree</field>
+            <field name="model">sms.program.category</field>
+            <field name="arch" type="xml">
+                <tree string="Programs">
+                    <field name="name"/>
+                    <field name="category_code"/>
+                    <field name="offered_in_inst"/>
+                </tree>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="action_program">
+            <field name="name">Programs Category</field>
+            <field name="res_model">sms.program.category</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+
+
+
+
+
+
+
+
+
+
 
 <!--Session Months-->
  <record model="ir.ui.view" id="view_sessionmonths_tree">
@@ -610,7 +771,7 @@
 			<button name="%(report_admission_form_filled_id)d" string="Admission Form" states="Draft,Admitted" type="action" class="oe_highlight" groups=""/>
 -->
 			<button name="promote_std" string="Promote" states="admitted" type="object" class="oe_highlight" groups=""/>
-			<button name="%(action_withdraw_student)d" string="Withdraw" states="Admitted" type="action" class="oe_highlight" groups=""/>
+			<!--<button name="%(action_withdraw_student)d" string="Withdraw" states="Admitted" type="action" class="oe_highlight" groups=""/>-->
 			<button name="%(action_demote_student)d" string="Demote" states="Admitted" type="action" confirm = "Use this wizard Carefully, thiw wizard enables you to bring a student back to his previous class." class="oe_highlight" groups=""/>
     		<button name="admisssion_registration" string="Admit(Beta)" states="Draft" type="object" class="oe_highlight" groups=""/>
 				
@@ -623,22 +784,26 @@
 			<h1><field name="name" placeholder="Student Name" /></h1>
 			<h2><field name="current_class" placeholder="current_class" /></h2>
 			</div>
-			<field name="registration_no" widget="" placeholder="" groups=""/> 
+			<group    col="6" colspan="2">
+				<field name="registration_no" widget="" placeholder="" groups=""/>
+				<field name="login_id" readonly="1"/>
+				<field name="password" readonly="1"/>
+			</group> 
 			<div class="oe_right oe_button_box" name="button_box">
 			<!-- Put here related buttons -->
 			</div>
 				<notebook>
-                <page string="Information">
+                <page string="Information" name="personal_information">
 					<notebook>
-						<page string="Contact Information">
+						<page string="Contact Information" name='contact_information'>
 							 <group>
-			                 	<group string="Personal">
+			                 	<group string="Personal" name="personal">
 			                   	<field name="father_name" required="1"/>
 								<field name="gender"  required="1"/>
 								<field name="father_nic"/>
 								<field name="father_occupation"/>
-								 <field name="religion" />
-								<field name="birthday" />
+								<field name="religion"/>
+								<field name="birthday"/>
 			                  </group>
 								<group string="Contact">
 								<field name="phone"  />
@@ -689,51 +854,75 @@
 						          </group>
 								</group>
 						</page>
+						<page string="Attach Files">
+							<group>
+								<field name="attachment"/>
+							</group>
+						</page>
 				   </notebook>
 			   </page>
 				<page string="Admission information">
 				 <group>
                     <group string="Admission">
-                   	<field name="entrytest_per"/>
-					<field name="admitted_to_class"/>
-				   	<field name="desired_class"/>
-					<field name="admitted_on"/>
-					<field name="admission_form_no"/>
-					<field name="fee_starting_month" invisible="1"/>
-					<field name="board_reg_no"/>
+	                   	<field name="entrytest_per"/>
+						<field name="admitted_to_class"/>
+					   	<field name="desired_class"/>
+						<field name="admitted_on"/>
+						<field name="admission_form_no"/>
+						<field name="fee_starting_month" invisible="1"/>
+						<field name="board_reg_no"/>
 				    </group> 
                     <group string="Previous">
-				    <field name="previous_school" />
-				    <field name="reason_leaving"/>	
-					<field name="current_state" invisible="1"/>	
-					<field name="is_loged_user_admin" invisible="1"/>	
-					
+					    <field name="previous_school" />
+					    <field name="reason_leaving"/>	
+						<field name="current_state" invisible="1"/>	
+						<field name="is_loged_user_admin" invisible="1"/>	
 				    </group> 
-				</group>  
+				</group>
+                <separator string="With Drawl Information" colspan="4"/>
+				<field name="reason_withdraw" nolabel="1"/>
 			    </page>
-				
 				<page string="Academics">
-				   <field name="classes_history"/>
-				   <field name="reg_nos"/>	
+					<notebook>
+					<page string= "Classes Details">
+				   	<field name="classes_history"/>
+					</page>
+					</notebook>
+				  
 			    </page>
 				<page string="Class Subjects">
-				   <field name="active_subjects" domain="[('subject_status','=','Current')]" />
+
+                <button name="%(action_wizard_calss_subject)d" string="Add new Subject" states="Admitted" type="action" class="oe_highlight" groups=""/>
+                   <field name="active_subjects" domain="[('subject_status','=','Cu rrent')]" />
+
 			    </page>
 				</notebook>
-								
 				<notebook>
 				<page string="Achievements">
                     <field name="achievements_ids" nolabel="1" colspan="4"/> 
                  </page>
-				
 				<page string="Certificate">
                     <field name="certificate_ids" nolabel="1" colspan="4"/> 
                  </page>
 				 <page string="References">
 				   <field name="reference_ids" nolabel="1" colspan="4"/> 
 			     </page>
-				 <page string="Previous School">
-                    <field name="previous_school_ids" nolabel="1" colspan="4"/> 
+				 <page string="Previous Institute">
+                    <field name="previous_school_ids" widget="one2many_list" nolabel="1" colspan="4"> 
+						<tree delete="false">
+							<field name="name" />
+							<field name="exit_date"/>
+						</tree>
+						<form delete="false">
+							<field name="name" />
+							<field name="registration_no"/>
+							<field name="admission_date" />
+							<field name="last_class_attended"/>
+							<field name="result_last_class" />
+							<field name="marks_obtained"/>
+							<field name="per"/>
+						</form>
+						</field>
                   </page>
 				  <page string="Relatives">
                     <field name="relatives" nolabel="1"/> 
@@ -742,18 +931,18 @@
                     <field name="family_contact_ids" nolabel="1" colspan="4"/> 
                   </page>
 						<page string="Medical">
-                            		<field name="blood_grp"/>
-									<group string="Does the applicant have any Disabilities?" col="6" colspan="4">
-									<field name="eye"/>
-                                    <field name="ear"/>
-                                    <field name="nose_throat"/>
-                                    <field name="respiratory"/>
-                                    <field name="cardiovascular"/>
-                                    <field name="neurological"/>
-                                    <field name="muskoskeletal"/>
-                                    <field name="dermatological"/>
-                                    <field name="blood_pressure"/>
-                                </group>
+                    		<field name="blood_grp"/>
+							<group string="Does the applicant have any Disabilities?" col="6" colspan="4">
+								<field name="eye"/>
+                                <field name="ear"/>
+                                <field name="nose_throat"/>
+                                <field name="respiratory"/>
+                                <field name="cardiovascular"/>
+                                <field name="neurological"/>
+                                <field name="muskoskeletal"/>
+                                <field name="dermatological"/>
+                                <field name="blood_pressure"/>
+                            </group>
                             <separator string="Notes" colspan="4"/>
                             <group col="6" colspan="4">
                                 <field name="medical_comment" placeholder="Notes About Medical.." nolabel="1"/>
@@ -1152,7 +1341,7 @@
  			 <header>
              <button name="start_class" string="Start Class" states="Draft" type="object" class="oe_highlight" groups="" confirm="Are you sure to start this class?"/>
 			 <button name="load_subjects" string="Load Class  Subjects" attrs="{'invisible':[('subjects_loaded','=',True)]}" states="Draft"   type="object" class="oe_highlight" groups=""/>
-			 <button name="%(report_studentsclass_list_id)d" string="Print Class List"  states="Draft,Active,Complete" type="action" icon="gtk-print"/>
+			 <button name="%(action_print_class_list)d" string="Print Class List"  states="Draft,Active,Complete" type="action" icon="gtk-print"/>
 			 <!--
 			 <button name="load_students_from_excel" string="Load Students" states="subjects_loaded" type="object" class="oe_highlight" groups=""/>
 			 -->
@@ -1162,7 +1351,8 @@
 			<div><label for="name"/><h1><field name="name"/></h1></div>
 			<group>
 				<group>
-					<field name="acad_session_id" on_change="onchange_academic_session(acad_session_id)" attrs="{'readonly':[('state','IN',['Active','Complete'])]}"  widget="selection"  />
+					<!--<field name="acad_session_id" on_change="onchange_academic_session(acad_session_id)" attrs="{'readonly':[('state','IN',['Active','Complete'])]}"  widget="selection"  />-->
+					<field name="acad_session_id" on_change="onchange_academic_session(acad_session_id)"   widget="selection"  />
 					<field name="session_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}"  />
 					<field name="class_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}" />
 					<field name="class_teacher" attrs="{'readonly':[('state','IN',['Complete'])]}"/>
@@ -1170,6 +1360,7 @@
 				<group>
 					<field name="section_id"  attrs="{'readonly':[('state','IN',['Active','Complete'])]}" domain="[('active','=',1)]"/>
 					<field name="group_id"/>
+					<field name="disp_order" invisible="1"/>
 				</group>
 			</group>
 			<notebook>
@@ -1203,7 +1394,8 @@
 				<field name="total_students" readonly="1"/>
 				<field name="withdrawn_students" readonly="1"/>
 				<field name="promoted_students" readonly="1"/>
-				<field name="active_students" readonly="1"/>
+				<field name="count_student_class_changed" readonly="1"/>
+				<field name="cur_strength" readonly="1"/>
 			</group>
 			<field name="acad_cal_students" widget="one2many_list" readonly="1">
 				<tree delete="false">
@@ -1424,6 +1616,16 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree</field>
         </record>
+<!--filter.on.subject-->
+     <record id="ir_actions_server_filter_subject" model="ir.actions.server">
+            <field name="sequence" eval="5"/>
+            <field name="state">code</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_sms_filter_subject_open"/>
+            <field name="code">action = pool.get('sms.filter.subject.open').filter_subject(cr, uid, None, context)</field>
+            <field name="condition">True</field>
+            <field name="name">My Subjects</field>
+        </record>
 <!--sms.student.subject-->
 <!--this view is set for classes with no specific subject attendance, for subject wise attendance create another view of the same object-->
         <record model="ir.ui.view" id="students_subjects_form">
@@ -1432,12 +1634,15 @@
          <field name="arch" type="xml">
             <form string="Student Subjects" version="7.0">
 			<sheet>
+			<group>
 			<h2><field name="student_id" readonly = "1"/></h2>
 			<h3><field name="name"/></h3>
-			<field name="student"/>  
+			<group>
+			<field name="student"/> 
 			<field name="subject"/>
 			<field name="subject_status"/>
-
+			</group>
+			</group>
 			<notebook>
             <page string="Results">
 			  <group string="Examination">
@@ -2245,6 +2450,7 @@
 		 <group colspan="4">
  		   <field name="start_date" on_change="onchange_exam_start_date(start_date)" attrs="{'readonly':[('state','in',['Closed','Cancelled'])]}"/>
  		   <field name="session_year"/>
+ 		     <field name="term_name"/>
  		    <field name="result"/>
 		</group>
 		</group>
@@ -2265,6 +2471,7 @@
         <tree string="Exam Offered">
           <field name="name"/>
 		  <field name="exam_type"/>
+		  <field name="term_name"/>
  		  <field name="start_date"/>
 		   <field name="session_year"/>
 		  <field name="state"/>
@@ -2518,52 +2725,17 @@
         </tree>
       </field>
     </record>
-    
-    <!-- END NEWsms.Class.promotion --> 
- 
-	<!-- sms.student.promotion -->
-    <record model="ir.ui.view" id="sms_student_promotion_form">
-      <field name="name">Student Promotion</field>
-      <field name="model">sms.student.promotion</field>
-      <field name="type">form</field>
-      <field name="arch" type="xml">
-        <form string="Student Promotion">
-		  <field name="registration_no"/>
-          <field name="name"/>
-          <field name="father_name"/>
-		  <field name="obtained_marks"/>
-		  <field name="total_marks"/>
-		  <field name="decision"/>
-        </form>
-      </field>
-    </record>
-
-    <record model="ir.ui.view" id="sms_student_promotion_tree">
-      <field name="name">Student Promotion</field>
-      <field name="model">sms.student.promotion</field>
-      <field name="type">tree</field>
-      <field name="arch" type="xml">
-        <tree string="Student Promotion" editable="top">
-		  <field name="registration_no"/>
-          <field name="name"/>
-          <field name="father_name"/>
-		  <field name="obtained_marks"/>
-		  <field name="total_marks"/>
-		  <field name="decision"/>
-        </tree>
-      </field>
-    </record>
-
-    <record model="ir.actions.act_window" id="action_sms_student_promotion">
-      <field name="name">Student Promotion</field>
-      <field name="res_model">sms.student.promotion</field>
+    <!-- the same promotion object is used for changing student class, action is defined here` -->
+ <record model="ir.actions.act_window" id="action_sms_change_student_class">
+      <field name="name">Change Students Class</field>
+      <field name="res_model">sms.student.class.promotion</field>
+		<field name="domain">[('action','=','change_students_class')]</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree,form</field>
     </record>
 
-    <!-- sms.student.promotion --> 
-
-	<!-- sms.student.change.section -->
+    <!-- END NEWsms.Class.promotion --> 
+ 	<!-- sms.student.change.section -->
     <record model="ir.ui.view" id="sms_student_change_section_form">
       <field name="name">Student Change Section</field>
       <field name="model">sms.student.change.section</field>
@@ -2600,35 +2772,31 @@
 
 <!-- Change student class -->
     
-     <record model="ir.ui.view" id="sms_student_change_section_form">
+     <record model="ir.ui.view" id="sms_student_change_classss_form">
       <field name="name">Student Change Section</field>
-      <field name="model">sms.change.student.class</field>
+      <field name="model">sms.change.student.class</field> 
       <field name="type">form</field>
       <field name="arch" type="xml">
         <form string="Student Change Class">
-          
-          
-          <group>
-          <field name="name" on_change="onchange_student(name)" />
-           <field name="father_name"/>
-           <field name="current_class" on_change="onchange_acad_cal(current_class)"/>
-          <field name="new_class"/>
-		  <field name="fee_str" />	
-		  <field name="fee_starting_month" />	
-         </group>
-         <group>
-		  <field name="academic_session"/>
-		  <field name="session"/> 
-		  <field name="changed_by"/>
-		  <field name="date_changed"/>
-         
-         
-		  </group>
-		  
+		<group  string = "Change Student Class" attrs="{'readonly':[('state','!=','Draft')]}">
+	          <group>
+	           <field name="name" on_change="onchange_student(name)"/>
+	           <field name="current_class" />
+				<field name="session"/> 
+	         </group>
+	         <group>
+				 <field name="father_name"/>
+				 <field name="new_class" on_change="onchange_acad_cal(new_class)"/>
+				  <field name="academic_session"/>
+			</group>
+			<group>
+			  <field name="changed_by"/>
+			  <field name="date_changed"/>
+			 </group>
+		 </group>
         </form>
       </field>
     </record>
-    
     
     <record model="ir.ui.view" id="sms_change_std_cls_tree">
       <field name="name">Change Students Class</field>
@@ -2660,6 +2828,7 @@
 	      <field name="inherit_id" ref="base.view_company_form"/>
 	      <field name="type">form</field>
 	      <field name="arch" type="xml">
+
 	        <notebook>
 	          <page string="School Management" position="after">
 	            <notebook>
@@ -2697,6 +2866,26 @@
 	      </notebook>
 	      </field>
 	    </record>
+
+
+		 <!-- hr contracted inherited for adding dedicting hours for attendance
+		<record id="hr_contract_inherited_form2" model="ir.ui.view">
+            <field name="name">hr.contract.fform2</field>
+            <field name="model">hr.contract</field>
+            <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+            <field name="arch" type="xml">
+                <data>
+                    
+                    <xpath expr="//group[@name='duration_group']" position="before">
+                        <group string="Deductions">
+                            <field name="hours_to_deduct" />
+                            <field name="amount_to_deduct"/>
+                        </group>
+                    </xpath>
+                    
+                </data>
+            </field>
+        </record>-->
         <!-- sms.employee-->
 		<record model="ir.ui.view" id="view_sms_employee_form">
 		      <field name="name">hr.employee.inherit</field>
@@ -2709,6 +2898,23 @@
 					<field name="father_name"/>
 					<field name="attendance_id"/>
 				</field>
+				
+				    <field name="coach_id" position="after">
+                    <!-- <label for="isactive" class="oe_edit_only"/> -->
+                    <field name="isactive"/>
+                   
+                </field>
+                
+                
+                
+                    <field name="isactive" position="after">
+                    <!-- <label for="joiningdate" class="oe_edit_only"/> -->
+                    <field name="joiningdate"/>
+                 
+                </field>
+				
+				
+				
 		      </field>
 		    </record>
 
@@ -2977,13 +3183,13 @@
                    </group>
 				   <newline/>
 					<notebook>
-						<page string="Contact Information"  attrs="{'readonly':[('state','=','Confirm')]}">
+						<page string="Contact Information"   attrs="{'readonly':[('state','=','Confirm')]}">
 						 <group>
 		                 	<group string="Personal">
 			                   	<field name="gender"  required="1"/>
-								<field name="father_nic" required="1"/>
+								<field name="father_nic"/>
 								<field name="blood_grp"/>
-								<field name="father_occupation"/>
+								<field name="father_occupation"  />
 								 <field name="religion" />
 								<field name="birthday" />
 		                  	</group>
@@ -3010,8 +3216,6 @@
 						<page string="Subjects"  attrs="{'invisible':[('state','not in',['waiting_approval','Confirm'] )],'readonly':[('state','=','Confirm')]}" >
 					  		<field name="subject_ids" colspan="6"  />
 						</page>
-						
-						
 					</notebook>
 			    </group>  
 				</sheet>
@@ -3162,10 +3366,12 @@
 				<group>
                   <group string="Weekly Plan" col="4" colspan="4">
 					  <field name="subject"  on_change="onchange_get_teacher(teacher, subject)" attrs="{'readonly':[('state','=','Confirm')]}" />
-			          <field name="teacher" on_change="onchange_get_teacher(teacher, subject)" attrs="{'readonly':[('state','=','Confirm')]}" />
+			          <field name="teacher" attrs="{'readonly':[('state','=','Confirm')]}"  />
 			          <field name="week" attrs="{'readonly':[('state','=','Confirm')]}" />
-			          <field name="filled_by"  attrs="{'readonly':[('state','=','Confirm')]}" />
+			          <field name="filled_by"  attrs="{'readonly':[('state','=','Confirm')]}" readonly="1" />
 					  <field name="state" readonly="1"/>
+					   <field name="current_tea_id" on_change="onchange_set_domain()" invisible="1"/>
+
                   </group>
 				  <field name="work_guide" attrs="{'readonly':[('state','=','Confirm')]}" />
 				</group>  
@@ -3207,6 +3413,20 @@
             <field name="context">{'search_default_draft': 1}</field>
             <field name="search_view_id" ref="view_sms_weekly_plan_search"/>
         </record>
+        
+        <!--filter.on.week.plan-->
+     <record id="ir_actions_server_weekly_plan" model="ir.actions.server">
+            <field name="sequence" eval="5"/>
+            <field name="state">code</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="model_sms_filter_week_plan"/>
+            <field name="code">action = pool.get('sms.filter.week.plan').filter_week_plan(cr, uid, None, context)</field>
+            <field name="condition">True</field>
+            <field name="name">Weekly Plan</field>
+        </record>
+        
+        
+        
 <!--END -->
 
 <!-- project_transactional_log 
@@ -3421,7 +3641,7 @@
 
 			<group>
 --	          <group>
-		          <field name="name" on_change="onchange_student(name)" attrs="{'readonly':[('state','!=','Draft')]}" />
+		          <field name="name" on_change="onchange_student(name)" attrs="{'readonly':[('state','!=','Draft')]}"/>
 		          <field name="current_class" on_change="onchange_acad_cal(current_class)"/>
 		          <field name="fee_str" />
 				  <field name="changed_by"/>

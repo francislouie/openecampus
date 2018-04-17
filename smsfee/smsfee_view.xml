@@ -12,15 +12,13 @@
 					<notebook>
 			  		<page string ="Fee Management">
 		              	  <separator string="Fee Accounts Configuration" colspan="4"/>
-						  <field name="enable_fm"/>
-							<group>
-							 <field name="order_of_report"/>
-							</group>
-						  <group>
+						 <field name="enable_fm"/>
+						<group>
 						  	<group>
-							<field name="fee_journal" colspan ="4" attrs="{'required':[('enable_fm','=',True)]}" domain="[('type','=','cash')]"/>
-							<field name="student_fee_income_acc" attrs="{'required':[('enable_fm','=',True)]}" colspan ="4" domain="[('type','=','other')]"/>
-							<field name="fee_reception_account_cash" attrs="{'required':[('enable_fm','=',True)]}"  colspan ="4" domain="[('type','=','liquidity')]"/>
+								<field name="order_of_report"/>
+							<field name= "fee_journal"  attrs="{'required':[('enable_fm','=',True)]}" domain="[('type','=','cash')]"/>
+							<field name="student_fee_income_acc" attrs="{'required':[('enable_fm','=',True)]}"  domain="[('type','=','other')]"/>
+							<field name="fee_reception_account_cash" attrs="{'required':[('enable_fm','=',True)]}"  domain="[('type','=','liquidity')]"/>
 							</group>
 							<group>
 								 <field name="student_fee_expense_acc"   attrs="{'required':[('enable_fm','=',True)]}"  domain="[('type','=','other')]"/>
@@ -45,8 +43,6 @@
 							 <field name="company_cfieldfour"/>
 							 <field name="company_cfieldfive"/>
 							 <field name="company_cfieldsix"/>
-							 <field name="company_cfieldseven"/>
-							 <field name="company_cfieldeight"/>
 							 <field name="campus_code" invisible="1"/>
 							</group>	
 					      </group>
@@ -56,6 +52,8 @@
 						<group>
 						 	<field name="fee_display_portal"/>
 						 	<field name="display_refundable"/>
+						 	
+						 	
 						</group>
 		          	</page>
 				   </notebook>
@@ -96,7 +94,7 @@
 			<field name = "arch" type = "xml">
 				<xpath expr = "//field[@name ='session_id']" position = "after">
 				<field name="state" invisible="1" />
-				<field name="id"  />
+				<field name="id"/>
 				<field name="month_focasted_amount"  />
 				<field name="month_collected_amout"  />
 				<field name="month_recovery_ratio"  />
@@ -261,6 +259,7 @@
 						<button name="%(action_student_advancefee_collect_id)d" string="Advance Fee Collection" states="Admitted" type="action" class="oe_highlight" groups=""/>
 						<button name="%(action_singlestudent_unpaidfee_receipt_id)d" string="Print Fee Bills" states="Admitted,admission_cancel,drop_out,deceased,passout,slc,Withdraw" type="action" class="oe_highlight" groups=""/>
 						<button name="%(action_student_fee_collect_id)d" string="Receive a Fee Bill" states="Admitted,admission_cancel,drop_out,deceased,passout" type="action" class="oe_highlight" groups=""/>
+						<button name="%(action_student_fee_collect_idd)d" string="Add Student Fee"  type="action"  class="oe_highlight" groups=""/>
 						<notebook>
 						<page string = "Fee Academics">
 							<group>
@@ -274,7 +273,6 @@
 								<field name="view_academics_fee"     nolabel="1"/>
 							</group>
 						</page>
-						
 						<page string = "Fee Refundable">
 						<field  name="refundable_fee_ids"     nolabel="1" widget="one2many_list"   >
 							<tree editable = "top" >
@@ -294,8 +292,7 @@
 							 </form>
 							 </field>
 						</page>
-
-						<page string = "Discounts">
+						<page string="Discounts" groups="sms.group_sms_fee_officer,sms.group_sms_director,sms.group_sms_admin,sms.group_sms_fee_manager">
 							<group>
 								<group>					
 								<div class="oe_title">
@@ -309,7 +306,7 @@
 								</group>
 							</group>
 							<group>			    	 		
-								<field  name="discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('discount_given', '=', False)]}"  >
+								<field name="discount_ids" nolabel="1" widget="one2many_list" context="{'student_id': active_id}" attrs="{'invisible':[('discount_given', '=', False)]}"  >
 							<tree editable = "top" >
 								<field name="student_id" invisible="1" />
 								<field name="fee_type" readonly ="0" 
@@ -321,11 +318,27 @@
 							 </tree>
 							 </field>
 							</group>
-						</page>
+							<group>
+                                <group>                 
+                                <div class="oe_title">
+                                    <label for="fee_structure_history_ids"/>
+                                </div>
+                                </group>
+                            </group>                         
+                                <field  name="fee_structure_history_ids" nolabel="1" widget="one2many_list" readonly ="1" >
+                            <tree editable = "top" >
+                                <!-- <field name="history_id" invisible="1" /> -->
+                                <field name="name" readonly ="1" />
+                                <field name="assignment_date" readonly ="1"/>
+                                <field name="deallocation_date" readonly ="1" />
+                                <field name="assigned_by" readonly ="1"/>
+                             </tree>
+                             </field>
 
-						<page string = "Edit or Add New Fee">
+						</page>
+						<page string = "Edit or Add New Fee" groups="sms.group_sms_fee_officer,sms.group_sms_director,sms.group_sms_admin,sms.group_sms_fee_manager">
 						<group string = "Update, Delete or add new Fee" readonly ="1">		    	 		
-							<field  name="studen_fee_ids" nolabel="1"  attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"   />
+							<field  name="studen_fee_ids" nolabel="1"  attrs="{'readonly':[('is_loged_user_admin', '!=', True)]}" context="{'student_id': active_id}"  />
 						</group>
 						</page>
 						<page string = "Fee Bills">
@@ -335,6 +348,7 @@
 								<field name="receipt_date"/>
 								<field name="state"/>
 								<field name="fee_received_by"/>
+								<field name="fee_approved_by"/>
 								<field name="total_paybles"/>
 								<field name="challan_cat"/>
 							 </tree>
@@ -355,6 +369,7 @@
 					<page string="Portal Settings">
 						<group colspan="4" col="2">
 							<field name="exammark_prtal" string="Donnot Show Exam Detail"/>
+	                        <field name="info_portal" string="Show Personal Information?"/>
 							<field name="disp_cntct_prtal" />
 						</group>
 					</page>
@@ -604,31 +619,33 @@
 					<group>
 						<group>
 							<field name="fee_type" attrs="{'readonly':[('state','IN',['fee_paid'])]}" on_change="onchange_get_amount(fee_type)"  />
-							<field name="fee_amount" attrs="{'readonly':[('state','IN',['fee_paid'])]}" />
+							<field name="generic_fee_type"   />
+
+							<field name="fee_amount"/>
 							<field name="net_total" readonly = "1"/>
 							<field name="receipt_no" attrs="{'readonly':[('state','IN',['fee_paid'])]}"/>
 						</group>
 						 <group>
-							<field name="fee_month"/>
-							<field name="paid_amount" readonly="1"/>
+							<field name="fee_month" on_change="onchange_fee_month(fee_month)" />
+							<field name="paid_amount"/>
 							<field name="discount" readonly="1"/>
 					    </group>
 						<group>
 							<field name="date_fee_charged" readonly="1"/>
-							<field name="late_fee" readonly="1"/>
+							<field name="late_fee" />
 							<field name="date_fee_paid" readonly="1"/>
 						</group>
 						 <group>
 							<field name="due_month"/>
 							<field name="id" string = "Record#"/>
 							<field name="category"/>
+							 <field name="verified" string="Verified" />
 						</group>
-				    </group>	
+				    </group>
 				</sheet>	 	
           	</form>
          </field>
         </record>
-
         <record model="ir.ui.view" id="studentfee_tree">
             <field name="name">smsfee.studentfee.tree</field>
             <field name="model">smsfee.studentfee</field>
@@ -639,6 +656,7 @@
 					<field name="paid_amount"/>
 					<field name="state"/>
 					<field name="category" invisible ="1"/>
+					<!--<field name="class_changed"/>-->
 			    </tree>
             </field>
         </record>
@@ -692,9 +710,10 @@
 						<field name="name"  readonly ="1" />
 						<field name="request_date" required="1" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
 						<field name="state"  readonly ="1" />
-						<field name="request_type" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"/>
+						<field name="request_type" required="1" attrs="{'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}"/>
 					    <field name="transfer_type" attrs="{'invisible':[('request_type','!=','transfer_out')],
-					    	'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
+                                                            'required':[('request_type','=','transfer_out')],
+					    	                                'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
               			<field name="transfer_campus" attrs="{'invisible':[('request_type','!=','transfer_out')],
 					    	'readonly':[('state','IN',['waiting_approval','Approved','Rejected'])]}" />
               			<field name="transfer_fee" attrs="{'invisible':[('request_type','!=','transfer_out')],
@@ -758,10 +777,9 @@
 			<header>
 			<button name="load_std_fee" string="1. Show Student Fees" states="Draft" type="object"  class="oe_highlight" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_fee_officer,sms.group_sms_director" />
 			<button name="send_for_approval" string="1. Receive Fee (Send For Approval)" states="fee_calculated" type="object" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_fee_officer,sms.group_sms_director" class="oe_highlight" />
-			<button name="confirm_fee_received" string="2. Approve(Receive Fee)" confirm = "Receive Fee with given amount?" states="Waiting_Approval" type="object" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_director"  class="button_ok" />
-			<button name="send_back_for_correction" string="2. Send Back For Correction" confirm = "If you think this challans needs correction, send it back to your account officer" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_director"  states="waiting_approval" type="object" class="button_back_to_statement"   />
+			<button name="confirm_fee_received" string="2.Approve(Receive Fee)" confirm = "Receive Fee with given amount?" states="Waiting_Approval" type="object" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_director"  class="button_ok" />
+			<button name="send_back_for_correction" string="Send Back For Correction" confirm = "Send Back?" groups="sms.group_sms_admin,sms.group_sms_fee_manager,sms.group_sms_director"  states="waiting_approval" type="object" class="oe_highlight"   />
 			<button name="cancel_fee_bill" string="[X]Cancel This Fee Bill" confirm = "Are you sure Cancel Fee bill?" states="Waiting_Approval,fee_calculated" type="object" class="button_close_statement" />
-			<button name="%(action_singlestudent_fee_openchallan_id)d" string="Print" states="fee_calculated,Cancel" type="action" class="oe_link" groups=""/>
 			<button name="%(print_paid_fee_receipt_id)d" string="Print Receipt" states="Paid" type="action" class="oe_highlight" groups=""/>
 			<field name="state" widget="statusbar" statusbar_visible="Draft,fee_calculated,Waiting_Approval,Paid,Request_Adjustment,Adjusted"/>
 			</header>
@@ -771,41 +789,54 @@
 				<h2><field name="student_id" nolabel ="1" readonly ="1"/><field name="student_class_id" readonly ="1"   /></h2>
 				<h4><field name="fee_structure"  readonly ="1" /></h4>
 				</group>
+				<group>
+				<h2><field name="counter" readonly ="1"  nolabel ="1" /></h2>
+				<newline/>
+				<field name="donot_charge_late_fee"  attrs="{'readonly':[('state','IN',['Waiting_Approval'])]}" />
+				<field name="due_date" readonly="1"/>
+				</group>
 			</group>
 			<group >
 					<group>
-					<field name="counter" readonly ="1" />
-					<field name="receive_whole_amount" attrs="{'readonly':[('state','!=','Draft')]}" />	
+					<field name="receive_whole_amount" attrs="{'readonly':[('state','!=','fee_calculated')]}" />	
+					<!-- <field name="cancel_late_fee"  attrs="{'invisible':[('state','IN',['Waiting_Approval'])]}" />
+					<field name="due_date"/> -->
+
+					<!--late fee will be atuo filled when late calcultion is up-->
 					<field name="late_fee" attrs="{'readonly':[('state','in',['Paid','Cancel','Adjusted'])]}"/>
 					<field name="challan_type" readonly="1"/>
 					</group>
 		     		<group string ="">
-						<field name="receipt_date" required ="1" attrs="{'readonly':[('state','IN',['Paid'])]}"/>
-						<field name="receipt_date_view" readonly="1" invisible="1"/>
+						<field name="receipt_date" required ="1" attrs="{'invisible':[('state','IN',['Waiting_Approval','Paid','Cancel','Adjusted'])]}"/>
+						<field name="payment_date" attrs="{'invisible':[('state','IN',['Draft','fee_calculated'])]}"/>
 						<field name="payment_method" readonly = "1" required ="1"/>	
 						<field name="manual_recpt_no"  />								
 					</group>
 					</group>
 					<notebook>
         				    <page string="Fee Received" attrs="{'readonly':[('receive_whole_amount','=',1)]}" >
-							<field name="receiptbook_lines_ids" attrs="{'readonly':[('state','IN',['Paid'])]}"  />
+							<field name="receiptbook_lines_ids" attrs="{'readonly':[('state','IN',['Waiting_Approval','Paid'])]}"  />
 							</page>
 							
 							<page string="Accounting Enteries" >
 								<group>
 									<group>
-										<field name="vouchered"/>
-										<field name="vouchered_by"/>
+										<field name="fee_received_by"/>
+										<field name="fee_approved_by"/>
+										<field name="challan_cancel_by" attrs="{'invisible':[('state','NOT IN',['Cancel'])]}"/>
 									</group>							
 									<group>
-										<field name="voucher_date"/>
-										<field name="voucher_no"/>
+										<field name="date_receivd_onsystem"/>
+										<field name="approve_date"/>
+										<field name="cancel_date" attrs="{'invisible':[('state','NOT IN',['Cancel'])]}"/>
 									</group>
 								</group>
 							</page>
 							<page string="Note" >
+							<group>
 							<p><h2>Need correction?</h2> <button name="request_for_adjustment" string="Ask For Fee Adjustment"  states="Paid" type="object"  class="oe_highlight" /></p>
-							<field name="id" stribg = "File#"/>
+							<field name="id" string = "File#"/>
+							</group>
 							</page>
 							<!--<page string="Fee Adjustment" attrs="{'invisible':[('state','NOT IN',['Request_Adjustment','Adjusted'])]}" >
 							<field name="receipt_book_idd" nolabel ="1" attrs="{'readonly':[('state','NOT IN',['Request_Adjustment'])]}"  />
@@ -822,9 +853,7 @@
 				 <h2><label for="challan_cat" string="Category"/><field name="challan_cat" readonly ="1"/></h2>
 				</group>
 				
-					<group string ="">
-							<field name="fee_received_by"  readonly ="1" />
-					</group>
+					
 		</sheet>	 	
               </form>
             </field>
@@ -836,10 +865,11 @@
             <field name="arch" type="xml">
                 <tree fonts="bold:challan_cat=='Transport'" string="Fee Bills">
 					<field name="counter"/>
+					<field name="std_reg_no" string = "Student Reg#"/>
 					<field name="student_id" domain="[('current_class','=',name)]" />
-					<field name="std_reg_no"/>
-					<field name="receipt_date_view"/>
-					<!--<field name="receipt_date"/>-->
+					
+					<field name="payment_date" attrs="{'invisible':[('state','IN',['Draft','fee_calculated'])]}"/>
+					<field name="receipt_date" attrs="{'invisible':[('state','IN',['Waiting_Approval','Paid','Cancel','Adjusted'])]}"/>
 					<field name="state"/>
 					<field name="challan_cat"/>
 					<field name="total_paybles"/>
@@ -858,6 +888,7 @@
 					<field name="manual_recpt_no" string= "Manual Receipt No"/>
 					<field name="std_reg_no" string="Registration Number"/>
 					<field name="challan_cat" string="Category"/>
+					<field name="total_paybles" string="Amount"/>
 					<field name="fee_approved_by" string="Approved By"/>
                 </search>
             </field>

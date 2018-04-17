@@ -1,5 +1,5 @@
 import smsfee_report_feereports
-import unpaid_fee_challan_parser_1o1
-import unpaid_fee_challan_parser_3o1
-import student_unpaid_fee_challan
+import report_unpaid_fee_bills_3folded
+import report_unpaid_fee_bills_2folded
+import report_std_admfee_receipt_unpaid
 import smsfee_report_open_challans

@@ -1,101 +1,268 @@
 <?xml version="1.0"?>
-<document filename="blank_attendanceShett.pdf">
-  <template pageSize="(792.0,1150.0)" title="Blank Attendance Sheet" author="Ghulam Masood" allowSplitting="20">
+<document filename="filled_attendanceShett.pdf">
+  <template pageSize="(920.0,892.0)" title="Crossovered Analytic" author="Ghulam Masood" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="28.0" y1="10.0" width="738" height="1140"/>
+      <frame id="first" x1="34.0" y1="10.0" width="880" height="780"/>
     </pageTemplate>
   </template>
-  <stylesheet>
-    <blockTableStyle id="Standard_Outline">
-      <blockAlignment value="LEFT"/>
+  
+<stylesheet>
+
+ <blockTableStyle id="Table1">
+      <blockAlignment value="RIGHT"/>
       <blockValign value="TOP"/>
     </blockTableStyle>
-    <blockTableStyle id="Table2">
-	    <blockAlignment value="LEFT"/>
-	    <blockValign value="TOP"/>
-		<blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
-	    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
-	    <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
-		<blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
-		<blockBackground colorName="#e6e6e6" start="0,0" stop="-1,-1"/>
-	</blockTableStyle>
-    <blockTableStyle id="Table3">
-	    <blockAlignment value="LEFT"/>
-	    <blockValign value="TOP"/>
-		<blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
-	    <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
-	    <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
-		<blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
-	</blockTableStyle>
+
+
+<blockTableStyle id="Table2">
+      <blockAlignment value="RIGHT"/>
+      <blockValign value="TOP"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="0,0" stop="0,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="0,0" stop="0,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="0,-1" stop="0,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0" stop="1,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="1,0" stop="1,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="1,-1" stop="1,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="2,0" stop="2,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="2,0" stop="2,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="2,-1" stop="2,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEAFTER" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="3,0" stop="3,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="3,-1" stop="3,-1"/>
+    </blockTableStyle>
     
-	<initialize>
+    <blockTableStyle id="Table3">
+        <blockAlignment value="CENTER"/>
+        <blockValign value="TOP"/>
+        <blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+        <blockBottomPadding length="2.0" start="0,0" stop="-1,-1"/>
+        <blockLeftPadding length="2.0" start="5,1" stop="-1,-1"/>
+        <blockRightPadding length="2.0" start="0,0" stop="-1,-1"/>
+        <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
+        <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table4">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="0,0" stop="0,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="0,0" stop="0,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="0,-1" stop="0,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0" stop="1,-1"/>
+      <lineStyle kind="LINEAFTER" colorName="#cccccc" start="1,0" stop="1,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="1,0" stop="1,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="1,-1" stop="1,-1"/>
+    </blockTableStyle>
+    
+     <blockTableStyle id="Table5">
+      <blockAlignment value="LEFT"/>
+      <blockValign value="TOP"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="0,0" stop="0,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="0,0" stop="0,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="0,-1" stop="0,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0" stop="1,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="1,0" stop="1,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="1,-1" stop="1,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="2,0" stop="2,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="2,0" stop="2,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="2,-1" stop="2,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEAFTER" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="3,0" stop="3,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="3,-1" stop="3,-1"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table6">
+      <blockAlignment value="RIGHT"/>
+      <blockValign value="TOP"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="0,0" stop="0,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="0,0" stop="0,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="0,-1" stop="0,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="1,0" stop="1,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="1,0" stop="1,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="1,-1" stop="1,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="2,0" stop="2,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="2,0" stop="2,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="2,-1" stop="2,-1"/>
+      <lineStyle kind="LINEBEFORE" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEAFTER" colorName="#cccccc" start="3,0" stop="3,-1"/>
+      <lineStyle kind="LINEABOVE" colorName="#cccccc" start="3,0" stop="3,0"/>
+      <lineStyle kind="LINEBELOW" colorName="#cccccc" start="3,-1" stop="3,-1"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table7">
+        <blockAlignment value="CENTER"/>
+        <blockValign value="TOP"/>
+        <blockTopPadding length="2.0" start="0,0" stop="-1,-1"/>
+        <blockBottomPadding length="5.0" start="0,0" stop="-1,-1"/>
+        <lineStyle kind="GRID" colorName="#c6c6c6" start="0,0" stop="-1,-1"/>
+        <blockValign value="MIDDLE" start="0,0" stop="-1,-1"/>
+        <blockBackground colorName="#e6e6e6" start="0,0" stop="-1,-1"/>
+    </blockTableStyle>
+    
+    <initialize>
       <paraStyle name="all" alignment="justify"/>
     </initialize>
-    <paraStyle name="P1" fontName="Helvetica" fontSize="12.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P6" fontName="Helvetica" fontSize="12.0" leading="13" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P20" fontName="Helvetica" fontSize="14.0" leading="13" alignment="CENTER" spaceBefore="10.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P19" fontName="Helvetica" fontSize="13.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P18" fontName="Helvetica" fontSize="12.0" leading="13" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
-    <paraStyle name="P41" fontName="Helvetica" fontSize="8.0" leading="14" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="para_1" fontName="Helvetica" fontSize="6.0" leading="9" alignment="CENTER" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
+    <paraStyle name="P6" fontName="Helvetica" fontSize="8.0" leading="9" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0" textColor="#000000"/>
+    <paraStyle name="P222" fontName="Helvetica" fontSize="8" leading="9" alignment="LEFT" spaceBefore="16.0" spaceAfter="16.0" textColor="#000000"/>
+    <paraStyle name="P20" fontName="Helvetica" fontSize="8" leading="9" alignment="CENTER" spaceBefore="3.0" spaceAfter="3.0" textColor="#000000"/>
+    <paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="CENTER" color="#FFFFFF" spaceBefore="3.0" spaceAfter="3.0"/>
+    <paraStyle name="form_heading" fontName="Helvetica-Bold" fontSize="14.0" leading="5" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    
+    
+    
+    
+     <paraStyle name="P2" rightIndent="-56.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P14" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="RIGHT"/>
+    <paraStyle name="P15" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+     <paraStyle name="P16" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica-Bold" fontSize="8.0" leading="10" alignment="RIGHT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="P4" rightIndent="0.0" leftIndent="0.0" fontName="Helvetica" fontSize="8.0" leading="10" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+     <paraStyle name="P7" fontName="Helvetica-Bold" fontSize="14.0" leading="17" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
     <images/>
-  </stylesheet>
-  <story>
-	<!--
-    <blockTable colWidths="340.0,200.0,340.0" style="Table6">
-      <tr>
-	  <td></td>
-      <td><para style="P20">International </para></td>
-      <td></td>
-      </tr>
-	<tr>
-      <td><para style="P18">...</para></td>
-      <td><para style="P19">Blank Attendance Sheet</para></td>
-	  <td><para style="P19">...</para></td>
-      </tr>	
-      <tr><para style="P1"></para>
-      <td><para style="P18">...</para></td>
-      <td><para style="P18"> Teacher: ..</para></td>
-	  <td><para style="P18"> </para></td>
-      </tr> <tr><td></td><td></td><td></td></tr>
-	 
-    </blockTable>
--->
-    <section>
-	    <blockTable colWidths="40.0,150.0,160.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0" repeatRows="1" style="Table2">
-			<tr>      
-				<td><para style="P1">S.No</para></td>
-				<td><para style="P1">Student Name</para></td>
-				<td><para style="P1">Father Name</para></td>	
-				<td><para style="P1"></para></td>
-				<td><para style="P1"></para></td>
-				<td><para style="P1"></para></td>
-				<td><para style="P1"></para></td>
-				<td><para style="P1"></para></td>
-				<td><para style="P1"></para></td>
-				<td><para style="P1"></para></td>
-				<td><para style="P1"></para></td>
-			</tr>
-		</blockTable>
-	</section>
-    <section>
-		<para style="P1">[[repeatIn(get_blank_attendance_sheet(data['form']),'s')]]</para>
-			<blockTable colWidths="40.0,150.0,160.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0,53.0" repeatRows="1" style="Table3">
-				<tr>
-					<td><para style="P6"> [[(s['S.No'])]]</para></td>
-					<td><para style="P6">[[(s['name'])]]</para></td>
-					<td><para style="P6">[[(s['father'])]]</para></td>
-					<td><para style="P6"></para></td>
-					<td><para style="P6"></para></td>
-					<td><para style="P6"></para></td>
-					<td><para style="P6"></para></td>
-					<td><para style="P6"></para></td>
-					<td><para style="P6"></para></td>
-					<td><para style="P6"></para></td>
-					<td><para style="P6"></para></td>
-				</tr>
-			</blockTable>
-	</section>
+  </stylesheet> 
+ <story>
+ 
+ 
+ 
+ 
+  <para style="P2">[[ repeatIn(get_blank_attendance_report_days('Form'),'p') ]]</para>
   
+    <blockTable colWidths="539.0" style="Table1">
+      <tr>
+        <td><para style="P7">Empty Monthly Sheet</para></td>
+      </tr>
+    </blockTable>
+
+    <blockTable colWidths="449.0,280.0,190.0,281.0" style="Table2">
+    <tr><td><para style="P16">Class</para></td>
+        <td><para style="P15">[[p['class'] ]]</para></td>
+        <td><para style="P15">Total Student</para></td>
+        <td><para style="P4">[[p['total_student'] ]]</para></td>
+      </tr>
+      <tr><td><para style="P16">Session</para></td>
+        <td><para style="P15">[[p['sessions'] ]]</para></td>
+        <td><para style="P15">Total Class Attendance</para></td>
+        <td><para style="P4">[[p['total_class_attendance'] ]]</para></td>
+      </tr>
+       
+      <tr><td><para style="P16">Program</para></td>
+        <td><para style="P15">[[p['program'] ]]</para></td>
+        <td><para style="P15">Month</para></td>
+        <td><para style="P4">[[p['att_for_month'] ]]</para></td>
+      </tr>
+    </blockTable>
+ 
+    <blockTable colWidths="449.0,280.0,190.0,281.0" style="Table6">
+      <tr>
+        <td><para style="P15">Printed By</para></td>
+        <td><para style="P4">[[p['printed_by'] ]]</para></td>
+        <td><para style="P15">Date</para></td>
+        <td><para style="P4">[[p['dated'] ]]</para></td>
+      </tr>
+    </blockTable> 
+ 
+     <section>
+     
+        
+        <blockTable colWidths="325.0,100.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0" style="Table7">
+            <tr>
+                <para>[[repeatIn((p['sub_dict']),'s')]]]]</para> 
+                <td><para style="P6">#</para></td>
+                <td><para style="P20">Student Name</para></td>
+                <td><para style="para_1">[[(s['date1'])]]</para></td>
+                <td><para style="para_1">[[(s['date2'])]]</para></td>
+                <td><para style="para_1">[[(s['date3'])]]</para></td>
+                <td><para style="para_1">[[(s['date4'])]]</para></td>
+                <td><para style="para_1">[[(s['date5'])]]</para></td>
+                <td><para style="para_1">[[(s['date6'])]]</para></td>
+                <td><para style="para_1">[[(s['date7'])]]</para></td>
+                <td><para style="para_1">[[(s['date8'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date9'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date10'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date11'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date12'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date13'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date14'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date15'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date16'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date17'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date18'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date19'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date20'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date21'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date22'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date23'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date24'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date25'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date26'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date27'])]]</para></td>
+          
+                <td><para style="para_1">[[(s['date28'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date29'])]]</para></td>
+                
+                 <td><para style="para_1">[[(s['date30'])]]</para></td>
+                    
+                <td><para style="para_1">[[(s['date31'])]]</para></td> 
+            </tr>
+        </blockTable>
+        
+          <blockTable colWidths="325.0,100.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0,25.0" style="Table3">
+            <tr>
+                <para>[[repeatIn(get_blank_attendance_report_recs(data['form']),'r')]]</para> 
+                <td><para style="P6">[[(r['s_no'])]]</para></td>
+                <td><para style="P222">[[(r['student'])]]</para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date1'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date1'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date2'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date2'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date3'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date3'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date4'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date4'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date5'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date5'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date6'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date6'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date7'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date7'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date8'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date8'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date9'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date9'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date10'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date10'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date11'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date11'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date12'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date12'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date13'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date13'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date14'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date14'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date15'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date15'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date16'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date16'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date17'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date17'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date18'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date18'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date19'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date19'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date20'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date20'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date21'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date21'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date22'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date22'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date23'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date23'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date24'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date24'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date25'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date25'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date26'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date26'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date27'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date27'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date28'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date28'])]]</font></para></td>
+                <td><para style="P20"><font color="Black">[[ (r['date29'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date29'])]]</font></para></td> 
+                <td><para style="P20"><font color="Black">[[ (r['date30'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date30'])]]</font></para></td> 
+                <td><para style="P20"><font color="Black">[[ (r['date31'])=='A' and ( setTag('font','font',{'color':'Red'})) ]][[(r['date31'])]]</font></para></td>  
+            </tr>
+        </blockTable> 
+    </section>
   </story>
-	
 </document>

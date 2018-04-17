@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+		<report
+            auto="False"
+            id="payslip_report_inherited"
+            model="hr.payslip"
+            name="payslip_inherited"
+            rml="sms_hr/report/report_payslip_inherited.rml"
+            string="Employee PaySlip cbt" />
+	   <report
+            auto="False"
+            id="payslip_report_inherited2"
+            model="sms.hr.payslips.reports"
+            name="payslip_inherited"
+            rml="sms_hr/report/report_payslip_inherited.rml"
+            string="Employee PaySlip cbt3" />
+   </data>
+</openerp>

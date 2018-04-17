@@ -1,15 +1,15 @@
 {
     'name': 'SMS',
     'version': '1.0',
-    'author': 'Inovtec Solutions',
+    'author': 'CYME Business Technologies',
     'category': 'School Management System',
     'description': """
 This Module is used for CompasManagmentSystem.
 Manage Students records From their Admission Entry to Final Transcript
 Manage Employee records as Teacher Round Report etc""",
-    'website': 'http://www.inovtec.com.pk',
+    'website': 'http://www.cyme.com.pk',
     'images': ['images/sms.jpeg'],
-    'depends' : ['base','account','hr','hr_contract','account_accountant','sale','purchase','hr_expense'],
+    'depends' : ['base','account','hr','hr_contract','account_accountant','sale','purchase','hr_expense','mail'],
     'data': [
              'security/sms_security.xml',
              'security/ir.model.access.csv',
@@ -36,9 +36,9 @@ Manage Employee records as Teacher Round Report etc""",
              'wizard/sms_wizard_readmit_studen.xml',
              'wizard/sms_hr_attendance_load_csv.xml',
              'wizard/sms_wizard_class_subject_list_view.xml',
-             
+             'wizard/sms_wizard_calss_subject.xml',
+             'wizard/sms_classlist.xml',
              'wizard/sms_wizard_student_transfer_in_view.xml',
-             
              'cms_report.xml',
              'custom_sale_view.xml',
             

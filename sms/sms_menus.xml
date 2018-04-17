@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
 <data>
-
+	
+	<!-- Top menu item -->
 	<menuitem name="Academics" id="menu_sms_root" 
-	groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer" sequence="0"/>
+	groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer,group_sms_faculty" sequence="0"/>
+
+	 
+        <menuitem name="Reporting.."
+            id="menu_reporting_opencampus"
+            groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer" sequence="5"
+            />
+	 <menuitem name="Administrative"
+            id="menu_reporting_opencampus_administrative"
+            groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer" sequence="1"
+			parent="menu_reporting_opencampus"
+            />	
+	
+	<menuitem name="Students Analysis"
+            id="menu_reporting_opencampus_studentanal"
+            groups="group_sms_admin,group_sms_director,group_sms_admission_manager,group_sms_principal,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_fee_manager,group_sms_fee_officer" sequence="2"
+			parent="menu_reporting_opencampus"
+            />	
 
 	<menuitem id="menu_configuration_id" name="Configuration" parent="" sequence="5" groups="group_sms_admin,group_sms_director"/>
 	<menuitem id="menu_exective_reports_id" name="Exective Reports" parent="" sequence="6" groups="group_sms_admin,group_sms_director"/>
 	<menuitem id="menu_quick_setting_id" name="Quick Setting" parent="menu_configuration_id" sequence="2" groups="group_sms_admin,group_sms_director,group_sms_admission_manager" />
 	<menuitem id="menu_session_stting_id" name="Session Setting" parent="menu_quick_setting_id" sequence="2" groups="group_sms_admin,group_sms_director,group_sms_admission_manager"/>
-    <menuitem id="session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_session"/>
+	<menuitem id="session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_session"/>
+    <menuitem id="term_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_session_term"/>
+    <menuitem id="program_id" parent="menu_quick_setting_id" sequence="2" groups="group_sms_admin,group_sms_admission_manager" action="action_program"/>
     <menuitem id="academic_session_id" parent="menu_quick_setting_id" sequence="3" groups="group_sms_admin,group_sms_admission_manager" action="action_academic_session"/>
 	
 	<!-- Exective Reports
@@ -22,7 +42,12 @@
 	<menuitem id="menu_attendance" name="Class Attendance" parent="sms.menu_sms_attendance" sequence="1" groups="group_sms_principal,group_sms_admin,group_sms_admission_officer,group_sms_admission_manager"/>
 	<menuitem id="menu_sms_class_attendance" parent="menu_attendance" sequence="1" groups="group_sms_principal,group_sms_admission_officer,group_sms_admin,group_sms_admission_manager" action="action_sms_class_attendance"/>
 -->
-	
+	<!--Subjects-->
+    <menuitem id="menu_sms_subject_id" name="Subjects" parent="menu_sms_root" sequence="1" 
+    groups="group_sms_faculty"/>
+    <menuitem id="menu_sms_teacher_subject_id" parent="menu_sms_subject_id" sequence="1" action="ir_actions_server_filter_subject"
+    groups="group_sms_faculty"/>
+
 	<!--Academic calendar-->
 	<menuitem id="menu_sms_id" name="Academic Calendars" parent="menu_sms_root" sequence="1" 
 	groups="group_sms_admin,group_sms_principal,group_sms_director,group_sms_manager_exams,group_sms_officers_exams,group_sms_admission_officer,group_sms_admission_manager,group_sms_fee_officer,group_sms_fee_manager,group_sms_fee_officer"/>
@@ -116,16 +141,16 @@
 	
 	<!--Examination-->
 	<menuitem id="menu_examination_head_top_id" name="Examinations" parent="" sequence="2" 
-	groups="group_sms_admission_officer,group_sms_director,group_sms_admin,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal"/>
+	groups="group_sms_admission_officer,group_sms_director,group_sms_admin,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal,group_sms_faculty"/>
 	
 	<menuitem id="menu_sms_exam_results_id" name="Results" parent="menu_examination_head_top_id" sequence="3" 
 	groups="group_sms_admission_officer,group_sms_director,group_sms_principal,group_sms_officers_exams,group_sms_admin,group_sms_manager_exams,group_sms_principal"/>
 
 	<menuitem id="menu_examination_head_id" name="Examinations" parent="menu_examination_head_top_id" sequence="1" 
-	groups="group_sms_director,group_sms_admin,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal"/>
+	groups="group_sms_director,group_sms_admin,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal,group_sms_faculty"/>
 	
 	<menuitem id="menu_sms_exam_entry_wizard" parent="menu_examination_head_id" sequence="" 
-	groups="group_sms_director,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal" action="action_view_sms_exam_entry_wizard" />
+	groups="group_sms_director,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal,group_sms_faculty" action="action_view_sms_exam_entry_wizard" />
 
 	<menuitem id="menu_sms_student_exam_lists_wizard" parent="menu_sms_exam_results_id" sequence="" action="action_view_sms_student_exam_lists_wizard"
 	groups="group_sms_director,group_sms_manager_exams,group_sms_principal,group_sms_manager_exams,group_sms_principal"/>
@@ -184,7 +209,7 @@
 	<menuitem id="menu_sms_calander_weeks" parent="menu_sms_calander" sequence="1" action="action_sms_calander_week1"
 	groups="group_sms_director,group_sms_principal,group_sms_admission_officer,group_sms_admin,group_sms_admission_manager"/>
 
-	<menuitem id="menu_sms_weekly_plan" parent="menu_sms_calander" sequence="2" action="action_sms_weekly_plan"
+	<menuitem id="menu_sms_weekly_plan" parent="menu_sms_calander" sequence="2" action="ir_actions_server_weekly_plan"
 	groups="group_sms_director,group_sms_principal,group_sms_admission_officer,group_sms_admin,group_sms_admission_manager"/>
 
 <!-- Transactional Log -->

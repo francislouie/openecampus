@@ -5,6 +5,7 @@ import datetime
 import xlwt
 import xlrd
 from dateutil import parser
+from docutils.nodes import field_name
 
 class sms_session(osv.osv):
     
@@ -65,40 +66,197 @@ class sms_offdays(osv.osv):
 sms_offdays()
 
 class sms_academiccalendar(osv.osv):
-    
+ 
+    def _get_class_totalattendance(self, cr, uid, ids, name, args, context=None):
+        """This method will return Total attendance for class"""
+        res = {}
+        for f in self.browse(cr, uid, ids, context):
+            if f.class_id.id:
+                
+                sql = """SELECT count(id) from sms_class_attendance
+                         where class_id =""" + str(f.id) +""""""
+                cr.execute(sql)
+                result = cr.fetchone()[0]
+                res[f.id] = result
+        return res
+#     def get_class_attendance(self, cr, uid, ids, class_id, date):
+#         sql = """SELECT 
+#                 COALESCE(sum(CASE WHEN present THEN 1 ELSE 0 END),0) as present, 
+#                 COALESCE(sum(CASE WHEN absent THEN 1 ELSE 0 END),0) as absent, 
+#                 COALESCE(sum(CASE WHEN leave THEN 1 ELSE 0 END),0) as leave
+#                 FROM sms_class_attendance_lines AS l, sms_class_attendance AS a
+#                 where a.id = l.parent_id 
+#                 and a.class_id = %s
+#                 and a.attendance_date =  %s 
+#                 """
+# 
+#         args = [class_id, date]
+#         cr.execute(sql, args)
+#         rec = cr.fetchone()
+# 
+#         result = {}
+#         result.update({'present': rec[0]})
+#         result.update({'absent': rec[1]})
+#         result.update({'leave': rec[2]})
+# 
+#         return result
     def get_class_attendance(self, cr, uid, ids, class_id, date):
-        sql = """SELECT 
-                COALESCE(sum(CASE WHEN present THEN 1 ELSE 0 END),0) as present, 
-                COALESCE(sum(CASE WHEN absent THEN 1 ELSE 0 END),0) as absent, 
-                COALESCE(sum(CASE WHEN leave THEN 1 ELSE 0 END),0) as leave
-                FROM sms_class_attendance_lines AS l, sms_class_attendance AS a
-                where a.id = l.parent_id 
-                and a.class_id = %s
-                and a.attendance_date =  %s 
-                """
-
-        args = [class_id, date]
-        cr.execute(sql, args)
-        rec = cr.fetchone()
-
-        result = {}
-        result.update({'present': rec[0]})
-        result.update({'absent': rec[1]})
-        result.update({'leave': rec[2]})
-
-        return result
+            sql = """SELECT 
+                    COALESCE(sum(CASE WHEN present THEN 1 ELSE 0 END),0) as present, 
+                    COALESCE(sum(CASE WHEN absent THEN 1 ELSE 0 END),0) as absent, 
+                    COALESCE(sum(CASE WHEN leave THEN 1 ELSE 0 END),0) as leave
+                    FROM sms_class_attendance_lines AS l, sms_class_attendance AS a,sms_academiccalendar_student AS std
+                    where a.id = l.parent_id 
+                    and l.student_class_id = std.id 
+                    and std.state='Current'
+                    and a.class_id = %s
+                    and a.attendance_date =  %s 
+                    """
+    
+            args = [class_id, date]
+            cr.execute(sql, args)
+            rec = cr.fetchone()
+    
+            result = {}
+            result.update({'present': rec[0]})
+            result.update({'absent': rec[1]})
+            result.update({'leave': rec[2]})
+    
+            return result
 
     _name = 'sms.academiccalendar'
     _inherit = 'sms.academiccalendar'
     _columns = {
                 'attendace_punching':fields.selection([('by_admin', 'Admin Staff'),
                                                      ('by_faculty', 'Faculty')], 'Attendance Punching', 
-                                                      help='Describes the staff category who is going to punch attendance for this session'),
+                                                    help='Describes the staff category who is going to punch attendance for this session'),
+                
+                 'get_class_totalattendance' : fields.function(_get_class_totalattendance, method=True, string='Class total attendance', type='integer',size=256),                   
             } 
     _defaults = {
                  'attendace_punching': 'by_admin'
             }
 sms_academiccalendar()
+class sms_academiccalendar_student(osv.osv):
+ 
+    def _get_student_attendance(self, cr, uid, ids,field_name, args, context=None):
+        """This method will return Total attendance for class"""
+        result = {}
+        state=""
+        for f in self.browse(cr, uid, ids, context):
+            result[f.id] = {} 
+            if type(field_name)is not list:
+                field_name = [field_name]
+            for key_str in field_name:
+                result[f.id][key_str] = 0
+                if 'total_present'in field_name:
+                    state ='Present'
+                if 'total_absent'in field_name:
+                    state ='Absent'
+                if 'total_leave'in field_name:
+                    state ='Leave' 
+                if 'attendace_percentage'in field_name:    
+                    sql = """SELECT count(id) from sms_class_attendance
+                         where class_id =""" + str(f.name.id) +""""""
+                    cr.execute(sql) 
+                    total_rec = cr.fetchone()[0]
+                    print"total classes",total_rec
+                    
+                    sql = """SELECT count(sms_class_attendance.id) from sms_class_attendance inner join  sms_class_attendance_lines on sms_class_attendance.id=sms_class_attendance_lines.parent_id
+                          where sms_class_attendance.class_id =""" + str(f.name.id) + """
+                          AND   sms_class_attendance_lines.student_name=""" + str(f.std_id.id) + """
+                          AND   sms_class_attendance_lines.state='Present'"""
+                    cr.execute(sql)
+                    Present_rec = cr.fetchone()[0]
+                    
+                    res = float(Present_rec) / float(total_rec)*100
+                    
+                    result[f.id] = res
+                    return result
+                if 'not_taken'in field_name:
+                    
+                    sql = """SELECT count(id) from sms_class_attendance
+                         where class_id =""" + str(f.name.id) +""""""
+                    cr.execute(sql)
+                    total_classes=cr.fetchone()[0]
+                    sql = """SELECT count(sms_class_attendance.id) from sms_class_attendance inner join  sms_class_attendance_lines on sms_class_attendance.id=sms_class_attendance_lines.parent_id
+                              where sms_class_attendance.class_id =""" + str(f.name.id) + """
+                              AND   sms_class_attendance_lines.student_name=""" + str(f.std_id.id) + """
+                              """
+                    cr.execute(sql)
+                    resul = cr.fetchone()[0]
+                    result[f.id] =total_classes - resul
+                    return result
+                sql = """SELECT count(sms_class_attendance.id) from sms_class_attendance inner join  sms_class_attendance_lines on sms_class_attendance.id=sms_class_attendance_lines.parent_id
+                          where sms_class_attendance.class_id =""" + str(f.name.id) + """
+                          AND   sms_class_attendance_lines.student_name=""" + str(f.std_id.id) + """
+                          AND   sms_class_attendance_lines.state='""" + str(state) + """'
+                          """
+    
+                cr.execute(sql)
+                resul = cr.fetchone()[0]
+                print"result",resul
+                result[f.id] = resul
+        return result
+    
+    
+    def _get_student_att_per(self, cr, uid, ids,field_name, args, context=None):
+        """This method will return Total attendance for class"""
+        res = {}
+        if 'attendace_percentage'in field_name:
+            for f in self.browse(cr, uid, ids, context):
+                if f.name:
+                     
+                    sql = """SELECT count(id) from sms_class_attendance
+                         where class_id =""" + str(f.name.id) +""""""
+                    cr.execute(sql) 
+                    rec = cr.fetchone()[0]
+                    print"Total class atte",rec
+                    
+                         
+                    sql = """SELECT count(sms_class_attendance.id) from sms_class_attendance inner join  sms_class_attendance_lines on sms_class_attendance.id=sms_class_attendance_lines.parent_id
+                              where sms_class_attendance.class_id =""" + str(f.name.id) + """
+                              AND   sms_class_attendance_lines.student_name=""" + str(f.std_id.id) + """
+                              ANd   sms_class_attendance_lines.state = 'Present'  
+                              """
+    
+                    cr.execute(sql)
+                    present_rec = cr.fetchone()[0]
+                    
+                    
+                    
+                    print"present class atte",present_rec
+                    result = float(present_rec) / float(rec)*100
+                    print"result",result
+                    res[f.id] = result
+        return res
+ 
+    _name = 'sms.academiccalendar.student'
+    _inherit = 'sms.academiccalendar.student'
+    _columns = {
+        
+                 'total_present' : fields.function(_get_student_attendance, method=True, string='Present', type='integer',size=256),                   
+                 
+                 'total_absent' : fields.function(_get_student_attendance, method=True, string='Absent', type='integer',size=256),                   
+                
+                 'total_leave' : fields.function(_get_student_attendance, method=True, string='leave', type='integer',size=256), 
+                 'attendace_percentage' : fields.function(_get_student_attendance, method=True, string='percentage', type='integer',size=256),  
+                 'not_taken' : fields.function(_get_student_attendance, method=True, string='Not Taken', type='integer',size=256),                                                
+            } 
+    _defaults = {
+            }
+sms_academiccalendar_student()
+####
+class sms_student(osv.osv):
+    
+    _name = 'sms.student'
+    _inherit = 'sms.student'
+    _columns = {
+                'attendance_status_ids' : fields.one2many('sms.class.attendance.lines','student_name','Student Attendance'),
+            } 
+sms_student()
+###
+
 
 class sms_class_attendance(osv.osv):
 
@@ -129,9 +287,12 @@ class sms_class_attendance(osv.osv):
     def mark_attendance(self, cr, uid, ids, context):
         rec = self.browse(cr ,uid ,ids)[0]
         for acd_cal in rec.class_id.acad_cal_students:
+            per= self.pool.get('sms.academiccalendar.student').browse(cr ,uid ,acd_cal.id)
             self.pool.get('sms.class.attendance.lines').create(cr ,uid ,{'parent_id': rec.id ,
                                                                         'student_name':acd_cal.std_id.id  ,
                                                                         'student_class_id':acd_cal.id  ,
+                                                                        'registration_no':acd_cal.std_id.registration_no,    
+                                                                        'std_agr_att_on_date':per.attendace_percentage
                                                                         })
         self.write(cr ,uid ,ids ,{'state':'waiting_approval' ,'class_teacher':rec.class_id.class_teacher.id })
         return True
@@ -149,9 +310,16 @@ class sms_class_attendance(osv.osv):
                 self.pool.get('sms.class.attendance.lines').write(cr ,uid ,a_lines.id ,{'state':'Present'})
         self.write(cr ,uid ,ids ,{'state':'Submit' , 'punched_by':uid})
         return None
-    
+#      return {'domain': {'group':[('id','=',acad_cal_obj.group_id.id ) ]},'value': vals}
     def onchange_set_domain(self, cr, uid , ids, class_id, attendance_date, context=None):
         result = {}
+        user_ids = self.pool.get('hr.employee').search(cr, uid, [('user_id','=',uid)], context=context)
+        if not len(user_ids):
+            raise osv.except_osv(('Error!'), ('Please create an employee and associate it with this user.'))
+        cr.execute("""select id,job_id  from hr_employee where resource_id =(select id from resource_resource where user_id =""" + str(uid) + """  )""")
+        emp_obj = cr.fetchone()
+        teacher_id = emp_obj[0]
+        tea_job_id = emp_obj[1]
         if class_id:
             rec = self.pool.get('sms.academiccalendar').browse(cr ,uid ,[class_id])[0]
             if attendance_date < rec.session_id.start_date or attendance_date > rec.session_id.end_date:
@@ -159,7 +327,10 @@ class sms_class_attendance(osv.osv):
             result['class_teacher'] = rec.class_teacher.id
         else:
             result['class_teacher'] = None
-        return {'value': result}
+#         if tea_job_id !=1:   
+#             return {'domain': {'class_id':[('class_teacher','=',teacher_id) ]},'value': result}
+#         else:
+        return {'domain': {'class_id':[('state','=','Active') ]},'value': result}
     
     def _user_get(self,cr,uid,context={}):
         return uid
@@ -188,7 +359,6 @@ class sms_class_attendance(osv.osv):
                  'attendance_date':lambda *a: datetime.date.today().strftime('%Y-%m-%d'),
                  }  
     _sql_constraints = [('class_date', 'unique(attendance_date,class_id)', 'Attendance for the selected class has already been punched.')]
-
 sms_class_attendance()
 
 class sms_class_attendance_lines(osv.osv):
@@ -227,18 +397,30 @@ class sms_class_attendance_lines(osv.osv):
 #     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):                
 #         raise osv.except_osv(('Not Allowed'), ('S..................s.'))
 #         return
-    
+    def get_class_date(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            attendance_date = f.parent_id.attendance_date
+            
+            print "attendance date level 1",attendance_date
+            if f.parent_id.id:
+                attendance_date = datetime.datetime.strptime(str(attendance_date), '%Y-%m-%d').strftime('%d-%m-%Y')
+            result[f.id] = str(attendance_date)
+        return result
     """This object serves as a tree view for sms_student_admission_register for fee purpose """
     _name = 'sms.class.attendance.lines'
     _columns = {
         'parent_id' : fields.many2one('sms.class.attendance','Class Attendance'),
      #   'student_name' : fields.char('Student',size=256),
-        'student_name' : fields.many2one('sms.student','Student'),
+        'student_name' : fields.many2one('sms.student','Student', required=True),
         'student_class_id' : fields.many2one('sms.academiccalendar.student','Student Class'),
         'present' :fields.boolean('Present'),
         'absent' :fields.boolean('Absent'),
         'leave' :fields.boolean('Leave'),
         'state' : fields.selection([('Draft','Draft'),('Present','Present'),('Absent','Absent'),('Leave','Leave')],'Status'),
+        'std_agr_att_on_date' :fields.float('Per on given date'),
+        'registration_no': fields.char(string = "Registration No.", size=32),
+        'class_date' : fields.function(get_class_date, method=True, string='Class Date', type='char',size=50),#jsut for display purpose
     }
     _defaults = {'state': 'Present' , 'present': True}    
     

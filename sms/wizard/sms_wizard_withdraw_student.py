@@ -64,5 +64,6 @@ class withdraw_student(osv.osv_memory):
                 for sub in std_subs:
                     add_subs = self.pool.get('sms.student.subject').write(cr,uid,sub,{'subject_status': 'Suspended'})
         return result
+    
 withdraw_student()
 

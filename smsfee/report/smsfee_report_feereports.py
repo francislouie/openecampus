@@ -1,6 +1,7 @@
 import time
 from openerp.report import report_sxw
 import datetime
+import math
 
 class smsfee_report_feereports(report_sxw.rml_parse):
     def __init__(self, cr, uid, name, context):
@@ -373,50 +374,75 @@ class smsfee_report_feereports(report_sxw.rml_parse):
     
 #--------------------------------------------------------------------------------------------------------------------------------------------------------    
 
-#     def monthwise_defaulter_studentslist(self, data):                                                         
-#             result = []
-#             """Late fee amount is not shown. to show it, make another columns on right side of others and mention it in separate column"""
-#             this_form = self.datas['form']
-#             session_id = this_form['session']
-#            cls_id = this_form['class_id'][0]class_id
-#             print "AAAAAAAAAA>>>>>>",session_id
-#             acad_ids = self.pool.get('sms.session').search(self.cr, self.uid,[('acad_cals', '=', session_id)])
-#             print "BBBBBBBBBBBBBBB>>>>>>", acad_ids
-#             cls_id = self.pool.get('sms.session').search(self.cr, self.uid,[('name', '=', acad_ids)])
-#             print "CCCCCCCCCCCCCCC>>>>>>", acad_ids
-    def defaulter_student_list(self, data):                                                         
+
+    def defaulter_student_list(self, data):  
+        
+            idds = self.pool.get('sms.academiccalendar').search(self.cr,self.uid,[])
+            recc = self.pool.get('sms.academiccalendar').browse(self.cr,self.uid,idds)
+            for x in recc:
+                self.pool.get('sms.academiccalendar').write(self.cr,self.uid,[x.id],{'name':str(x.class_id.name)+"-"+str(x.section_id.name)+""+str(x.session_id.name)})
+            
+            idds2 = self.pool.get('sms.session').search(self.cr,self.uid,[])
+            recc2 = self.pool.get('sms.session').browse(self.cr,self.uid,idds2)
+            for x2 in recc2:
+                sdate = x2.start_date
+                year = sdate.split('-')
+                self.pool.get('sms.session').write(self.cr,self.uid,[x2.id],{'name':x2.subcate+"-"+str(year[0])})
+            #Prints summary for defaulter students list               2                                    
             result = []
-            """Late fee amount is not shown. to show it, make another columns on right side of others and mention it in separate column"""
+            result2 = []
             this_form = self.datas['form']
             order_by = this_form['order_by']
             contact_option = this_form['show_phone_no']
             cls_id = this_form['class_id']
             
+            session_name = self.pool.get('sms.session').browse(self.cr,self.uid,this_form['session'][0]).name
+            grand_total_unpaid_dues = 0
+            main_dict = {'sessions':'','counted_classes':'','counted_students':'','fee_category':'',
+                        'filter_domain':'','grand_total_unpaid_dues':'','total_due_undue_amount':'',
+                        'ratio_due_fee':'','printed_date':'','printed_by':'','subdictionary':''}
+            """Late fee amount is not shown. to show it, make another columns on right side of others and mention it in separate column"""
+            
+            
+            
+            
+            
             if cls_id:
                 class_str = str(tuple(cls_id))
-                class_str = "AND sms_student.current_class in " + class_str.replace(',)', ')')
+                class_str = "AND sms_academiccalendar_student.name in " + class_str.replace(',)', ')')
             else:
                 class_str = ''
-                
+               
             sql_academics = """ SELECT sms_student.id, sms_student.name, registration_no, sms_student.state
                                 ,sms_academiccalendar.name , sms_academiccalendar.id, sms_student.cell_no, 
-                                sms_student.phone 
+                                sms_student.phone
                                 FROM sms_academiccalendar
+                                
+                                INNER JOIN sms_academiccalendar_student
+                                ON sms_academiccalendar.id = sms_academiccalendar_student.name
                                 INNER JOIN sms_student 
-                                ON sms_student.current_class = sms_academiccalendar.id
+                                ON sms_student.id = sms_academiccalendar_student.std_id
                                 WHERE sms_academiccalendar.session_id = """+str(this_form['session'][0])+ """
                                 """+ class_str + """ 
                                 ORDER BY """+str(order_by)+""""""
 
             self.cr.execute(sql_academics)
             rec = self.cr.fetchall()
-             
-            i = 1    
+            print "query result",sql_academics 
+            i = 1 
+            total_students = 0   
             for student in rec:
+                total_students = total_students +1
+                amount_academics = 0
+                amount_transport = 0
+                amount_overall   = 0
                 if student[3] != 'Admitted':
                     student_name = str(student[1])+'(*)'
+
+
                 else:
                     student_name = str(student[1])
+
                 mydict = {'sno':'SNO','student':student_name,'registration_no':student[2],'adm_state':student[3],'class_name':student[4],'father':'Father','fee_amount':student[0],'remarks':'Remarks','total':'TOTAL'}
 
                 if contact_option:
@@ -428,26 +454,49 @@ class smsfee_report_feereports(report_sxw.rml_parse):
                         mydict['remarks'] = '--'
                                    
                 if this_form['category'] == 'Academics':
-                    amount_academics = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics')
-                    mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
-                    mydict['fee_amount_transport'] = '--'
-                    mydict['fee_amount_total'] = '{0:,d}'.format(amount_academics)
+                    amount_academics = self.pool.get('sms.student').class_total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Academics','fee_unpaid')
+                    if amount_academics >= this_form['base_amount']:
+                        grand_total_unpaid_dues = grand_total_unpaid_dues + amount_academics 
+                        mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
+                        mydict['fee_amount_transport'] = '--'
+                        mydict['fee_amount_total'] = '{0:,d}'.format(amount_academics)
                 elif this_form['category'] == 'Transport':
-                    amount_transport = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Transport')
-                    mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
-                    mydict['fee_amount_academics'] = '--'
-                    mydict['fee_amount_total'] = '{0:,d}'.format(amount_transport)
+                    amount_transport = self.pool.get('sms.student').class_total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Transport','fee_unpaid')
+                    if amount_transport >= this_form['base_amount']:
+                        grand_total_unpaid_dues = grand_total_unpaid_dues + amount_transport
+                        mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
+                        mydict['fee_amount_academics'] = '--'
+                        mydict['fee_amount_total'] = '{0:,d}'.format(amount_transport)
                 elif this_form['category'] == 'All':
-                    amount_academics = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Academics')
-                    mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
-                    amount_transport = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Transport')
-                    mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
-                    amount_overall = self.pool.get('sms.student').total_outstanding_dues(self.cr,self.uid,student[0],'Overall')
-                    mydict['fee_amount_total'] = '{0:,d}'.format(amount_overall)
-                mydict['sno'] = i
-                result.append(mydict)
-                i = i + 1
+                    amount_academics = self.pool.get('sms.student').class_total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Academics','fee_unpaid')
+                    if amount_academics + amount_transport >this_form['base_amount']:
+                        mydict['fee_amount_academics'] = '{0:,d}'.format(amount_academics)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
+                        amount_transport = self.pool.get('sms.student').class_total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Transport','fee_unpaid')
+                        mydict['fee_amount_transport'] = '{0:,d}'.format(amount_transport)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
+                        amount_overall = self.pool.get('sms.student').class_total_outstanding_dues(self.cr,self.uid,student[0],student[5],'Overall','fee_unpaid')
+                        grand_total_unpaid_dues = grand_total_unpaid_dues + amount_transport
+                        mydict['fee_amount_total'] = '{0:,d}'.format(amount_overall)
+                #donot append students with 0 amount in all categories
+                if amount_overall >this_form['base_amount'] or amount_academics >this_form['base_amount'] or amount_transport >this_form['base_amount']:
+                    mydict['sno'] = i
+                    result2.append(mydict)
+                    i = i + 1
+            main_dict['sub_dict'] = result2 
+            main_dict['sessions'] = session_name
+            main_dict['counted_classes'] = len(cls_id)
+            main_dict['fee_category'] = this_form['category']
+            main_dict['counted_students_defaulter'] = str(i-1)+"\t("+str(round(float((i-1)*100/total_students)))+"%)"
+            main_dict['overall_total_students'] = total_students
+            main_dict['grand_total_unpaid_dues'] =  '{0:,d}'.format(grand_total_unpaid_dues)#the variable fee_amout hold the value and '{0:,d}'.format(variable) converts it to currency format
+            main_dict['base_amount'] = 'Ignored students with dues < '+str(this_form['base_amount']) 
+            main_dict['printed_by'] = self.pool.get('res.users').browse(self.cr, self.uid,self.uid).name
+            main_dict['dated'] = datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%d-%B-%Y')
+            result.append(main_dict)
             return result
+#             main_dict = {'sessions':'','counted_classes':'','counted_students':'','fee_category':'',
+#                         'filter_domain':'','total_due_amount':'','total_due_undue_amount':'',
+#                         'ratio_due_fee':'','printed_date':'','printed_by':'','subdictionary':''}
+            
 #---------------------------------------------------------------------------------------------------------------------------------------------------
 
     def student_fee_receipts(self, data):                                                         
@@ -521,59 +570,92 @@ class smsfee_report_feereports(report_sxw.rml_parse):
         result = []
         ####
         this_form = self.datas['form']
-        cls_id = this_form['class_id']
+
+        #cls_id = this_form['class_id']
         fee_manager = this_form['fee_manager']
-        if cls_id:
-            this_form['class_id'][0]
-            cls_qry = """AND student_class_id= """+str(this_form['class_id'][0])
+        approved_by = this_form['fee_approved_by']
+        if this_form['category']:
+            category=this_form['category']
+            category_query=""" And challan_cat='"""+str(this_form['category'])
         else:
-            cls_qry = """ """ 
+            category_query=""""""
+            category='Academics ,Transport'
+       # if cls_id:
+          #  this_form['class_id'][0]
+         #   cls_qry = """AND student_class_id= """+str(this_form['class_id'][0])
+        #else:
+           # cls_qry = """ """
         if fee_manager:
              fm_query = """AND fee_received_by = """+str(this_form['fee_manager'][0])  
         else:
-             fm_query ="""""" 
-        print "class ids:",cls_id
+             fm_query =""""""
+        if approved_by:
+             fa_query = """AND fee_approved_by = """+str(this_form['fee_approved_by'][0])
+        else:
+             fa_query =""""""
+        #print "class ids:",cls_id
         
         ###
         
         
         sql_rb = """ SELECT total_paid_amount,student_class_id,student_id,fee_received_by,receipt_date,
-                     name FROM smsfee_receiptbook                              
+                     id ,fee_approved_by,challan_cat FROM smsfee_receiptbook                              
                      WHERE smsfee_receiptbook.receipt_date >= '"""+str(this_form['from_date'])+"""'
                      AND smsfee_receiptbook.receipt_date <= '"""+str(this_form['to_date'])+"""'
-                     """+cls_qry+"""
                      """+fm_query+"""
+                     """+fa_query+"""
+                     """+category_query+"""'
                      AND smsfee_receiptbook.state='Paid'
                      AND smsfee_receiptbook.total_paid_amount>0 ORDER By receipt_date """
+        print('query',sql_rb)
                              
         self.cr.execute(sql_rb)
         rb_ids = self.cr.fetchall()
         c = 1
-        dict1 = {'total_amount':'','arr':''}
+        dict1 = {'total_amount':'','arr':'','session':'','from_date':str(this_form['from_date']),
+                 'to_date':str(this_form['from_date']),'cat':category,'printed_by':'','dated':''}
         total_amount = 0
         result2 = []
         for idss in rb_ids:
-            mydict = {'sno':'SNO','paid_amount':'class_name','student_name':'fee_received_by','receipt_date':'','receipt_no':''}
+            mydict = {'sno':'SNO',
+                      'paid_amount':'',
+                      'student_name':'',
+                      'fee_received_by':'',
+                      'receipt_date':'',
+                      'receipt_no':'',
+                      'approved_by':'',
+                      'reg_no':'',
+                      'category':''}
             student_name = self.pool.get('sms.student').browse(self.cr, self.uid,idss[2]).name
-            class_name = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,idss[1]).name
+            session_name = self.pool.get('sms.session').browse(self.cr, self.uid, this_form['session'][0]).name
+            dict1['printed_by'] = self.pool.get('res.users').browse(self.cr, self.uid, self.uid).name
+            dict1['dated'] = datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%d-%B-%Y')
+
+            reg_no = self.pool.get('sms.student').browse(self.cr, self.uid, idss[2]).registration_no
+           # class_name = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,idss[1]).name
             user = self.pool.get('res.users').browse(self.cr, self.uid,idss[3]).name
+            appvd_by = self.pool.get('res.users').browse(self.cr, self.uid, idss[6]).name
             total_amount = total_amount + idss[0]
             dated = self.pool.get('sms.session').set_date_format(self.cr, self.uid,idss[4])
             mydict['sno'] = c
             mydict['receipt_date'] = dated
             mydict['paid_amount'] = idss[0]
-            mydict['class_name'] = class_name
+           # mydict['class_name'] = class_name
             mydict['student_name'] = student_name
             mydict['fee_received_by'] = user
-#             mydict['receipt_no'] = idss[5]
+            mydict['receipt_no'] = idss[5]
+            mydict['approved_by'] = appvd_by
+            mydict['reg_no'] = reg_no
+            mydict['category'] = idss[7]
             c= c + 1
             result2.append(mydict)
         dict1['arr'] = result2 
-        dict1['total_amount'] = total_amount  
+        dict1['total_amount'] = total_amount
+        dict1['session']=session_name
         result.append(dict1)
         return result
 #--------------------------------------------------------------------------------------------------------------------------------------
-    def student_paidfee_receipts(self, data):                                                         
+    def student_paidfee_receipts(self, data):
                 result = []
                 result2 = []
                 """student paid fee receipt from receiptbook"""

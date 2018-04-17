@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+	
+		 <!-- parslips reports -->
+        <menuitem id="menu_payslips_reports_sign_bank"
+                  sequence="3"
+                  parent="hr_payroll.menu_hr_root_payroll"
+                  action="action_payslips_reports" 
+                  groups=""/>
+                  
+      
+      <!--defaulter payslip menu is inherited to show -->
+      <menuitem action="action_view_hr_payslip_inprocess_form" id="hr_payroll.menu_department_tree" parent="hr_payroll.menu_hr_root_payroll" groups="base.group_hr_user"/>
+      <menuitem action="action_view_hr_new_payslip_confirmed_form" id="menu_department_new_confirmed_tree" parent="hr_payroll.menu_hr_root_payroll" groups="base.group_hr_user"/>
+      <menuitem action="action_view_hr_payslip_archieved_confirmed_form" id="menu_department_archieved_confirmed_tree" parent="hr_payroll.menu_hr_root_payroll" groups="base.group_hr_user"/>
+      
+      <menuitem id="menu_hr_attendance_machines_pull_data"
+                  sequence="10"
+                  parent="hr.menu_hr_main"
+                  action="action_pull_hr_data" 
+                  groups=""/>
+     <menuitem id="menu_sms_hr_attendance_report"
+                  sequence="10"
+                  parent="hr_attendance.menu_hr_attendance"
+                  action="action_sms_hr_attendance_report" 
+                  groups=""/>
+      
+	</data>
+</openerp>

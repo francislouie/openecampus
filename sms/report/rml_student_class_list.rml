@@ -61,35 +61,34 @@
   <story>
   <pto>
 	<section>
-   		 <blockTable colWidths="250.0,250.0,250.0" repeatRows="1" style="Table2">
-		    
-			<tr>
+	 <blockTable colWidths="250.0,250.0,250.0" repeatRows="1" style="Table2">
+		<tr>
 			<td><para style="Heading2"></para></td>
 			<td><para style="form_heading">[[ class_name(data['form'])]]</para></td>
 			<td><para style="Heading2"></para></td>
-			</tr>
-			<tr>
+		</tr>
+		<tr>
 			<td><para style="white">.</para></td>
 			<td><para style="white">.</para></td>
 			<td><para style="white">.</para></td>
-			</tr>
-		</blockTable>
+		</tr>
+	</blockTable>
 
 	<blockTable  rowHeights="20.0" colWidths="60.0,100.0,150.0,150.0" repeatRows="1" style="innermost_tables">
-					 <tr>
-					<td><para style="para_2">S.No</para></td>
-					<td><para style="para_2">Admission No</para></td>
-					<td><para style="para_2">Student</para></td>
-					<td><para style="para_2">Father</para></td>
-					</tr>
-					<tr>[[ repeatIn(print_students_class_list(data['form']),'s') ]]
-					<td><para style="para_1">[[ s['sno'] ]]</para></td>
-					<td><para style="para_1">[[ s['admsn_no'] ]]</para></td>
-					<td><para style="para_1">[[ s['student'] ]]</para></td>
-					<td><para style="para_1">[[ s['father'] ]]</para></td>
-					</tr>
-					</blockTable>
+		<tr>
+			<td><para style="para_2">S.No</para></td>
+			<td><para style="para_2">Admission No</para></td>
+			<td><para style="para_2">Student</para></td>
+			<td><para style="para_2">Father</para></td>
+		</tr>
+		<tr>[[ repeatIn(print_students_class_list(data['form']),'s') ]]
+			<td><para style="para_1">[[ s['sno'] ]]</para></td>
+			<td><para style="para_1">[[ s['admsn_no'] ]]</para></td>
+			<td><para style="para_1">[[ s['student'] ]]</para></td>
+			<td><para style="para_1">[[ s['father'] ]]</para></td>
+		</tr>
+	</blockTable>
 	</section>
 </pto>
-  </story>
+</story>
 </document>

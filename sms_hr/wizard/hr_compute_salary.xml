@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+        <record id="view_hr_compute_salary" model="ir.ui.view">
+            <field name="name">hr.compute.salary</field>
+            <field name="model">hr.compute.salary</field>
+            <field name="arch" type="xml">
+                <form string="Compute Salary" version="7.0">
+                    <group>
+                        <group>
+                    <!--    <field name="month" /> -->
+                          <field name="month_comp" />
+                        
+                        </group>
+                    </group>
+                    <footer>
+                         <button icon="gtk-execute" string="Compute" name="compute_salary" type="object" class="oe_highlight"  />
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+        </record>
+
+        <record id="action_hr_compute_salarys" model="ir.actions.act_window">
+            <field name="name">Compute salary</field>
+            <field name="res_model">hr.compute.salary</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="view_hr_compute_salary"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</openerp>

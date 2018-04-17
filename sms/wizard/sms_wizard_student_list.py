@@ -11,29 +11,63 @@ class sms_student_list(osv.osv_memory):
                                              ('check_admissions','3.Check Admissions Statistics'),
                                              ('biodata','4. Student Biodata'),
                                              ('security_cards','5. Students Security Cards'),
-                                             ('withdrawn_students','6. Withdrawn Students')], 'List Type', required=True),
+                                             ('withdrawn_students','6. Withdrawn Students'),
+                                             ('students_strength','7. Student Strength Report')], 'List Type', required=True),
               'start_date': fields.date('Start Date'),
               'student_ids':fields.many2many('sms.student','sms_student_cards_rel', 'student_id', 'card_id', 'Students'),
               'end_date':fields.date('End Date'),
               'card_display_message':fields.char('Display Text'),
-              'export_to_excel':fields.boolean('Save As MS Excel File')
+              'export_to_excel':fields.boolean('Save As MS Excel File'),
+              'class_form': fields.boolean('Class View'),
+              'display_draft_waitapprov':fields.boolean('Display Draft and Waiting'),
              }
-    _defaults = { 'list_type': 'check_admissions',
+    _defaults = { 'list_type': 'students_strength',
+                 'class_form': False
+                 
            }
 
     def print_list(self, cr, uid, ids, data):
+        sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
+               on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
+        cr.execute(sqluser)
+        group_name = cr.fetchall()
+        Faculty_group = False
+        for s in group_name:
+            if s[0] == 'Faculty':
+                Faculty_group = True
+        #prent refort for every one
+        Faculty_group=False
+
+
         thisform = self.browse(cr, uid, ids)[0]
         listtype = thisform['list_type']
         if listtype == 'check_admissions':
-            report = 'sms.std_admission_statistics.name'
+            if Faculty_group:
+                raise osv.except_osv(('Teachers is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms.std_admission_statistics.name'
         elif listtype == 'class_list':
-            report = 'sms.class.list.name'
+            if Faculty_group:
+                raise osv.except_osv(('Teacher is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms.class.list.name'
         elif listtype == 'security_cards':
-            report = 'sms_students_securuty_cards_name'
+            if Faculty_group:
+                raise osv.except_osv(('Teacher is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms_students_securuty_cards_name'
         elif listtype == 'biodata':
-            report = 'sms.students.biodata'
+            if Faculty_group:
+                raise osv.except_osv(('Teacher is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms.students.biodata'
         elif listtype == 'withdrawn_students':
-            report = 'sms.withdrawn.student.details'
+            if Faculty_group:
+                raise osv.except_osv(('Teacher is not authorized'), ('Restriction.'))
+            else:
+                report = 'sms.withdrawn.student.details'
+        elif listtype == 'students_strength':
+            report = 'sms.student.strength.report'
         else:
             student_cal_ids = self.pool.get('sms.academiccalendar.student').search(cr,uid,[('name','=',thisform['acad_cal'].id)])
             if not student_cal_ids:

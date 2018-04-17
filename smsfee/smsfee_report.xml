@@ -90,16 +90,23 @@
             model="smsfee.classfees.register"
             name="smsfee_print_one_student_per_page"
             multi="True"
-            rml="smsfee/report/smsfee_unpaid_receipts_report_1o1.rml"
+            rml="smsfee/report/report_unpaid_fee_bills_3folded.rml"
             string="Fee Receipts (Unpaid)"
             />   
-
+            <report
+            id="report_smsfee_std_admfee_receipt_unpaid_id"
+            model="student.admission.register"
+            name="smsfee_std_admfee_receipt_unpaid"
+            multi="True"
+            rml="smsfee/report/report_std_admfee_receipt_unpaid.rml"
+            string="Fee Receipts (Unpaid)"
+            />  
 			<report
             id="report_class_unpaidfee_receipts_3o1_id"
             model="smsfee.classfees.register"
             name="smsfee_print_three_student_per_page"
             multi="True"
-            rml="smsfee/report/smsfee_unpaid_receipts_report_3o1.rml"
+            rml="smsfee/report/report_unpaid_fee_bills_2folded.rml"
             string="Fee Receipts (Unpaid)"
             />   
 

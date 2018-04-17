@@ -212,6 +212,7 @@ class sms_transport_registrations(osv.osv):
                                                 'late_fee':0,  
                                                 'total_amount':trfee.fee_amount + 0, 
                                                 'reconcile':False,
+                                                'generic_fee_type':trfee.name.fee_type.id,
                                                  'state':'fee_unpaid'
                                                 }
             
@@ -219,6 +220,14 @@ class sms_transport_registrations(osv.osv):
     #                         current_ac
     #                         self.pool.get('sms.transport.vehcile').write(cr, uid, student_id,{'current_accomodation':True,'vehcile_reg_students_id':record.current_vehcile.id,'transport_reg_id':record.id})
         return result
+    
+    def withdraw_from_transprot(self, cr, uid, ids, name):
+        for f in self.browse(cr,uid,ids):
+            self.write(cr,uid,f.id,{'state':'Withdrawn','withdraw_by':uid})
+            self.pool.get('sms.student').write(cr, uid, [f.student_id.id],{'transport_availed':False,'vehcile_reg_students_id':None})
+        
+        
+        return
     
     def load_transport_fee(self, cr, uid, ids, context):
         for record in self.browse(cr, uid, ids):
@@ -298,6 +307,7 @@ class sms_transport_registrations(osv.osv):
         'registration_no':fields.related('student_id', 'registration_no', type='char', string='Registration No'),  
         'employee_id':fields.many2one('hr.employee','Employee'),
         'student_id':fields.many2one('sms.student','Student'),
+        'withdraw_by':fields.many2one('res.users','Withdraw By'),
         'student_reg_no':fields.char('Search Student(Reg No)', size=256),
         'shift':fields.many2one('sms.transport.shift','Transport Shift', required=True),
         'reg_start_date': fields.date('Start Date'),
@@ -413,7 +423,7 @@ class hr_employee(osv.osv):
         
     _columns = {
         'vehcile_reg_employee_id': fields.many2one('sms.transport.vehcile','Vehcile Registration'),
-        'transport_availed':fields.boolean('Transport Availed?'),
+        'transport_availed':fields.boolean('Transport Availed?',readonly = True),
         'transport_regis_id':fields.many2one('sms.transport.registrations','Transport Registration'),
         'transport_fee_payment_ids':fields.one2many('sms.transport.fee.payments','employee_id','Transport Payments'),
         }
@@ -421,7 +431,7 @@ hr_employee()
 
 class sms_student(osv.osv):
     
-    """This object is used to add fields in sms.student"""
+    """This object is used to add fields in sms.student for transport"""
     def get_student_fee_views(self, cr, uid, ids, field_names, arg=None, context=None):
         """This was clients requirements to show academis and transport ,and hostel etc fee separately, we made this method to use in 
            each module, this will be called by relavent columns to show fee history of one module only, here this method shows fee
@@ -430,9 +440,8 @@ class sms_student(osv.osv):
         res = {}
         for f in records:
             sql =   """ SELECT  smsfee_studentfee.id  FROM smsfee_studentfee
-                       inner join smsfee_classes_fees_lines on smsfee_classes_fees_lines.id = smsfee_studentfee.fee_type
-                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_classes_fees_lines.fee_type
-                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Transport' """
+                      inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_studentfee.generic_fee_type
+                     WHERE smsfee_studentfee.student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Transport' order by fee_month """
             cr.execute(sql)
             res[f.id] = [x[0] for x in cr.fetchall()]
         return res
@@ -455,16 +464,31 @@ class sms_student(osv.osv):
     _inherit ='sms.student'
         
     _columns = {
-            'vehcile_reg_students_id':fields.many2one('sms.transport.vehcile','Vechile Registration'),
+
+            'vehcile_reg_students_id':fields.many2one('sms.transport.vehcile','Vehicle',readonly = True),
+
             'view_transport_fee': fields.function(get_student_fee_views, method=True, type='one2many', relation='smsfee.studentfee', string='Transport Fee'),
-            'transport_availed':fields.boolean('Transport Availed?'),
-            'transport_fee_history':fields.float('Fee History'),
+            'transport_availed':fields.boolean('Transport Availed?',readonly = True),
+            'transport_fee_history':fields.float('Fee History',readonly = True),
             'total_paybles_transport':fields.function(set_paybles_transport, method=True, string='Balance(Transport)', type='float'),
-            'transport_reg_id':fields.many2one('sms.transport.registrations','Transport Registration'),
+            'transport_reg_id':fields.many2one('sms.transport.registrations','Transport Registration',readonly = True),
             'transport_fee_payment_ids':fields.one2many('sms.transport.fee.payments','student_id','Transport Payments'),
             
                 }
 sms_student()
+
+
+class smsfee_receiptbook(osv.osv):
+    
+    def confirm_fee_received(self, cr, uid, ids, context=None):
+        result = super(smsfee_receiptbook, self).confirm_fee_received(cr, uid, ids, context)
+        print "transport method of confimation is called"
+        return result
+    _name = 'smsfee.receiptbook'
+    _description = "This object store fee types"
+    _inherit = 'smsfee.receiptbook'
+    
+    columns = {}
 
 class sms_transportfee_challan_book(osv.osv):
     
@@ -668,6 +692,18 @@ class sms_transportfee_challan_book(osv.osv):
         return
     
     def receive_transportfee(self, cr, uid, ids, context=None):
+        sqluser = """ select res_groups.name from res_groups inner join res_groups_users_rel 
+                              on res_groups.id=res_groups_users_rel.gid where res_groups_users_rel.uid=""" + str(uid)
+        cr.execute(sqluser)
+        group_name = cr.fetchall()
+        for s in group_name:
+            print('sss', s[0])
+            IsItTransportManager = True
+            if 'SMS Transport Manager' in s:
+                IsItTransportManager=False
+        if IsItTransportManager:
+            raise osv.except_osv(('Transport Challans'), ('Only Transport Manager is allowed to Approve Challans'))
+
         self.onchange_student(cr, uid, ids, None)
         rec = self.browse(cr, uid, ids, context)
         paymethod = ''
@@ -871,6 +907,7 @@ class sms_session_months(osv.osv):
     
     """ This object is inherited to Apply Transport Fees on Students """
     def update_monthly_feeregister_transport(self, cr, uid, ids, name):
+        print "UPdate monthly fee Register is called"
         """This method now getting transport fee from smsfee classes fees lines, but when the fee structure is change for smsfee_studentfee
            then it will directly pick the transport fee id from smsfee_feetypes while its amount will be picked from rout or destination , 
            the transport fee str is also not necesarry to be defined for every session and every rout
@@ -885,6 +922,7 @@ class sms_session_months(osv.osv):
                                     where smsfee_feetypes.category =  'Transport'"""
             cr.execute(sql)
             feetypid = cr.fetchone()[0]
+            print"Fee type id-----",feetypid
             if not feetypid:
                 raise osv.except_osv(('Transport Fee Not Found'),('Transport fee is not defined in any class, Goto fee management of any class and add transport under any fee structure.'))
             ftrow = self.pool.get('smsfee.classes.fees.lines').browse(cr,uid,feetypid)  
@@ -893,10 +931,17 @@ class sms_session_months(osv.osv):
                 veh_rec = self.pool.get('sms.transport.vehcile').browse(cr,uid,vehcle_ids)
                 for this_veh in veh_rec:
                         students_ids = this_veh.registered_students
+
                         for this_student in students_ids:
                             if this_student.transport_availed and this_student.state == 'Admitted':
                                 #call method to add this fee to student
-                                call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student.id, this_student.current_class.id, ftrow, f.id)
+                                ses_id = self.pool.get('sms.academiccalendar').browse(cr, uid,this_student.current_class.id)
+
+                                if ses_id.session_id.id==f.session_id.id:
+                                    print " Done a id ", ses_id.session_id.id, "b id", f.session_id.id
+                                    call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student.id, this_student.current_class.id, ftrow, f.id)
+                                else:
+                                    print "dublicate fee for tranpsort will raise here ", ses_id.session_id.id, "b id", f.session_id.id
                                            
                         #Update fee register object for this month 
                         # search if this month already exists then leav, otherwise create new record

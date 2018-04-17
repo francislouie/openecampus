@@ -13,10 +13,15 @@ class daily_report(osv.osv_memory):
     _columns = {
               "session": fields.many2one('sms.session', 'Session', help="Select A session , you can also print reprts from previous session."),
               'fee_manager':fields.many2one('res.users', 'Fee Manager',  help="Select A Fee Manager to check his fee collection.Leave it blank if you want to print for all Managers."),
-              "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('fee_defined','=',1)]", help="Select A class to check its fee collection.Leave it blank if you want to print for all classes"),
+              'fee_approved_by':fields.many2one('res.users', 'Fee approved Manager',  help="Select A Fee Manager to check his fee collection.Leave it blank if you want to print for all Managers."),
+              'advance_search': fields.boolean("Advance search"),
+              # "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('fee_defined','=',1)]", help="Select A class to check its fee collection.Leave it blank if you want to print for all classes"),
               'from_date': fields.date('From'),
               'to_date': fields.date('To'),
-               }
+              'program_category_id': fields.many2one('sms.program.category', 'Program category'),
+             'category': fields.selection([('Academics', 'Academics'), ('Transport', 'Transport')], 'Fee Category'),
+
+    }
     _defaults = {
                  'session':_get_active_session,
            }

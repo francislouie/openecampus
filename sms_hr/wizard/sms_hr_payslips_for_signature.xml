@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Fee Reports-->
+
+        <record id="view_form_payslips_reports" model="ir.ui.view">
+            <field name="name">sms.hr.payslips.report.form</field>
+            <field name="model">sms.hr.payslips.reports</field>
+            <field name="arch" type="xml">
+                <form string="Employees Payslips" version="7.0">
+					
+					
+                    <group>
+						<group>
+						<field name="payslip_start_date" />
+						<newline/><field name="payslip_end_date" />
+						 <newline/><field name="order_by" required="1"/>
+						 <!-- <newline/><field name="search_filter_salary_str" colspan="4" /> -->
+	                    </group>
+	                    <group>
+							
+							 
+	                   </group>
+	                    
+					</group>
+					
+                    <footer>
+                        <button string="Print Pay Slips For Signature" name="print_payslipslist_signature_list" type="object" class="oe_highlight"/>
+                        <button string="Prepare Bank Sheet" name="print_payslipslist_bank_sheet" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+          </record> 
+
+  <!-- action Fee Reports -->
+
+        <record id="action_payslips_reports" model="ir.actions.act_window">
+            <field name="name">Payslips Reports</field>
+            <field name="res_model">sms.hr.payslips.reports</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_form_payslips_reports"/>
+           <field name="target">new</field>
+        </record> 
+</data>
+</openerp>
