@@ -6,6 +6,7 @@ from openerp.tools.translate import _
 # from dbus.decorators import method
 import calendar
 from pdftools.pdfdefs import false
+from matplotlib.legend_handler import update_from_first_child
 #from samba.netcmd import domain
 
 DAYOFWEEK_SELECTION = [('0', 'Monday'),
@@ -99,7 +100,7 @@ class hr_monthly_attendance_calculation(osv.osv):
             
             result[f.id] = deducted_amount
         return result
-#     def get_half_days(self, cr, uid,ids, name, args, context=None):
+#     def get_half_days(self, cr,  uid,ids, name, args, context=None):
 #         result = {}
 #         for f in self.browse(cr, uid, ids, context=context):
 #             total_late = f.twenty_minutes_late or 0
@@ -179,7 +180,7 @@ class hr_monthly_attendance_calculation(osv.osv):
                 if(emp.total_short_minutes >= 30 and emp.final_status !='Status Not Clear'):
                     thirty_minutes_late=thirty_minutes_late+1
             result[f.id] = thirty_minutes_late
-        return result
+        return result 
     
     def get_decuction_thirty_m_late(self, cr, uid,ids, name, args, context=None):
         result = {}
@@ -370,7 +371,7 @@ class hr_employee_attendance(osv.osv):
                         lat_min=0
                     else:
                         lat_min = timedelta.days + float(timedelta.seconds) / 60
-                else:
+                else: 
                     lat_min=0
             
             else:
@@ -490,23 +491,137 @@ class hr_payslip_run(osv.osv):
     _inherit = "hr.payslip.run"
     _description = "hr payslip run"
 
+
+    def create(self, cr, uid, vals, context=None):
+        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
+        cr.execute(sql)
+        date = cr.fetchone()[0]
+        date_last=date+' '+'12:00:00'
+        
+        date_today = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        # Static date is set for testing
+#         date_last= '2018-04-17 12:00:00'
+        if  (date_today > date_last):
+            raise osv.except_osv(('!NO'), ('First Pull lastest attendance'))
+        else:
+            payslip_run_id = super(hr_payslip_run, self).create(cr, uid, vals, context=context)
+        return payslip_run_id
+
+
+
+    def onchange_set_domain(self, cr, uid , ids, date_start,context=None):
+        print"onchange_set_domain is called",date_start
+        year = int(datetime.strptime(str(date_start), '%Y-%m-%d').strftime('%Y'))
+        mont = int(datetime.strptime(str(date_start), '%Y-%m-%d').strftime('%m'))
+        if(mont <10):
+            month ='0'+str(mont)
+        else:
+            month =''+str(mont) 
+        mon_days = calendar.monthrange(year,mont)[1]
+        date_from =str(str(year)+'-'+str(month)+'-01')
+        date_to =str(str(year)+'-'+str(month)+'-'+str(mon_days))
+        date_today = datetime.today().strftime('%Y-%m-%d')
+        print"Date today ",date_today 
+        print"Date from ",date_from 
+      
+        print"date to ",date_to
+        
+        if (date_to > date_today):
+            date_tto=date_today
+        else:
+            date_tto=date_to
+        return {'value': {'date_end':date_tto}}
+
+    def _get_last_pull(self, cr, uid, ids): 
+        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
+        cr.execute(sql)
+        pull_date = cr.fetchone()[0]
+        print"last pull",pull_date
+        return pull_date
+    
+
     _columns = {
- 
+   'last_pull':fields.date('Last Pull '),
     }
     _defaults = {
+        'last_pull':_get_last_pull
     }
     
     
 class hr_payslip(osv.osv):
-    '''
-    Pay Slip
-    '''
+    ''' Pay Slip (inprocess)'''
+    def create(self, cr, uid, vals, context=None):
+        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
+        cr.execute(sql)
+        date = cr.fetchone()[0]
+        date_last=date+' '+'12:00:00'
+        
+        date_today = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
+        # Static date is set for testing
+#         date_last= '2018-04-17 12:00:00'
+
+        if  (date_today > date_last):
+            raise osv.except_osv(('!NO'), ('First Pull lastest attendance'))
+        else:
+            payslip_id = super(hr_payslip, self).create(cr, uid, vals, context=context)
+        return payslip_id
+    
+    
+    
+    
+    
+    
+    
+   
+    
+    def onchange_set_domain(self, cr, uid , ids, date_from,context=None):
+        print"onchange_set_domain is called",date_from
+        year = int(datetime.strptime(str(date_from), '%Y-%m-%d').strftime('%Y'))
+        mont = int(datetime.strptime(str(date_from), '%Y-%m-%d').strftime('%m'))
+        if(mont <10):
+            month ='0'+str(mont)
+        else:
+            month =''+str(mont) 
+        mon_days = calendar.monthrange(year,mont)[1]
+        date_from =str(str(year)+'-'+str(month)+'-01')
+        date_to =str(str(year)+'-'+str(month)+'-'+str(mon_days))
+        date_today = datetime.today().strftime('%Y-%m-%d')
+        print"Date today ",date_today 
+        print"Date from ",date_from 
+      
+        print"date to ",date_to
+        
+        if (date_to > date_today):
+            date_tto=date_today
+        else:
+            date_tto=date_to
+        return {'value': {'date_to':date_tto}}
+    
+    
+    
+    
+    def _get_last_pull(self, cr, uid, ids): 
+        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
+        cr.execute(sql)
+        pull_date = cr.fetchone()[0]
+        print"last pull",pull_date
+        return pull_date
+    
+    
+    
+    
+    
+    
+    
     def send_to_archieve(self, cr, uid, ids, context=None):
         return self.write(cr, uid, ids, {'state': 'cancel'}, context=context)
     _name = 'hr.payslip'
     _description = 'Pay Slip'
     _inherit = "hr.payslip"
     _columns = {
+        
+        
+    'last_pull':fields.date('Last Pull '),
     'state': fields.selection([
             ('draft', 'Draft'),
             ('verify', 'Waiting'),
@@ -521,7 +636,11 @@ class hr_payslip(osv.osv):
       'salary_month':fields.char('Salary Month')# e.g 10-2017 also add this in search filter
                  }
     
-    
+    _defaults = {
+#                  'date_from': lambda *a: time.strftime('%Y-%m-01'),
+                 'last_pull':_get_last_pull
+                 
+    }
     
     
     

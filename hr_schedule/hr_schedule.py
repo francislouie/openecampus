@@ -427,9 +427,9 @@ class hr_employee(osv.osv):
     def create(self, cr, uid, vals, context=None):
         employee_id =  super(hr_employee, self).create(cr, uid, vals, context=context)
        
-        dep_schedule_ids = self.pool.get('hr.schedule').search(cr,uid, [('department_id','=',vals['department_id'])])
-        if dep_schedule_ids:
-            self.create_schedule_per_emp_details(cr, uid, dep_schedule_ids[0],employee_id, context=context)
+#         dep_schedule_ids = self.pool.get('hr.schedule').search(cr,uid, [('department_id','=',vals['department_id'])])
+#         if dep_schedule_ids:
+#             self.create_schedule_per_emp_details(cr, uid, dep_schedule_ids[0],employee_id, context=context)
             
         return employee_id    
     _columns = {
