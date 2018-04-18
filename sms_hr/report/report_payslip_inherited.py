@@ -14,7 +14,8 @@ class report_payslip_inherited(report_sxw.rml_parse):
         super(report_payslip_inherited, self).__init__(cr, uid, name, context)
         self.localcontext.update({
             'get_payslip_lines': self.get_payslip_lines,
-            'print_payslipslist_signature_list': self.print_payslipslist_signature_list
+            'print_payslipslist_signature_list': self.print_payslipslist_signature_list,
+            'get_attendance_details': self.get_attendance_details
         })
 
     def get_payslip_lines(self, obj):
@@ -25,11 +26,25 @@ class report_payslip_inherited(report_sxw.rml_parse):
         for id in range(len(obj)):
             if obj[id].appears_on_payslip == True:
                 ids.append(obj[id].id)
-                
+                print'--Employee Id', obj[id].id
         if ids:
             res = payslip_line.browse(self.cr, self.uid, ids)
             print "Test Values for Payslips ----   ", res
         return res
+    
+    def get_attendance_details(self, obj):
+#         print "figuring out the deduction particulars"
+#         payslip_line = self.pool.get('hr.payslip.line')
+#         res = []
+#         ids = []
+#         for id in range(len(obj)):
+#             if obj[id].appears_on_payslip == True:
+#                 ids.append(obj[id].id)
+#                 
+#         if ids:
+#             res = payslip_line.browse(self.cr, self.uid, ids)
+#             print "Test Values for Payslips ----   ", res
+        return True
     
     def print_payslipslist_signature_list(self, cr, uid, ids, data):
         result = []
@@ -105,6 +120,6 @@ class report_payslip_inherited(report_sxw.rml_parse):
         book.save(path)
         return
 
-report_sxw.report_sxw('report.payslip_inherited', 'hr.payslip', 'sms_hr/report/report_payslip_inherited.rml', parser=report_payslip_inherited)
+report_sxw.report_sxw('report.payslip_inherited', 'hr.payslip', 'sms_hr/report/report_payslip_inherited.rml', parser=report_payslip_inherited, header='external')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

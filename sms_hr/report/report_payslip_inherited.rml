@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <document filename="test.pdf">
-  <template title="Test" author="Martin Simon" allowSplitting="20">
+  <template pageSize="(595.0,950.0)" title="Test" author="Martin Simon" allowSplitting="20">
     <pageTemplate id="first">
-      <frame id="first" x1="28.0" y1="28.0" width="539" height="786"/>
+      <frame id="first" x1="28.0" y1="10.0" width="539" height="940"/>
     </pageTemplate>
   </template>
   <stylesheet>
@@ -159,6 +159,7 @@
     <images/>
   </stylesheet>
   <story>
+
     <para style="P2">[[repeatIn(objects,'o')]]</para>
     <blockTable colWidths="539.0" style="Table1">
       <tr>
@@ -172,7 +173,7 @@
       <font face="Helvetica-Bold" size="14.0">Note</font>
     </para>
     <para style="P8">([[o.name or removeParentNode('para')]])</para>
-    <blockTable colWidths="63.0,206.0,89.0,181.0" style="Table2">
+    <blockTable colWidths="73.0,196.0,89.0,181.0" style="Table2">
       <tr>
         <td> <para style="P15">Name</para></td>
         <td> <para style="P15">[[o.employee_id.name]]</para></td>
@@ -180,7 +181,15 @@
         <td><para style="P4">[[ o.employee_id.job_id.name or '' ]]</para></td>
       </tr>
     </blockTable>
-    <blockTable colWidths="63.0,476.0" style="Table3">
+        <blockTable colWidths="73.0,196.0,89.0,181.0" style="Table2">
+         <tr>
+        <td> <para style="P15">Empleado ID</para></td>
+        <td> <para style="P4">[[o.employee_id.empleado_account_id or '']]</para></td>
+        <td><para style="P15">Department</para></td>
+        <td><para style="P4">[[ o.employee_id.department_id.name or '' ]]</para></td>
+      </tr>
+    </blockTable>
+    <blockTable colWidths="73.0,466.0" style="Table3">
       <tr>
         <td><para style="terp_default_Bold_8"><font face="Helvetica">Address </font></para></td>
         <td><para style="P4">[[o.employee_id.address_home_id and o.employee_id.address_home_id.name or '' ]]
@@ -188,7 +197,7 @@
         </td>
       </tr>
     </blockTable>
-    <blockTable colWidths="63.0,206.0,89.0,181.0" style="Table4">
+    <blockTable colWidths="73.0,196.0,89.0,181.0" style="Table4">
       <tr>
         <td><para style="P15">Email</para></td>
         <td><para style="P4">[[ o.employee_id.work_email or '' ]]</para></td>
@@ -196,7 +205,7 @@
         <td><para style="P4">[[ o.employee_id.identification_id or '' ]]</para></td>
       </tr>
     </blockTable>
-    <blockTable colWidths="63.0,206.0,89.0,181.0" style="Table5">
+    <blockTable colWidths="73.0,196.0,89.0,181.0" style="Table5">
       <tr>
         <td> <para style="P15">Reference</para></td>
         <td><para style="P4">[[ o.number or '' ]]</para></td>
@@ -204,7 +213,7 @@
         <td><para style="P4">[[ o.employee_id.otherid or '' ]]</para></td>
       </tr>
     </blockTable>
-    <blockTable colWidths="63.0,206.0,89.0,181.0" style="Table6">
+    <blockTable colWidths="73.0,196.0,89.0,181.0" style="Table6">
       <tr>
         <td><para style="P15">Date From</para></td>
         <td><para style="P4">[[ o.date_from or '']]</para></td>
@@ -218,13 +227,19 @@
     <para style="P6"/>
     <blockTable colWidths="600.0" style="Standard_Outline">
         <tr>
-          <td><para style="P131">Salary is calculated according to Institues HR plocicies communicated to all employees. Attendance polcy is expalined below:</para></td>
+          <td><para style="P131">Salary is calculated according to Institue's HR policies communicated to all employees. Attendance policy is explained below:</para></td>
         </tr>
         <tr>
           <td><para style="P131">2x late comings upto 30 minutes = 1 day deduction</para></td>
         </tr>
         <tr>
           <td><para style="P131">3x late comings upto 20 minutes = 1 day deduction</para></td>
+        </tr>
+         <tr>
+          <td><para style="P131">Full-day salary = 450 </para></td>
+        </tr>
+         <tr>
+          <td><para style="P131">Half-day salary = 225 </para></td>
         </tr>
        
       </blockTable>
@@ -247,6 +262,8 @@
       </blockTable>
        
     </section>
+    
+    
     <para style="P10">
       <font color="white"> </font>
     </para>
@@ -259,6 +276,7 @@
     <para style="P1">
       <font color="white"> </font>
     </para>
+    <spacer length="40"/>
     <blockTable colWidths="269.0,269.0" style="Table13">
       <tr>
         <td><para style="P4"><font color="white"> </font> </para></td>
