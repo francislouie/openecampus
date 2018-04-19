@@ -357,7 +357,6 @@ class sms_class_attendance(osv.osv):
 
         return {'domain': {'class_id':[('state','=','Active') ]},'value': result}
 
-    
     def _user_get(self,cr,uid,context={}):
         return uid
 
