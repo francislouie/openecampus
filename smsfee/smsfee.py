@@ -1392,13 +1392,16 @@ class smsfee_std_withdraw(osv.osv):
     def confirm_std_withdraw(self, cr, uid, ids, context=None):
         print "approve request"
         self.write(cr, uid, ids[0], {'state':'Approved','decision_by':uid,'decision_date':datetime.date.today()})
-        rec = self.browse(cr, uid, ids, context)
+        rec = self.browse(cr, uid, ids)
         for f in rec:
             
             print "class:",f.student_class_id.id
             std_cls_id = self.pool.get('sms.academiccalendar.student').search(cr, uid, [('std_id','=',f.student_id.id),('name','=',f.student_class_id.id)], context=context)
+            
             if std_cls_id:
+#                 self.pool.get('sms.student').write(cr, uid, std_cls_id,{'state':f.request_type,'date_withdraw':datetime.date.today(),'withdraw_by':uid})
                 std_cls_rec = self.pool.get('sms.academiccalendar.student').browse(cr, uid, std_cls_id[0])
+                print'------- std cls rec -----------', std_cls_rec.std_id.id
                 std_subj_ids = self.pool.get('sms.student.subject').search(cr, uid, [('student','=',std_cls_id[0]),('subject_status','=','Current')], context=context)
                 print "student subjects:",std_subj_ids
                 if std_subj_ids:
@@ -1406,21 +1409,25 @@ class smsfee_std_withdraw(osv.osv):
                         #Withdraw student subjects
                         withdraw = self.pool.get('sms.student.subject').write(cr, uid, std_subj_ids,{'subject_status':'Withdraw'})
                         #Withdraw student class
-                        std_cls_rec = self.pool.get('sms.academiccalendar.student').write(cr, uid, std_cls_id[0],{'state':'Withdraw'})
+                        std_cls_rec2 = self.pool.get('sms.academiccalendar.student').write(cr, uid, std_cls_id[0],{'state':'Withdraw'})
                         #update sms_student
-                        sms_std = self.pool.get('sms.student').write(cr, uid, f.student_id.id,{'state':f.request_type,'date_withdraw':datetime.date.today(),'withdraw_by':uid})
+                        write_query = """UPDATE sms_student SET state='"""+f.request_type+"""', date_withdraw='"""+str(datetime.date.today())+"""', withdraw_by='"""+str(uid)+"""' where id="""+str(f.student_id.id)
+                        cr.execute(write_query)
+
                     else:
                         #suspend student subjects
                         susp = self.pool.get('sms.student.subject').write(cr, uid, std_subj_ids,{'subject_status':'Suspended'})
                         #suspend student class
-                        std_cls_rec = self.pool.get('sms.academiccalendar.student').write(cr, uid, std_cls_id[0],{'state':'Suspended'})
+                        std_cls_rec2 = self.pool.get('sms.academiccalendar.student').write(cr, uid, std_cls_id[0],{'state':'Suspended'})
                         #update sms_student
-                        sms_std = self.pool.get('sms.student').write(cr, uid, f.student_id.id,{'state':f.request_type,'date_withdraw':datetime.date.today(),'withdraw_by':uid})
+                        write_query = """UPDATE sms_student SET state='"""+f.request_type+"""', date_withdraw='"""+str(datetime.date.today())+"""', withdraw_by='"""+str(uid)+"""' where id="""+str(f.student_id.id)
+                        cr.execute(write_query)
   
         return 
             
     def onchange_student(self, cr, uid, ids, std, context=None):
         result = {}
+        print "stddddddddddd",std
         std_rec = self.pool.get('sms.student').browse(cr, uid, std)
         print "stddddddddddd",std
         print "std rec",std_rec
@@ -1467,7 +1474,7 @@ class smsfee_std_withdraw(osv.osv):
         'student_id': fields.many2one('sms.student','Student',required = True),
         'father_name': fields.char(string = 'Father',size = 100,readonly = True),
         'reason_withdraw':fields.text('Reason Withdraw'),
-        'request_type':fields.selection([('Withdraw','Withdraw'),('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),('slc','School Leaving Certificate'), ('transfer_out','Transfer Out')],'Request Type'),
+        'request_type':fields.selection([('Withdraw','Withdraw'),('admission_cancel','Admission Cancel'),('drop_out','Drop Out'),('slc','School Leaving Certificate'), ('transfer_out','Transfer Out'),('pass_out','Pass Out')],'Request Type'),
         'transfer_type':fields.selection([('temporiry','Temporiry'),('permanent','Permanent')],'Transfer Type'),
         'transfer_campus': fields.many2one('sms.transfer.in', 'Campus'),
         'transfer_fee': fields.float('Transfer Fee'),

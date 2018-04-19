@@ -303,11 +303,9 @@ class hr_device_pull_log(osv.osv):
 
     _columns = {
         'device_id': fields.char('ID'),
-        'puncing_date_time': fields.char('Reg No on Device'),
-        'em_empleado_acc_id': fields.char('Reg No on Device'),
-        'status': fields.char('Reg No on Device'),
-        'date_time_pulled': fields.char("Provider"),
-        'pulled_by': fields.char("Company"),
+        'status': fields.char('Status'),
+        'date_time_pulled': fields.char('Date time Pulled'),
+        'pulled_by': fields.char('Pulled By'),
     }
     _defaults = {
     }
@@ -326,8 +324,10 @@ class hr_employee(osv.osv):
         'emp_regno_on_device': fields.char('Reg No on Device'),
         'empleado_account_id': fields.char('Empleado Acc ID'),
         'default_devicee_id': fields.char('Default Device'),
+        'punch_attendance':fields.selection([('yes','Yes'),('no','No')],'Attendance Punching Allowed ?')
     }
     _defaults = {
+        'punch_attendance': 'yes'
     }
 hr_employee()
 
