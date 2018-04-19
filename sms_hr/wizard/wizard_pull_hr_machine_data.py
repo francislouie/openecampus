@@ -329,13 +329,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
          
             item2 += 1
         self.compute_attendance_absentees(cr, uid, ids, data)
-<<<<<<< HEAD
-
         self.summaries_employee_attendance(cr, uid, ids, data)
-
-=======
-#         self.compute_attendance_holidays(cr, uid, ids, data)
->>>>>>> 9088d4077fd2e251edf3bcb70c14d3bdfac40962
         return True    
     
     def compute_attendance_absentees(self, cr, uid, ids, data):
