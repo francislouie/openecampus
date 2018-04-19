@@ -327,7 +327,10 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                     print " not found on ERP for emplead acc",employee_rec
          
             item2 += 1
+            
         self.compute_attendance_absentees(cr, uid, ids, data)
+
+        self.summaries_employee_attendance(cr, uid, ids, data)
 
         return True    
     
@@ -361,15 +364,36 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                 dates.append(date_stamp)
         print'------ Attendance Date List --------', dates    
         for date_item in dates:
+                hr_holiday_rec = False
+                
                 for emp_idd in emp_id_list:
-                    emp_rec_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_idd),('attendance_date', '=', date_item)]) 
+                    
+                    print"Employee_id",emp_idd
                     fdate = datetime.datetime.strptime(date_item,'%Y%m%d')
                     day = fdate.weekday()
-
-                    print" date ",date_item
                     attendance_date =datetime.datetime.strptime(date_item,'%Y%m%d').strftime('%Y-%m-%d')
-                    hr_holiday_rec = self.pool.get('hr.public.holiday').search(cr, uid, [('holiday_date','=', attendance_date)])
-                    if hr_holiday_rec:
+                    emp_rec_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_idd),('attendance_date', '=', date_item)]) 
+                    for f in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_rec_ids):
+                        print"First record in hr employee attendance ",f
+                        if(f.employee_id.department_id):
+                            print"departmetn found"
+                            emp_rec_ids = self.pool.get('hr.schedule').search(cr,uid,[('department_id','=',f.employee_id.department_id.id),('state','=','validate')]) 
+                            for sche in self.pool.get('hr.schedule').browse(cr,uid, emp_rec_ids):
+                                print "schedule found"
+                                if( sche.public_holiday_ids):
+                                    print"public holyday found"
+                                    for puh in sche.public_holiday_ids:
+                                        print"under the public holiday "
+                                        print"compare",puh.holiday_date,attendance_date
+                                        if(puh.holiday_date == attendance_date):
+                                            print"public hol matched"
+                                            hr_holiday_rec =True
+                                    print"after public holiday"
+                   
+                    print"the end"
+#                     hr_holiday_rec = self.pool.get('hr.public.holiday').search(cr, uid, [('holiday_date','=', attendance_date)])
+                    print"before the if conditon"
+                    if ( hr_holiday_rec):
                         final_status='public_holiday'
 
                     else:    
@@ -392,7 +416,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
 #         print '---------- Employees ---------', emp_id_list,'--- Dates',dates
         #wrte method code here
         return True
-    def compute_attendance_holidays(self, cr, uid, ids, data):
+    def summaries_employee_attendance(self, cr, uid, ids, data):
         
         print"Compute attendance holidays method is called"
         #this place was giving error when i called it on abve method of pulling attendance, it should be rectified, for the time i am giving static dates

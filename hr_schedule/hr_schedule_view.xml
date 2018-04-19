@@ -56,9 +56,12 @@
                 <form string="Employee Schedule" version="7.0">
                     <sheet>
                         <header>
-                            <button name="signal_validate" type="workflow" states="draft" class="oe_highlight" string="Validate"/>
+                           <button name="Schedule_backto_confirm" string="Back To Confirm" states="locked" type="object" class="oe_highlight"/>
+                           <button name="Schedule_Rec_lock" string="locked" states="validate" type="object" class="oe_highlight"/>
+                           <button name="signal_validate" type="workflow" states="draft" class="oe_highlight" string="Confirm"/> 
                             <field name="state" widget="statusbar"/>
                         </header>
+                        
                         <group col="4">
                             <field name="template_id"/>
         
@@ -100,7 +103,7 @@
                                     </tree>
                                 </field>
                             </page> -->
-                            <page string="Rest Days">
+                            <!-- <page string="Rest Days">
                                 <group>
                                     <group>
                                         <field name="restday_ids1" widget="many2many_tags"/>
@@ -116,7 +119,7 @@
                                 <group string="Alerts" colspan="4" cols="5">
                                     <field name="alert_ids" nolabel="1"/>
                                 </group>
-                            </page>
+                            </page> -->
                         </notebook>
                     </sheet>
                 </form>
