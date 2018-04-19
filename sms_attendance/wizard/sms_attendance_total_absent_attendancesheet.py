@@ -10,7 +10,7 @@ class class_print_total_absent_attendance_sheet(osv.osv_memory):
     _columns = {
               'session_id': fields.many2one('sms.session', 'Session', domain="[('state','=','Active')]", required=True, help="Class"),
               'class_id': fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active')]", required=True, help="Class"),
-              'date': fields.date('Date', required=True),
+              'date': fields.date('Select Month', required=True),
                }
     _defaults = {} 
     
