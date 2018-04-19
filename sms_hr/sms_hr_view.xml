@@ -113,7 +113,9 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <data>
-                    
+                    <xpath expr="//field[@name='coach_id']" position="after">
+                        <field name="punch_attendance" required="1"/>
+                    </xpath>
                     <xpath expr="//field[@name='active']" position="after">
                         <group string="Biometric Setting">
                             <field name="emp_regno_on_device"/>
@@ -154,14 +156,57 @@
             <field name="inherit_id" ref="hr_payroll.view_hr_payslip_form"/>
             <field name="arch" type="xml">
                 <data>
-                    
+                     <xpath expr="//field[@name='date_from']" position="replace">
+                        <field name="date_from"   on_change="onchange_set_domain(date_from)" />To
+                    </xpath>
+                     <xpath expr="//field[@name='date_to']" position="replace">
+                        <field name="date_to"  readonly="1" />
+                    </xpath>
                     <xpath expr="//button[@name='cancel_sheet']" position="after">
                         <button string="Archieve" name="send_to_archieve" states="done,cancel"/>
+                    </xpath>
+                     <xpath expr="//field[@name='employee_id']" position="after">
+                           
+                             <group>
+                            <field name="last_pull"  readonly="1"/>
+                        </group>
+          
+                    </xpath>
+                </data>
+            </field>
+        </record>
+
+
+
+        <record id="hr_payslip_run_form_inherit" model="ir.ui.view">
+            <field name="name">hr_payslip_run</field>
+            <field name="model">hr.payslip.run</field>
+            <field name="inherit_id" ref="hr_payroll.hr_payslip_run_form"/>
+            <field name="arch" type="xml">
+                <data>
+                     <xpath expr="//field[@name='date_start']" position="replace">
+                        <field name="date_start"   on_change="onchange_set_domain(date_start)" />To
+                    </xpath>
+                    
+                     <xpath expr="//field[@name='date_end']" position="replace">
+                          <field name="date_end" readonly="1" />
+                    </xpath>
+                    
+                    
+                    <xpath expr="//field[@name='name']" position="after">
+                             <group>
+                            <field name="last_pull"  readonly="1"/>
+                        </group>
+          
                     </xpath>
                     
                 </data>
             </field>
         </record>
+
+
+
+
 
          <!--<record id="hr_payslip_run_form_inherit" model="ir.ui.view">
             <field name="name">hr_payslip_run</field>
