@@ -19,7 +19,7 @@ class hr_compute_salary(osv.osv_memory):
     def compute_salary(self, cr, uid, ids, context=None):
         data = self.read(cr, uid, ids)[0]['month_comp']
         print"data",data
-        return self.pool.get('sms.pull.hr.machine.data').compute_attendance_holidays(cr, uid, ids ,data)
+        return self.pool.get('sms.pull.hr.machine.data').summaries_employee_attendance(cr, uid, ids ,data)
     
     
     

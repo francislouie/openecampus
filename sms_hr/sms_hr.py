@@ -533,7 +533,7 @@ class hr_payslip_run(osv.osv):
         return {'value': {'date_end':date_tto}}
 
     def _get_last_pull(self, cr, uid, ids): 
-        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
+        sql = """select attendance_date FROM hr_device_pull_log ORDER BY attendance_date DESC LIMIT 1"""
         cr.execute(sql)
         pull_date = cr.fetchone()[0]
         print"last pull",pull_date
@@ -566,10 +566,18 @@ class hr_payslip(osv.osv):
             payslip_id = super(hr_payslip, self).create(cr, uid, vals, context=context)
         return payslip_id
     
+    def hr_verify_sheet(self, cr, uid, ids, context=None):
+        obj = self.browse(cr, uid, ids, context=context)
+        print"given id",obj[0].date_from
+        
+        mont = int(datetime.strptime(str(obj[0].date_from), '%Y-%m-%d').strftime('%m'))
+        print"Given Month",mont
+        print"employee id",obj[0].employee_id.id
+        id = super(hr_payslip, self).hr_verify_sheet(cr, uid, ids, context=context)
+        a = self.pool.get('hr.monthly.attendance.calculation').write(cr, uid, ids, {'is_invoiced': True}, context=context)
     
-    
-    
-    
+        print"Hr monthly attendivance calculation ",a
+        return id
     
     
    
@@ -601,7 +609,7 @@ class hr_payslip(osv.osv):
     
     
     def _get_last_pull(self, cr, uid, ids): 
-        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
+        sql = """select attendance_date FROM hr_device_pull_log ORDER BY attendance_date DESC LIMIT 1"""
         cr.execute(sql)
         pull_date = cr.fetchone()[0]
         print"last pull",pull_date
