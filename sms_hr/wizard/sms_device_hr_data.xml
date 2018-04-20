@@ -27,7 +27,7 @@
                     <footer>
                         <button string="Pull Employees Attendance" name="pull_attendance_device_data" type="object" class="oe_highlight"/>
                         <button string="Compute Absentees" name="compute_attendance_absentees" type="object" class="oe_highlight"/>
-                         <!--  <button string="Compute Holidays" name="compute_attendance_holidays" type="object" class="oe_highlight"/> -->
+                         <!--  <button string="Compute Holidays" name="summaries_employee_attendance" type="object" class="oe_highlight"/> -->
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>

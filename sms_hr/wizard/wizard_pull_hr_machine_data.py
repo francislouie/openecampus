@@ -160,6 +160,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         missing_empleado_id = self.read(cr, uid, ids)[0]['missing_empleado']
         if missing_empleado_id:
             raise osv.except_osv((),'Some employees have missing Empleado IDs, Cannot Proceed!')
+
          
          
         # Check if there are employees with departments not assigned in the wizard 
@@ -328,13 +329,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
          
             item2 += 1
         self.compute_attendance_absentees(cr, uid, ids, data)
-<<<<<<< HEAD
-
-        self.compute_attendance_holidays(cr, uid, ids, data)
-
-=======
-#         self.compute_attendance_holidays(cr, uid, ids, data)
->>>>>>> 9088d4077fd2e251edf3bcb70c14d3bdfac40962
+        self.summaries_employee_attendance(cr, uid, ids, data)
         return True    
     
     def compute_attendance_absentees(self, cr, uid, ids, data):
@@ -419,7 +414,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
 #         print '---------- Employees ---------', emp_id_list,'--- Dates',dates
         #wrte method code here
         return True
-    def compute_attendance_holidays(self, cr, uid, ids, data):
+    def summaries_employee_attendance(self, cr, uid, ids, data):
         
         print"Compute attendance holidays method is called"
         #this place was giving error when i called it on abve method of pulling attendance, it should be rectified, for the time i am giving static dates
@@ -479,6 +474,7 @@ sms_pull_hr_machine_data()
 
 
 
+<<< HEAD
 
 
 
