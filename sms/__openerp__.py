@@ -41,7 +41,7 @@ Manage Employee records as Teacher Round Report etc""",
              'wizard/sms_wizard_student_transfer_in_view.xml',
              'cms_report.xml',
              'custom_sale_view.xml',
-            
+             'wizard/sms_wizard_simple_exam.xml',
              'data/sms_subjects_data.xml',
              'data/sms_acadamiccal_default_data.xml',
              'data/sms_time_slot_day_data.xml',

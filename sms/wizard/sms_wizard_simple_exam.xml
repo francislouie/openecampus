@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Exam Entry -->
+
+        <record id="view_sms_simple_exam_entry" model="ir.ui.view">
+            <field name="name">Exam Simple Marks Entry</field>
+            <field name="model">simple.exam.entry</field>
+            <field name="arch" type="xml">
+                <form string="Simple Exam Entry" version="7.0">
+                    <group col="2">
+
+						<field name="academiccalendar_id"/>
+						<field name="exam_name"/>
+					</group>
+                    <footer>
+                        <button string="Next" name="exam_entry" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+            </field>
+          </record>
+
+  <!-- View Exam Entry -->
+
+        <record id="action_view_sms_simple_exam_entry_wizard" model="ir.actions.act_window">
+            <field name="name">Exam Marks</field>
+            <field name="res_model">simple.exam.entry</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_sms_simple_exam_entry"/>
+           <field name="target">new</field>
+        </record>
+</data>
+</openerp>

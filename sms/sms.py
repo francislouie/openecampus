@@ -45,7 +45,7 @@ res_company()
 
 class sms_academics_session(osv.osv):
     """
-    This Creates an    academic session thame may be of minimum 1 year, max many years
+    This Creates an academic session thame may be of minimum 1 year, max many years
     """
 
         
@@ -3187,6 +3187,8 @@ class sms_exam_type(osv.osv):
         'sequence_no': fields.integer('Sequence No' , required=True),
     }
 sms_exam_type()
+
+
 
 class sms_exam(osv.osv):
     """This ."""

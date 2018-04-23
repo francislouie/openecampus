@@ -152,6 +152,13 @@
 	<menuitem id="menu_sms_exam_entry_wizard" parent="menu_examination_head_id" sequence="" 
 	groups="group_sms_director,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal,group_sms_faculty" action="action_view_sms_exam_entry_wizard" />
 
+    <menuitem id="menu_sms_simple_exam_entry_wizard" parent="menu_examination_head_id" sequence="" 
+	groups="group_sms_director,group_sms_manager_exams,group_sms_officers_exams,group_sms_principal,group_sms_faculty" action="action_view_sms_simple_exam_entry_wizard" />
+
+
+
+
+
 	<menuitem id="menu_sms_student_exam_lists_wizard" parent="menu_sms_exam_results_id" sequence="" action="action_view_sms_student_exam_lists_wizard"
 	groups="group_sms_director,group_sms_manager_exams,group_sms_principal,group_sms_manager_exams,group_sms_principal"/>
 
