@@ -1,6 +1,6 @@
 import time
 import datetime
-from datetime import datetime
+from datetime import datetime, timedelta 
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 # from dbus.decorators import method
@@ -493,16 +493,14 @@ class hr_payslip_run(osv.osv):
 
 
     def create(self, cr, uid, vals, context=None):
-        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
-        cr.execute(sql)
-        date = cr.fetchone()[0]
-        date_last=date+' '+'12:00:00'
-        
+        date = self.pool.get('sms.pull.hr.machine.data')._get_last_pull(cr, uid, vals)
+        d= datetime.strptime(date,"%Y-%m-%d %H:%M:%S") + timedelta(hours=12)  
+        pull_date =datetime.strptime(str(d), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
         date_today = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         # Static date is set for testing
 #         date_last= '2018-04-17 12:00:00'
-        if  (date_today > date_last):
-            raise osv.except_osv(('!NO'), ('First Pull lastest attendance'))
+        if  (date_today > pull_date):
+            raise osv.except_osv(('First Pull attendance'),'')
         else:
             payslip_run_id = super(hr_payslip_run, self).create(cr, uid, vals, context=context)
         return payslip_run_id
@@ -530,14 +528,10 @@ class hr_payslip_run(osv.osv):
             date_tto=date_today
         else:
             date_tto=date_to
-        return {'value': {'date_end':date_tto}}
+        return {'value': {'date_end':date_tto,'date_start':date_from}}
 
     def _get_last_pull(self, cr, uid, ids): 
-        sql = """select attendance_date FROM hr_device_pull_log ORDER BY attendance_date DESC LIMIT 1"""
-        cr.execute(sql)
-        pull_date = cr.fetchone()[0]
-        print"last pull",pull_date
-        return pull_date
+        return self.pool.get('sms.pull.hr.machine.data')._get_last_pull(cr, uid, ids)
     
 
     _columns = {
@@ -547,37 +541,37 @@ class hr_payslip_run(osv.osv):
         'last_pull':_get_last_pull
     }
     
-    
 class hr_payslip(osv.osv):
     ''' Pay Slip (inprocess)'''
     def create(self, cr, uid, vals, context=None):
-        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
-        cr.execute(sql)
-        date = cr.fetchone()[0]
-        date_last=date+' '+'12:00:00'
-        
+        date = self.pool.get('sms.pull.hr.machine.data')._get_last_pull(cr, uid, vals)
+        d= datetime.strptime(date,"%Y-%m-%d %H:%M:%S") + timedelta(hours=12)  
+        pull_date =datetime.strptime(str(d), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
         date_today = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         # Static date is set for testing
 #         date_last= '2018-04-17 12:00:00'
-
-        if  (date_today > date_last):
-            raise osv.except_osv(('!NO'), ('First Pull lastest attendance'))
+        if  (date_today < pull_date):
+            raise osv.except_osv(('First Pull attendance'),'')
         else:
             payslip_id = super(hr_payslip, self).create(cr, uid, vals, context=context)
         return payslip_id
     
     def hr_verify_sheet(self, cr, uid, ids, context=None):
-        obj = self.browse(cr, uid, ids, context=context)
-        print"given id",obj[0].date_from
         
-        mont = int(datetime.strptime(str(obj[0].date_from), '%Y-%m-%d').strftime('%m'))
-        print"Given Month",mont
-        print"employee id",obj[0].employee_id.id
-        id = super(hr_payslip, self).hr_verify_sheet(cr, uid, ids, context=context)
-        a = self.pool.get('hr.monthly.attendance.calculation').write(cr, uid, ids, {'is_invoiced': True}, context=context)
-    
-        print"Hr monthly attendivance calculation ",a
-        return id
+        super(hr_payslip, self).hr_verify_sheet(cr, uid, ids, context=context)
+        
+        
+        
+        obj = self.browse(cr, uid, ids, context=context)
+        employee_id = obj[0].employee_id.id
+        mont = datetime.strptime(str(obj[0].date_from), '%Y-%m-%d').strftime('%m')
+        year = datetime.strptime(str(obj[0].date_from), '%Y-%m-%d').strftime('%Y')
+        slip_month= mont +'-'+year
+        print"before",employee_id
+        hr_id = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('name','=',slip_month),('employee_id','=',employee_id)]) 
+        print"After"
+        monthly_att= self.pool.get('hr.monthly.attendance.calculation').write(cr, uid, hr_id, {'is_invoiced': True}, context=context)
+        return monthly_att
     
     
    
@@ -603,18 +597,13 @@ class hr_payslip(osv.osv):
             date_tto=date_today
         else:
             date_tto=date_to
-        return {'value': {'date_to':date_tto}}
+        return {'value': {'date_to':date_tto,'date_from':date_from}}
     
     
     
     
     def _get_last_pull(self, cr, uid, ids): 
-        sql = """select attendance_date FROM hr_device_pull_log ORDER BY attendance_date DESC LIMIT 1"""
-        cr.execute(sql)
-        pull_date = cr.fetchone()[0]
-        print"last pull",pull_date
-        return pull_date
-    
+        return self.pool.get('sms.pull.hr.machine.data')._get_last_pull(cr, uid, ids)
     
     
     
