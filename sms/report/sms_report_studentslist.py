@@ -252,8 +252,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
     
     def get_student_biodata(self,form):
         
-        call_fees_lines = self.pool.get('sms.student').get_student_fees_lines(self.cr,self.uid,22,70,'Academics','fee_paid')
-        print "fee return liens",call_fees_lines
+#         call_fees_lines = self.pool.get('sms.student').get_student_fees_lines(self.cr,self.uid,22,70,'Academics','fee_paid')
+#         print "fee return liens",call_fees_lines
         res = []
         s_no = 0
         _ids = self.pool.get('sms.academiccalendar.student').search(self.cr ,self.uid ,[('name','=',form['acad_cal'][0])])

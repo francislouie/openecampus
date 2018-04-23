@@ -7,6 +7,9 @@ import os
 import xlwt
 from openerp.report import report_sxw
 from openerp.tools import amount_to_text_en
+import calendar
+from datetime import date
+from datetime import datetime
 
 class report_payslip_inherited(report_sxw.rml_parse):
 
@@ -14,8 +17,35 @@ class report_payslip_inherited(report_sxw.rml_parse):
         super(report_payslip_inherited, self).__init__(cr, uid, name, context)
         self.localcontext.update({
             'get_payslip_lines': self.get_payslip_lines,
-            'print_payslipslist_signature_list': self.print_payslipslist_signature_list
+            'print_payslipslist_signature_list': self.print_payslipslist_signature_list,
+            'get_attendance_details': self.get_attendance_details,
+            'get_oneday_salary': self.get_oneday_salary
         })
+        
+    def get_oneday_salary(self, obj, date_to):
+        print "inherited report called lled lled called"
+        payslip_line = self.pool.get('hr.payslip.line')
+        final_obj = {}
+        result = []
+        res = []
+        ids = []
+        year = int(datetime.strptime(date_to, '%Y-%m-%d').strftime('%Y'))
+        month = int(datetime.strptime(date_to, '%Y-%m-%d').strftime('%m'))
+        days = int(calendar.monthrange(year, month)[1])
+        
+        for id in range(len(obj)):
+            if obj[id].appears_on_payslip == True:
+                ids.append(obj[id].id)
+                print'--Employee Id', obj[id].id
+        if ids:
+            res = payslip_line.browse(self.cr, self.uid, ids)
+            for r in res:
+                if r.code == 'GROSS':
+                    final_obj['fullday'] = r.total / days
+                    final_obj['halfday'] = final_obj['fullday'] / 2
+        result.append(final_obj)
+        return result
+    
 
     def get_payslip_lines(self, obj):
         print "inherited report called lled lled called"
@@ -25,11 +55,64 @@ class report_payslip_inherited(report_sxw.rml_parse):
         for id in range(len(obj)):
             if obj[id].appears_on_payslip == True:
                 ids.append(obj[id].id)
-                
+                print'--Employee Id', obj[id].id
         if ids:
             res = payslip_line.browse(self.cr, self.uid, ids)
             print "Test Values for Payslips ----   ", res
         return res
+    
+    def get_attendance_details(self, emp_id, date_from, date_to):
+        print "figuring out the attendance particulars"
+        result = []
+        total_recs = []
+        attendance_rec = {}
+        final_recs = {}
+        date_f = datetime.strptime(date_from, '%Y-%m-%d').strftime('%Y-%m-%d')
+        date_t = datetime.strptime(date_to, '%Y-%m-%d').strftime('%Y-%m-%d')
+
+        attendance_ids = self.pool.get('hr.employee.attendance').search(self.cr,self.uid, [('employee_id','=',emp_id),('attendance_date','>=',str(date_f)),('attendance_date','<=',str(date_t))])
+
+        if attendance_ids:
+            print'----- There are Ids in attendance for this employee ------', attendance_ids
+            attendance_recs = self.pool.get('hr.employee.attendance').browse(self.cr, self.uid, attendance_ids)
+            for rec in attendance_recs:
+                
+                if rec.final_status == 'Status Not Clear':
+                    attendance_rec['status'] = 'Half-day'
+                    attendance_rec['date'] = rec.attendance_date
+                    attendance_rec['signin'] = rec.sign_in
+                    attendance_rec['signout'] = rec.sign_out
+                    attendance_rec['short_min'] = rec.total_short_minutes
+                    total_recs.append(attendance_rec)
+                    
+                elif rec.final_status == 'Absent':
+                    attendance_rec['status'] = 'Absent'
+                    attendance_rec['date'] = rec.attendance_date
+                    attendance_rec['signin'] = rec.sign_in
+                    attendance_rec['signout'] = rec.sign_out
+                    attendance_rec['short_min'] = rec.total_short_minutes
+                    total_recs.append(attendance_rec)
+                    
+                elif rec.final_status == 'Present' and (rec.total_short_minutes >= 20 and rec.total_short_minutes < 30):
+                    attendance_rec['status'] = '20 minutes late'
+                    attendance_rec['date'] = rec.attendance_date
+                    attendance_rec['signin'] = rec.sign_in
+                    attendance_rec['signout'] = rec.sign_out
+                    attendance_rec['short_min'] = rec.total_short_minutes
+                    total_recs.append(attendance_rec)
+                    
+                elif rec.final_status == 'Present' and rec.total_short_minutes >= 30:
+                    attendance_rec['status'] = '30 minutes late'
+                    attendance_rec['date'] = rec.attendance_date
+                    attendance_rec['signin'] = rec.sign_in
+                    attendance_rec['signout'] = rec.sign_out
+                    attendance_rec['short_min'] = rec.total_short_minutes
+                    total_recs.append(attendance_rec)
+                    
+            print'----- recs -------', total_recs    
+            final_recs.update({'total_recs': total_recs})
+#             result.append(final_recs)
+        return total_recs
     
     def print_payslipslist_signature_list(self, cr, uid, ids, data):
         result = []
@@ -105,6 +188,6 @@ class report_payslip_inherited(report_sxw.rml_parse):
         book.save(path)
         return
 
-report_sxw.report_sxw('report.payslip_inherited', 'hr.payslip', 'sms_hr/report/report_payslip_inherited.rml', parser=report_payslip_inherited)
+report_sxw.report_sxw('report.payslip_inherited', 'hr.payslip', 'sms_hr/report/report_payslip_inherited.rml', parser=report_payslip_inherited, header='external')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

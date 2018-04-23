@@ -160,8 +160,6 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         missing_empleado_id = self.read(cr, uid, ids)[0]['missing_empleado']
         if missing_empleado_id:
             raise osv.except_osv((),'Some employees have missing Empleado IDs, Cannot Proceed!')
-
-         
          
         # Check if there are employees with departments not assigned in the wizard 
         department_not_set_id = self.read(cr, uid, ids)[0]['department_not_set']
@@ -221,6 +219,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
 #                     print "---------------------------     json response    -----------------------------",read,ack
                     for att_record in read['att_records']:
                         device_id = att_record['device_id']
+
 #                         print "empleado id",att_record['user_empleado_id']
                         if att_record['user_empleado_id'] not in emp_id:
                             emp_id.append(att_record['user_empleado_id'])
@@ -228,12 +227,12 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                     for att_record in read['att_records']:
                         att_value = att_record['att_time']
                         att_date = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
-                        if att_date not in dates:
-                            dates.append(att_date)
-                        
-                    for att_record in read['att_records']:
                         att_value = att_record['att_time']
                         att_time = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H%M%S')
+                        if att_record['user_empleado_id'] not in emp_id:
+                            emp_id.append(att_record['user_empleado_id'])
+                        if att_date not in dates:
+                            dates.append(att_date)
                         if att_time not in dates:
                             times.append(att_time)
             
@@ -248,11 +247,13 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                     att_value = att_records['att_time']           
                                     biometric_id = att_records['bio_id']
                                     user_id = att_records['user_empleado_id']
+
                                     device_id = att_records['device_id']
                                     
                                     date_time_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y-%m-%d %H:%M:%S')           
                                     date_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
                                     time_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H:%M:%S')
+                                    
                                     for date in dates:
                                         if date_stamp == date:
                                             search_rec = self.pool.get('hr.attendance').search(cr,uid,[('employee_id','=',employee_rec[0].id),('attendance_date','=',date_stamp),('attendance_time','=',time_stamp)])   
@@ -328,6 +329,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                                     print " not found on ERP for emplead acc",employee_rec
          
             item2 += 1
+            
         self.compute_attendance_absentees(cr, uid, ids, data)
         self.summaries_employee_attendance(cr, uid, ids, data)
         return True    
