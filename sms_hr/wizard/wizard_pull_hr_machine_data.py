@@ -224,7 +224,45 @@ class sms_pull_hr_machine_data(osv.osv_memory):
 #                         print "empleado id",att_record['user_empleado_id']
                         if att_record['user_empleado_id'] not in emp_id:
                             emp_id.append(att_record['user_empleado_id'])
-                                
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        
                     for att_record in read['att_records']:
                         att_value = att_record['att_time']
                         att_date = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
@@ -470,48 +508,6 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                         print "creating new record in attendance calculation table for "+str(emp)
         return
 sms_pull_hr_machine_data()
-
-
-
-
-<<< HEAD
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

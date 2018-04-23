@@ -252,13 +252,13 @@ class hr_monthly_attendance_calculation(osv.osv):
         'contract_id': fields.many2one('hr.contract'),
         'employee_id': fields.many2one('hr.employee'),
         'remarks': fields.function(get_remarks, method=True, string='Remarks',type='char'),
-        'twenty_minutes_late':fields.integer('Twenty Minutes late'),
-        'thirty_minutes_late':fields.integer('Thirty_minutes_late'),
+#         'twenty_minutes_late':fields.integer('Twenty Minutes late'),
+#         'thirty_minutes_late':fields.integer('Thirty_minutes_late'),
 #         'half_days': fields.integer('No. of Half Days'),
         'half_days': fields.function(get_half_days, method=True, string='Half dayse',type='integer'),
-#         'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
+        'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
         'deduction_on_twenty_minutes_late': fields.function(get_decuction_twentry_m_late, method=True, string='Deduction (Days) On 20min',type='integer'),
-        #'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
+        'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
 
         'deduction_on_thirty_minutes_late': fields.function(get_decuction_thirty_m_late, method=True, string='Deduction (Days) On 30min',type='integer'),
         'half_days': fields.integer('No. of Half Days'),
@@ -569,8 +569,9 @@ class hr_payslip(osv.osv):
         slip_month= mont +'-'+year
         print"before",employee_id
         hr_id = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('name','=',slip_month),('employee_id','=',employee_id)]) 
-        print"After"
+        print"After",hr_id
         monthly_att= self.pool.get('hr.monthly.attendance.calculation').write(cr, uid, hr_id, {'is_invoiced': True}, context=context)
+        print"Is invoiced",monthly_att
         return monthly_att
     
     
