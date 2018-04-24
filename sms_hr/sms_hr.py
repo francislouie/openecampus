@@ -252,13 +252,13 @@ class hr_monthly_attendance_calculation(osv.osv):
         'contract_id': fields.many2one('hr.contract'),
         'employee_id': fields.many2one('hr.employee'),
         'remarks': fields.function(get_remarks, method=True, string='Remarks',type='char'),
-        'twenty_minutes_late':fields.integer('Twenty Minutes late'),
-        'thirty_minutes_late':fields.integer('Thirty_minutes_late'),
+#         'twenty_minutes_late':fields.integer('Twenty Minutes late'),
+#         'thirty_minutes_late':fields.integer('Thirty_minutes_late'),
 #         'half_days': fields.integer('No. of Half Days'),
         'half_days': fields.function(get_half_days, method=True, string='Half dayse',type='integer'),
-#         'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
+        'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
         'deduction_on_twenty_minutes_late': fields.function(get_decuction_twentry_m_late, method=True, string='Deduction (Days) On 20min',type='integer'),
-        #'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
+        'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
 
         'deduction_on_thirty_minutes_late': fields.function(get_decuction_thirty_m_late, method=True, string='Deduction (Days) On 30min',type='integer'),
         'half_days': fields.integer('No. of Half Days'),
@@ -550,7 +550,10 @@ class hr_payslip(osv.osv):
         date_today = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         # Static date is set for testing
 #         date_last= '2018-04-17 12:00:00'
-        if  (date_today < pull_date):
+        print"pull date",pull_date
+        print"today date",date_today
+        if  (date_today > pull_date):
+        
             raise osv.except_osv(('First Pull attendance'),'')
         else:
             payslip_id = super(hr_payslip, self).create(cr, uid, vals, context=context)

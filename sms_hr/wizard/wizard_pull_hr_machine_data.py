@@ -476,9 +476,6 @@ sms_pull_hr_machine_data()
 
 
 
-<<< HEAD
-
-
 
 
 
