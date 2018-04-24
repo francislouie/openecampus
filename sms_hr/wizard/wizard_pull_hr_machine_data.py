@@ -142,189 +142,225 @@ class sms_pull_hr_machine_data(osv.osv_memory):
       
     def pull_attendance_device_data(self, cr, uid, ids, data):
         import requests
-        
-         
-        # Check if Current Branch ID field is set in the wizard 
-        branch_id = self.read(cr, uid, ids)[0]['branch_id']
-        if not branch_id or branch_id == 0:
-            raise osv.except_osv((),'No Branch ID Set, Cannot Proceed!')
-         
-         
-        # Check if there are inactive employees in the wizard 
-        inactive_id = self.read(cr, uid, ids)[0]['inactive_employees']
-        if inactive_id:
-            raise osv.except_osv((),'There are inactive employees in system, Cannot Proceed!')
-         
-         
-        # Check if there are employees with missing empleado ids in the wizard 
-        missing_empleado_id = self.read(cr, uid, ids)[0]['missing_empleado']
-        if missing_empleado_id:
-            raise osv.except_osv((),'Some employees have missing Empleado IDs, Cannot Proceed!')
-         
-         
-        # Check if there are employees with departments not assigned in the wizard 
-        department_not_set_id = self.read(cr, uid, ids)[0]['department_not_set']
-        if department_not_set_id:
-            raise osv.except_osv((),'Some employees have not been assigned proper Departments, Cannot Proceed!')
-         
-         
-        # Check if there are departments with no schedules in the wizard 
-        schedules_not_set_id = self.read(cr, uid, ids)[0]['schedules_not_set']
-        if schedules_not_set_id:
-            raise osv.except_osv((),'Some departments are without schedules, Cannot Proceed!')
-         
-         
-        # Check if Month is selected in the wizard
-        month_comp_date = self.read(cr, uid, ids)[0]['month_comp']
-        if not month_comp_date:
-            raise osv.except_osv((),'Date is required!')
-        
-        
-        # Assign value of Pull all previous record boolean to variable
-        all_records = self.read(cr, uid, ids)[0]['fetch_all_records']
+        import datetime, calendar
         
         
         
-        # Select branch id from res_company based on the currently logged in user from res_users
-        company_query="""select empleado_branch_id from res_company where
-            id=(select company_id from res_users where id="""+str(uid)+""" )"""
-       
-        cr.execute(company_query)
-        branch_id=cr.fetchone()[0]
-        print("-----branch id-------", str(branch_id))
+#         # Check if Current Branch ID field is set in the wizard 
+#         branch_id = self.read(cr, uid, ids)[0]['branch_id']
+#         if not branch_id or branch_id == 0:
+#             raise osv.except_osv((),'No Branch ID Set, Cannot Proceed!')
+#          
+#          
+#         # Check if there are inactive employees in the wizard 
+#         inactive_id = self.read(cr, uid, ids)[0]['inactive_employees']
+#         if inactive_id:
+#             raise osv.except_osv((),'There are inactive employees in system, Cannot Proceed!')
+#          
+#          
+#         # Check if there are employees with missing empleado ids in the wizard 
+#         missing_empleado_id = self.read(cr, uid, ids)[0]['missing_empleado']
+#         if missing_empleado_id:
+#             raise osv.except_osv((),'Some employees have missing Empleado IDs, Cannot Proceed!')
+#          
+#          
+#         # Check if there are employees with departments not assigned in the wizard 
+#         department_not_set_id = self.read(cr, uid, ids)[0]['department_not_set']
+#         if department_not_set_id:
+#             raise osv.except_osv((),'Some employees have not been assigned proper Departments, Cannot Proceed!')
+#          
+#          
+#         # Check if there are departments with no schedules in the wizard 
+#         schedules_not_set_id = self.read(cr, uid, ids)[0]['schedules_not_set']
+#         if schedules_not_set_id:
+#             raise osv.except_osv((),'Some departments are without schedules, Cannot Proceed!')
+#          
+#          
+#         # Check if Month is selected in the wizard
+#         month_comp_date = self.read(cr, uid, ids)[0]['month_comp']
+#         if not month_comp_date:
+#             raise osv.except_osv((),'Date is required!')
+#         
+#         
+#         # Assign value of Pull all previous record boolean to variable
+#         all_records = self.read(cr, uid, ids)[0]['fetch_all_records']
+#         
+#         
+#         
+#         # Select branch id from res_company based on the currently logged in user from res_users
+#         company_query="""select empleado_branch_id from res_company where
+#             id=(select company_id from res_users where id="""+str(uid)+""" )"""
+#        
+#         cr.execute(company_query)
+#         branch_id=cr.fetchone()[0]
+#         print("-----branch id-------", str(branch_id))
+        
+        
+        # check if records exists for every employee for the current month
+        emp_ids = self.pool.get('hr.employee').search(cr,uid,[('isactive','=',True), ('punch_attendance','=','yes'), ('empleado_account_id','!=','')])
+        
+        current_date = datetime.datetime.today().strftime('%Y-%m-%d')
+        salary_month = datetime.datetime.today().strftime('%m-%Y')
+        current_month_name = datetime.datetime.today().strftime('%B')
+        year = int(datetime.datetime.strptime(str(current_date), '%Y-%m-%d').strftime('%Y'))
+        month = int(datetime.datetime.strptime(str(current_date), '%Y-%m-%d').strftime('%m'))
+
+        num_days = calendar.monthrange(year, month)[1]
+        current_month_dates = [datetime.date(year, month, day) for day in range(1, num_days+1)]
+        
+        for emp_id in emp_ids:
+            
+            attendance_exists = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_id),('attendance_date','=',current_date)])
+        
+            # if records don't exist then create records for each employee in employee attendance for the this current month
+            if not attendance_exists:
+                for date in current_month_dates:
+                                        date_stamp = date.strftime('%Y%m%d')
+                                        self.pool.get('hr.employee.attendance').create(cr, uid, {'employee_id': emp_id,'attendance_date': date_stamp, 
+                                            'sign_in': '','sign_out': '','final_status': 'Unknown','attendance_month': str(current_month_name)})
+        
+        
+            # create an entry against the current employee in the hr_monthly_attendance_calcualtion table
+            contr_ids = self.pool.get('hr.contract').search(cr,uid,[('employee_id','=',emp_id)])
+            if contr_ids:
+                    exists = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('employee_id','=',emp_id),('name','=',salary_month),('contract_id','=',contr_ids[0])]) 
+                      
+                    if not exists:
+                        self.pool.get('hr.monthly.attendance.calculation').create(cr,uid,{'employee_id':emp_id,'contract_id':contr_ids[0],'calendar_month':current_date,'name':salary_month,'absentees_this_month':0})
         
         # Fetch all records if all previous records checkbox is selected
-        if all_records:
-            ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id='+str(branch_id)+'&ack_id=0')
-             
-        emp_id = []
-        dates = []
-        times = []
-        item2 = 0
-        status = 'ok'
-        device_id = ''
-                     
-        while status == 'ok':
-            item = 0
-            # Development API
-#             r = requests.get('http://api.smilesn.com/empleado/test_attendance.php?org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24')
-            # Production API
-            r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id='+str(branch_id))
-            if(r.status_code == 200):
-
-                read = r.json()
-                print'----------- RAW DATA ------------------',read
-                if(read['status']=='ok'):
-                    ack_id = read['acknowledge_id']
-                    ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id='+str(branch_id)+'&ack_id='+str(ack_id)) 
-#                     print "---------------------------     json response    -----------------------------",read,ack
-                    for att_record in read['att_records']:
-                        device_id = att_record['device_id']
-                        att_value = att_record['att_time']
-                        att_date = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
-                        att_value = att_record['att_time']
-                        att_time = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H%M%S')
-                        if att_record['user_empleado_id'] not in emp_id:
-                            emp_id.append(att_record['user_empleado_id'])
-                        if att_date not in dates:
-                            dates.append(att_date)
-                        if att_time not in dates:
-                            times.append(att_time)
-            
-                    while item < len(emp_id):
-                        employee_id = self.pool.get('hr.employee').search(cr,uid,[('empleado_account_id','=',str(emp_id[item]))])
-                        employee_rec = self.pool.get('hr.employee').browse(cr,uid,employee_id)
-                        if employee_rec:
-#                             print "----------    Data of user with ID   ---------------------",employee_rec[0].name_related
-                            for att_records in read['att_records']: 
-                                if att_records['user_empleado_id'] == emp_id[item]:
-                    
-                                    att_value = att_records['att_time']           
-                                    biometric_id = att_records['bio_id']
-                                    user_id = att_records['user_empleado_id']
-                                    device_id = att_records['device_id']         
-                                    date_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
-                                    time_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H:%M:%S')
-                                    
-                                    for date in dates:
-                                        if date_stamp == date:
-                                            search_rec = self.pool.get('hr.attendance').search(cr,uid,[('employee_id','=',employee_rec[0].id),('attendance_date','=',date_stamp),('attendance_time','=',time_stamp)])   
-                                            if not search_rec:
-                                                result = self.pool.get('hr.attendance').create(cr, uid, {
-                                                'attendance_date': date_stamp,
-                                                'attendance_time': time_stamp,                            
-                                                'status': 'Sign In',
-                                                'action':'sign_in',
-                                                'name': '2018-01-11 07:45:23',
-                                                'empleado_account_id': user_id, 
-                                                'emp_regno_on_device': biometric_id,
-                                                'employee_name': employee_rec[0].name_related
-                                                })  
-#                                                   
-                        item += 1
-  
-            status = read['status']
         
-        # Logging functionality on successful Pull
-        if status == '0':
-
-            time_detail = datetime.now()
-            rec_id = self.pool.get('res.users').search(cr, uid, [('id','=',uid)])
-            user = self.pool.get('res.users').browse(cr, uid, rec_id[0])
-            
-            self.pool.get('hr.device.pull.log').create(cr, uid, {
-                'device_id': device_id,
-                'status': 'success',
-                'date_time_pulled': time_detail,
-                'pulled_by': user.login,
-            })                          
-                         
-
-
-        while item2 < len(emp_id):
-            employee_id = self.pool.get('hr.employee').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2]))])
-            employee_rec = self.pool.get('hr.employee').browse(cr,uid,employee_id) 
-#                     print '-------------HR Employeee Table-------------'
-            for date in dates:
-#                             print "----------- All Dates -------------", date
-                            search_rec1 = self.pool.get('hr.attendance').search(cr,uid,[('empleado_account_id','=',emp_id[item2]),('attendance_date', '=', date)])                                            
-                            if search_rec1:
-                                recs_found1 = self.pool.get('hr.attendance').browse(cr,uid,search_rec1) 
-                                emp_time_recs = sorted(recs_found1, key=lambda k: k['attendance_time']) 
-                                emptime_list = []
-                                signin = True
-                                for rec2 in emp_time_recs:
-                                    emptime_list.append(rec2.attendance_time)
-                                    if signin == True:
-                                        result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign In'})
-                                        signin = False
-                                    else:
-                                        result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out'}) 
-                                        signin = True 
-                              
-                                if employee_rec:
-#                                     print'------------- Dates for this employee -------------- ', date, ' ---- ',employee_rec[0].id   
-                                    employee_date = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',employee_rec[0].id),('attendance_date','=',date)])
-                                    if not employee_date:
-                                        if(emptime_list[0] == emptime_list[-1]):
-                                            f_status = 'Status Not Clear'
-                                        else:
-                                            f_status = 'Present'
-                                        self.pool.get('hr.employee.attendance').create(cr, uid, {
-                                            'employee_id': employee_rec[0].id,
-                                            'attendance_date': date, 
-                                            'sign_in': emptime_list[0],
-                                            'sign_out': emptime_list[-1],
-                                            'final_status': f_status,
-                                            'attendance_month': str(datetime.strptime(date,'%Y%m%d').strftime('%B'))})
-                                else:
-                                    print " not found on ERP for emplead acc",employee_rec
-         
-            item2 += 1
-            
-        self.compute_attendance_absentees(cr, uid, ids, data)
-
-        self.summaries_employee_attendance(cr, uid, ids, data)
+#         if all_records:
+#             ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id='+str(branch_id)+'&ack_id=0')
+#              
+#         emp_id = []
+#         dates = []
+#         times = []
+#         item2 = 0
+#         status = 'ok'
+#         device_id = ''
+#                      
+#         while status == 'ok':
+#             item = 0
+#             # Development API
+# #             r = requests.get('http://api.smilesn.com/empleado/test_attendance.php?org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id=24')
+#             # Production API
+#             r = requests.get('http://api.smilesn.com/attendance_pull.php?operation=pull_attendance&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id='+str(branch_id))
+#             if(r.status_code == 200):
+# 
+#                 read = r.json()
+#                 print'----------- RAW DATA ------------------',read
+#                 if(read['status']=='ok'):
+#                     ack_id = read['acknowledge_id']
+#                     ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id='+str(branch_id)+'&ack_id='+str(ack_id)) 
+# #                     print "---------------------------     json response    -----------------------------",read,ack
+#                     for att_record in read['att_records']:
+#                         device_id = att_record['device_id']
+#                         att_value = att_record['att_time']
+#                         att_date = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
+#                         att_value = att_record['att_time']
+#                         att_time = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H%M%S')
+#                         if att_record['user_empleado_id'] not in emp_id:
+#                             emp_id.append(att_record['user_empleado_id'])
+#                         if att_date not in dates:
+#                             dates.append(att_date)
+#                         if att_time not in dates:
+#                             times.append(att_time)
+#             
+#                     while item < len(emp_id):
+#                         employee_id = self.pool.get('hr.employee').search(cr,uid,[('empleado_account_id','=',str(emp_id[item]))])
+#                         employee_rec = self.pool.get('hr.employee').browse(cr,uid,employee_id)
+#                         if employee_rec:
+# #                             print "----------    Data of user with ID   ---------------------",employee_rec[0].name_related
+#                             for att_records in read['att_records']: 
+#                                 if att_records['user_empleado_id'] == emp_id[item]:
+#                     
+#                                     att_value = att_records['att_time']           
+#                                     biometric_id = att_records['bio_id']
+#                                     user_id = att_records['user_empleado_id']
+#                                     device_id = att_records['device_id']         
+#                                     date_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%Y%m%d')
+#                                     time_stamp = datetime.strptime(att_value,'%Y%m%d%H%M%S').strftime('%H:%M:%S')
+#                                     
+#                                     for date in dates:
+#                                         if date_stamp == date:
+#                                             search_rec = self.pool.get('hr.attendance').search(cr,uid,[('employee_id','=',employee_rec[0].id),('attendance_date','=',date_stamp),('attendance_time','=',time_stamp)])   
+#                                             if not search_rec:
+#                                                 result = self.pool.get('hr.attendance').create(cr, uid, {
+#                                                 'attendance_date': date_stamp,
+#                                                 'attendance_time': time_stamp,                            
+#                                                 'status': 'Sign In',
+#                                                 'action':'sign_in',
+#                                                 'name': '2018-01-11 07:45:23',
+#                                                 'empleado_account_id': user_id, 
+#                                                 'emp_regno_on_device': biometric_id,
+#                                                 'employee_name': employee_rec[0].name_related
+#                                                 })  
+# #                                                   
+#                         item += 1
+#   
+#             status = read['status']
+#         
+#         # Logging functionality on successful Pull
+#         if status == '0':
+# 
+#             time_detail = datetime.now()
+#             rec_id = self.pool.get('res.users').search(cr, uid, [('id','=',uid)])
+#             user = self.pool.get('res.users').browse(cr, uid, rec_id[0])
+#             
+#             self.pool.get('hr.device.pull.log').create(cr, uid, {
+#                 'device_id': device_id,
+#                 'status': 'success',
+#                 'date_time_pulled': time_detail,
+#                 'pulled_by': user.login,
+#             })                          
+#                          
+# 
+# 
+#         while item2 < len(emp_id):
+#             employee_id = self.pool.get('hr.employee').search(cr,uid,[('empleado_account_id','=',str(emp_id[item2]))])
+#             employee_rec = self.pool.get('hr.employee').browse(cr,uid,employee_id) 
+# #                     print '-------------HR Employeee Table-------------'
+#             for date in dates:
+# #                             print "----------- All Dates -------------", date
+#                             search_rec1 = self.pool.get('hr.attendance').search(cr,uid,[('empleado_account_id','=',emp_id[item2]),('attendance_date', '=', date)])                                            
+#                             if search_rec1:
+#                                 recs_found1 = self.pool.get('hr.attendance').browse(cr,uid,search_rec1) 
+#                                 emp_time_recs = sorted(recs_found1, key=lambda k: k['attendance_time']) 
+#                                 emptime_list = []
+#                                 signin = True
+#                                 for rec2 in emp_time_recs:
+#                                     emptime_list.append(rec2.attendance_time)
+#                                     if signin == True:
+#                                         result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign In'})
+#                                         signin = False
+#                                     else:
+#                                         result = self.pool.get('hr.attendance').write(cr, uid, rec2.id, {'status': 'Sign Out'}) 
+#                                         signin = True 
+#                               
+#                                 if employee_rec:
+# #                                     print'------------- Dates for this employee -------------- ', date, ' ---- ',employee_rec[0].id   
+#                                     employee_date = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',employee_rec[0].id),('attendance_date','=',date)])
+#                                     if not employee_date:
+#                                         if(emptime_list[0] == emptime_list[-1]):
+#                                             f_status = 'Status Not Clear'
+#                                         else:
+#                                             f_status = 'Present'
+#                                         self.pool.get('hr.employee.attendance').create(cr, uid, {
+#                                             'employee_id': employee_rec[0].id,
+#                                             'attendance_date': date, 
+#                                             'sign_in': emptime_list[0],
+#                                             'sign_out': emptime_list[-1],
+#                                             'final_status': f_status,
+#                                             'attendance_month': str(datetime.strptime(date,'%Y%m%d').strftime('%B'))})
+#                                 else:
+#                                     print " not found on ERP for emplead acc",employee_rec
+#          
+#             item2 += 1
+#             
+#         self.compute_attendance_absentees(cr, uid, ids, data)
+# 
+#         self.summaries_employee_attendance(cr, uid, ids, data)
 
         return True    
     
