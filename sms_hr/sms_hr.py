@@ -6,7 +6,7 @@ from openerp.tools.translate import _
 # from dbus.decorators import method
 import calendar
 from pdftools.pdfdefs import false
-from matplotlib.legend_handler import update_from_first_child
+# from matplotlib.legend_handler import update_from_first_child
 #from samba.netcmd import domain
 
 DAYOFWEEK_SELECTION = [('0', 'Monday'),
@@ -324,6 +324,7 @@ class hr_employee(osv.osv):
         'emp_regno_on_device': fields.char('Reg No on Device'),
         'empleado_account_id': fields.char('Empleado Acc ID'),
         'default_devicee_id': fields.char('Default Device'),
+        'left_out':fields.boolean('Left Out'), 
         'punch_attendance':fields.selection([('yes','Yes'),('no','No')],'Attendance Punching Allowed ?')
     }
     _defaults = {
@@ -431,8 +432,24 @@ class hr_employee_attendance(osv.osv):
         print "***************** Early Going End*************************"
         return result
     
-    
-    
+    def get_signin_time(self, cr, uid, ids, name, args, context=None):
+        time = {}
+        emptime_list = []
+        for f in self.browse(cr, uid, ids, context=context):
+            print"employee id ",f.employee_id.id
+
+            employee_record = self.pool.get('hr.employee').browse(cr, uid, f.employee_id.id) 
+            print"empleado account id ",employee_record
+            employee_ids = self.pool.get('hr.attendance').search(cr,uid, [('empleado_account_id','=',employee_record.empleado_account_id),('attendance_date', '=', f.attendance_date)])
+            if employee_ids:
+                recs_found = self.pool.get('hr.attendance').browse(cr,uid,employee_ids) 
+                emp_time_recs = sorted(recs_found, key=lambda k: k['attendance_time']) 
+
+                emptime_list.append(emp_time_recs.attendance_time)
+                    
+            time[f.id] = emptime_list[0]
+        print"----sign in time----",emptime_list
+        return time
      
     def get_day_ofweek(self, cr, uid,ids, name, args, context=None):
         result = {}
@@ -453,12 +470,12 @@ class hr_employee_attendance(osv.osv):
       'employee_id': fields.many2one('hr.employee'),
       'attendance_date': fields.date('Date'),
       'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='char'),
-      'sign_in': fields.char('Sign In'),
+      'sign_in': fields.char('Sign Out'),
       'sign_out': fields.char('Sign Out'),
       'late_early_arrival': fields.function(get_late_arrival, method=True, string='Late Arrival',type='integer'),
       'early_late_going': fields.function(get_early_leaving, method=True, string='Early Departure',type='integer'),
       'total_short_minutes': fields.function(total_short_minutes, method=True, string='Short Min ',type='integer'),
-      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('public_holiday', 'Public Holiday'),('Holiday', 'Holiday'),('Not-Out', 'Not-CheckOut'),('Status Not Clear','Status Not Clear')], 'Status'),
+      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('public_holiday', 'Public Holiday'),('Holiday', 'Holiday'),('Not-Out', 'Not-CheckOut'),('Status Not Clear','Status Not Clear'),('Unknown','Unknown')], 'Status'),
       'attendance_month': fields.char('Attendance Month'),
       'invoiced': fields.boolean('Invoiced',readonly = 1)
     }
@@ -531,7 +548,10 @@ class hr_payslip_run(osv.osv):
         return {'value': {'date_end':date_tto,'date_start':date_from}}
 
     def _get_last_pull(self, cr, uid, ids): 
+
+
         return self.pool.get('sms.pull.hr.machine.data')._get_last_pull(cr, uid, ids)
+
     
 
     _columns = {
@@ -637,8 +657,8 @@ class hr_payslip(osv.osv):
                  }
     
     _defaults = {
-#                  'date_from': lambda *a: time.strftime('%Y-%m-01'),
-                 'last_pull':_get_last_pull
+                'date_from': lambda *a: time.strftime('%Y-%m-01'),
+                'last_pull':_get_last_pull
                  
     }
     
