@@ -3685,7 +3685,7 @@ class sms_student_class_promotion(osv.osv):
                                        ctr = ctr + 1
                                        if action == 'set_receivables':
                                            # it means set actual fees agains student smsfee_stduetfee
-                                           add_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line,month_id)
+                                           add_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line.name.fee_type.id,line,month_id)
                                if action == 'only_show_fees' :   
                                       string += line.fee_type.name + " = "+str(line.amount) + " X "+str(ctr)+" = "+str(line.amount*ctr)
                                #get all months from month fee register for which new classmonth is updated
@@ -3695,7 +3695,7 @@ class sms_student_class_promotion(osv.osv):
                                     mmonth = datetime.datetime.strptime(str(datetime.date.today()), '%Y-%m-%d').strftime('%m')
                                     smonth = self.pool.get('sms.session.months')._get_session_month_from_calendar_month(cr,uid,year,mmonth)[0]['session_month']
 
-                                    add_non_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line,smonth)
+                                    add_non_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line.name.fee_type.id,line,smonth)
 #                                                                                              insert_student_monthly_non_monthlyfee(self, cr, uid, std_id,acad_cal,fee_type_row,month):
                                total = total + line.amount
                                
@@ -4502,7 +4502,7 @@ class student_admission_register(osv.osv):
         if selected_fee_id:
             rec_sel_fee = self.pool.get('admission.register.student.fees').browse(cr,uid,selected_fee_id)
             for fee in rec_sel_fee:
-                add_std_fees =  self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, student_id,acad_cal_id,fee.name,fee.fee_month.id)
+                add_std_fees =  self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, student_id,acad_cal_id,fee.name.fee_type.id,fee.name,fee.fee_month.id)
                 if not add_std_fees:
                     fee_success = False
             if fee_success:
@@ -4891,7 +4891,7 @@ class sms_change_student_class_new(osv.osv):
                                        ctr = ctr + 1
                                        if action == 'set_receivables':
                                            # it means set actual fees agains student smsfee_stduetfee
-                                           add_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line,month_id)
+                                           add_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line.name.fee_type.id,line,month_id)
                                if action == 'only_show_fees' :   
                                       string += line.fee_type.name + " = "+str(line.amount) + " X "+str(ctr)+" = "+str(line.amount*ctr)
                                #get all months from month fee register for which new classmonth is updated
@@ -4902,7 +4902,7 @@ class sms_change_student_class_new(osv.osv):
                                     print "month from today >>>>>>>>>>>>>>>>>>>>",mmonth
                                     smonth = self.pool.get('sms.session.months')._get_session_month_from_calendar_month(cr,uid,year,10)
                                     print "got session month from caliedanr:",smonth[0]['session_month']
-                                    add_non_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line,smonth[0]['session_month'])
+                                    add_non_monthly_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, std_id,new_class,line.name.fee_type.id,line,smonth[0]['session_month'])
 #                                                                                              insert_student_monthly_non_monthlyfee(self, cr, uid, std_id,acad_cal,fee_type_row,month):
                                total = total + line.amount
                                

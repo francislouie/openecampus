@@ -83,7 +83,62 @@ class sms_session_months(osv.osv):
     """
     This object is inherited to keep some fields in session month related fees
     """
+    
     def update_monthly_feeregister(self, cr, uid, ids, name):
+        print "update fee register called:"
+        for f in self.browse(cr, uid, ids):
+            parent_session_id = f.session_id.id
+            #search all classes in this session
+            classes_ids = self.pool.get('sms.academiccalendar').search(cr,uid,[('session_id','=',parent_session_id)])
+            print "classes found ",classes_ids
+            if classes_ids:
+                rec_classes = self.pool.get('sms.academiccalendar').browse(cr, uid, classes_ids)
+               
+                for cur_cls in rec_classes:
+                    #search all fee structures in this class
+                    fees_ids = self.pool.get('smsfee.classes.fees').search(cr,uid,[('academic_cal_id','=',cur_cls.id)])
+                    if fees_ids:
+                        rec_fees = self.pool.get('smsfee.classes.fees').browse(cr, uid, fees_ids)
+                        print "class fee types ",rec_fees
+                        for fee in rec_fees:
+                        # search all feetypes in this fs of thi class
+                            ft_list = []
+                            fee_types_ids = self.pool.get('smsfee.classes.fees.lines').search(cr,uid,[('fee_type.category','=','Academics'),('parent_fee_structure_id','=',fee.id)])
+                            print "fee lines ",fee_types_ids
+                            if fee_types_ids:
+                                rec_fee_types = self.pool.get('smsfee.classes.fees.lines').browse(cr,uid,fee_types_ids)
+                                #now search all students for this class and this fee strucutre
+                                print "class ",cur_cls.id
+                                print "fee str ",fee.fee_structure_id.id
+                              
+                               
+                                students_ids = self.pool.get('sms.student').search(cr,uid,[('fee_type','=',fee.fee_structure_id.id),('current_class','=',cur_cls.id),('state','=',"Admitted")])
+                                print "student found ",students_ids
+                                if students_ids:
+                                   for this_ft in rec_fee_types:
+                                       #check if fee is monthly fee then continue
+                                       if this_ft.fee_type.subtype == 'Monthly_Fee':
+                                           generic_fee_id = this_ft.fee_type.id
+                                           amount = this_ft.amount
+                                           for this_student in students_ids:
+                                               #call method to add this fee to student
+                                        
+                                               call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student, cur_cls.id, generic_fee_id,amount, f.id)
+                                              
+                    #Update fee register object for this month
+                    # search if this month already exists then leav, otherwise create new record
+                    register_id = self.pool.get('smsfee.classfees.register').search(cr,uid,[('academic_cal_id','=',cur_cls.id),('month','=',f.id)])
+                    if not register_id:
+                        fee_register = self.pool.get('smsfee.classfees.register').create(cr,uid,{
+                                                            'academic_cal_id':cur_cls.id,                                                      
+                                                            'month':f.id,
+                                                                })
+            self.write(cr,uid,f.id,{'update_log':'Last update on:'+str(datetime.date.today()),'state':'Updated'})
+        return 
+    
+    
+    
+    def update_monthly_feeregister_old(self, cr, uid, ids, name):
         print "update fee register called:"
         for f in self.browse(cr, uid, ids):
             parent_session_id = f.session_id.id
@@ -120,7 +175,7 @@ class sms_session_months(osv.osv):
                                            for this_student in students_ids:
                                                #call method to add this fee to student
                                          
-                                               call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student, cur_cls.id, this_ft, f.id)
+                                               call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student, cur_cls.id,this_ft.fee_type.id, this_ft, f.id)
                                                
                     #Update fee register object for this month 
                     # search if this month already exists then leav, otherwise create new record
@@ -1137,7 +1192,87 @@ class smsfee_studentfee(osv.osv):
         print "get student total paybles",bal
         return bal[0]
     
-    def insert_student_monthly_non_monthlyfee(self, cr, uid, std_id, acad_cal, fee_type_row, month):
+    
+    
+#     This is the main method, replace old code with new one
+
+    def insert_student_monthly_non_monthlyfee(self, cr, uid, std_id, acad_cal, generic_fee_type,amount, month):
+        """This method will insert student monthly and non monthly fee
+           only when called in loop or without loop (admit student,re-admit student,student promotion and other wizards wlil call it)
+           Currently called by
+           1) update_monthly_feeregister() class:sms_session_months
+           2) called by admission register
+           3)called by promotion process
+           4) called by advance fee management
+           5) adding a single student fee doesont use this method becuase it ignores fee type row
+           later on we will udpate this method and we will remove use of fee_type_row if feasible, only generic fee_id will be used
+          
+           admin
+           """
+      
+        fee_already_exists =  self.pool.get('smsfee.studentfee').search(cr, uid,[('acad_cal_id', '=', acad_cal), ('student_id', '=', std_id), ('generic_fee_type', '=', generic_fee_type), ('due_month', '=', month)])
+        print "Fee Exists_____________",fee_already_exists
+        if not fee_already_exists:
+            print"Under the if condition "
+
+            # at this stage is assued that fee month and dues month are same for all cases, due month may change in exceptional cases, i.e when fee of all prevoius
+            #month is registered in current month against a student, this case due month for all fees will be current month to avoid fine,
+            fee_month = month
+            due_month = month
+
+            fee_amount = amount.amount
+        
+           
+            # If discount is given to the student, update the fee_amount
+            sql = """SELECT discount_given FROM sms_student WHERE id ="""+str(std_id)+""""""
+            cr.execute(sql)
+            discount_given = cr.fetchone()[0]
+
+            if discount_given is True:
+             
+                discount_fee_ids = self.pool.get('smsfee.discount').search(cr ,uid ,[('student_id','=',std_id),('fee_type','=',generic_fee_type)])
+         
+                if discount_fee_ids:
+
+                    discount_fee = self.pool.get('smsfee.discount').browse(cr,uid, discount_fee_ids[0])
+                    
+                
+                    
+                    fee_amount = discount_fee.discounted_fee
+                   
+                    print"fee_amountfee_amountfee_amountfee_amountfee_amount"
+                    full_amount = discount_fee.discounted_fee
+                    print "Student id and discounted fee",str(std_id),fee_amount
+                    print "Student id and Full fee",str(std_id),full_amount
+            fee_dcit= {
+                        'student_id': std_id,
+                        'acad_cal_id': acad_cal,
+                        'fee_type': None,
+                        'generic_fee_type':generic_fee_type,
+                        'date_fee_charged':datetime.date.today(),
+                        'due_month': due_month,
+                        'fee_month': fee_month,
+                        'paid_amount':0,
+                        'fee_amount': fee_amount, 
+                        'late_fee':0,
+                        'discount':0,
+                        'total_amount':fee_amount + 0,
+                        'reconcile':False,
+                        'state':'fee_unpaid',
+                     }
+          
+            create_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit)
+         
+            if create_fee:
+       
+                return True
+            else:
+                return False
+        else:
+                print"False False False False False False False False False False False False"
+                return False   
+    
+    def insert_student_monthly_non_monthlyfee_old(self, cr, uid, std_id, acad_cal, fee_type_row, month):
         """This method will insert student monthly and non monthly fee 
            only when called in loop or without loop (admit student,re-admit student,student promotion and other wizards wlil call it)
            Currently called by 
@@ -1212,7 +1347,7 @@ class smsfee_studentfee(osv.osv):
     def _get_total_payables(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-             result[f.id] = f.late_fee + f.fee_amount
+            result[f.id] = f.late_fee + f.fee_amount
         return result
     
     def set_refundable_fee(self, cr, uid, booklines_rw):
