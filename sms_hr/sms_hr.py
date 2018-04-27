@@ -17,6 +17,9 @@ DAYOFWEEK_SELECTION = [('0', 'Monday'),
                        ('5', 'Saturday'),
                        ('6', 'Sunday'),]
 
+ATTENDANCE_STATUS_LIST = [('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('public_holiday', 'Public Holiday'),('Holiday', 'Holiday'),('Status Not Clear','Status Not Clear'),('unknown','Unknown')]
+
+
 class res_company(osv.osv):
     
     """This object inherits res company adds fields related to accounts ."""
@@ -36,7 +39,6 @@ class hr_contract(osv.osv):
         for f in self.browse(cr, uid, ids, context=context):
             if f.deduction_choice == 'auto':
                 mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('is_invoiced','=', False)])
-                print"mss",mss
                 if mss:
                     rec = self.pool.get('hr.monthly.attendance.calculation').browse(cr,uid,mss[0]) 
                     deducted_amount = rec.final_deduced_amount 
@@ -82,7 +84,6 @@ class hr_monthly_attendance_calculation(osv.osv):
                 day_ded = 0
             
             result[f.id] = day_ded
-            print"resrrrrrrrrrrrult",result
         return result
     
     def get_deducted_amount_on_half_days(self, cr, uid,ids, name, args, context=None):
@@ -100,41 +101,21 @@ class hr_monthly_attendance_calculation(osv.osv):
             
             result[f.id] = deducted_amount
         return result
-#     def get_half_days(self, cr,  uid,ids, name, args, context=None):
-#         result = {}
-#         for f in self.browse(cr, uid, ids, context=context):
-#             total_late = f.twenty_minutes_late or 0
-#             if total_late >=3:
-#                 day_ded = int(total_late/3)
-#             else:
-#                 day_ded = 0
-#             
-#             result[f.id] = day_ded
-#             print"result",result
-#         return result
+
 
     def get_half_days(self, cr, uid,ids, name, args, context=None):
         result = {}
+        half_day_count = 0
         for f in self.browse(cr, uid, ids, context=context):
-            month_comp_date =f.calendar_month
-            year = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))
-            mont = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%m'))
-            if(mont <10):
-                month ='0'+str(mont)
-            else:
-                month =''+str(mont) 
-            mon_days = calendar.monthrange(year,mont)[1]
-            date_from =str(str(year)+'-'+str(month)+'-01')
-            date_to =str(str(year)+'-'+str(month)+'-'+str(mon_days))
-       
-            
-            half_days=0
-            emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
-            for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
-                if(emp.final_status == 'Status Not Clear'):
-                        half_days=half_days+1
-            result[f.id] = half_days
+            month_name = datetime.strptime(f.name, '%m-%Y').strftime('%B')
+            emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_month','=',month_name)]) 
+            if emp_att_ids:
+                for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
+                    if emp.sign_in != '00:00:00' and emp.sign_in == emp.sign_out:
+                        half_day_count += 1          
+            result[f.id] = half_day_count
         return result
+
 
     def get_twentry_m_late(self, cr, uid,ids, name, args, context=None):
         result = {}
@@ -154,7 +135,7 @@ class hr_monthly_attendance_calculation(osv.osv):
             twenty_minutes_late=0
             emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
             for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
-                if(emp.total_short_minutes >=20 and  emp.total_short_minutes< 30) and emp.final_status !='Status Not Clear':
+                if(emp.total_short_minutes >=20 and  emp.total_short_minutes< 30) and emp.final_status != ATTENDANCE_STATUS_LIST[5][0]:
                     twenty_minutes_late=twenty_minutes_late+1
             result[f.id] = twenty_minutes_late
         return result
@@ -177,7 +158,7 @@ class hr_monthly_attendance_calculation(osv.osv):
             thirty_minutes_late=0
             emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
             for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
-                if(emp.total_short_minutes >= 30 and emp.final_status !='Status Not Clear'):
+                if(emp.total_short_minutes >= 30 and emp.final_status != ATTENDANCE_STATUS_LIST[5][0]):
                     thirty_minutes_late=thirty_minutes_late+1
             result[f.id] = thirty_minutes_late
         return result 
@@ -200,6 +181,7 @@ class hr_monthly_attendance_calculation(osv.osv):
             net= f.absentees_this_month - f.approved_leaves_this_month 
             if net <0:
                 net = 0
+            print' --- net absentees this month ----', net
             result[f.id] = net
         return result
     
@@ -245,6 +227,19 @@ class hr_monthly_attendance_calculation(osv.osv):
             result[f.id] = "Per Day salary = "+str(per_day)+", Half Day Salary = "+str(half_day)
         return result
     
+    def get_absentees_this_month(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        absent_count = 0
+        for f in self.browse(cr, uid, ids, context=context):
+            month_name = datetime.strptime(f.name, '%m-%Y').strftime('%B')
+            emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_month','=',month_name)]) 
+            if emp_att_ids:
+                for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
+                    if emp.final_status =='Absent':
+                        absent_count += 1
+                        
+            result[f.id] = absent_count
+        return result
        
     _columns = {
         'calendar_month': fields.date('Month', required=True),
@@ -252,18 +247,13 @@ class hr_monthly_attendance_calculation(osv.osv):
         'contract_id': fields.many2one('hr.contract'),
         'employee_id': fields.many2one('hr.employee'),
         'remarks': fields.function(get_remarks, method=True, string='Remarks',type='char'),
-#         'twenty_minutes_late':fields.integer('Twenty Minutes late'),
-#         'thirty_minutes_late':fields.integer('Thirty_minutes_late'),
-#         'half_days': fields.integer('No. of Half Days'),
-        'half_days': fields.function(get_half_days, method=True, string='Half dayse',type='integer'),
+        'half_days': fields.function(get_half_days, method=True, string='Half days',type='integer'),
         'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
         'deduction_on_twenty_minutes_late': fields.function(get_decuction_twentry_m_late, method=True, string='Deduction (Days) On 20min',type='integer'),
         'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
-
         'deduction_on_thirty_minutes_late': fields.function(get_decuction_thirty_m_late, method=True, string='Deduction (Days) On 30min',type='integer'),
-        'half_days': fields.integer('No. of Half Days'),
         'amount_deducted_half_days': fields.function(get_deducted_amount_on_half_days, method=True, string='Deduction On Half Days',type='integer'),
-        'absentees_this_month': fields.integer('Absentees This month'),
+        'absentees_this_month': fields.function(get_absentees_this_month, method=True, string='Absentees This month',type='integer'),
         'amount_deducted_absentees': fields.function(get_deducted_amount_on_absentees, method=True, string='Deduction On Absentees',type='integer'),
         'approved_leaves_this_month': fields.integer('Leaves This month'),
         'net_absentees': fields.function(get_absentess_leave, method=True, string='Absentees After Leave',type='integer'),
@@ -324,10 +314,12 @@ class hr_employee(osv.osv):
         'emp_regno_on_device': fields.char('Reg No on Device'),
         'empleado_account_id': fields.char('Empleado Acc ID'),
         'default_devicee_id': fields.char('Default Device'),
-        'punch_attendance':fields.selection([('yes','Yes'),('no','No')],'Attendance Punching Allowed ?')
+        'punch_attendance':fields.selection([('yes','Yes'),('no','No')],'Attendance Punching Allowed ?'),
+        'left_out': fields.boolean('Left Out')
     }
     _defaults = {
-        'punch_attendance': 'yes'
+        'punch_attendance': 'yes',
+        'left_out': False
     }
 hr_employee()
 
@@ -356,7 +348,6 @@ class hr_employee_attendance(osv.osv):
             emp_dep_ids = self.pool.get('hr.employee').search(cr,uid, [('id','=',f.employee_id.id)])
             for emp in self.pool.get('hr.employee').browse(cr,uid, emp_dep_ids):
                 if (emp.department_id):
-                    print"department is assign"
                     emp_dep_id=emp.department_id.id
                 else:
                     print"department is not assign"     
@@ -373,7 +364,7 @@ class hr_employee_attendance(osv.osv):
                         lat_min = timedelta.days + float(timedelta.seconds) / 60
                 else: 
                     lat_min=0
-            
+             
             else:
                 lat_min=-10000
          
@@ -383,8 +374,8 @@ class hr_employee_attendance(osv.osv):
     def total_short_minutes(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            if(f.final_status=='Status Not Clear'):
-                print"Status Not Clear "
+            if f.final_status== ATTENDANCE_STATUS_LIST[5][0]:
+                print"Status Not Clear 1"
                 result[f.id]=0
             else:    
                 result[f.id] = f.late_early_arrival + f.early_late_going
@@ -400,11 +391,10 @@ class hr_employee_attendance(osv.osv):
         for f in self.browse(cr, uid, ids, context=context):
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
-            
+             
             emp_dep_ids = self.pool.get('hr.employee').search(cr,uid, [('id','=',f.employee_id.id)])
             for emp in self.pool.get('hr.employee').browse(cr,uid, emp_dep_ids):
                 if (emp.department_id):
-                    print"department is assign"
                     emp_dep_id=emp.department_id.id
                 else:
                     print"department is not assign"     
@@ -422,7 +412,7 @@ class hr_employee_attendance(osv.osv):
                             early_minutes=0
                         else:
                             early_minutes = timedelta.days + float(timedelta.seconds) / 60
-                
+                 
                     else:
                         early_minutes=0
             else:
@@ -433,22 +423,86 @@ class hr_employee_attendance(osv.osv):
     
     def get_signin_time(self, cr, uid, ids, name, args, context=None):
         time = {}
-        emptime_list = []
         for f in self.browse(cr, uid, ids, context=context):
-            print"employee id ",f.employee_id.id
-
             employee_record = self.pool.get('hr.employee').browse(cr, uid, f.employee_id.id) 
-            print"empleado account id ",employee_record
             employee_ids = self.pool.get('hr.attendance').search(cr,uid, [('empleado_account_id','=',employee_record.empleado_account_id),('attendance_date', '=', f.attendance_date)])
             if employee_ids:
-                recs_found = self.pool.get('hr.attendance').browse(cr,uid,employee_ids) 
-                emp_time_recs = sorted(recs_found, key=lambda k: k['attendance_time']) 
-
-                emptime_list.append(emp_time_recs.attendance_time)
-                    
-            time[f.id] = emptime_list[0]
-        print"----sign in time----",emptime_list
+                recs_found = self.pool.get('hr.attendance').browse(cr,uid,employee_ids)
+                emp_time_recs = sorted(recs_found, key=lambda k: k['attendance_time'])
+                time[f.id] = emp_time_recs[0]['attendance_time']          
+#                 time[f.id] = recs_found.attendance_time
+            else:
+                time[f.id] = '00:00:00'
         return time
+    
+    def get_signout_time(self, cr, uid, ids, name, args, context=None):
+        time = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            employee_record = self.pool.get('hr.employee').browse(cr, uid, f.employee_id.id) 
+            employee_ids = self.pool.get('hr.attendance').search(cr,uid, [('empleado_account_id','=',employee_record.empleado_account_id),('attendance_date', '=', f.attendance_date)])
+            if employee_ids:
+                recs_found = self.pool.get('hr.attendance').browse(cr,uid,employee_ids)
+                emp_time_recs = sorted(recs_found, key=lambda k: k['attendance_time'])
+                time[f.id] = emp_time_recs[-1]['attendance_time']
+            else:
+                time[f.id] = '00:00:00'
+        return time
+    
+    
+    def get_final_status(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        final_status = ATTENDANCE_STATUS_LIST[6][0]
+        hr_holiday_rec = False
+        for f in self.browse(cr, uid, ids, context=context):
+            if f.sign_in == '00:00:00':
+                current_date = datetime.strptime(f.attendance_date,'%Y-%m-%d')
+                day = current_date.weekday()
+                employee_record = self.pool.get('hr.employee').browse(cr, uid, f.employee_id.id) 
+                hr_attendance_exists = self.pool.get('hr.attendance').search(cr,uid, [('empleado_account_id','=',employee_record.empleado_account_id),('attendance_date', '>=', f.attendance_date)])
+                if hr_attendance_exists:
+                    if f.employee_id.department_id:
+                                emp_rec_ids = self.pool.get('hr.schedule').search(cr,uid,[('department_id','=',f.employee_id.department_id.id),('state','=','validate')]) 
+                                if emp_rec_ids:
+                                    for sche in self.pool.get('hr.schedule').browse(cr,uid, emp_rec_ids):
+                                        if sche.public_holiday_ids:
+                                            for puh in sche.public_holiday_ids:
+                                                if puh.holiday_date == f.attendance_date:
+                                                    hr_holiday_rec =True
+
+                    if hr_holiday_rec:
+                        final_status = ATTENDANCE_STATUS_LIST[3][0]             #Public Holiday
+                        hr_holiday_rec = False
+                    else:    
+                        if(day==5 or day==6):
+                            
+                            final_status = ATTENDANCE_STATUS_LIST[4][0]         #Holiday
+                        else:    
+                            final_status = ATTENDANCE_STATUS_LIST[1][0]           #Absent
+            else:
+                if f.sign_in == f.sign_out:
+                    final_status = ATTENDANCE_STATUS_LIST[5][0]                   #Status Not Clear
+                    print'---------- status not clear hit -------------', final_status
+                else:
+                    final_status = ATTENDANCE_STATUS_LIST[0][0]                   #Present
+                    
+            result[f.id] = final_status
+        return result 
+    
+    
+    
+    def _get_status_not_clear(self, cr, uid, ies, month, context=None):
+        result = {}
+        status_count = 0
+        emp_ids = self.search(cr,uid,[('employee_id','=',ies),('attendance_month','=',month)])
+        if emp_ids:
+            for f in self.browse(cr, uid, emp_ids):
+                if f.sign_in != '00:00:00' and f.sign_in == f.sign_out:
+                    status_count += 1
+                print'----- STATUS NOT CLEAR COUNT ----', status_count
+            result = status_count    
+        return result
+    
+    
      
     def get_day_ofweek(self, cr, uid,ids, name, args, context=None):
         result = {}
@@ -460,7 +514,7 @@ class hr_employee_attendance(osv.osv):
             name_day=days[day]
             result[f.id] = name_day.upper()
         return result 
-    
+
     
     def set_month(self):
         return True
@@ -469,12 +523,12 @@ class hr_employee_attendance(osv.osv):
       'employee_id': fields.many2one('hr.employee'),
       'attendance_date': fields.date('Date'),
       'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='char'),
-      'sign_in': fields.char('Sign Out'),
-      'sign_out': fields.char('Sign Out'),
+      'sign_in': fields.function(get_signin_time, method=True, string='Sign In',type='char'),
+      'sign_out': fields.function(get_signout_time, method=True, string='Sign Out',type='char'),
       'late_early_arrival': fields.function(get_late_arrival, method=True, string='Late Arrival',type='integer'),
       'early_late_going': fields.function(get_early_leaving, method=True, string='Early Departure',type='integer'),
       'total_short_minutes': fields.function(total_short_minutes, method=True, string='Short Min ',type='integer'),
-      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('public_holiday', 'Public Holiday'),('Holiday', 'Holiday'),('Not-Out', 'Not-CheckOut'),('Status Not Clear','Status Not Clear'),('Unknown','Unknown')], 'Status'),
+      'final_status': fields.function(get_final_status, string='Status',type='selection', selection=ATTENDANCE_STATUS_LIST),
       'attendance_month': fields.char('Attendance Month'),
       'invoiced': fields.boolean('Invoiced',readonly = 1)
     }

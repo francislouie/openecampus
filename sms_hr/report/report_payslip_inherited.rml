@@ -276,24 +276,24 @@
         <para style="CaptionC">Attendance Details (in case of deduction)</para> 
     <blockTable colWidths="60.0,50.0,70.0,86.0,100.0" style="Table8">
       <tr>
-        <td> <para style="P14">Date</para></td>
+        <td> <para style="P13">Date</para></td>
         <td><para style="P14">Sign In</para></td>
         <td><para style="P14">Sign Out</para></td>
         <td><para style="P14">Short Minutes</para></td>
         <td><para style="P14">Status</para></td>
       </tr>
     </blockTable>
-
- 
+</section>
+ <section>
 <para style="P4">[[repeatIn(get_attendance_details(o.employee_id.id,o.date_from, o.date_to), 'r')]]</para>
 
       <blockTable colWidths="60.0,50.0,70.0,86.0,100.0" style="Table9">
 
         <tr>
-         <td><para style="P5">[[(r['date'])]]</para></td>
-          <td><para style="P5">[[(r['signin'])]]</para></td>
-           <td><para style="P5">[[(r['signout'])]]</para></td>
-            <td><para style="P5">[[(r['short_min'])]]</para></td>
+         <td><para style="P5">[[(r['attendance_date'])]]</para></td>
+          <td><para style="P5">[[(r['sign_in'])]]</para></td>
+           <td><para style="P5">[[(r['sign_out'])]]</para></td>
+            <td><para style="P5">[[(r['total_short_minutes'])]]</para></td>
              <td><para style="P5">[[(r['status'])]]</para></td>
         </tr>
       </blockTable>
