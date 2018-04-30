@@ -41,7 +41,7 @@ class report_payslip_inherited(report_sxw.rml_parse):
             res = payslip_line.browse(self.cr, self.uid, ids)
             for r in res:
                 if r.code == 'GROSS':
-                    final_obj['fullday'] = r.total / days
+                    final_obj['fullday'] = r.total / 30
                     final_obj['halfday'] = final_obj['fullday'] / 2
         result.append(final_obj)
         return result
@@ -77,40 +77,44 @@ class report_payslip_inherited(report_sxw.rml_parse):
             attendance_recs = self.pool.get('hr.employee.attendance').browse(self.cr, self.uid, attendance_ids)
             for rec in attendance_recs:
                 
-                if rec.final_status == 'Status Not Clear':
+                if rec.sign_in != '00:00:00' and rec.sign_in == rec.sign_out:
                     attendance_rec['status'] = 'Half-day'
-                    attendance_rec['date'] = rec.attendance_date
-                    attendance_rec['signin'] = rec.sign_in
-                    attendance_rec['signout'] = rec.sign_out
-                    attendance_rec['short_min'] = rec.total_short_minutes
-                    total_recs.append(attendance_rec)
+                    attendance_rec['attendance_date'] = rec.attendance_date
+                    attendance_rec['sign_in'] = rec.sign_in
+                    attendance_rec['sign_out'] = rec.sign_out
+                    attendance_rec['total_short_minutes'] = int(rec.total_short_minutes)
+                    total_recs.append(attendance_rec.copy())
+                    print'----------rec1--------',rec.attendance_date
                     
                 elif rec.final_status == 'Absent':
                     attendance_rec['status'] = 'Absent'
-                    attendance_rec['date'] = rec.attendance_date
-                    attendance_rec['signin'] = rec.sign_in
-                    attendance_rec['signout'] = rec.sign_out
-                    attendance_rec['short_min'] = rec.total_short_minutes
-                    total_recs.append(attendance_rec)
+                    attendance_rec['attendance_date'] = rec.attendance_date
+                    attendance_rec['sign_in'] = rec.sign_in
+                    attendance_rec['sign_out'] = rec.sign_out
+                    attendance_rec['total_short_minutes'] = int(rec.total_short_minutes)
+                    total_recs.append(attendance_rec.copy())
+                    print'----------rec2--------',rec.attendance_date
                     
                 elif rec.final_status == 'Present' and (rec.total_short_minutes >= 20 and rec.total_short_minutes < 30):
                     attendance_rec['status'] = '20 minutes late'
-                    attendance_rec['date'] = rec.attendance_date
+                    attendance_rec['attendance_date'] = rec.attendance_date
                     attendance_rec['signin'] = rec.sign_in
                     attendance_rec['signout'] = rec.sign_out
-                    attendance_rec['short_min'] = rec.total_short_minutes
-                    total_recs.append(attendance_rec)
+                    attendance_rec['total_short_minutes'] = int(rec.total_short_minutes)
+                    total_recs.append(attendance_rec.copy())
+                    print'----------rec3--------',rec.attendance_date
                     
                 elif rec.final_status == 'Present' and rec.total_short_minutes >= 30:
                     attendance_rec['status'] = '30 minutes late'
-                    attendance_rec['date'] = rec.attendance_date
-                    attendance_rec['signin'] = rec.sign_in
-                    attendance_rec['signout'] = rec.sign_out
-                    attendance_rec['short_min'] = rec.total_short_minutes
-                    total_recs.append(attendance_rec)
-                    
+                    attendance_rec['attendance_date'] = rec.attendance_date
+                    attendance_rec['sign_in'] = rec.sign_in
+                    attendance_rec['sign_out'] = rec.sign_out
+                    attendance_rec['total_short_minutes'] = int(rec.total_short_minutes)
+                    final_recs.update({'total_recs': attendance_rec})
+                    total_recs.append(attendance_rec.copy())
+                    print'----------rec4--------',rec.attendance_date
             print'----- recs -------', total_recs    
-            final_recs.update({'total_recs': total_recs})
+#             final_recs.update({'total_recs': total_recs})
 #             result.append(final_recs)
         return total_recs
     

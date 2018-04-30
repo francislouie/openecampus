@@ -100,11 +100,11 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
 
     def print_singlestudent_unpaidfee_report(self, cr, uid, ids, data):
         thisform = self.read(cr, uid, ids)[0]
-        std_id = thisform['student_id']
+        std_id = thisform['student_id'][0]
         std_rec = self.pool.get('sms.student').browse(cr, uid, std_id)
         selected_months = thisform['unpaidfee_months_id']
         category = thisform['category']
-        
+
         if std_rec.transport_availed == False and category == 'Transport':
             raise osv.except_osv(('Transport is not availed by this student.'), 'Please select another fee category!')
         #--------------------------------------------------------------------------

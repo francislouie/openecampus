@@ -114,6 +114,7 @@
             <field name="arch" type="xml">
                 <data>
                     <xpath expr="//field[@name='coach_id']" position="after">
+                        <field name="left_out" required="0" />
                         <field name="punch_attendance" required="1"/>
                     </xpath>
                     <xpath expr="//field[@name='active']" position="after">
