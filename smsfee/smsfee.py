@@ -433,16 +433,51 @@ class sms_academiccalendar(osv.osv):
                 result[f.id] = str(recovery)+"%"
         return result
     
+    
+    def forcasted_amount(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            print"returned from funciton"
+            total = 0
+            lines_ids = self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('name','=',f.id),('state','=','Current')])
+            print"sms academic students",lines_ids
+            lines_obj = self.pool.get('sms.academiccalendar.student').browse(cr ,uid , lines_ids)
+            for line in lines_obj: 
+                sql = """SELECT COALESCE(sum(fee_amount),'0') from smsfee_studentfee
+                         WHERE student_id = """+str(line.std_id.id)
+                cr.execute(sql)
+                row = cr.fetchone()
+                total = total + row[0]
+                result[f.id] = total 
+        return result
+    
+    def collected_amout(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        total = 0
+        for f in self.browse(cr, uid, ids, context=context):
+            lines_ids = self.pool.get('sms.academiccalendar.student').search(cr ,uid ,[('name','=',f.id),('state','=','Current')])
+            lines_obj = self.pool.get('sms.academiccalendar.student').browse(cr ,uid , lines_ids)
+            for line in lines_obj: 
+                sql = """SELECT COALESCE(sum(paid_amount),'0') from smsfee_studentfee
+                          WHERE student_id = """+str(line.std_id.id)+""" AND reconcile = True and state = 'fee_paid'"""       
+                cr.execute(sql)
+                row = cr.fetchone()
+                total = total + row[0]
+            result[f.id] = total
+        return result
+    
+    
+    
     _name = 'sms.academiccalendar'
     _inherit ='sms.academiccalendar'
     _columns = {
             'fee_structures':fields.one2many('smsfee.classes.fees','academic_cal_id','Fee Structure'),
             #new class fee object, aobve one will be deleted
-          #  'fee_update_till':fields.many2one('sms.session.months','Fee Updated Till'),
+            #'fee_update_till':fields.many2one('sms.session.months','Fee Updated Till'),
             'fee_update_till':fields.many2one('sms.session.months',' Fee Starts From Month'),
             'fee_register':fields.one2many('smsfee.classfees.register','academic_cal_id','Register'),
-            'class_forcasted_fee':fields.float('a'),
-            'class_fee_received':fields.float('a'),
+            'class_forcasted_fee':fields.function(forcasted_amount, method=True,  string='Forcasted',type='float'),
+            'class_fee_received':fields.function(collected_amout, method=True,  string='Collection',type='float'),
             'recovery_ratio':fields.function(_calculate_calculate_recovery, method=True,  string='Recovery(%)',type='char'),
             'annaul_fs_id':fields.many2one('smsfee.festructure.revision','Annual Fee Register'),
     }
@@ -861,10 +896,10 @@ class smsfee_classes_fees(osv.osv):
             for line in lines_obj: 
                 print"compare with feetype", line.id
                 print"compare with generic fee",line.fee_type.id
-#                  sql = """SELECT COALESCE(sum(fee_amount),'0') from smsfee_studentfee
-#                           WHERE fee_type = """+str(line)
                 sql = """SELECT COALESCE(sum(fee_amount),'0') from smsfee_studentfee
-                          WHERE generic_fee_type = """+str(line.fee_type.id)         
+                         WHERE fee_type = """+str(line.id)
+#                 sql = """SELECT COALESCE(sum(fee_amount),'0') from smsfee_studentfee
+#                           WHERE generic_fee_type = """+str(line.fee_type.id)         
                 cr.execute(sql)
                 row = cr.fetchone()
                 total = total + row[0]
@@ -877,10 +912,10 @@ class smsfee_classes_fees(osv.osv):
         for f in self.browse(cr, uid, ids, context=context):
             lines_ids = self.pool.get('smsfee.classes.fees.lines').search(cr,uid,[('parent_fee_structure_id','=',f.id)])
             for line in lines_ids: 
-#                  sql = """SELECT COALESCE(sum(paid_amount),'0') from smsfee_studentfee
-#                           WHERE fee_type = """+str(line)+""" AND reconcile = True and state = 'fee_paid'"""
                 sql = """SELECT COALESCE(sum(paid_amount),'0') from smsfee_studentfee
-                          WHERE fee_type = """+str(line)+""" AND reconcile = True and state = 'fee_paid'"""         
+                         WHERE fee_type = """+str(line)+""" AND reconcile = True and state = 'fee_paid'"""
+#                 sql = """SELECT COALESCE(sum(paid_amount),'0') from smsfee_studentfee
+#                           WHERE fee_type = """+str(line)+""" AND reconcile = True and state = 'fee_paid'"""         
                 cr.execute(sql)
                 row = cr.fetchone()
                 total = total + row[0]
@@ -1215,7 +1250,7 @@ class smsfee_studentfee(osv.osv):
                 string = f.description
             elif f.generic_fee_type.subtype == 'Monthly_Fee':
                 year = f.fee_month.name
-                string = str(f.fee_type.name) + " (" + str(month_name) + ")"
+                string = str(f.generic_fee_type.name) + " (" + str(month_name) + ")"
             else:
 
                 string = str(f.fee_type.name) + " (" + str(month_name) + ")//"
@@ -1268,7 +1303,7 @@ class smsfee_studentfee(osv.osv):
             fee_month = month
             due_month = month
 
-            fee_amount = amount.amount
+            fee_amount = amount
         
            
             # If discount is given to the student, update the fee_amount

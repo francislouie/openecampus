@@ -45,7 +45,7 @@ class class_student_advancefee_collect(osv.osv_memory):
             months_ids = self.pool.get('sms.session.months').search(cr, uid, [('id','in', thisform['fee_months'])])
             months_objs = self.pool.get('sms.session.months').browse(cr, uid, months_ids)
             for obj in months_objs:
-                collecting_advance_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, thisform['student_id'][0], class_id,record.name.fee_type.id, record, obj.id)
+                collecting_advance_fee = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, thisform['student_id'][0], class_id,record.name.fee_type.id, record.amount, obj.id)
                 if collecting_advance_fee:
                     _logger.info("Advance Fee From Student " + str(collecting_advance_fee) + " Made By " + str(uid))
         return True
