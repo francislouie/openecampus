@@ -164,8 +164,6 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         branch_id = self.read(cr, uid, ids)[0]['branch_id']
         if not branch_id or branch_id == 0:
             raise osv.except_osv((),'No Branch ID Set, Cannot Proceed!')
-
-                 
         # Check if there are inactive employees in the wizard 
         inactive_id = self.read(cr, uid, ids)[0]['inactive_employees']
         if inactive_id:
@@ -176,8 +174,6 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         missing_empleado_id = self.read(cr, uid, ids)[0]['missing_empleado']
         if missing_empleado_id:
             raise osv.except_osv((),'Some employees have missing Empleado IDs, Cannot Proceed!')
-     
-     
         # Check if there are employees with missing contracts in the wizard 
         missing_contract_id = self.read(cr, uid, ids)[0]['missing_contract']
         if missing_contract_id:
@@ -251,6 +247,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         # API REQUESTS STARTING NOW
         
         # Fetch all records if all previous records checkbox is selected
+         
         if all_records:
             ack = requests.get('http://api.smilesn.com/attendance_pull.php?operation=acknowledge&org_id=16&auth_key=d86ee704b4962d54227af9937a1396c3&branch_id='+str(branch_id)+'&ack_id=0')
               

@@ -942,7 +942,7 @@ class sms_session_months(osv.osv):
 
                                 if ses_id.session_id.id==f.session_id.id:
                                     print " Done a id ", ses_id.session_id.id, "b id", f.session_id.id
-                                    call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student.id, this_student.current_class.id, ftrow, f.id)
+                                    call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student.id, this_student.current_class.id,ftrow.name.fee_type.id, ftrow.amount, f.id)
                                 else:
                                     print "dublicate fee for tranpsort will raise here ", ses_id.session_id.id, "b id", f.session_id.id
                                            
