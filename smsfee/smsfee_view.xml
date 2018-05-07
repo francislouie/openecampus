@@ -740,8 +740,9 @@
             <field name="arch" type="xml">
                 <tree string="Classes Fees">
 							<field name="name" />
+							<field name="registration_no" />
 							<field name="student_id" />
-							<field name="father_name" />
+							<field name="student_class_id" />
 							<field name="state" />
 				 </tree>
             </field>
