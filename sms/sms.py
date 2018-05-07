@@ -4600,6 +4600,7 @@ class student_admission_register(osv.osv):
         'domocile': fields.char(string = "Domicile", size=32),
         'is_migrated':fields.boolean(string="Migrated"),
         'date_admission_confirmed':fields.date('Admission Confirmed On'),
+        'sibling': fields.many2many('sms.student', 'sms_std_sms_admission_reg_rel', 'sms_admission_register_id', 'sms_stdent_id','Sibling')
     } 
     _sql_constraints = [('Student_Admission', 'unique (name,student_class,state)', """ Student Admission for this class already exists.""")]
     _defaults = {  

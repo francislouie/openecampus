@@ -2,6 +2,7 @@ import time
 import datetime
 from datetime import date
 import logging
+from scipy.interpolate.fitpack import bisplrep
 _logger = logging.getLogger(__name__)
 from openerp.report import report_sxw
 
@@ -21,6 +22,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
             'get_student_strength':self.get_student_strength,            
             'get_date_range':self.get_date_range,
             'get_student_strength_message':self.get_student_strength_message,
+            'get_student_sibling':self.get_student_sibling,
             'get_user_name':self.get_user_name,
             'get_today':self.get_today
         })
@@ -118,6 +120,55 @@ class sms_report_studentslist(report_sxw.rml_parse):
         mydict['strength']  = overall_total
         result.append(mydict)
         return result
+    
+    def get_student_sibling(self, form):                                                         
+        result = []
+        students = []
+        studentss = []
+        this_form = self.datas['form']
+        class_ids_f = this_form['class_id']
+#         draft_boolean = this_form['display_draft_waitapprov']
+#         class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','in',['Active','Draft'])], order='disp_order, section_id')
+        class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_ids_f)
+        i = 1
+        student_name = ''
+
+
+ 
+        for class_obj in class_objs:
+            mydict = {'s_no':'', 'class':'', 'Siblings':''}
+            mydict['s_no']  = i
+            mydict['class']     = class_obj.name
+            print"class name id",class_obj.name,class_obj.id
+            
+            
+            student_reg_ids = self.pool.get('student.admission.register').search(self.cr, self.uid, [('student_class','=',class_obj.id)])
+            student_reg_objs = self.pool.get('student.admission.register').browse(self.cr, self.uid, student_reg_ids)
+            for f in student_reg_objs:
+                studentss.append(f.id)
+            if studentss:
+                student=tuple(studentss)
+                sql = """select sms_stdent_id from sms_std_sms_admission_reg_rel where sms_admission_register_id in"""+str(student)+""""""
+                self.cr.execute(sql)
+                student = self.cr.fetchall()
+                for ft in student:
+                    students.append(ft[0])
+            for student in students:
+                std_objs = self.pool.get('sms.student').browse(self.cr, self.uid, student)
+                std_objs.name
+                student_name= student_name+'\n' + std_objs.name
+                mydict['Siblings']  = student_name
+          
+            
+            
+            i += 1
+            result.append(mydict)
+        return result
+    
+    
+    
+    
+    
     
     def get_withdrawn_student_info(self,form):                                                         
         result = []
@@ -384,5 +435,6 @@ report_sxw.report_sxw('report.sms.students.biodata', 'sms.student', 'addons/sms/
 report_sxw.report_sxw('report.sms_students_securuty_cards_name', 'sms.student', 'addons/sms/report/rml_student_remp_sec_cards.rml',parser=sms_report_studentslist, header=False)
 report_sxw.report_sxw('report.sms.withdrawn.student.details', 'sms.student', 'addons/sms/report/rml_withdrawnstudentsdata.rml',parser=sms_report_studentslist, header='external')
 report_sxw.report_sxw('report.sms.student.strength.report', 'sms.academiccalendar', 'addons/sms/report/rml_studentstrength.rml',parser=sms_report_studentslist, header='external')
+report_sxw.report_sxw('report.sms.student.sibling.name', 'student.admission.register', 'addons/sms/report/rml_studentsibling.rml',parser=sms_report_studentslist, header='external')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

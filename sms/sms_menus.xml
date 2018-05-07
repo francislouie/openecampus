@@ -84,7 +84,10 @@
 
 	<menuitem id="menu_action_student" parent="menu_sms_id_students" sequence="" action="action_student_admitted"
 	groups="group_sms_principal,group_sms_admin,group_sms_admission_officer,group_sms_director,group_sms_admission_manager,group_sms_officers_exams,group_sms_manager_exams,group_sms_fee_manager,group_sms_fee_officer"/>
-
+   
+    <menuitem id="menu_action_studentsibling" parent="menu_sms_id_students" sequence="4" action="action_student_sibling"
+    groups="group_sms_principal,group_sms_director,group_sms_admin,group_sms_admission_officer,group_sms_admission_manager,group_sms_officers_exams,group_sms_manager_exams,group_sms_fee_manager,group_sms_fee_officer"/>
+	
 	<menuitem id="menu_action_studentslist" parent="menu_sms_id_students" sequence="3" action="action_studentlist"
 	groups="group_sms_principal,group_sms_director,group_sms_admin,group_sms_admission_officer,group_sms_admission_manager,group_sms_officers_exams,group_sms_manager_exams,group_sms_fee_manager,group_sms_fee_officer"/>
 

@@ -3171,6 +3171,7 @@
                     	  <field name="name" required="1"   attrs="{'readonly':[('state','=','Confirm')]}" />
                     	  <field name="registration_no" attrs="{'readonly':[('state','=','Confirm')]}" /> 
 				          <field name="father_name"  required="1" attrs="{'readonly':[('state','=','Confirm')]}" />
+				          <field name="sibling" widget="many2many_tags"/>
  				          <field name="student_class" context = "{'class_id':student_class}" required="1" attrs="{'readonly':[('state','!=','Draft')]}" on_change="onchange_set_domain(student_class)"  />
 						  <field name="group" attrs="{'readonly':[('state','!=','Draft')]}" />
 						  <field name="fee_structure"  required="1" attrs="{'readonly':[('state','!=','Draft')]}" />

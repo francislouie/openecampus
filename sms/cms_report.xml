@@ -58,6 +58,16 @@
             multi="True"
             rml="sms/report/rml_student_class_list.rml"
             string="Student Class Lis"/>
+            
+            
+        <!--print students sibling list-->
+        <report id="report_studentsibling_list_id"
+            model="student.admission.register"
+            name="sms.studentsibling.name"
+            multi="True"
+            rml="sms/report/rml_studentsibling.rml"
+            string="Student Sibling List"/>
+            
 
  		<!--print students admission statistics list-->
 		<report id="report_student_admission_statisitics_id"
