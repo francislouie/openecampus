@@ -323,13 +323,16 @@
       		</tr>
       		<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0">
+	          		<blockTable colWidths="70.0,90.0,100.0">
 		      		<tr>
 		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
 		        		<td><para style="P4-Bold"></para></td>
+		        		<td><para style="P4-Bold"></para></td>
 		      		</tr>
+		      		
 		      		<tr>
 		        		<td><para style="P4-Bold">[[(record['vechil_no'])]]</para></td>
+		        		<td><para style="P4-Bold">[[(record['driver_name'])]]</para></td>
 		        		<td><para style="P4-Bold">[[(record['vechil_name'])]]</para></td>
 		      		</tr>
 		      		</blockTable>
@@ -486,17 +489,20 @@
       		</tr>
       		<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0">
-		      		<tr>
-		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
-		        		<td><para style="P4-Bold"></para></td>
-		      		</tr>
-		      		<tr>
-		        		<td><para style="P4-Bold">[[(record['vechil_no'])]]</para></td>
-		        		<td><para style="P4-Bold">[[(record['vechil_name'])]]</para></td>
-		      		</tr>
-		      		</blockTable>
-				</td>
+                    <blockTable colWidths="70.0,90.0,100.0">
+                    <tr>
+                        <td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
+                        <td><para style="P4-Bold"></para></td>
+                        <td><para style="P4-Bold"></para></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><para style="P4-Bold">[[(record['vechil_no'])]]</para></td>
+                        <td><para style="P4-Bold">[[(record['driver_name'])]]</para></td>
+                        <td><para style="P4-Bold">[[(record['vechil_name'])]]</para></td>
+                    </tr>
+                    </blockTable>
+                </td>
       		</tr>
       		</blockTable>
         </td>
@@ -646,17 +652,20 @@
       		</tr>
       		<tr>
         		<td>
-	          		<blockTable colWidths="200.0,60.0">
-		      		<tr>
-		        		<td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
-		        		<td><para style="P4-Bold"></para></td>
-		      		</tr>
-		      		<tr>
-		        		<td><para style="P4-Bold">[[(record['vechil_no'])]]</para></td>
-		        		<td><para style="P4-Bold">[[(record['vechil_name'])]]</para></td>
-		      		</tr>
-		      		</blockTable>
-				</td>
+                    <blockTable colWidths="70.0,90.0,100.0">
+                    <tr>
+                        <td><para style="P4-Bold">[[(record['grand_total'])]]</para></td>
+                        <td><para style="P4-Bold"></para></td>
+                        <td><para style="P4-Bold"></para></td>
+                    </tr>
+                    
+                    <tr>
+                        <td><para style="P4-Bold">[[(record['vechil_no'])]]</para></td>
+                        <td><para style="P4-Bold">[[(record['driver_name'])]]</para></td>
+                        <td><para style="P4-Bold">[[(record['vechil_name'])]]</para></td>
+                    </tr>
+                    </blockTable>
+                </td>
       		</tr>
       		</blockTable>
         </td>
