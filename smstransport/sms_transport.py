@@ -157,6 +157,7 @@ class sms_transport_registrations(osv.osv):
             fee_structure = self.pool.get('sms.transport.fee.registration').browse(cr,uid,fee_structure)
             fee_amount = 0
             for rec in fee_structure:
+                print'----- fee monthly transport -----', rec.fee_amount
                 fee_amount = fee_amount + rec.fee_amount
                 fee_month = rec.fee_month.id
             # --------- Register Person requesting to avail transport and also make entry in registration lines object. ------------
@@ -200,6 +201,7 @@ class sms_transport_registrations(osv.osv):
                             if fee_ids:
                                 feesrec = self.pool.get('sms.transport.fee.registration').browse(cr,uid,fee_ids)
                                 for trfee in feesrec:
+                                    print' --- monthly fee on transport registration ----', trfee.fee_amount
                                     fee_dcit= {
                                                 'student_id': record.student_id.id,
                                                 'acad_cal_id': record.student_id.current_class.id,
@@ -248,6 +250,7 @@ class sms_transport_registrations(osv.osv):
                     raise osv.except_osv(('Transport Fee Not Found'),('Transport fee is not defined in any class, Goto fee management of any class and add transport under any fee structure.'))
                 
                 for rec in fee_structure_obj:
+                    print'------ monthly Transport Fee -------', rec.monhtly_fee
                     fiscalyear_months_id = self.pool.get('sms.session.months').search(cr, uid, [('session_id','=',rec.session_id.id)])
                     fiscalyear_months_obj = self.pool.get('sms.session.months').browse(cr, uid, fiscalyear_months_id)
                     for obj in fiscalyear_months_obj:
@@ -939,7 +942,7 @@ class sms_session_months(osv.osv):
 
                                 if ses_id.session_id.id==f.session_id.id:
                                     print " Done a id ", ses_id.session_id.id, "b id", f.session_id.id
-                                    call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student.id, this_student.current_class.id, ftrow, f.id)
+                                    call = self.pool.get('smsfee.studentfee').insert_student_monthly_non_monthlyfee(cr, uid, this_student.id, this_student.current_class.id,ftrow.name.fee_type.id, ftrow.amount, f.id)
                                 else:
                                     print "dublicate fee for tranpsort will raise here ", ses_id.session_id.id, "b id", f.session_id.id
                                            

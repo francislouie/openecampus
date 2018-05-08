@@ -502,7 +502,6 @@ class hr_employee_attendance(osv.osv):
             result = status_count    
         return result
     
-    
      
     def get_day_ofweek(self, cr, uid,ids, name, args, context=None):
         result = {}
