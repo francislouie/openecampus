@@ -376,28 +376,6 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                     #adding vechil No phase no and driver number to transport challans this will work for Individual
                     #as well as class wise challans
                     if self.datas['form']['category'] == 'Transport':
-#                         if 'student_id' in self.datas['form']:
-#                             query = """ select vehcile_no,name,driver from  sms_transport_vehcile
-#                                            where id =(select vehcile_reg_students_id from sms_student where id=""" \
-#                                     + str(challan.student_id.id) + """)"""
-#                             self.cr.execute(query)
-#                             _result1 = self.cr.fetchall()
-#                             if len(_result1) > 0:
-#                                 _result2 = _result1[0]
-#                                 veh_reg_obj = self.pool.get('res.partner').browse(self.cr,self.uid,_result2[2])
-#                                 challan_dict['vechil_no'] = "Vehcile No:"+str(_result2[0])
-#                                 challan_dict['vechil_name'] = "Vehcile Name: "+str(_result2[1])
-#                                 challan_dict['driver_name'] = "Driver Name: "+str(veh_reg_obj.name)
-#                             else:
-#                                 challan_dict['vechil_no'] = '--'
-#                                 challan_dict['vechil_name'] = '--'
-#                                 challan_dict['driver_name'] = '--'
-#                         else:
-#                             print("class idd",self.datas['form']['class_id'][0])
-#                             print "student idd",challan.student_id.id
-#                             class_id = self.datas['form']['class_id'][0]
-#                             
-#                             
                         query = """ select vehcile_no,name,driver from  sms_transport_vehcile
                                        where id =(select vehcile_reg_students_id from sms_student where id=""" \
                                 + str(challan.student_id.id) + """)"""

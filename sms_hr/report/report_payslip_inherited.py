@@ -98,8 +98,8 @@ class report_payslip_inherited(report_sxw.rml_parse):
                 elif rec.final_status == 'Present' and (rec.total_short_minutes >= 20 and rec.total_short_minutes < 30):
                     attendance_rec['status'] = '20 minutes late'
                     attendance_rec['attendance_date'] = rec.attendance_date
-                    attendance_rec['signin'] = rec.sign_in
-                    attendance_rec['signout'] = rec.sign_out
+                    attendance_rec['sign_in'] = rec.sign_in
+                    attendance_rec['sign_out'] = rec.sign_out
                     attendance_rec['total_short_minutes'] = int(rec.total_short_minutes)
                     total_recs.append(attendance_rec.copy())
                     print'----------rec3--------',rec.attendance_date

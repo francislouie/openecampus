@@ -5,7 +5,8 @@ class sms_student_list(osv.osv_memory):
     _name = "sms.studentlist"
     _description = "Used to Print Students List in Multiple Formats"
     _columns = {
-              'acad_cal':fields.many2one('sms.academiccalendar','Academic Calendar', domain=[('state','=','Active')]),
+#             'acad_cal':fields.many2many('sms.academiccalendar','sms_classes_rel','Academic Calendar', domain=[('state','=','Active')]),
+            'acad_cal':fields.many2one('sms.academiccalendar','Academic Calendar', domain=[('state','=','Active')]),
               'list_type': fields.selection([('class_list','1.Class List'),
                                              ('contact_list','2.Contact list'),
                                              ('check_admissions','3.Check Admissions Statistics'),
