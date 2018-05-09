@@ -1056,7 +1056,9 @@ class sms_student(osv.osv):
         'relative_contact':fields.char(string = "Relative Contact #", size=50),
         'relative_addr':fields.char(string = "Relative Address", size=50),
         'attachment': fields.binary('Attachments'),
-        'reason_withdraw': fields.text('With-Drawl Reason'),        
+        'reason_withdraw': fields.text('With-Drawl Reason'),  
+        'sibling': fields.many2many('sms.student', 'sms_std_sibling_reg_rel', 'sms_student_id', 'sms_sibling_id','Sibling')
+          
         #*****************************************************************************************************
         
     } 
@@ -4600,7 +4602,6 @@ class student_admission_register(osv.osv):
         'domocile': fields.char(string = "Domicile", size=32),
         'is_migrated':fields.boolean(string="Migrated"),
         'date_admission_confirmed':fields.date('Admission Confirmed On'),
-        'sibling': fields.many2many('sms.student', 'sms_std_sms_admission_reg_rel', 'sms_admission_register_id', 'sms_stdent_id','Sibling')
     } 
     _sql_constraints = [('Student_Admission', 'unique (name,student_class,state)', """ Student Admission for this class already exists.""")]
     _defaults = {  

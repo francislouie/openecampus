@@ -14,7 +14,7 @@ class sms_studentsibling_wizard(osv.osv_memory):
     _description = "Print student sibling report"
     _columns = {
               'session_id': fields.many2one('sms.session', 'Session', domain="[('state','=','Active')]"),
-              "class_id": fields.many2many('sms.academiccalendar', 'sms_std_sms_wizard_rel', 'sms_studentsibling_wizard_id', 'sms_academiccalendar_id','Classes', domain="[('state','=','Active')]"),
+              "class_id": fields.many2one('sms.academiccalendar','Classes', domain="[('state','=','Active')]"),
               'order_of_report': fields.selection([('name', 'Name'), ('class','Class')],"Order By")
                }
     

@@ -3,6 +3,7 @@ import datetime
 from datetime import date
 import logging
 from scipy.interpolate.fitpack import bisplrep
+from tkFont import ITALIC
 _logger = logging.getLogger(__name__)
 from openerp.report import report_sxw
 
@@ -123,47 +124,41 @@ class sms_report_studentslist(report_sxw.rml_parse):
     
     def get_student_sibling(self, form):                                                         
         result = []
-        students = []
-        studentss = []
+        student_sibling = []
+        sibling =[]
         this_form = self.datas['form']
         class_ids_f = this_form['class_id']
-#         draft_boolean = this_form['display_draft_waitapprov']
-#         class_ids = self.pool.get('sms.academiccalendar').search(self.cr, self.uid, [('state','in',['Active','Draft'])], order='disp_order, section_id')
-        class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_ids_f)
-        i = 1
-        student_name = ''
-
-
- 
-        for class_obj in class_objs:
-            mydict = {'s_no':'', 'class':'', 'Siblings':''}
-            mydict['s_no']  = i
-            mydict['class']     = class_obj.name
-            print"class name id",class_obj.name,class_obj.id
-            
-            
-            student_reg_ids = self.pool.get('student.admission.register').search(self.cr, self.uid, [('student_class','=',class_obj.id)])
-            student_reg_objs = self.pool.get('student.admission.register').browse(self.cr, self.uid, student_reg_ids)
-            for f in student_reg_objs:
-                studentss.append(f.id)
-            if studentss:
-                student=tuple(studentss)
-                sql = """select sms_stdent_id from sms_std_sms_admission_reg_rel where sms_admission_register_id in"""+str(student)+""""""
+        sql = """select sms_student_id  from sms_std_sibling_reg_rel """
+        self.cr.execute(sql)
+        std_sib= self.cr.fetchall()
+        for ft in std_sib:
+            sibling.append(ft[0])
+        std_ids = self.pool.get('sms.student').search(self.cr, self.uid, [('id','in',sibling),('current_class','=',class_ids_f[0])])
+        std_objs = self.pool.get('sms.student').browse(self.cr, self.uid,std_ids)
+        if(std_ids):
+            i = 1
+            for student in std_objs:
+                student_sibling = []
+                student_name = ''
+                mydict = {'s_no':'', 'class':'', 'Siblings':''}
+                mydict['s_no']  = i
+                mydict['class']     = student.name
+                sql = """select sms_sibling_id  from sms_std_sibling_reg_rel where sms_student_id ="""+str(student.id)+""""""
                 self.cr.execute(sql)
-                student = self.cr.fetchall()
-                for ft in student:
-                    students.append(ft[0])
-            for student in students:
-                std_objs = self.pool.get('sms.student').browse(self.cr, self.uid, student)
-                std_objs.name
-                student_name= student_name+'\n' + std_objs.name
+                std_sib= self.cr.fetchall()
+                for ft in std_sib:
+                    student_sibling.append(ft[0])
+                for student in student_sibling:
+                    std_objs = self.pool.get('sms.student').browse(self.cr, self.uid, student)
+                    student_name= student_name+'\n' + std_objs.name+'\t'+" "+std_objs.current_class.name+'\t'+'-'+std_objs.fee_type.name
                 mydict['Siblings']  = student_name
-          
-            
-            
-            i += 1
+                i += 1
+                result.append(mydict)
+            return result
+        else:
+            mydict = {'s_no':'', 'class':'', 'Siblings':'No Sibling'}
             result.append(mydict)
-        return result
+            return result
     
     
     

@@ -37,14 +37,14 @@
                 <td><para style="white">.</para></td>
             </tr>
         </blockTable>
-        <blockTable colWidths="40.0,260.0,240.0" repeatRows="1" style="Table2">
+        <blockTable colWidths="40.0,90.0,330.0" repeatRows="1" style="Table2">
             <tr>
                 <td><para style="para_1">S.No</para></td>
-                <td><para style="para_1">Class</para></td>
+                <td><para style="para_1">Name</para></td>
                 <td><para style="para_1"> Siblings</para></td>
             </tr>
         </blockTable>
-        <blockTable colWidths="40.0,260.0,240.0" style="Table21">
+        <blockTable colWidths="40.0,90.0,330.0" style="Table21">
             <tr>[[repeatIn(get_student_sibling(data['form']),'r')]]
                 <td><para style="para_2">[[ r['s_no'] ]]</para></td>
                 <td><para style="para_22">[[ r['class'] ]]</para></td>
