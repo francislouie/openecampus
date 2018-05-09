@@ -503,13 +503,13 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                 title = ''
                 whole_amount = 0
                 for challan in challans:
-                    title += challan.fee_name +':'+str(challan.fee_amount)+','
+                    #title += challan.fee_name +':'+str(challan.fee_amount)+','
                     whole_amount = int(whole_amount) + int(challan.fee_amount)
-                dict = {'head_name':title,'head_amount':whole_amount}
+                dict = {'head_name':'Fee','head_amount':whole_amount}
                 result.append(dict) 
             else:
                 for challan in challans:
-                    dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
+                    dict = {'head_name':'Fee','head_amount':challan.fee_amount}
                     result.append(dict) 
         return result
     
