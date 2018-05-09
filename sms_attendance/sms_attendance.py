@@ -25,9 +25,9 @@ class sms_session(osv.osv):
 #                 class_obj.attendace_punching = f.attendace_punching
 #         return True
 
-    def create(self, cr, uid, vals, context=None, check=True):
-        year_id = super(sms_session, self).create(cr, uid, vals, context)
-        return True
+#     def create(self, cr, uid, vals, context=None, check=True):
+#         year_id = super(sms_session, self).create(cr, uid, vals, context)
+#         return True
 
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         super(sms_session, self).write(cr, uid, ids, vals, context)
