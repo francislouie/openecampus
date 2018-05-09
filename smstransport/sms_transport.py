@@ -92,6 +92,7 @@ class sms_transport_vehcile(osv.osv):
         'name' : fields.function(_get_vehcile_name, method=True, store = True, size=256, string='Code',type='char'),
         'vehcile_type': fields.selection([('Bus', 'Bus'),('Van', 'Van')], 'Vehcile Type'),
         'max_accomodation':fields.integer('Maximum Seats'),
+        'driver':fields.many2one('res.partner','Driver Name', domain="[('supplier','=',True)]"),
         'current_accomodation':fields.function(_get_filled_seats, method=True, string='Filled Seats', type='integer', readonly=True),
         #---------- Ids are inverted in many2many object in sms_transport_route_vehcile_rel table. sms_transport_route_id, contains vehcile ids and sms_transport_vehcile_id, contains route id 
         'transport_route':fields.many2many('sms.transport.route', 'sms_transport_route_vehcile_rel', 'sms_transport_route_id', 'sms_transport_vehcile_id','Transport Route', required=True),
