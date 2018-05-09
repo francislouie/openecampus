@@ -240,7 +240,18 @@ class hr_monthly_attendance_calculation(osv.osv):
                         
             result[f.id] = absent_count
         return result
-       
+    
+    
+    def get_unknown_status(self, cr, uid, emp_id, date_from, date_to, context=None):
+        result = 0
+        emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
+        if emp_att_ids:
+            for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
+                if emp.final_status =='unknown':
+                    result += 1
+        return result  
+    
+     
     _columns = {
         'calendar_month': fields.date('Month', required=True),
         'name': fields.char('Month Year'),
@@ -566,8 +577,22 @@ class hr_payslip_run(osv.osv):
         d= datetime.strptime(date,"%Y-%m-%d %H:%M:%S") + timedelta(hours=12)  
         pull_date =datetime.strptime(str(d), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
         date_today = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-        # Static date is set for testing
-#         date_last= '2018-04-17 12:00:00'
+        
+        year = int(datetime.strptime(str(vals['date_from']), '%Y-%m-%d').strftime('%Y'))
+        month = int(datetime.strptime(str(vals['date_from']), '%Y-%m-%d').strftime('%m'))
+        month_days = calendar.monthrange(year,month)[1]
+        date_from = datetime.strptime(vals['date_from'], "%Y-%m-%d").strftime("%Y-%m-%d")
+        date_to = datetime(year=int(year), month=int(month), day=int(month_days)).strftime("%Y-%m-%d")
+
+        print' --------- employee id for payslip -----------', vals['employee_id']
+        print'--------- date from man ------', date_from
+        print'--------- date to man ------', date_to
+        
+        unknown = self.pool.get('hr.monthly.attendance.calculation').get_unknown_status(cr, uid, vals['employee_id'], date_from, date_to)
+        print' ---- unknown ---------', unknown
+        
+        if unknown > 0:
+            raise osv.except_osv(('Cannot Proceed'),'There are unknown statuses for this employee in the current month!')
         if  (date_today > pull_date):
             raise osv.except_osv(('First Pull attendance'),'')
         else:
@@ -620,10 +645,25 @@ class hr_payslip(osv.osv):
         d= datetime.strptime(date,"%Y-%m-%d %H:%M:%S") + timedelta(hours=12)  
         pull_date =datetime.strptime(str(d), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
         date_today = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-        # Static date is set for testing
-#         date_last= '2018-04-17 12:00:00'
+        print'---- vals -----', vals
         print"pull date",pull_date
         print"today date",date_today
+        year = int(datetime.strptime(str(vals['date_from']), '%Y-%m-%d').strftime('%Y'))
+        month = int(datetime.strptime(str(vals['date_from']), '%Y-%m-%d').strftime('%m'))
+        month_days = calendar.monthrange(year,month)[1]
+        date_from = datetime.strptime(vals['date_from'], "%Y-%m-%d").strftime("%Y-%m-%d")
+        date_to = datetime(year=int(year), month=int(month), day=int(month_days)).strftime("%Y-%m-%d")
+
+        print' --------- employee id for payslip -----------', vals['employee_id']
+        print'--------- date from man ------', date_from
+        print'--------- date to man ------', date_to
+        
+        unknown = self.pool.get('hr.monthly.attendance.calculation').get_unknown_status(cr, uid, vals['employee_id'], date_from, date_to)
+        print' ---- unknown ---------', unknown
+        
+        if unknown > 0:
+            raise osv.except_osv(('Cannot Proceed'),'There are unknown statuses for this employee in the current month!')
+        
         if  (date_today > pull_date):
         
             raise osv.except_osv(('First Pull attendance'),'')

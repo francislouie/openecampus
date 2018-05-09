@@ -47,14 +47,6 @@ class sms_academics_session(osv.osv):
     """
     This Creates an academic session thame may be of minimum 1 year, max many years
     """
-
-        
-
-    
-    
-    
-    
-    
     def close_academic_session(self, cr, uid, ids, *args):
    
         result = {}
@@ -319,9 +311,11 @@ class sms_session(osv.osv):
                 raise osv.except_osv(('Session '), ('Session End date must be greater than Start date.' ))
             else:
                 year = sdate.split('-')
+                year_end = edate.slit('-')
                 acad_session = obj.academic_session_id.name
                 arr = acad_session.split('-')
-                result[obj.id] = obj.subcate+"-"+str(year[0])
+                result[obj.id] = obj.subcate+"-"+str(year[0])+"-"+year_end[:2]
+                raise osv.except_osv(( obj.subcate+"-"+str(year[0])+"-"+year_end[:2]), ('Session End date must be greater than Start date.' ))
         return result
     
     def load_students_from_excel(self, cr, uid, data, context):

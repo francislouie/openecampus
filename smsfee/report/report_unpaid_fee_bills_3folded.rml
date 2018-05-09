@@ -244,8 +244,8 @@
 						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 					<tr>
-						<td><para style="P4-Bold">Fee Month:</para></td>
-						<td><para style="P4">[[(r['fee_month'])]]</para></td>
+						<td><para style="P4-Bold"></para></td>
+						<td><para style="P4"></para></td>
 					</tr>
 		      		</blockTable>
 				</td>
@@ -412,8 +412,8 @@
 						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 					<tr>
-						<td><para style="P4-Bold">Fee Month:</para></td>
-						<td><para style="P4">[[(r['fee_month'])]]</para></td>
+						<td><para style="P4-Bold"></para></td>
+						<td><para style="P4"></para></td>
 					</tr>
 		      		</blockTable>
 				</td>
@@ -576,8 +576,8 @@
 						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 					<tr>
-						<td><para style="P4-Bold">Fee Month:</para></td>
-						<td><para style="P4">[[(r['fee_month'])]]</para></td>
+						<td><para style="P4-Bold"></para></td>
+						<td><para style="P4"></para></td>
 					</tr>
 		      		</blockTable>
 				</td>
