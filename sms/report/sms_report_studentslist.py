@@ -61,7 +61,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
         
         students = """SELECT registration_no,name,father_name,birthday,cell_no,phone
                           FROM sms_student WHERE current_class ="""+str(acad_cal)+"""
-                          AND state not in('admission_cancel','drop_out','deleted','slc') ORDER BY name"""
+                          AND state = 'Admitted' ORDER BY name"""
+#                           state not in('admission_cancel','drop_out','deleted','slc')
         self.cr.execute(students)
         rows = self.cr.fetchall() 
         i = 1
@@ -194,7 +195,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
             acad_cal = form['acad_cal'][0]
         students = """SELECT registration_no,name,father_name,birthday,cell_no,phone
                           FROM sms_student WHERE current_class ="""+str(acad_cal)+"""
-                          AND state not in('admission_cancel','drop_out','deleted','slc') ORDER BY name"""
+                          AND state = 'Admitted' ORDER BY name"""
+#                           state not in('admission_cancel','drop_out','deleted','slc')
         self.cr.execute(students)
         rows = self.cr.fetchall() 
         i = 1
@@ -305,7 +307,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
         _ids = self.pool.get('sms.academiccalendar.student').search(self.cr ,self.uid ,[('name','=',form['acad_cal'][0])])
         std_t = tuple(_ids)
         sql = """SELECT std_id FROM sms_academiccalendar_student
-            WHERE id IN """+str(std_t)+""" """
+            WHERE id IN """+str(std_t)+""" and state='Current' """
         self.cr.execute(sql)
         
         info = self.cr.fetchall()
