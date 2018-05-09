@@ -166,34 +166,34 @@ class sms_pull_hr_machine_data(osv.osv_memory):
             raise osv.except_osv((),'No Branch ID Set, Cannot Proceed!')
         
         
-#         # Check if there are inactive employees in the wizard 
-#         inactive_id = self.read(cr, uid, ids)[0]['inactive_employees']
-#         if inactive_id:
-#             raise osv.except_osv((),'There are inactive employees in system, Cannot Proceed!')
-#            
-#            
-#         # Check if there are employees with missing empleado ids in the wizard 
-#         missing_empleado_id = self.read(cr, uid, ids)[0]['missing_empleado']
-#         if missing_empleado_id:
-#             raise osv.except_osv((),'Some employees have missing Empleado IDs, Cannot Proceed!')
-#         
-#         
-#         # Check if there are employees with missing contracts in the wizard 
-#         missing_contract_id = self.read(cr, uid, ids)[0]['missing_contract']
-#         if missing_contract_id:
-#             raise osv.except_osv((),'Some employees have no contracts, Cannot Proceed!')
-#            
-#            
-#         # Check if there are employees with departments not assigned in the wizard 
-#         department_not_set_id = self.read(cr, uid, ids)[0]['department_not_set']
-#         if department_not_set_id:
-#             raise osv.except_osv((),'Some employees have not been assigned proper Departments, Cannot Proceed!')
-#            
-#            
-#         # Check if there are departments with no schedules in the wizard 
-#         schedules_not_set_id = self.read(cr, uid, ids)[0]['schedules_not_set']
-#         if schedules_not_set_id:
-#             raise osv.except_osv((),'Some departments are without schedules, Cannot Proceed!')
+        # Check if there are inactive employees in the wizard 
+        inactive_id = self.read(cr, uid, ids)[0]['inactive_employees']
+        if inactive_id:
+            raise osv.except_osv((),'There are inactive employees in system, Cannot Proceed!')
+            
+            
+        # Check if there are employees with missing empleado ids in the wizard 
+        missing_empleado_id = self.read(cr, uid, ids)[0]['missing_empleado']
+        if missing_empleado_id:
+            raise osv.except_osv((),'Some employees have missing Empleado IDs, Cannot Proceed!')
+         
+         
+        # Check if there are employees with missing contracts in the wizard 
+        missing_contract_id = self.read(cr, uid, ids)[0]['missing_contract']
+        if missing_contract_id:
+            raise osv.except_osv((),'Some employees have no contracts, Cannot Proceed!')
+            
+            
+        # Check if there are employees with departments not assigned in the wizard 
+        department_not_set_id = self.read(cr, uid, ids)[0]['department_not_set']
+        if department_not_set_id:
+            raise osv.except_osv((),'Some employees have not been assigned proper Departments, Cannot Proceed!')
+            
+            
+        # Check if there are departments with no schedules in the wizard 
+        schedules_not_set_id = self.read(cr, uid, ids)[0]['schedules_not_set']
+        if schedules_not_set_id:
+            raise osv.except_osv((),'Some departments are without schedules, Cannot Proceed!')
           
 #          
 #         # Check if Month is selected in the wizard
