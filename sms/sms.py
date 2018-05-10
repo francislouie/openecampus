@@ -1050,7 +1050,9 @@ class sms_student(osv.osv):
         'relative_contact':fields.char(string = "Relative Contact #", size=50),
         'relative_addr':fields.char(string = "Relative Address", size=50),
         'attachment': fields.binary('Attachments'),
-        'reason_withdraw': fields.text('With-Drawl Reason'),        
+        'reason_withdraw': fields.text('With-Drawl Reason'),  
+        'sibling': fields.many2many('sms.student', 'sms_std_sibling_reg_rel', 'sms_student_id', 'sms_sibling_id','Sibling')
+          
         #*****************************************************************************************************
         
     } 
