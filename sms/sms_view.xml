@@ -804,6 +804,7 @@
 								<field name="father_occupation"/>
 								<field name="religion"/>
 								<field name="birthday"/>
+							    <field name="sibling" widget="many2many_tags"/>
 			                  </group>
 								<group string="Contact">
 								<field name="phone"  />

@@ -113,7 +113,10 @@
             <field name="inherit_id" ref="hr.view_employee_form"/>
             <field name="arch" type="xml">
                 <data>
-                    
+                    <xpath expr="//field[@name='coach_id']" position="after">
+                        <field name="left_out" required="0" />
+                        <field name="punch_attendance" required="1"/>
+                    </xpath>
                     <xpath expr="//field[@name='active']" position="after">
                         <group string="Biometric Setting">
                             <field name="emp_regno_on_device"/>
@@ -163,6 +166,12 @@
                     <xpath expr="//button[@name='cancel_sheet']" position="after">
                         <button string="Archieve" name="send_to_archieve" states="done,cancel"/>
                     </xpath>
+<<<<<<< HEAD
+=======
+                    <xpath expr="//button[@name='hr_verify_sheet']" position="replace">
+                        <button string="Confirm" name="hr_verify_sheet" states="draft" class="oe_highlight"/>
+                    </xpath>
+>>>>>>> 6e4cef37d8d35f575d6bf413e6eebdf3bf49fa13
                      <xpath expr="//field[@name='employee_id']" position="after">
                            
                              <group>

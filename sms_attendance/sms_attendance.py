@@ -25,9 +25,9 @@ class sms_session(osv.osv):
 #                 class_obj.attendace_punching = f.attendace_punching
 #         return True
 
-    def create(self, cr, uid, vals, context=None, check=True):
-        year_id = super(sms_session, self).create(cr, uid, vals, context)
-        return True
+#     def create(self, cr, uid, vals, context=None, check=True):
+#         year_id = super(sms_session, self).create(cr, uid, vals, context)
+#         return True
 
     def write(self, cr, uid, ids, vals, context=None, check=True, update_check=True):
         super(sms_session, self).write(cr, uid, ids, vals, context)
@@ -249,6 +249,33 @@ sms_academiccalendar_student()
 ####
 class sms_student(osv.osv):
     
+    def get_attendance_on_period_selection(self, cr, uid, ids, student_id, date_from, date_to):
+            print"get_attendance_on_date_list method is called from sms"
+            sql = """SELECT 
+                    COALESCE(sum(CASE WHEN present THEN 1 ELSE 0 END),0) as present, 
+                    COALESCE(sum(CASE WHEN absent THEN 1 ELSE 0 END),0) as absent, 
+                    COALESCE(sum(CASE WHEN leave THEN 1 ELSE 0 END),0) as leave
+                    FROM sms_class_attendance_lines AS l, sms_class_attendance AS a,sms_academiccalendar_student AS std
+                    where a.id = l.parent_id 
+                    and l.student_class_id = std.id
+                    and (std.state='Current' OR std.state='Suspended')
+                    and l.student_name = %s 
+                    and a.attendance_date >=  %s 
+                    and a.attendance_date <=  %s 
+                    """
+    
+            args = [student_id, date_from, date_to]
+            cr.execute(sql, args)
+            rec = cr.fetchone()
+    
+            result = {}
+            result.update({'present': rec[0]})
+            result.update({'absent': rec[1]})
+            result.update({'leave': rec[2]})
+    
+            return result
+        
+        
     _name = 'sms.student'
     _inherit = 'sms.student'
     _columns = {
@@ -327,11 +354,9 @@ class sms_class_attendance(osv.osv):
             result['class_teacher'] = rec.class_teacher.id
         else:
             result['class_teacher'] = None
-#         if tea_job_id !=1:   
-#             return {'domain': {'class_id':[('class_teacher','=',teacher_id) ]},'value': result}
-#         else:
+
         return {'domain': {'class_id':[('state','=','Active') ]},'value': result}
-    
+
     def _user_get(self,cr,uid,context={}):
         return uid
 

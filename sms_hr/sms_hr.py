@@ -1,12 +1,13 @@
 import time
 import datetime
-from datetime import datetime
+from datetime import datetime, timedelta 
 from openerp.osv import fields, osv
 from openerp.tools.translate import _
 # from dbus.decorators import method
 import calendar
 from pdftools.pdfdefs import false
-from matplotlib.legend_handler import update_from_first_child
+
+# from matplotlib.legend_handler import update_from_first_child
 #from samba.netcmd import domain
 
 DAYOFWEEK_SELECTION = [('0', 'Monday'),
@@ -16,6 +17,9 @@ DAYOFWEEK_SELECTION = [('0', 'Monday'),
                        ('4', 'Friday'),
                        ('5', 'Saturday'),
                        ('6', 'Sunday'),]
+
+ATTENDANCE_STATUS_LIST = [('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('public_holiday', 'Public Holiday'),('Holiday', 'Holiday'),('Status Not Clear','Status Not Clear'),('unknown','Unknown')]
+
 
 class res_company(osv.osv):
     
@@ -36,7 +40,6 @@ class hr_contract(osv.osv):
         for f in self.browse(cr, uid, ids, context=context):
             if f.deduction_choice == 'auto':
                 mss = self.pool.get('hr.monthly.attendance.calculation').search(cr, uid, [('contract_id','=', f.id),('is_invoiced','=', False)])
-                print"mss",mss
                 if mss:
                     rec = self.pool.get('hr.monthly.attendance.calculation').browse(cr,uid,mss[0]) 
                     deducted_amount = rec.final_deduced_amount 
@@ -82,7 +85,6 @@ class hr_monthly_attendance_calculation(osv.osv):
                 day_ded = 0
             
             result[f.id] = day_ded
-            print"resrrrrrrrrrrrult",result
         return result
     
     def get_deducted_amount_on_half_days(self, cr, uid,ids, name, args, context=None):
@@ -100,41 +102,21 @@ class hr_monthly_attendance_calculation(osv.osv):
             
             result[f.id] = deducted_amount
         return result
-#     def get_half_days(self, cr,  uid,ids, name, args, context=None):
-#         result = {}
-#         for f in self.browse(cr, uid, ids, context=context):
-#             total_late = f.twenty_minutes_late or 0
-#             if total_late >=3:
-#                 day_ded = int(total_late/3)
-#             else:
-#                 day_ded = 0
-#             
-#             result[f.id] = day_ded
-#             print"result",result
-#         return result
+
 
     def get_half_days(self, cr, uid,ids, name, args, context=None):
         result = {}
+        half_day_count = 0
         for f in self.browse(cr, uid, ids, context=context):
-            month_comp_date =f.calendar_month
-            year = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%Y'))
-            mont = int(datetime.strptime(str(month_comp_date), '%Y-%m-%d').strftime('%m'))
-            if(mont <10):
-                month ='0'+str(mont)
-            else:
-                month =''+str(mont) 
-            mon_days = calendar.monthrange(year,mont)[1]
-            date_from =str(str(year)+'-'+str(month)+'-01')
-            date_to =str(str(year)+'-'+str(month)+'-'+str(mon_days))
-       
-            
-            half_days=0
-            emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
-            for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
-                if(emp.final_status == 'Status Not Clear'):
-                        half_days=half_days+1
-            result[f.id] = half_days
+            month_name = datetime.strptime(f.name, '%m-%Y').strftime('%B')
+            emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_month','=',month_name)]) 
+            if emp_att_ids:
+                for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
+                    if emp.sign_in != '00:00:00' and emp.sign_in == emp.sign_out:
+                        half_day_count += 1          
+            result[f.id] = half_day_count
         return result
+
 
     def get_twentry_m_late(self, cr, uid,ids, name, args, context=None):
         result = {}
@@ -154,7 +136,7 @@ class hr_monthly_attendance_calculation(osv.osv):
             twenty_minutes_late=0
             emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
             for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
-                if(emp.total_short_minutes >=20 and  emp.total_short_minutes< 30) and emp.final_status !='Status Not Clear':
+                if(emp.total_short_minutes >=20 and  emp.total_short_minutes< 30) and emp.final_status != ATTENDANCE_STATUS_LIST[5][0]:
                     twenty_minutes_late=twenty_minutes_late+1
             result[f.id] = twenty_minutes_late
         return result
@@ -177,7 +159,7 @@ class hr_monthly_attendance_calculation(osv.osv):
             thirty_minutes_late=0
             emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
             for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
-                if(emp.total_short_minutes >= 30 and emp.final_status !='Status Not Clear'):
+                if(emp.total_short_minutes >= 30 and emp.final_status != ATTENDANCE_STATUS_LIST[5][0]):
                     thirty_minutes_late=thirty_minutes_late+1
             result[f.id] = thirty_minutes_late
         return result 
@@ -200,6 +182,7 @@ class hr_monthly_attendance_calculation(osv.osv):
             net= f.absentees_this_month - f.approved_leaves_this_month 
             if net <0:
                 net = 0
+            print' --- net absentees this month ----', net
             result[f.id] = net
         return result
     
@@ -245,25 +228,44 @@ class hr_monthly_attendance_calculation(osv.osv):
             result[f.id] = "Per Day salary = "+str(per_day)+", Half Day Salary = "+str(half_day)
         return result
     
-       
+    def get_absentees_this_month(self, cr, uid, ids, name, args, context=None):
+        result = {}
+        absent_count = 0
+        for f in self.browse(cr, uid, ids, context=context):
+            month_name = datetime.strptime(f.name, '%m-%Y').strftime('%B')
+            emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',f.employee_id.id),('attendance_month','=',month_name)]) 
+            if emp_att_ids:
+                for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
+                    if emp.final_status =='Absent':
+                        absent_count += 1
+                        
+            result[f.id] = absent_count
+        return result
+    
+    
+    def get_unknown_status(self, cr, uid, emp_id, date_from, date_to, context=None):
+        result = 0
+        emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
+        if emp_att_ids:
+            for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
+                if emp.final_status =='unknown':
+                    result += 1
+        return result  
+    
+     
     _columns = {
         'calendar_month': fields.date('Month', required=True),
         'name': fields.char('Month Year'),
         'contract_id': fields.many2one('hr.contract'),
         'employee_id': fields.many2one('hr.employee'),
         'remarks': fields.function(get_remarks, method=True, string='Remarks',type='char'),
-        'twenty_minutes_late':fields.integer('Twenty Minutes late'),
-        'thirty_minutes_late':fields.integer('Thirty_minutes_late'),
-#         'half_days': fields.integer('No. of Half Days'),
-        'half_days': fields.function(get_half_days, method=True, string='Half dayse',type='integer'),
-#         'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
+        'half_days': fields.function(get_half_days, method=True, string='Half days',type='integer'),
+        'twenty_minutes_late': fields.function(get_twentry_m_late, method=True, string='Twenty Minutes late',type='integer'),
         'deduction_on_twenty_minutes_late': fields.function(get_decuction_twentry_m_late, method=True, string='Deduction (Days) On 20min',type='integer'),
-        #'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
-
+        'thirty_minutes_late': fields.function(get_thirty_m_late, method=True, string='Thirty Minutes late',type='integer'),
         'deduction_on_thirty_minutes_late': fields.function(get_decuction_thirty_m_late, method=True, string='Deduction (Days) On 30min',type='integer'),
-        'half_days': fields.integer('No. of Half Days'),
         'amount_deducted_half_days': fields.function(get_deducted_amount_on_half_days, method=True, string='Deduction On Half Days',type='integer'),
-        'absentees_this_month': fields.integer('Absentees This month'),
+        'absentees_this_month': fields.function(get_absentees_this_month, method=True, string='Absentees This month',type='integer'),
         'amount_deducted_absentees': fields.function(get_deducted_amount_on_absentees, method=True, string='Deduction On Absentees',type='integer'),
         'approved_leaves_this_month': fields.integer('Leaves This month'),
         'net_absentees': fields.function(get_absentess_leave, method=True, string='Absentees After Leave',type='integer'),
@@ -303,11 +305,9 @@ class hr_device_pull_log(osv.osv):
 
     _columns = {
         'device_id': fields.char('ID'),
-        'puncing_date_time': fields.char('Reg No on Device'),
-        'em_empleado_acc_id': fields.char('Reg No on Device'),
-        'status': fields.char('Reg No on Device'),
-        'date_time_pulled': fields.char("Provider"),
-        'pulled_by': fields.char("Company"),
+        'status': fields.char('Status'),
+        'date_time_pulled': fields.char('Date time Pulled'),
+        'pulled_by': fields.char('Pulled By'),
     }
     _defaults = {
     }
@@ -326,8 +326,12 @@ class hr_employee(osv.osv):
         'emp_regno_on_device': fields.char('Reg No on Device'),
         'empleado_account_id': fields.char('Empleado Acc ID'),
         'default_devicee_id': fields.char('Default Device'),
+        'punch_attendance':fields.selection([('yes','Yes'),('no','No')],'Attendance Punching Allowed ?'),
+        'left_out': fields.boolean('Left Out')
     }
     _defaults = {
+        'punch_attendance': 'yes',
+        'left_out': False
     }
 hr_employee()
 
@@ -356,7 +360,6 @@ class hr_employee_attendance(osv.osv):
             emp_dep_ids = self.pool.get('hr.employee').search(cr,uid, [('id','=',f.employee_id.id)])
             for emp in self.pool.get('hr.employee').browse(cr,uid, emp_dep_ids):
                 if (emp.department_id):
-                    print"department is assign"
                     emp_dep_id=emp.department_id.id
                 else:
                     print"department is not assign"     
@@ -373,7 +376,7 @@ class hr_employee_attendance(osv.osv):
                         lat_min = timedelta.days + float(timedelta.seconds) / 60
                 else: 
                     lat_min=0
-            
+             
             else:
                 lat_min=-10000
          
@@ -383,8 +386,8 @@ class hr_employee_attendance(osv.osv):
     def total_short_minutes(self, cr, uid, ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            if(f.final_status=='Status Not Clear'):
-                print"Status Not Clear "
+            if f.final_status== ATTENDANCE_STATUS_LIST[5][0]:
+                print"Status Not Clear 1"
                 result[f.id]=0
             else:    
                 result[f.id] = f.late_early_arrival + f.early_late_going
@@ -400,11 +403,10 @@ class hr_employee_attendance(osv.osv):
         for f in self.browse(cr, uid, ids, context=context):
             fdate = datetime.strptime(f.attendance_date,'%Y-%m-%d')
             day = fdate.weekday()
-            
+             
             emp_dep_ids = self.pool.get('hr.employee').search(cr,uid, [('id','=',f.employee_id.id)])
             for emp in self.pool.get('hr.employee').browse(cr,uid, emp_dep_ids):
                 if (emp.department_id):
-                    print"department is assign"
                     emp_dep_id=emp.department_id.id
                 else:
                     print"department is not assign"     
@@ -422,7 +424,6 @@ class hr_employee_attendance(osv.osv):
                             early_minutes=0
                         else:
                             early_minutes = timedelta.days + float(timedelta.seconds) / 60
-                
                     else:
                         early_minutes=0
             else:
@@ -431,7 +432,86 @@ class hr_employee_attendance(osv.osv):
         print "***************** Early Going End*************************"
         return result
     
+    def get_signin_time(self, cr, uid, ids, name, args, context=None):
+        time = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            employee_record = self.pool.get('hr.employee').browse(cr, uid, f.employee_id.id) 
+            employee_ids = self.pool.get('hr.attendance').search(cr,uid, [('empleado_account_id','=',employee_record.empleado_account_id),('attendance_date', '=', f.attendance_date)])
+            if employee_ids:
+                recs_found = self.pool.get('hr.attendance').browse(cr,uid,employee_ids)
+                emp_time_recs = sorted(recs_found, key=lambda k: k['attendance_time'])
+                time[f.id] = emp_time_recs[0]['attendance_time']          
+#                 time[f.id] = recs_found.attendance_time
+            else:
+                time[f.id] = '00:00:00'
+        return time
     
+    def get_signout_time(self, cr, uid, ids, name, args, context=None):
+        time = {}
+        for f in self.browse(cr, uid, ids, context=context):
+            employee_record = self.pool.get('hr.employee').browse(cr, uid, f.employee_id.id) 
+            employee_ids = self.pool.get('hr.attendance').search(cr,uid, [('empleado_account_id','=',employee_record.empleado_account_id),('attendance_date', '=', f.attendance_date)])
+            if employee_ids:
+                recs_found = self.pool.get('hr.attendance').browse(cr,uid,employee_ids)
+                emp_time_recs = sorted(recs_found, key=lambda k: k['attendance_time'])
+                time[f.id] = emp_time_recs[-1]['attendance_time']
+            else:
+                time[f.id] = '00:00:00'
+        return time
+    
+    
+    def get_final_status(self, cr, uid,ids, name, args, context=None):
+        result = {}
+        final_status = ATTENDANCE_STATUS_LIST[6][0]
+        hr_holiday_rec = False
+        for f in self.browse(cr, uid, ids, context=context):
+            if f.sign_in == '00:00:00':
+                current_date = datetime.strptime(f.attendance_date,'%Y-%m-%d')
+                day = current_date.weekday()
+                employee_record = self.pool.get('hr.employee').browse(cr, uid, f.employee_id.id) 
+                hr_attendance_exists = self.pool.get('hr.attendance').search(cr,uid, [('empleado_account_id','=',employee_record.empleado_account_id),('attendance_date', '>=', f.attendance_date)])
+                if hr_attendance_exists:
+                    if f.employee_id.department_id:
+                                emp_rec_ids = self.pool.get('hr.schedule').search(cr,uid,[('department_id','=',f.employee_id.department_id.id),('state','=','validate')]) 
+                                if emp_rec_ids:
+                                    for sche in self.pool.get('hr.schedule').browse(cr,uid, emp_rec_ids):
+                                        if sche.public_holiday_ids:
+                                            for puh in sche.public_holiday_ids:
+                                                if puh.holiday_date == f.attendance_date:
+                                                    hr_holiday_rec =True
+
+                    if hr_holiday_rec:
+                        final_status = ATTENDANCE_STATUS_LIST[3][0]             #Public Holiday
+                        hr_holiday_rec = False
+                    else:    
+                        if(day==5 or day==6):
+                            
+                            final_status = ATTENDANCE_STATUS_LIST[4][0]         #Holiday
+                        else:    
+                            final_status = ATTENDANCE_STATUS_LIST[1][0]           #Absent
+            else:
+                if f.sign_in == f.sign_out:
+                    final_status = ATTENDANCE_STATUS_LIST[5][0]                   #Status Not Clear
+                    print'---------- status not clear hit -------------', final_status
+                else:
+                    final_status = ATTENDANCE_STATUS_LIST[0][0]                   #Present
+                    
+            result[f.id] = final_status
+        return result 
+    
+    
+    
+    def _get_status_not_clear(self, cr, uid, ies, month, context=None):
+        result = {}
+        status_count = 0
+        emp_ids = self.search(cr,uid,[('employee_id','=',ies),('attendance_month','=',month)])
+        if emp_ids:
+            for f in self.browse(cr, uid, emp_ids):
+                if f.sign_in != '00:00:00' and f.sign_in == f.sign_out:
+                    status_count += 1
+                print'----- STATUS NOT CLEAR COUNT ----', status_count
+            result = status_count    
+        return result
     
      
     def get_day_ofweek(self, cr, uid,ids, name, args, context=None):
@@ -444,7 +524,7 @@ class hr_employee_attendance(osv.osv):
             name_day=days[day]
             result[f.id] = name_day.upper()
         return result 
-    
+
     
     def set_month(self):
         return True
@@ -453,12 +533,12 @@ class hr_employee_attendance(osv.osv):
       'employee_id': fields.many2one('hr.employee'),
       'attendance_date': fields.date('Date'),
       'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='char'),
-      'sign_in': fields.char('Sign In'),
-      'sign_out': fields.char('Sign Out'),
+      'sign_in': fields.function(get_signin_time, method=True, string='Sign In',type='char'),
+      'sign_out': fields.function(get_signout_time, method=True, string='Sign Out',type='char'),
       'late_early_arrival': fields.function(get_late_arrival, method=True, string='Late Arrival',type='integer'),
       'early_late_going': fields.function(get_early_leaving, method=True, string='Early Departure',type='integer'),
       'total_short_minutes': fields.function(total_short_minutes, method=True, string='Short Min ',type='integer'),
-      'final_status': fields.selection([('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('public_holiday', 'Public Holiday'),('Holiday', 'Holiday'),('Not-Out', 'Not-CheckOut'),('Status Not Clear','Status Not Clear')], 'Status'),
+      'final_status': fields.function(get_final_status, string='Status',type='selection', selection=ATTENDANCE_STATUS_LIST),
       'attendance_month': fields.char('Attendance Month'),
       'invoiced': fields.boolean('Invoiced',readonly = 1)
     }
@@ -493,16 +573,28 @@ class hr_payslip_run(osv.osv):
 
 
     def create(self, cr, uid, vals, context=None):
-        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
-        cr.execute(sql)
-        date = cr.fetchone()[0]
-        date_last=date+' '+'12:00:00'
-        
+        date = self.pool.get('sms.pull.hr.machine.data')._get_last_pull(cr, uid, vals)
+        d= datetime.strptime(date,"%Y-%m-%d %H:%M:%S") + timedelta(hours=12)  
+        pull_date =datetime.strptime(str(d), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
         date_today = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-        # Static date is set for testing
-#         date_last= '2018-04-17 12:00:00'
-        if  (date_today > date_last):
-            raise osv.except_osv(('!NO'), ('First Pull lastest attendance'))
+        
+        year = int(datetime.strptime(str(vals['date_from']), '%Y-%m-%d').strftime('%Y'))
+        month = int(datetime.strptime(str(vals['date_from']), '%Y-%m-%d').strftime('%m'))
+        month_days = calendar.monthrange(year,month)[1]
+        date_from = datetime.strptime(vals['date_from'], "%Y-%m-%d").strftime("%Y-%m-%d")
+        date_to = datetime(year=int(year), month=int(month), day=int(month_days)).strftime("%Y-%m-%d")
+
+        print' --------- employee id for payslip -----------', vals['employee_id']
+        print'--------- date from man ------', date_from
+        print'--------- date to man ------', date_to
+        
+        unknown = self.pool.get('hr.monthly.attendance.calculation').get_unknown_status(cr, uid, vals['employee_id'], date_from, date_to)
+        print' ---- unknown ---------', unknown
+        
+        if unknown > 0:
+            raise osv.except_osv(('Cannot Proceed'),'There are unknown statuses for this employee in the current month!')
+        if  (date_today > pull_date):
+            raise osv.except_osv(('First Pull attendance'),'')
         else:
             payslip_run_id = super(hr_payslip_run, self).create(cr, uid, vals, context=context)
         return payslip_run_id
@@ -530,14 +622,13 @@ class hr_payslip_run(osv.osv):
             date_tto=date_today
         else:
             date_tto=date_to
-        return {'value': {'date_end':date_tto}}
+        return {'value': {'date_end':date_tto,'date_start':date_from}}
 
     def _get_last_pull(self, cr, uid, ids): 
-        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
-        cr.execute(sql)
-        pull_date = cr.fetchone()[0]
-        print"last pull",pull_date
-        return pull_date
+
+
+        return self.pool.get('sms.pull.hr.machine.data')._get_last_pull(cr, uid, ids)
+
     
 
     _columns = {
@@ -547,29 +638,55 @@ class hr_payslip_run(osv.osv):
         'last_pull':_get_last_pull
     }
     
-    
 class hr_payslip(osv.osv):
     ''' Pay Slip (inprocess)'''
     def create(self, cr, uid, vals, context=None):
-        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
-        cr.execute(sql)
-        date = cr.fetchone()[0]
-        date_last=date+' '+'12:00:00'
-        
+        date = self.pool.get('sms.pull.hr.machine.data')._get_last_pull(cr, uid, vals)
+        d= datetime.strptime(date,"%Y-%m-%d %H:%M:%S") + timedelta(hours=12)  
+        pull_date =datetime.strptime(str(d), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
         date_today = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-        # Static date is set for testing
-#         date_last= '2018-04-17 12:00:00'
+        print'---- vals -----', vals
+        print"pull date",pull_date
+        print"today date",date_today
+        year = int(datetime.strptime(str(vals['date_from']), '%Y-%m-%d').strftime('%Y'))
+        month = int(datetime.strptime(str(vals['date_from']), '%Y-%m-%d').strftime('%m'))
+        month_days = calendar.monthrange(year,month)[1]
+        date_from = datetime.strptime(vals['date_from'], "%Y-%m-%d").strftime("%Y-%m-%d")
+        date_to = datetime(year=int(year), month=int(month), day=int(month_days)).strftime("%Y-%m-%d")
 
-        if  (date_today > date_last):
-            raise osv.except_osv(('!NO'), ('First Pull lastest attendance'))
+        print' --------- employee id for payslip -----------', vals['employee_id']
+        print'--------- date from man ------', date_from
+        print'--------- date to man ------', date_to
+        
+        unknown = self.pool.get('hr.monthly.attendance.calculation').get_unknown_status(cr, uid, vals['employee_id'], date_from, date_to)
+        print' ---- unknown ---------', unknown
+        
+        if unknown > 0:
+            raise osv.except_osv(('Cannot Proceed'),'There are unknown statuses for this employee in the current month!')
+        
+        if  (date_today > pull_date):
+        
+            raise osv.except_osv(('First Pull attendance'),'')
         else:
             payslip_id = super(hr_payslip, self).create(cr, uid, vals, context=context)
         return payslip_id
-    
-    
-    
-    
-    
+    def hr_verify_sheet(self, cr, uid, ids, context=None):
+        
+        super(hr_payslip, self).hr_verify_sheet(cr, uid, ids, context=context)
+        
+        
+        
+        obj = self.browse(cr, uid, ids, context=context)
+        employee_id = obj[0].employee_id.id
+        mont = datetime.strptime(str(obj[0].date_from), '%Y-%m-%d').strftime('%m')
+        year = datetime.strptime(str(obj[0].date_from), '%Y-%m-%d').strftime('%Y')
+        slip_month= mont +'-'+year
+        print"before",employee_id
+        hr_id = self.pool.get('hr.monthly.attendance.calculation').search(cr,uid,[('name','=',slip_month),('employee_id','=',employee_id)]) 
+        print"After"
+        monthly_att= self.pool.get('hr.monthly.attendance.calculation').write(cr, uid, hr_id, {'is_invoiced': True}, context=context)
+        return monthly_att
+>>>>>>> 6e4cef37d8d35f575d6bf413e6eebdf3bf49fa13
     
     
    
@@ -595,18 +712,13 @@ class hr_payslip(osv.osv):
             date_tto=date_today
         else:
             date_tto=date_to
-        return {'value': {'date_to':date_tto}}
+        return {'value': {'date_to':date_tto,'date_from':date_from}}
     
     
     
     
     def _get_last_pull(self, cr, uid, ids): 
-        sql = """select attendance_date FROM hr_employee_attendance ORDER BY attendance_date DESC LIMIT 1"""
-        cr.execute(sql)
-        pull_date = cr.fetchone()[0]
-        print"last pull",pull_date
-        return pull_date
-    
+        return self.pool.get('sms.pull.hr.machine.data')._get_last_pull(cr, uid, ids)
     
     
     
@@ -637,8 +749,8 @@ class hr_payslip(osv.osv):
                  }
     
     _defaults = {
-#                  'date_from': lambda *a: time.strftime('%Y-%m-01'),
-                 'last_pull':_get_last_pull
+                'date_from': lambda *a: time.strftime('%Y-%m-01'),
+                'last_pull':_get_last_pull
                  
     }
     

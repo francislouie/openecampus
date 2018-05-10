@@ -12,15 +12,23 @@
                     <group>
 						<group>
 						<field name="pull_for_device" />
+						  <field name="branch_id" readonly="1"/>
 						  <field name="month_comp" />
 						  <field name="fetch_all_records" />
+						  <field name="exempted_attendance" readonly="1" />
+						  <field name="inactive_employees" readonly="1" />
+						  <field name="missing_empleado" readonly="1" />
+						  <field name="missing_contract" readonly="1" />
+						  <field name="department_not_set" readonly="1" />
+						   <field name="schedules_not_set" readonly="1" />
+						  <field name="last_pull" readonly="1"/>
 	                    </group>
 	                </group>
 					
                     <footer>
                         <button string="Pull Employees Attendance" name="pull_attendance_device_data" type="object" class="oe_highlight"/>
-                        <button string="Compute Absentees" name="compute_attendance_absentees" type="object" class="oe_highlight"/>
-                         <!--  <button string="Compute Holidays" name="compute_attendance_holidays" type="object" class="oe_highlight"/> -->
+                        <!-- <button string="Compute Absentees" name="compute_attendance_absentees" type="object" class="oe_highlight"/> -->
+                         <!--  <button string="Compute Holidays" name="summaries_employee_attendance" type="object" class="oe_highlight"/> -->
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>

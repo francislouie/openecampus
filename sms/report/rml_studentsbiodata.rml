@@ -90,6 +90,7 @@
 						<td><para style="para_1">[[ r['registration_no'] ]]</para>
 						<para style="para_1">[[ r['name'] ]]</para>
 						<para style="para_1">[[ r['father_name'] ]]</para>
+						<para style="para_1">[[ r['birthday'] ]]</para>
 						<para style="para_1">[[ r['gender'] ]]</para></td>
 						<td><para style="para_1">[[ r['perm_address'] ]]</para></td>
 						<td><para style="para_1">[[ r['cur_address'] ]]</para></td>

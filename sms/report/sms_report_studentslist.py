@@ -2,6 +2,8 @@ import time
 import datetime
 from datetime import date
 import logging
+from scipy.interpolate.fitpack import bisplrep
+from tkFont import ITALIC
 _logger = logging.getLogger(__name__)
 from openerp.report import report_sxw
 
@@ -21,6 +23,7 @@ class sms_report_studentslist(report_sxw.rml_parse):
             'get_student_strength':self.get_student_strength,            
             'get_date_range':self.get_date_range,
             'get_student_strength_message':self.get_student_strength_message,
+            'get_student_sibling':self.get_student_sibling,
             'get_user_name':self.get_user_name,
             'get_today':self.get_today
         })
@@ -58,7 +61,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
         
         students = """SELECT registration_no,name,father_name,birthday,cell_no,phone
                           FROM sms_student WHERE current_class ="""+str(acad_cal)+"""
-                          AND state not in('admission_cancel','drop_out','deleted','slc') ORDER BY name"""
+                          AND state = 'Admitted' ORDER BY name"""
+#                           state not in('admission_cancel','drop_out','deleted','slc')
         self.cr.execute(students)
         rows = self.cr.fetchall() 
         i = 1
@@ -119,6 +123,49 @@ class sms_report_studentslist(report_sxw.rml_parse):
         result.append(mydict)
         return result
     
+    def get_student_sibling(self, form):                                                         
+        result = []
+        student_sibling = []
+        sibling =[]
+        this_form = self.datas['form']
+        class_ids_f = this_form['class_id']
+        sql = """select sms_student_id  from sms_std_sibling_reg_rel """
+        self.cr.execute(sql)
+        std_sib= self.cr.fetchall()
+        for ft in std_sib:
+            sibling.append(ft[0])
+        std_ids = self.pool.get('sms.student').search(self.cr, self.uid, [('id','in',sibling),('current_class','=',class_ids_f[0])])
+        std_objs = self.pool.get('sms.student').browse(self.cr, self.uid,std_ids)
+        if(std_ids):
+            i = 1
+            for student in std_objs:
+                student_sibling = []
+                student_name = ''
+                mydict = {'s_no':'', 'class':'', 'Siblings':''}
+                mydict['s_no']  = i
+                mydict['class']     = student.name
+                sql = """select sms_sibling_id  from sms_std_sibling_reg_rel where sms_student_id ="""+str(student.id)+""""""
+                self.cr.execute(sql)
+                std_sib= self.cr.fetchall()
+                for ft in std_sib:
+                    student_sibling.append(ft[0])
+                for student in student_sibling:
+                    std_objs = self.pool.get('sms.student').browse(self.cr, self.uid, student)
+                    student_name= student_name+'\n' + std_objs.name+'\t'+" "+std_objs.current_class.name+'\t'+'-'+std_objs.fee_type.name
+                mydict['Siblings']  = student_name
+                i += 1
+                result.append(mydict)
+            return result
+        else:
+            mydict = {'s_no':'', 'class':'', 'Siblings':'No Sibling'}
+            result.append(mydict)
+            return result
+    
+    
+    
+    
+    
+    
     def get_withdrawn_student_info(self,form):                                                         
         result = []
         this_form = self.datas['form']
@@ -148,7 +195,8 @@ class sms_report_studentslist(report_sxw.rml_parse):
             acad_cal = form['acad_cal'][0]
         students = """SELECT registration_no,name,father_name,birthday,cell_no,phone
                           FROM sms_student WHERE current_class ="""+str(acad_cal)+"""
-                          AND state not in('admission_cancel','drop_out','deleted','slc') ORDER BY name"""
+                          AND state = 'Admitted' ORDER BY name"""
+#                           state not in('admission_cancel','drop_out','deleted','slc')
         self.cr.execute(students)
         rows = self.cr.fetchall() 
         i = 1
@@ -252,14 +300,14 @@ class sms_report_studentslist(report_sxw.rml_parse):
     
     def get_student_biodata(self,form):
         
-        call_fees_lines = self.pool.get('sms.student').get_student_fees_lines(self.cr,self.uid,22,70,'Academics','fee_paid')
-        print "fee return liens",call_fees_lines
+#         call_fees_lines = self.pool.get('sms.student').get_student_fees_lines(self.cr,self.uid,22,70,'Academics','fee_paid')
+#         print "fee return liens",call_fees_lines
         res = []
         s_no = 0
         _ids = self.pool.get('sms.academiccalendar.student').search(self.cr ,self.uid ,[('name','=',form['acad_cal'][0])])
         std_t = tuple(_ids)
         sql = """SELECT std_id FROM sms_academiccalendar_student
-            WHERE id IN """+str(std_t)+""" """
+            WHERE id IN """+str(std_t)+""" and state='Current' """
         self.cr.execute(sql)
         
         info = self.cr.fetchall()
@@ -384,5 +432,6 @@ report_sxw.report_sxw('report.sms.students.biodata', 'sms.student', 'addons/sms/
 report_sxw.report_sxw('report.sms_students_securuty_cards_name', 'sms.student', 'addons/sms/report/rml_student_remp_sec_cards.rml',parser=sms_report_studentslist, header=False)
 report_sxw.report_sxw('report.sms.withdrawn.student.details', 'sms.student', 'addons/sms/report/rml_withdrawnstudentsdata.rml',parser=sms_report_studentslist, header='external')
 report_sxw.report_sxw('report.sms.student.strength.report', 'sms.academiccalendar', 'addons/sms/report/rml_studentstrength.rml',parser=sms_report_studentslist, header='external')
+report_sxw.report_sxw('report.sms.student.sibling.name', 'student.admission.register', 'addons/sms/report/rml_studentsibling.rml',parser=sms_report_studentslist, header='external')
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

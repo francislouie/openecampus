@@ -177,6 +177,8 @@
 						<field name="income_amount"/>
 						<field name="expanse_amount"/>
 						<field name="vehcile_no"/>
+						<field name="driver"/>
+						
 					</group>
 					<notebook>
 						<page readonly = "1" string = "Collections Register">
@@ -220,6 +222,7 @@
 			<tree string="Transport Vehcile">
 					<field name="name"/>
 					<field name="vehcile_type"/>
+					   <field name="driver"/>
 					<field name="income_amount"/>
 					<field name="expanse_amount"/>
 			</tree>

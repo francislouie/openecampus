@@ -100,31 +100,36 @@ class class_singlestudent_unpaidfee_receipt(osv.osv_memory):
 
     def print_singlestudent_unpaidfee_report(self, cr, uid, ids, data):
         thisform = self.read(cr, uid, ids)[0]
-        print("thisform",thisform)
+        std_id = thisform['student_id'][0]
+        std_rec = self.pool.get('sms.student').browse(cr, uid, std_id)
         selected_months = thisform['unpaidfee_months_id']
         category = thisform['category']
-        print('category',category)
+        if hasattr('std_rec', 'transport_availed'):
+            if std_rec.transport_availed == False and category == 'Transport':
+                raise osv.except_osv(('Transport is not availed by this student.'), 'Please select another fee category!')
         #--------------------------------------------------------------------------
-        if thisform['fee_receiving_type'] == 'Full':
-            self.create_unpaid_challans(cr, uid, thisform['student_id'],thisform['due_date'], category, 'Full', None)
-        elif thisform['fee_receiving_type'] == 'Partial':
-            self.create_unpaid_challans(cr, uid, thisform['student_id'],thisform['due_date'], category, 'Partial', selected_months)
-        #--------------------------------------------------------------------------
-        report = 'smsfee_print_one_student_per_page'
-            #--------------------------------------------------------------------------
-       
-        datas = {
-             'ids': [],
-             'active_ids': '',
-             'model': 'smsfee.classfees.register',
-             'form': self.read(cr, uid, ids)[0],
-             }
-        return {
-            'type': 'ir.actions.report.xml',
-            'report_name':report,
-            'datas': datas,
-            }
         
+        else:
+            if thisform['fee_receiving_type'] == 'Full':
+                self.create_unpaid_challans(cr, uid, thisform['student_id'],thisform['due_date'], category, 'Full', None)
+            elif thisform['fee_receiving_type'] == 'Partial':
+                self.create_unpaid_challans(cr, uid, thisform['student_id'],thisform['due_date'], category, 'Partial', selected_months)
+            #--------------------------------------------------------------------------
+            report = 'smsfee_print_one_student_per_page'
+                #--------------------------------------------------------------------------
+           
+            datas = {
+                 'ids': [],
+                 'active_ids': '',
+                 'model': 'smsfee.classfees.register',
+                 'form': self.read(cr, uid, ids)[0],
+                 }
+            return {
+                'type': 'ir.actions.report.xml',
+                'report_name':report,
+                'datas': datas,
+                }
+            
 class_singlestudent_unpaidfee_receipt()
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:

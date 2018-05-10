@@ -9,6 +9,9 @@ class exam_entry(osv.osv_memory):
         tea_job_id = emp_obj[1]
         print"Teacher id",tea_emp_id
         
+        if uid == 1:
+            return  {'domain': {'academiccalendar_id': []} ,'value':{}}
+        
         cr.execute("""select academic_calendar from sms_academiccalendar_subjects where  teacher_id =""" + str(tea_emp_id) + """""")
         ft_ids = cr.fetchall() 
         if tea_job_id ==1:

@@ -121,46 +121,57 @@ class class_student_fee_collectt(osv.osv_memory):
         domain = []
         thisform = self.read(cr, uid, ids)[0]
         st=thisform['student_id'][0]
+        print'---- student Id ---------------',st
         g_fee_type = thisform['generic_fee_type'][0]
+        print'---- generic fee type ---------------',g_fee_type
         current_class=thisform['class_id'][0]
+        print'---- class id ---------------',current_class
+        category = thisform['category']
         std=self.pool.get('sms.student').browse(cr,uid,st)
-        sql="""select id from smsfee_classes_fees_lines where
-                parent_fee_structure_id =(select id from smsfee_classes_fees where
-                academic_cal_id="""+str(std.current_class.id)+""" and fee_structure_id="""+str(std.fee_type.id)+""")   
-                and fee_type = """+str(g_fee_type)+""" """
-        cr.execute(sql)
-        _id = cr.fetchone()
-
-
-        # domain = [('id','>=',thisform['challan_id'][0])]
-        fee_dcit = {
-            'student_id':thisform['student_id'][0],
-            'acad_cal_id':thisform["class_id"][0],
-            'date_fee_charged': datetime.date.today(),
-            'due_month':thisform['due_month'][0],
-            'fee_month': thisform['fee_month'][0],
-            'paid_amount': 0,
-            'fee_amount': thisform['fee_amount'],
-            'discount': 0,
-            'reconcile': False,
-            'state': 'fee_unpaid',
-            'generic_fee_type':thisform['generic_fee_type'][0],
-            'fee_type':_id,
-            'category':thisform['category']
-
-        }
-        add_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit)
-
-        result = {
-                'type': 'ir.actions.act_window',
-                'name': 'Collect Fees',
-                'res_model': 'smsfee.studentfee',
-                'view_type': 'form',
-                'view_mode': 'form',
-                'view_id': False,
-                'nodestroy': True,
-                'target': 'current',
-                }
+        
+#         transport_exists = self.pool.get('sms.transport.registrations').search(cr, uid, [('student_id', '=', st)])
+        
+        if std.transport_availed == False and category == 'Transport':
+            raise osv.except_osv(('Transport is not availed by this student.'), 'Please select another fee category!')
+        
+        else:
+            sql="""select id from smsfee_classes_fees_lines where
+                    parent_fee_structure_id =(select id from smsfee_classes_fees where
+                    academic_cal_id="""+str(std.current_class.id)+""" and fee_structure_id="""+str(std.fee_type.id)+""")   
+                    and fee_type = """+str(g_fee_type)+""" """
+            cr.execute(sql)
+            _id = cr.fetchone()
+    
+    
+            # domain = [('id','>=',thisform['challan_id'][0])]
+            fee_dcit = {
+                'student_id':thisform['student_id'][0],
+                'acad_cal_id':thisform["class_id"][0],
+                'date_fee_charged': datetime.date.today(),
+                'due_month':thisform['due_month'][0],
+                'fee_month': thisform['fee_month'][0],
+                'paid_amount': 0,
+                'fee_amount': thisform['fee_amount'],
+                'discount': 0,
+                'reconcile': False,
+                'state': 'fee_unpaid',
+                'generic_fee_type':thisform['generic_fee_type'][0],
+                'fee_type':_id,
+                'category':thisform['category']
+    
+            }
+            add_fee = self.pool.get('smsfee.studentfee').create(cr, uid, fee_dcit)
+    
+            result = {
+                    'type': 'ir.actions.act_window',
+                    'name': 'Collect Fees',
+                    'res_model': 'smsfee.studentfee',
+                    'view_type': 'form',
+                    'view_mode': 'form',
+                    'view_id': False,
+                    'nodestroy': True,
+                    'target': 'current',
+                    }
 
         return add_fee
 
