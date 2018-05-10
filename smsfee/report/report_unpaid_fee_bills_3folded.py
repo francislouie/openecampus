@@ -364,7 +364,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
 
                     challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'',
                                 'amount_in_words':'','amount_after_due_date':'','dbid':'','grand_total':'','grand_lable':'','partial_lable':'' ,'Table_1':''
-                                ,'vechil_no':'Testing','driver_name':'testing','vechil_name':'ttesting'}
+                                ,'vechil_no':'','driver_name':'','vechil_name':''}
                     challan_dict['challan_number'] = self.get_challan_number(challan.id)
                     challan_dict['candidate_info'] = self.get_candidate_info(challan.student_id.id)
                     challan_dict['on_accounts'] = self.get_on_accounts(challan.id)
