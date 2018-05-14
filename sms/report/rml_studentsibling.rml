@@ -25,7 +25,7 @@
       <paraStyle name="all" alignment="justify"/>
     </initialize>
     <paraStyle name="para_1" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
-    <paraStyle name="para_2" fontName="Helvetica" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="para_2" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="para_22" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
     <paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="LEFT" color="#ffffff" spaceBefore="3.0" spaceAfter="3.0"/>
     <images/>
