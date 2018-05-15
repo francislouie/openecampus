@@ -79,7 +79,7 @@ class hr_monthly_attendance_calculation(osv.osv):
         for f in self.browse(cr, uid, ids, context=context):
             total_20_late = f.twenty_minutes_late or 0
             total_30_late = f.thirty_minutes_late or 0
-            if total_20_late >=3:
+            if total_20_late >=2:
                 day_ded = int(total_20_late/3)
                 remainder_20 = total_20_late % 3
                 remainder_30 = total_30_late % 2
