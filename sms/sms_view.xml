@@ -19,6 +19,7 @@
 							<group>
 							<group string="" >
 								<!--  <field name="subcate" /> -->
+								<field name="session_id" />
 								<field name="program_category_id" />
 								<field name="start_date" />
 								<field name="date_started" readonly ="1"/>
@@ -154,7 +155,7 @@
 			<field name="state" widget="statusbar" statusbar_visible="Draft,active,previous"/>
              </header>
 				<sheet>
-				 <group string="Acaddemic Session" >
+				 <group string="Acaddemic Session" colspan="4" >
 				<p>A new academic sssion is started when previously running session is closed. After you create session, you can add multiple programs to it. The session and its
 					programs are started and closed according to session start and end date.</p>
 					<newline/>
@@ -178,6 +179,10 @@
 					<field name="session_months" nolabel = "1"/>
 				</group>  
 			   </page>
+			<page string = "Session Programs">
+			<!--<field name="programs_ids" nolabel = "1"/>-->
+			<p>Programs</p>
+			</page>
 			  <page string= "Session Classes">
 				 <group string="">
 					<field name="acad_cals" domain="[('state','=','Complete')]" nolabel = "1"/>
