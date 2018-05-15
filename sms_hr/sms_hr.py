@@ -77,9 +77,14 @@ class hr_monthly_attendance_calculation(osv.osv):
     def get_decuction_twentry_m_late(self, cr, uid,ids, name, args, context=None):
         result = {}
         for f in self.browse(cr, uid, ids, context=context):
-            total_late = f.twenty_minutes_late or 0
-            if total_late >=3:
-                day_ded = int(total_late/3)
+            total_20_late = f.twenty_minutes_late or 0
+            total_30_late = f.thirty_minutes_late or 0
+            if total_20_late >=3:
+                day_ded = int(total_20_late/3)
+                remainder_20 = total_20_late % 3
+                remainder_30 = total_30_late % 2
+                if remainder_20 == 2 and remainder_30 == 1:
+                    day_ded += 1
             else:
                 day_ded = 0
             
@@ -573,30 +578,30 @@ class hr_payslip_run(osv.osv):
 
 
     def create(self, cr, uid, vals, context=None):
+        year = int(datetime.strptime(str(vals['date_start']), '%Y-%m-%d').strftime('%Y'))
+        mont = int(datetime.strptime(str(vals['date_start']), '%Y-%m-%d').strftime('%m'))
+        if(mont <10):
+            month ='0'+str(mont)
+        else:
+            month =''+str(mont) 
+        mon_days = calendar.monthrange(year,mont)[1]
+        date_to =str(str(year)+'-'+str(month)+'-'+str(mon_days))
+        date_today = datetime.today().strftime('%Y-%m-%d')
+        if (date_to > date_today):
+            date_tto=date_today
+        else:
+            date_tto=date_to
         date = self.pool.get('sms.pull.hr.machine.data')._get_last_pull(cr, uid, vals)
         d= datetime.strptime(date,"%Y-%m-%d %H:%M:%S") + timedelta(hours=12)  
         pull_date =datetime.strptime(str(d), "%Y-%m-%d %H:%M:%S").strftime("%Y-%m-%d %H:%M:%S")
         date_today = datetime.today().strftime("%Y-%m-%d %H:%M:%S")
-        
-        year = int(datetime.strptime(str(vals['date_from']), '%Y-%m-%d').strftime('%Y'))
-        month = int(datetime.strptime(str(vals['date_from']), '%Y-%m-%d').strftime('%m'))
-        month_days = calendar.monthrange(year,month)[1]
-        date_from = datetime.strptime(vals['date_from'], "%Y-%m-%d").strftime("%Y-%m-%d")
-        date_to = datetime(year=int(year), month=int(month), day=int(month_days)).strftime("%Y-%m-%d")
-
-        print' --------- employee id for payslip -----------', vals['employee_id']
-        print'--------- date from man ------', date_from
-        print'--------- date to man ------', date_to
-        
-        unknown = self.pool.get('hr.monthly.attendance.calculation').get_unknown_status(cr, uid, vals['employee_id'], date_from, date_to)
-        print' ---- unknown ---------', unknown
-        
-        if unknown > 0:
-            raise osv.except_osv(('Cannot Proceed'),'There are unknown statuses for this employee in the current month!')
         if  (date_today > pull_date):
             raise osv.except_osv(('First Pull attendance'),'')
         else:
             payslip_run_id = super(hr_payslip_run, self).create(cr, uid, vals, context=context)
+            
+            sql_query = """Update hr_payslip_run set date_end ='"""+str(date_tto)+"""' where id ="""+str(payslip_run_id)+""""""
+            cr.execute(sql_query)
         return payslip_run_id
 
 
@@ -653,7 +658,16 @@ class hr_payslip(osv.osv):
         month_days = calendar.monthrange(year,month)[1]
         date_from = datetime.strptime(vals['date_from'], "%Y-%m-%d").strftime("%Y-%m-%d")
         date_to = datetime(year=int(year), month=int(month), day=int(month_days)).strftime("%Y-%m-%d")
-
+        date_today = datetime.today().strftime('%Y-%m-%d')
+        print"Date today ",date_today 
+        print"Date from ",date_from 
+      
+        print"date to ",date_to
+        
+        if (date_to > date_today):
+            date_tto=date_today
+        else:
+            date_tto=date_to
         print' --------- employee id for payslip -----------', vals['employee_id']
         print'--------- date from man ------', date_from
         print'--------- date to man ------', date_to
@@ -669,6 +683,8 @@ class hr_payslip(osv.osv):
             raise osv.except_osv(('First Pull attendance'),'')
         else:
             payslip_id = super(hr_payslip, self).create(cr, uid, vals, context=context)
+            sql_query = """Update hr_payslip set date_to ='"""+str(date_tto)+"""' where id ="""+str(payslip_id)+""""""
+            cr.execute(sql_query)
         return payslip_id
     
     def hr_verify_sheet(self, cr, uid, ids, context=None):

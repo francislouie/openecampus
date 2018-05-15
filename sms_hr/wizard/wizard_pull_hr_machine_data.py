@@ -57,7 +57,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         return empleado_missing_employees
     
     
-    # Display all employees with missing Contract Ids in wizard
+    # Display all employees with missing Contract Ids or missing wage in wizard
     def _get_missing_contract_employees(self, cr, uid, ids): 
         missing_contract_employees = ''        
         contract_recs = self.pool.get('hr.employee').search(cr, uid, [('contract_id','=', None), ('punch_attendance','=','yes')])
@@ -65,7 +65,13 @@ class sms_pull_hr_machine_data(osv.osv_memory):
             for id in contract_recs:
                 rec = self.pool.get('hr.employee').browse(cr, uid, id)
                 missing_contract_employees += rec.name_related + ', '
-
+       
+        contract_recs = self.pool.get('hr.contract').search(cr, uid, [('wage','=', 0)])
+        if contract_recs:
+            for id in contract_recs:
+                rec = self.pool.get('hr.contract').browse(cr, uid, id)
+                emp = self.pool.get('hr.employee').browse(cr, uid, rec.employee_id.id)
+                missing_contract_employees += emp.name_related + ', '
         return missing_contract_employees
     
     
@@ -137,7 +143,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
               'missing_empleado': fields.text('Employees with Missing Empleado IDs'),
               'branch_id': fields.char(string='Current Branch ID'),
               'department_not_set': fields.text('Employees with Missing Departments'),
-              'missing_contract': fields.text('Employees with no Contracts'),
+              'missing_contract': fields.text('Missing Contracts / Zero Wage'),
               'schedules_not_set': fields.text('Departments with Missing Schedules'),
               'last_pull': fields.char('Last Pull Date')
               }
@@ -179,9 +185,9 @@ class sms_pull_hr_machine_data(osv.osv_memory):
          
          
         # Check if there are employees with missing contracts in the wizard 
-        missing_contract_id = self.read(cr, uid, ids)[0]['missing_contract']
-        if missing_contract_id:
-            raise osv.except_osv((),'Some employees have no contracts, Cannot Proceed!')
+#         missing_contract_id = self.read(cr, uid, ids)[0]['missing_contract']
+#         if missing_contract_id:
+#             raise osv.except_osv((),'Some employees have null or invalid contracts or wages undefined, Cannot Proceed!')
             
             
         # Check if there are employees with departments not assigned in the wizard 
