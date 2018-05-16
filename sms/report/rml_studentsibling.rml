@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<document filename="test.pdf">
+  <template pageSize="(732.0,920.0)" title="Crossovered Analytic" author="Ghulam Masood" allowSplitting="20">
+    <pageTemplate id="first">
+      <frame id="first" x1="40.0" y1="5.0" width="570" height="786"/>
+    </pageTemplate>
+  </template>
+  <stylesheet>
+     <blockTableStyle id="Table2">
+    <blockAlignment value="CENTER"/>
+    <blockValign value="TOP"/>
+    <blockTopPadding length="8.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="13.0" start="0,0" stop="-1,-1"/>
+    <blockBackground colorName="#e6e6e6" start="0,0" stop="5,0"/>
+    <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
+    </blockTableStyle>
+    <blockTableStyle id="Table21">
+    <blockAlignment value="CENTER"/>
+    <blockValign value="TOP"/>
+    <blockTopPadding length="8.0" start="0,0" stop="-1,-1"/>
+    <blockBottomPadding length="13.0" start="0,0" stop="-1,-1"/>
+    <lineStyle kind="GRID" colorName="#000000" start="0,0" stop="-1,-1"/>
+    </blockTableStyle>
+    <initialize>
+      <paraStyle name="all" alignment="justify"/>
+    </initialize>
+    <paraStyle name="para_1" fontName="Helvetica-Bold" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="para_2" fontName="Helvetica" fontSize="9.0" leading="11" alignment="CENTER" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="para_22" fontName="Helvetica" fontSize="9.0" leading="11" alignment="LEFT" spaceBefore="0.0" spaceAfter="0.0"/>
+    <paraStyle name="white" fontName="Helvetica" fontSize="9.0" leading="0" alignment="LEFT" color="#ffffff" spaceBefore="3.0" spaceAfter="3.0"/>
+    <images/>
+  </stylesheet>
+  <story>
+    <section>
+        <blockTable colWidths="540.0" style="">
+            <tr>
+                <td><para style="white">.</para></td>
+            </tr>
+        </blockTable>
+        <blockTable colWidths="40.0,90.0,330.0" repeatRows="1" style="Table2">
+            <tr>
+                <td><para style="para_1">S.No</para></td>
+                <td><para style="para_1">Name</para></td>
+                <td><para style="para_1"> Siblings</para></td>
+            </tr>
+        </blockTable>
+        <blockTable colWidths="40.0,90.0,330.0" style="Table21">
+            <tr>[[repeatIn(get_student_sibling(data['form']),'r')]]
+                <td><para style="para_2">[[ r['s_no'] ]]</para></td>
+                <td><para style="para_22">[[ r['class'] ]]</para></td>
+                <td><para style="para_2">[[ r['Siblings'] ]]</para></td>
+            
+            </tr>
+        </blockTable>
+        
+        <blockTable colWidths="200.0,240.0,100.0" style="">
+            <tr>
+                <td><para style="white">.</para></td>
+            </tr>
+             <tr>
+             <td><para style="P1">[[ get_user_name(data['form'])]]</para></td>
+             <td><para style="white">.</para></td>
+             <td><para style="P1">[[ get_today(data['form'])]]</para></td>
+                 
+             </tr>
+        </blockTable>
+        
+        <blockTable colWidths="540.0" style="">
+            <tr>
+                <td><para style="white">.</para></td>
+            </tr>
+        </blockTable>
+        
+        <para style="para_2">[[ get_student_strength_message(data['form'])]]</para>
+        
+        
+        
+        
+        
+    </section>
+</story>
+</document>

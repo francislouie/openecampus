@@ -172,6 +172,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
             raise osv.except_osv((),'No Branch ID Set, Cannot Proceed!')
         
         
+
         # Check if there are inactive employees in the wizard 
         inactive_id = self.read(cr, uid, ids)[0]['inactive_employees']
         if inactive_id:

@@ -47,14 +47,6 @@ class sms_academics_session(osv.osv):
     """
     This Creates an academic session thame may be of minimum 1 year, max many years
     """
-
-        
-
-    
-    
-    
-    
-    
     def close_academic_session(self, cr, uid, ids, *args):
    
         result = {}
@@ -113,7 +105,7 @@ class sms_academics_session(osv.osv):
     _description = "Stores academics session for an institue, e.g session 2013-2014."
     _columns = {
         'name':fields.function(_set_name, method=True, store = True, size=256, string='Code',type='char'), 
-        'session_ids':fields.one2many('sms.session','academic_session_id','Session'),
+        'session_id':fields.many2one('sms.session','Session', required = True),
         'start_date': fields.date('Start Date'),
         'end_date': fields.date('End Date'),
         'date_started':fields.date('Started On',readonly = True),
@@ -312,6 +304,7 @@ class sms_session(osv.osv):
         return True
     
     def set_code(self, cr, uid, ids, name, args, context=None):
+        #415
         result = {}
         for obj in self.browse(cr, uid, ids, context=context):
             sdate = obj.start_date
@@ -320,9 +313,11 @@ class sms_session(osv.osv):
                 raise osv.except_osv(('Session '), ('Session End date must be greater than Start date.' ))
             else:
                 year = sdate.split('-')
-                acad_session = obj.academic_session_id.name
-                arr = acad_session.split('-')
-                result[obj.id] = obj.subcate+"-"+str(year[0])
+                year_end = edate.split('-')
+                #acad_session = obj.academic_session_id.name this line is removed fornew strucutre on 15 may
+                #arr = acad_session.split('-')
+                result[obj.id] = str(obj.subcate)+"-"+str(year[0])
+                #raise osv.except_osv(( obj.subcate+"-"+str(year[0])+"-"+year_end[:2]), ('Session End date must be greater than Start date.' ))
         return result
     
     def load_students_from_excel(self, cr, uid, data, context):
@@ -419,10 +414,10 @@ class sms_session(osv.osv):
     _name = 'sms.session'
     _description = "This object defines academic years"
     _columns = {
-        'name':fields.function(set_code, method=True,store = True, size=256, string='Code',type='char'),
+        'name':fields.function(set_code, method=True, size=256, string='Code',type='char'),
         'start_date': fields.date("Start",required=True) ,
         'end_date': fields.date("End",required=True),
-        'academic_session_id':fields.many2one('sms.academics.session','Academic Session'),
+        'programs_ids ':fields.one2many('sms.academics.session','session_id','Programs'),
         'session_months':fields.one2many('sms.session.months','session_id','Months'),
         'months_loaded':fields.boolean('Month Loaded'),
         'acad_cals':fields.one2many('sms.academiccalendar','session_id','Academic Calendars'),
@@ -431,7 +426,7 @@ class sms_session(osv.osv):
         'session_admissions_closed':fields.boolean("Admission Closed In This Session"),
         'session_started_by':fields.many2one('res.users','Started By:'),
         'session_closed_by':fields.many2one('res.users','Closed By'),
-        'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
+        'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sesstion Term', required = True),
         'state': fields.selection([('Draft', 'Draft'),('Active', 'Active'),('Previous', 'Closed')], 'State', readonly = True, help='Session State'),
     }
     _defaults = {  'state': 'Draft'}
@@ -1057,7 +1052,9 @@ class sms_student(osv.osv):
         'relative_contact':fields.char(string = "Relative Contact #", size=50),
         'relative_addr':fields.char(string = "Relative Address", size=50),
         'attachment': fields.binary('Attachments'),
-        'reason_withdraw': fields.text('With-Drawl Reason'),        
+        'reason_withdraw': fields.text('With-Drawl Reason'),  
+        'sibling': fields.many2many('sms.student', 'sms_std_sibling_reg_rel', 'sms_student_id', 'sms_sibling_id','Sibling')
+          
         #*****************************************************************************************************
         
     } 
