@@ -38,10 +38,12 @@
                     <page string="Academics Bill Layout">
                             <separator string="Field for Challan Printing(Header)" colspan="4"/>
 							<group>
-							<field name="late_fee_amount"/>
-							 <field name="company_cfieldone"/>
-							 <field name="company_cfieldtwo"/>
-							 <field name="company_cfieldthree"/>
+                                <field name="late_fee_amount"/>
+                                <field name="remove_fee_title"/>
+                                <field name="remove_due_date"/>
+                                <field name="company_cfieldone"/>
+                                <field name="company_cfieldtwo"/>
+                                <field name="company_cfieldthree"/>    
 							</group>
                      		<separator string="Field for Challan Printing(Footer)" colspan="4"/>
 							<group col="4" colspan="2">

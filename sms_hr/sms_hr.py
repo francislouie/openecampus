@@ -367,7 +367,7 @@ class hr_employee_attendance(osv.osv):
                     emp_dep_id=emp.department_id.id
                 else:
                     print"department is not assign"     
-            sch_lines_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('department_id','=',emp_dep_id),('dayofweek','=',str(day))])
+            sch_lines_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('department_id','=',emp_dep_id),('dayofweek','=',str(day)),('schedule_id','=',f.active_schedule_id)])
             if sch_lines_ids:
                 sch_lines__objs = self.pool.get('hr.schedule.lines').browse(cr,uid, sch_lines_ids[0])
                 attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_lines__objs.date_start, "UTC", "Asia/Karachi")
@@ -414,7 +414,7 @@ class hr_employee_attendance(osv.osv):
                     emp_dep_id=emp.department_id.id
                 else:
                     print"department is not assign"     
-            sch_lines_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('department_id','=',emp_dep_id),('dayofweek','=',str(day))])
+            sch_lines_ids = self.pool.get('hr.schedule.lines').search(cr,uid, [('department_id','=',emp_dep_id),('dayofweek','=',str(day)),('schedule_id','=',f.active_schedule_id)])
             if sch_lines_ids:
                 sch_detail__objs = self.pool.get('hr.schedule.lines').browse(cr,uid, sch_lines_ids[0])
                 attendance_time =self.pool.get('hr.schedule').convert_datetime_timezone(sch_detail__objs.date_end, "UTC", "Asia/Karachi")
@@ -545,7 +545,8 @@ class hr_employee_attendance(osv.osv):
       'total_short_minutes': fields.function(total_short_minutes, method=True, string='Short Min ',type='integer'),
       'final_status': fields.function(get_final_status, string='Status',type='selection', selection=ATTENDANCE_STATUS_LIST),
       'attendance_month': fields.char('Attendance Month'),
-      'invoiced': fields.boolean('Invoiced',readonly = 1)
+      'invoiced': fields.boolean('Invoiced',readonly = 1),
+      'active_schedule_id': fields.integer('Active Schedule Id')
     }
     _defaults = {
         

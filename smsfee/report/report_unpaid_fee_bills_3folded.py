@@ -44,6 +44,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             'get_total_amount':self.get_total_amount,
             'get_amount_in_words':self.get_amount_in_words,
             'get_due_date':self.get_due_date,
+            'get_due_date_str':self.get_due_date_str,
             'get_class_group':self.get_class_group,
             'get_challan_logo':self.get_challan_logo,
             'get_challan_header_lineone':self.get_challan_header_lineone,
@@ -53,6 +54,7 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
             'get_challan_footer_two':self.get_challan_footer_two,
             'get_department_logo':self.get_department_logo,
             # 'get_vechil_no':self.get_vechil_no,
+            
          })
         self.context = context
 
@@ -306,8 +308,39 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         return today 
 
     def get_due_date(self):
+        due_dat = self.datas['form']
         due_date = self.datas['form']['due_date']
+        print 'This is the Due date------------------',due_dat
         due_date = datetime.strptime(due_date, '%Y-%m-%d').strftime('%d/%m/%Y')
+        if 'student_id' in self.datas['form']:
+            class_id = self.pool.get('sms.student').browse(self.cr,self.uid,self.datas['form']['student_id'][0]).current_class.id
+        else:
+            class_id = self.datas['form']['class_id'][0]
+        aca_cal_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,class_id)
+        remove_due_date = aca_cal_obj.acad_session_id.remove_due_date
+        print"remove_due_date",remove_due_date
+        if remove_due_date ==True:
+            due_dat = ''
+        else:
+            due_dat = due_date
+        return due_dat
+    
+    
+    
+    def get_due_date_str(self):
+        if 'student_id' in self.datas['form']:
+            print("fordata",self.datas['form'])
+            #user is printing indivual student challan from student form, get class id using student id from wizard form
+            class_id = self.pool.get('sms.student').browse(self.cr,self.uid,self.datas['form']['student_id'][0]).current_class.id
+        else:
+            class_id = self.datas['form']['class_id'][0]
+        aca_cal_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid, class_id)
+        remove_due_date = aca_cal_obj.acad_session_id.remove_due_date
+        print"remove_due_date",remove_due_date
+        if remove_due_date ==True:
+            due_date = ''
+        else:
+            due_date = 'Due date :'
         return due_date 
 
     def get_class_group(self, data):
@@ -482,7 +515,9 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
     def get_candidate_info(self, data):
         info_list = []
         stdrec = self.pool.get('sms.student').browse(self.cr, self.uid, data)
-        info_dict = {'name':'','father_name':'','class':'','fee_month':'','reg_no':''}
+        remove_fee_title =stdrec.current_class.acad_session_id.remove_fee_title
+        
+        info_dict = {'name':'','father_name':'','class':'','fee_month':'','fee_mon_str':'','reg_no':''}
         info_dict['reg_no'] = stdrec.registration_no 
         info_dict['name'] = stdrec.name 
         info_dict['father_name'] = stdrec.father_name
@@ -490,7 +525,14 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
         fee_month = self.datas['form']['due_date']
         due_date = datetime.strptime(fee_month, '%Y-%m-%d')
         str_date = due_date.strftime('%b %Y')
-        info_dict['fee_month'] = str_date
+        if remove_fee_title ==True:
+            fee_mon_str = ''
+            fee_month = ''
+        else:
+            fee_mon_str = 'Fee Month:'
+            fee_month = str_date
+        info_dict['fee_mon_str'] = fee_mon_str
+        info_dict['fee_month'] = fee_month
         info_list.append(info_dict)
         return info_list
  
@@ -503,13 +545,28 @@ class report_unpaid_fee_bills_3folded(report_sxw.rml_parse):
                 title = ''
                 whole_amount = 0
                 for challan in challans:
-                    title += challan.fee_name +':'+str(challan.fee_amount)+','
+                    title += str(challan.fee_type.name) +':'+str(challan.fee_amount)+','
                     whole_amount = int(whole_amount) + int(challan.fee_amount)
+                    
+                print'-------------------'+title
                 dict = {'head_name':title,'head_amount':whole_amount}
+                
                 result.append(dict) 
             else:
                 for challan in challans:
-                    dict = {'head_name':challan.fee_name,'head_amount':challan.fee_amount}
+                    if 'student_id' in self.datas['form']:
+                        class_id = self.pool.get('sms.student').browse(self.cr,self.uid,self.datas['form']['student_id'][0]).current_class.id
+                    else:
+                        class_id = self.datas['form']['class_id'][0]
+                    aca_cal_obj = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,class_id)
+                    remove_fee_title = aca_cal_obj.acad_session_id.remove_fee_title
+                    print"remove_fee_titlet",remove_fee_title
+                    if remove_fee_title ==True:
+                        titl = challan.fee_type.name
+
+                    else:
+                        titl = challan.fee_name 
+                    dict = {'head_name':titl,'head_amount':challan.fee_amount}
                     result.append(dict) 
         return result
     
