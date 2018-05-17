@@ -735,38 +735,37 @@
 
 	<!--sms student basic info-->
 		<record model="ir.ui.view" id="custom_module_kanban_view">
-            <field name="name">student.kanban</field>
-            <field name="model">sms.student</field>
-            <field name="type">kanban</field>
-            <field name="arch" type="xml">
-                <kanban>
-                    <!--list of field to be loaded -->
-                    <field name="name" />
-                    <field name="image" />
-                    <templates>
+        <field name="name">Students</field>
+        <field name="model">sms.student</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <templates>
                     <t t-name="kanban-box">
-                            <div class="oe_product_vignette">
-                                <a type="open">
-                                    <img class="oe_kanban_image"
-                                        t-att-src="kanban_image('sms.student', 'image', record.id.value)" />
-                                </a>
-                                <div class="oe_product_desc">
-                                    <h4>
-                                        <a type="edit">
-                                            <field name="name"></field>
-                                        </a>
-                                    </h4>
-                                    <ul>
-                                        <li><field name="father_name" /></li>
-										<li><field name="registration_no" /></li>
-                                    </ul>
-                                </div>
+                        <div class="oe_employee_vignette">
+                            <div class="oe_employee_image">
+                                <a type="open"><img t-att-src="kanban_image('sms.student', 'image', record.id.value)" class="oe_employee_picture"/></a>
                             </div>
-                        </t>
-                    </templates>
-                </kanban>
-            </field>
-        </record>
+                            <div class="oe_employee_details">
+                                <field name="registration_no"/>
+								<h4><field name="name"/></h4>
+                                <ul>
+                                   
+                                    <li t-if="record.current_class.raw_value"><h4><field name="current_class"/></h4></li>
+									<li t-if="record.fee_type.raw_value"><strong>Fee:</strong> <field name="fee_type"/></li>
+                                    <li t-if="record.phone.raw_value"><strong>Contact:</strong> <field name="phone"/></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <script>
+                            $('.oe_employee_picture').load(function() { if($(this).width() > $(this).height()) { $(this).addClass('oe_employee_picture_wide') } });
+                        </script>
+                    </t>
+                </templates>
+            </kanban>
+
+        </field>
+    </record>
 
         <record model="ir.ui.view" id="view_student_form">
          <field name="name">student.form</field>
