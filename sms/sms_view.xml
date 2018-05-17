@@ -2454,18 +2454,23 @@
 			 </group>
 		</group>
 			<group  colspan="4">
-			 <group>		
-		  	 <newline/><field name="exam_type" attrs="{'readonly':[('state','in',['Closed','Cancelled'])]}"/>
+			 <group colspan = "2">		
+		  	 <field name="exam_type" attrs="{'readonly':[('state','in',['Closed','Cancelled'])]}"/>
+			 <field name="term_name"/>
 		</group>
 		 <group colspan="4">
  		   <field name="start_date" on_change="onchange_exam_start_date(start_date)" attrs="{'readonly':[('state','in',['Closed','Cancelled'])]}"/>
  		   <field name="session_year"/>
- 		     <field name="term_name"/>
+ 		    
  		    <field name="result"/>
 		</group>
 		</group>
 		<notebook>
 		<page string ="Exam Classes">
+			<h1><p>Classes Appearing in this exams</p></h1>
+			<p>Following are the classes that appear in this examination. Delete a class from the list if you dont want to inculde in this examination.</p>
+			<p>Click on each class to enter its exam total marks and paper date.</p>
+			<p><strong>Note:</strong> Editing is only allowed before exams is started, once exams are started no class can be edited.</p>
 		  	<field name="datesheet_ids" nolabel = "1" colspan="4"/>
 		  </page>
 		</notebook>	
