@@ -63,8 +63,9 @@ class hr_schedule(osv.osv):
     
         return dt
     def create(self, cr, uid, vals, context=None):
-        
+        print"department id",vals['department_id']
         exists = self.search(cr,uid,[('department_id','=',vals['department_id']),('state','!=','locked')]) 
+        print"exist",exists
         if  exists:
             raise osv.except_osv(('Schedule is already in confirm state for this department'), ('First move it to lock state or remove it '))
         else:
@@ -143,6 +144,7 @@ class hr_schedule(osv.osv):
             ('locked', 'Locked'), (
                 'unlocked', 'Unlocked'),
         ), 'State', required=True, readonly=True),
+        'effective_date': fields.date('Effective Date'),
     }
 
     _defaults = {
@@ -266,7 +268,12 @@ class hr_schedule(osv.osv):
         return super(hr_schedule, self).unlink(cr, uid, schedule_ids, context=context)
  
     def _workflow_common(self, cr, uid, ids, signal, next_state, context=None):
- 
+        # <Obaid>
+        form_date = self.read(cr, uid, ids)[0]['effective_date']
+        if not form_date:
+            raise osv.except_osv(('Effective Date not set!'),'Please select effective date for this schedule first.')
+        # </Obaid>
+         
         wkf = netsvc.LocalService('workflow')
         for sched in self.browse(cr, uid, ids, context=context):
             for detail in sched.detail_ids:
@@ -280,6 +287,16 @@ class hr_schedule(osv.osv):
             cr.execute(sql_query)
             sql_query = """Update hr_schedule set state ='validate' where id ="""+str(sched.id)+""""""
             cr.execute(sql_query)
+            
+            # <Obaid> - code implemented to enable multiple schedule assignment for a department
+            employee_ids = self.pool.get('hr.employee').search(cr,uid,[('department_id','=',sched.department_id.id)])
+            if employee_ids:
+                for rec in employee_ids:
+                    employee_attendance_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',rec), ('attendance_date','>=', form_date)])
+                    if employee_attendance_ids:
+                        for id_rec in employee_attendance_ids:
+                            self.pool.get('hr.employee.attendance').write(cr, uid, id_rec, {'active_schedule_id': sched.id})
+            # </Obaid>
         return True
  
     def workflow_validate(self, cr, uid, ids, context=None):
@@ -411,6 +428,7 @@ class schedule_lines(osv.osv):
             ('locked', 'Locked'), (
                 'unlocked', 'Unlocked'),
         ), 'State', required=True, readonly=True),
+       
     }
 
     _order = 'schedule_id, date_start, dayofweek'

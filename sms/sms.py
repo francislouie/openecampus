@@ -143,7 +143,8 @@ class sms_academics_session(osv.osv):
 	    'order_of_report': fields.selection([('by_name', 'By Name'), ('by_registration_no', 		'By Reg No')],
                                             'Order Of Report'),
         'campus_code': fields.char('Campus Code', size=64),
-
+        'remove_fee_title':fields.boolean('Remove Fee Month'),
+        'remove_due_date':fields.boolean('Remove Due Date'),
 
         #         'subcate': fields.selection([('Fall', 'Fall'),('Summer', 'Summer'),('Spring', 'Spring')], 'Sess', required = True),
         } 

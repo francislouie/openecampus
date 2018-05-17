@@ -47,10 +47,10 @@
             <drawString x="638" y="565">[[get_challan_header_linetwo()]]</drawString>
             <drawString x="638" y="555">[[get_challan_header_linethree()]]</drawString>            
 
-			<setFont name="Helvetica-Bold" size="9" />
-			<drawString x="180" y="533">Due Date : [[ get_due_date() ]]</drawString>
-			<drawString x="475" y="533">Due Date : [[ get_due_date() ]]</drawString>
-			<drawString x="750" y="533">Due Date : [[ get_due_date() ]]</drawString>
+            <setFont name="Helvetica-Bold" size="9" />
+            <drawString x="180" y="533">[[get_due_date_str()]] [[ get_due_date() ]]</drawString>
+            <drawString x="475" y="533">[[get_due_date_str()]] [[ get_due_date() ]]</drawString>
+            <drawString x="750" y="533">[[get_due_date_str()]] [[ get_due_date() ]]</drawString>
 
 			<setFont name="Helvetica-Bold" size="11"/>
            	<drawString x="030" y="60">Officer</drawString>
@@ -244,8 +244,10 @@
 						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 					<tr>
-						<td><para style="P4-Bold"></para></td>
-						<td><para style="P4"></para></td>
+
+                        <td><para style="P4-Bold">[[(r['fee_mon_str'])]]</para></td>
+                        <td><para style="P4">[[(r['fee_month'])]]</para></td>
+
 					</tr>
 		      		</blockTable>
 				</td>
@@ -412,8 +414,10 @@
 						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 					<tr>
-						<td><para style="P4-Bold"></para></td>
-						<td><para style="P4"></para></td>
+
+                        <td><para style="P4-Bold">[[(r['fee_mon_str'])]]</para></td>
+                        <td><para style="P4">[[(r['fee_month'])]]</para></td>
+
 					</tr>
 		      		</blockTable>
 				</td>
@@ -576,8 +580,10 @@
 						<td><para style="P4">[[(r['class'])]]</para></td>
 		      		</tr>
 					<tr>
-						<td><para style="P4-Bold"></para></td>
-						<td><para style="P4"></para></td>
+
+                        <td><para style="P4-Bold">[[(r['fee_mon_str'])]]</para></td>
+                        <td><para style="P4">[[(r['fee_month'])]]</para></td>
+
 					</tr>
 		      		</blockTable>
 				</td>
