@@ -752,10 +752,41 @@ class sms_student(osv.osv):
 #         raise osv.except_osv((res), (sql))
         print "4444444"  
         return res
+    
+    def _unpaid_month_calc(self, cr, uid, ids, name, args, context=None):
+        result = {}
+#         print"unpaid month is callllllllllllllllllled",name,ids
+#         if args == None:
+        for f in  self.browse(cr, uid, ids, context):
+            sql =   """SELECT  COALESCE(COUNT(*),'0')  FROM smsfee_studentfee
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_studentfee.generic_fee_type
+                     WHERE student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics'  AND state='fee_unpaid'"""
+            cr.execute(sql)
+            amount = float(cr.fetchone()[0])
+            result[f.id] = amount
+        print"result",result
+        return result
+    def _search_unpaid_month(self, cr, uid, obj, name, args, context=None):
+        unpaid_id = args[0][2]
+        result = []
+        std_id = self.pool.get('sms.student').search(cr, uid, [('state','=','Admitted')])
+        for f in  self.pool.get('sms.student').browse(cr, uid, std_id):
+            sql =   """SELECT  COALESCE(COUNT(*),'0')  FROM smsfee_studentfee
+                        inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_studentfee.generic_fee_type
+                     WHERE student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics'  AND state='fee_unpaid'"""
+            cr.execute(sql)
+            amount = float(cr.fetchone()[0])
+            if amount >= unpaid_id:
+                result.append(f.id)
+        print"result",result
+        return  [('id','in',result)]
+    
+    
+    
+    
     #sms_student    
     _name = 'sms.student'
     _inherit ='sms.student'
-        
     _columns = {
             'discount_ids': fields.one2many('smsfee.discount', 'student_id', 'Student Discount'),
             'discount_given': fields.boolean('Give Discount'),
@@ -770,8 +801,8 @@ class sms_student(osv.osv):
             'total_paid_amount':fields.function(set_paid_amount, method=True, string='Total Paid', type='float', size=300),
             'exammark_prtal':fields.boolean('Show Exam Marks?'),
             'info_portal':fields.boolean('Show Personal Information?'),
-            'fee_structure_history_ids':fields.one2many('smsfee.structure.history', 'student_id', 'Fee Structure History')
-          
+            'fee_structure_history_ids':fields.one2many('smsfee.structure.history', 'student_id', 'Fee Structure History'),
+            'unpaid_month_calc':fields.function(_unpaid_month_calc, type='integer', string="Unpaid Months", fnct_search=_search_unpaid_month),
             }
     _defaults = {
         'discount_given': False,
