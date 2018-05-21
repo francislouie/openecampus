@@ -24,16 +24,40 @@ class class_fee_receipts_unpaid(osv.osv_memory):
 #             amount =  acad_cal_obj.class_id.acad_session_id.late_fee_amount
         return amount
     
+    def _get_total_pending(self, cr, uid, ids):
+        total_pending = 0
+        class_ids = self._get_class(cr, uid, ids)
+        pending_amount = self.pool.get('sms.academiccalendar').get_open_pending_receipts(cr, uid, class_ids, 'fee_calculated')
+        if pending_amount:
+            total_pending = pending_amount
+        return total_pending
+    
+    def _get_total_open(self, cr, uid, ids):
+        total_pending = 0
+        class_ids = self._get_class(cr, uid, ids)
+        pending_amount = self.pool.get('sms.academiccalendar').get_open_pending_receipts(cr, uid, class_ids, 'Waiting_Approval')
+        if pending_amount:
+            total_pending = pending_amount
+        return total_pending
+    
     _name = "class.fee.receipts.unpaid"
     _description = "admits student in a selected class"
     _columns = {
             "Dublicate": fields.boolean('Duplicate Fee Bill'),
-              "class_id": fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
+              'class_id': fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
               'due_date': fields.date('Due Date', required=True),
+              'total_pending': fields.integer('Pending Challans', readonly=True),
+                'total_open': fields.integer('Open Challans', readonly=True),
               'amount_after_due_date': fields.integer('Fine After Due Date',readonly=True),
                'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category',required=True),
                }
-    _defaults = {'class_id':_get_class,'amount_after_due_date':_get_amount,'category':'Academics'}
+    
+    _defaults = {'class_id':_get_class,
+                 'amount_after_due_date':_get_amount,
+                 'category':'Academics',
+                'total_pending': _get_total_pending,
+                'total_open': _get_total_open,
+                 }
     
     def create_unpaid_challans(self, cr, uid, class_id,due_date,category):
         print "create upaid challans"

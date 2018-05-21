@@ -344,9 +344,9 @@
 						<page string = "Fee Bills">
 						<field name="fee_bills" widget="one2many_list" domain="[('category','=','Academics')]"  nolabel="1">
 							<tree string="Fee Bills" >
-								<field name="name"/>
 								<field name="receipt_date"/>
 								<field name="state"/>
+								<field name="fee_issued_by"/>
 								<field name="fee_received_by"/>
 								<field name="fee_approved_by"/>
 								<field name="total_paybles"/>
