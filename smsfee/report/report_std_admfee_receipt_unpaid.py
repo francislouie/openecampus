@@ -203,6 +203,8 @@ class report_std_admfee_receipt_unpaid(report_sxw.rml_parse):
         challan_list = []
         tlt_amount = 0
         fee_res = []
+        
+        print"This is first print challan at the time od"
         info_list = []
         challan_dict = {'challan_number':'','candidate_info':'','on_accounts':'','vertical_lines':'','total_amount':'',
                             'amount_in_words':'','amount_after_due_date':'','dbid':'','grand_total':'','grand_lable':'','partial_lable':'' ,'Table_1':''
@@ -221,13 +223,29 @@ class report_std_admfee_receipt_unpaid(report_sxw.rml_parse):
         str_date = due_date.strftime('%b %Y')
         info_dict['fee_month'] = str_date
         info_list.append(info_dict)
-      
-        
-        for fee in rec.fee_ids  :
-            fee_name = str(fee.name.name)+"  "+str(fee.fee_month.name)
-            dict = {'head_name':fee_name,'head_amount':fee.amount}
+        print"lenth of the recfee",len(rec.fee_ids)
+        if len(rec.fee_ids)>10:
+            title = ''
+            whole_amount = 0
+            for fee in rec.fee_ids :
+                fee_name = str(fee.name.name)+"  "+str(fee.fee_month.name)
+                title += fee_name +':'+str(fee.amount)+'\n'
+                tlt_amount = tlt_amount+fee.amount
+            dict = {'head_name':title,'head_amount':fee.amount}
             fee_res.append(dict)
-            tlt_amount = tlt_amount+fee.amount
+           
+        else:
+            for fee in rec.fee_ids :
+                fee_name = str(fee.name.name)+"  "+str(fee.fee_month.name)
+                dict = {'head_name':fee_name,'head_amount':fee.amount}
+                fee_res.append(dict)
+                tlt_amount = tlt_amount+fee.amount
+    
+#         for fee in rec.fee_ids  :
+#             fee_name = str(fee.name.name)+"  "+str(fee.fee_month.name)
+#             dict = {'head_name':fee_name,'head_amount':fee.amount}
+#             fee_res.append(dict)
+#             tlt_amount = tlt_amount+fee.amount
         challan_dict['challan_number'] =rec.id
         challan_dict['candidate_info'] =  info_list
         challan_dict['on_accounts'] = fee_res
