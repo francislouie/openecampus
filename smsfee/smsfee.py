@@ -766,37 +766,11 @@ class sms_student(osv.osv):
             result[f.id] = amount
         print"result",result
         return result
-#         else:
-#             unpaid_id = args[0][2]
-#             print"Unpaid Month ",unpaid_id
-#             std_id = self.pool.get('sms.student').search(cr, uid, [('state','=','Admitted')])
-#             cls_fees_line_obj = self.pool.get('sms.student').browse(cr, uid, std_id)
-#              
-#             print"student object",cls_fees_line_obj
-#             
-#             for f in  self.pool.get('sms.student').browse(cr, uid, std_id):
-#                 sql =   """SELECT  COALESCE(COUNT(*),'0')  FROM smsfee_studentfee
-#                             inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_studentfee.generic_fee_type
-#                          WHERE student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics'  AND state='fee_unpaid'"""
-#                 cr.execute(sql)
-#                 amount = float(cr.fetchone()[0])
-# #                 if amount <= unpaid_id:
-#                 result[f.id] = amount
-#             return result
     def _search_unpaid_month(self, cr, uid, obj, name, args, context=None):
-        resul = [1, 9, 30, 34, 35, 36, 39, 41, 44, 54, 57, 61, 68, 73, 88, 111, 113, 115, 132, 154, 165, 167, 178, 181, 186, 203, 206, 211, 213, 216, 217, 218, 226, 230, 236, 238, 240, 249, 250, 265, 267, 268, 270, 272, 278, 282, 291, 293, 322, 323, 328, 331, 332, 333, 359, 371, 380, 384, 399, 412, 413, 425, 437, 439, 445, 447, 455, 456, 467, 469, 479, 480, 482, 490, 496, 500, 501, 505, 519, 522, 524, 532, 534, 549, 555, 556, 558, 559, 561, 565, 566, 568, 573, 576, 577, 582, 606, 609, 613, 620, 621, 622, 623, 624, 648, 656, 657, 664, 670, 688, 705, 715, 721, 725, 739, 750, 755, 758, 760, 763, 764, 769, 778, 803, 813, 814, 818, 820, 829, 835, 851, 852, 853, 854, 861, 862, 863, 865, 869, 871, 873, 890, 891, 892, 903, 906, 909, 913, 915, 925, 927, 928, 929, 930, 931, 932, 933, 936, 939, 947, 948, 954, 955, 960, 963, 965, 968, 969, 1000, 1018, 1019, 1023, 1032, 1033, 1038, 1039, 1040, 1041, 1042, 1043, 1044, 1063, 1064, 1068, 1075, 1076, 1078, 1080, 1090, 1129]
         unpaid_id = args[0][2]
-        ftlist = []
         result = []
-#         sql_ft = """SELECT id from sms_student WHERE state = 'Admitted'"""
-#         cr.execute(sql_ft)
-#         ft_ids = cr.fetchall() 
-#         for ft in ft_ids:
-#             ftlist.append(ft[0])
-#         print"list of tuples",ftlist    
         std_id = self.pool.get('sms.student').search(cr, uid, [('state','=','Admitted')])
         for f in  self.pool.get('sms.student').browse(cr, uid, std_id):
-#         for f in ftlist:
             sql =   """SELECT  COALESCE(COUNT(*),'0')  FROM smsfee_studentfee
                         inner join smsfee_feetypes on smsfee_feetypes.id = smsfee_studentfee.generic_fee_type
                      WHERE student_id = """+str(f.id)+""" AND smsfee_feetypes.category='Academics'  AND state='fee_unpaid'"""
