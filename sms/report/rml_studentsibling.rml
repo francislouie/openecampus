@@ -31,8 +31,15 @@
     <images/>
   </stylesheet>
   <story>
+   <para style="para_1">[[ repeatIn(get_student_sibling('Form'),'p') ]]</para>
+    <blockTable colWidths="240.0,300.0" style="">
+      <tr>
+        <td><para style="para_1">Sibling report</para></td>
+         <td><para style="para_22">[[p['class_name'] ]]</para></td>
+      </tr>
+    </blockTable>
     <section>
-        <blockTable colWidths="540.0" style="">
+     <blockTable colWidths="540.0" style="">
             <tr>
                 <td><para style="white">.</para></td>
             </tr>
@@ -45,11 +52,10 @@
             </tr>
         </blockTable>
         <blockTable colWidths="40.0,90.0,330.0" style="Table21">
-            <tr>[[repeatIn(get_student_sibling(data['form']),'r')]]
+            <tr>[[repeatIn((p['sub_dict']),'r')]]]]
                 <td><para style="para_2">[[ r['s_no'] ]]</para></td>
                 <td><para style="para_22">[[ r['class'] ]]</para></td>
                 <td><para style="para_2">[[ r['Siblings'] ]]</para></td>
-            
             </tr>
         </blockTable>
         
