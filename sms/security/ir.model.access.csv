@@ -42,7 +42,7 @@
 "44","ir.sequence.type","base.model_ir_sequence_type","group_sms_admin",1,1,1,1
 "45","ir.sequence","base.model_ir_sequence","group_sms_admin",1,1,1,1
 "46","account.sequence.fiscalyear","account.model_account_sequence_fiscalyear","group_sms_admin",1,1,1,1
-"47","hr.employee","hr.model_hr_employee","group_sms_admin,group_sms_principal",1,1,1,1
+"47","hr.employee","hr.model_hr_employee","group_sms_admin",1,1,1,1
 "48","hr.contract","hr_contract.model_hr_contract","group_sms_admin",1,1,1,1
 
 "49","sms.academiccalendar","model_sms_academiccalendar","group_sms_admission_manager",1,1,1,1
