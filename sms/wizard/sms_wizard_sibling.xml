@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+    <!-- Fee Reports -->
+
+        <record id="view_sms_studentsibling_wizard" model="ir.ui.view">
+            <field name="name">sms.studentsibling.wizard.form</field>
+            <field name="model">sms.studentsibling.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Student Sibling Report" version="7.0">
+                    <group >
+                        <field name="session_id"/>
+                        <field name="class_id" />
+                         <field name="order_of_report" />
+                    </group>
+                     <footer>
+                    <button string="Print" name="print_list" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+               </form>
+           </field>
+          </record>
+
+        <record id="action_student_sibling" model="ir.actions.act_window">
+            <field name="name">Sibling Report</field>
+            <field name="res_model">sms.studentsibling.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+           <field name="view_id" ref="view_sms_studentsibling_wizard"/>
+           <field name="target">new</field>
+        </record>
+</data>
+</openerp>

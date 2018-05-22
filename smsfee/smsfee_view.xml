@@ -268,6 +268,11 @@
 									<h2><field name="total_paybles"/></h2>
 								</div>
 								</group>
+								 <group>                 
+                                <div class="oe_title"><label for="unpaid_month_calc"/>
+                                    <h2><field name="unpaid_month_calc"/></h2>
+                                </div>
+                                </group>
 							</group>
 							<group>			    	 		
 								<field name="view_academics_fee"     nolabel="1"/>
@@ -376,7 +381,80 @@
 				</xpath>
 			</field>
 			</record>
-
+<!--Sms student tree view inherited-->
+        <record model = "ir.ui.view" id = "view_student_tree_ihrt">
+            <field name = "name">sms.student.tree</field>  
+            <field name = "model">sms.student</field>
+            <field name = "inherit_id" ref = "sms.view_student_tree"/>
+            <field name = "arch" type = "xml">
+                <xpath expr = "//field[@name ='fee_type']" position = "after">
+                <field name="unpaid_month_calc"  />
+                </xpath>
+            </field>
+        </record>
+        
+        
+        
+        
+        
+        
+        
+        
+        <!--Inherit quotations search view-->
+    <record id="view_student_search_inherit_filter" model="ir.ui.view">
+      <field name="name">sms.student.search.expand.filter</field>
+      <field name="model">sms.student</field>
+      <field name="inherit_id" ref="sms.view_student_search"/>
+      <field name="arch" type="xml">
+        <xpath expr="//search" position="inside">
+          <!-- This field will show up on the default filters
+               &lt; is the XML encoding for < and &gt; is the XML encoding for > -->
+          <!-- <filter string="Unpaid Month &lt; 5" name="unpaid_month_calc" domain="[('unpaid_month_calc', '&lt;=', 5)]"/>
+          <filter string="Unpaid Month &gt;= 10" name="unpaid_month_calc" domain="[('id', '&gt;=', 5)]"/>
+          <filter string="Unpaid Month &lt; 10" name="unpaid_month_calc" domain="[('id', '&lt;', 10)]"/> -->
+          <filter name="id" />
+        </xpath>
+      </field>
+    </record>
+        
+        
+        
+        
+    <!--Sms student search view inherited-->
+        
+    <record  model="ir.ui.view" id="view_student_search_inherit_filter">
+      <field name="name">sms.student.search.expand.filter</field>
+      <field name="model">sms.student</field>
+      <field name="inherit_id" ref="sms.view_student_search"/>
+      <field name="arch" type="xml">
+        <xpath expr="//search" position="inside">
+        
+          <field name="unpaid_month_calc" string="Unpaid Month"/>
+        </xpath>
+      </field>
+    </record>
+            
+        <!--Inherit quotations search view-->
+    <!-- <record id="view_student_search_inherit_filter" model="ir.ui.view">
+      <field name="name">sms.student.search.expand.filter</field>
+      <field name="model">sms.student</field>
+      <field name="inherit_id" ref="sms.view_student_search"/>
+      <field name="arch" type="xml">
+        <xpath expr="//search" position="inside"> -->
+          <!-- This field will show up on the default filters
+               &lt; is the XML encoding for < and &gt; is the XML encoding for > -->
+          <!-- <filter string="Unpaid Month &lt; 5" name="unpaid_month_calc" domain="[('unpaid_month_calc', '&lt;=', 5)]"/>
+          <filter string="Unpaid Month &gt;= 10" name="unpaid_month_calc" domain="[('id', '&gt;=', 5)]"/>
+          <filter string="Unpaid Month" name="unpaid_month_calc" /> 
+          
+            <filter string="Unpaid Month &lt; 5" name="unpaid_month_calc" domain="[('unpaid_month_calc', '&lt;=', 5)]"/>
+            <filter name="unpaid_month_calc" string="Unpaid Month" domain="[('unpaid_month_calc','=',True)]" />
+          
+        </xpath>
+      </field>
+    </record> -->
+        
+        
 		<!-- sms.Classes Fee-->
 
     <!-- Tree class fee types (new design) apread as one2many to smsfee.classes.fee-->
