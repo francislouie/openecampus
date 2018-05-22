@@ -130,12 +130,9 @@ class sms_report_studentslist(report_sxw.rml_parse):
         sibling =[]
         this_form = self.datas['form']
         class_list = this_form['class_id']
-        print"class id coming from form",class_list
-       
-        class_ids_f = [80,70,91]   
         for class_id in class_list:
+            class_objs = self.pool.get('sms.academiccalendar').browse(self.cr, self.uid,class_id)
             main_dict = {'s':'','class_name':'','sub_dict':''}   
-            print"class id ",class_id
             sql = """select sms_student_id  from sms_std_sibling_reg_rel """
             self.cr.execute(sql)
             std_sib= self.cr.fetchall()
@@ -143,14 +140,15 @@ class sms_report_studentslist(report_sxw.rml_parse):
                 sibling.append(ft[0])
             std_ids = self.pool.get('sms.student').search(self.cr, self.uid, [('id','in',sibling),('current_class','=',class_id)])
             std_objs = self.pool.get('sms.student').browse(self.cr, self.uid,std_ids)
+           
             if(std_ids):
                 i = 1
                 for student in std_objs:
+                    mydict = {'s_no':'', 'class':'', 'Siblings':''}
                     student_sibling = []
                     student_name = ''
-                    mydict = {'s_no':'', 'class':'', 'Siblings':''}
                     mydict['s_no']  = i
-                    mydict['class']     = student.name,student.current_class.id
+                    mydict['class']     = student.name
                     sql = """select sms_sibling_id  from sms_std_sibling_reg_rel where sms_student_id ="""+str(student.id)+""""""
                     self.cr.execute(sql)
                     std_sib= self.cr.fetchall()
@@ -163,23 +161,16 @@ class sms_report_studentslist(report_sxw.rml_parse):
                     i += 1
                     result2.append(mydict)
             else:
-                mydict = {'s_no':'', 'class':'', 'Siblings':'No Sibling'}
-                mydict['class']     = class_id
+                mydict = {'s_no':'', 'class':'', 'Siblings':''}
+                mydict['Siblings'] = 'Sibling not found'
                 result2.append(mydict)
             main_dict['s'] = class_id
-            main_dict['class_name'] = 'Reception II - Red (Summer-2017)'
+            main_dict['class_name'] = class_objs.name
             main_dict['sub_dict'] = result2 
-            print"class is appended to dic"
+            result2 = []
             result.append(main_dict)
-            
-        print"final dictionary ",main_dict
         return result
-    
-    
-    
-    
-    
-    
+
     def get_withdrawn_student_info(self,form):                                                         
         result = []
         this_form = self.datas['form']
