@@ -416,7 +416,7 @@ class sms_attendance_parser(report_sxw.rml_parse):
         final_dict.update({'date': days[0].strftime('%B, %Y')})
 
         session_obj = self.pool.get('sms.session').browse(self.cr, self.uid, session_id)
-        final_dict.update({'session': session_obj.academic_session_id.name})
+        final_dict.update({'session': session_obj.name})
         
         student_sql = """SELECT registration_no, name, cell_no, id
                         FROM sms_student 
