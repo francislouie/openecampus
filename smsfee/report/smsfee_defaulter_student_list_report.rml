@@ -277,8 +277,8 @@
 		<td><para style="para_heading2">Reg#</para></td>
 	    <td><para style="para_heading2">Student</para></td>
         <td><para style="para_heading2">Class</para></td>
-	    <td><para style="para_heading">Academic</para></td>
-	    <td><para style="para_heading">Transport</para></td>
+	    <td><para style="para_heading">Fee</para></td>
+	    <td><para style="para_heading">Others</para></td>
 	    <td><para style="para_heading">Total</para></td>
 	  </tr>
 	  </blockTable>

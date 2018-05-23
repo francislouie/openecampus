@@ -393,6 +393,7 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             result2 = []
             this_form = self.datas['form']
             order_by = this_form['order_by']
+            student_type = this_form['student_type']
             contact_option = this_form['show_phone_no']
             cls_id = this_form['class_id']
             
@@ -413,20 +414,35 @@ class smsfee_report_feereports(report_sxw.rml_parse):
             else:
                 class_str = ''
                
-            sql_academics = """ SELECT sms_student.id, sms_student.name, registration_no, sms_student.state
+            if student_type == 'Current':
+                sql_academics = """ SELECT sms_student.id, sms_student.name, registration_no, sms_student.state
                                 ,sms_academiccalendar.name , sms_academiccalendar.id, sms_student.cell_no, 
                                 sms_student.phone
-                                FROM sms_academiccalendar
-                                
-                                INNER JOIN sms_academiccalendar_student
+                                FROM sms_academiccalendar INNER JOIN sms_academiccalendar_student
                                 ON sms_academiccalendar.id = sms_academiccalendar_student.name
                                 INNER JOIN sms_student 
                                 ON sms_student.id = sms_academiccalendar_student.std_id
-                                WHERE sms_academiccalendar.session_id = """+str(this_form['session'][0])+ """
+                                WHERE sms_academiccalendar_student.state = 'Current' and sms_academiccalendar.session_id = """+str(this_form['session'][0])+ """
                                 """+ class_str + """ 
                                 ORDER BY """+str(order_by)+""""""
+                self.cr.execute(sql_academics)
 
-            self.cr.execute(sql_academics)
+                                
+                                
+            elif student_type == 'Withdrawn':
+                sql_academics = """ SELECT sms_student.id, sms_student.name, registration_no, sms_student.state
+                                ,sms_academiccalendar.name , sms_academiccalendar.id, sms_student.cell_no, 
+                                sms_student.phone
+                                FROM sms_academiccalendar INNER JOIN sms_academiccalendar_student
+                                ON sms_academiccalendar.id = sms_academiccalendar_student.name
+                                INNER JOIN sms_student 
+                                ON sms_student.id = sms_academiccalendar_student.std_id
+                                WHERE sms_academiccalendar_student.state != 'Current' and sms_academiccalendar.session_id = """+str(this_form['session'][0])+ """
+                                """+ class_str + """ 
+                                ORDER BY """+str(order_by)+""""""
+                self.cr.execute(sql_academics)
+                
+
             rec = self.cr.fetchall()
             print "query result",sql_academics 
             i = 1 

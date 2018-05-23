@@ -41,13 +41,15 @@ class fee_defaulters(osv.osv_memory):
               'order_by':fields.selection([('sms_student.name','Student Name'),('sms_student.registration_no','Registration No'),('sms_student.state','Admission Status'),('sms_academiccalendar.name,sms_student.name','Class')],'Order By'),
               'show_phone_no':fields.boolean('Display Contact No'),
               'developer_mode':fields.boolean('For Developer'),
-              'base_amount':fields.integer('Dues Greater Than',help = 'Enter an amount e.g 1000, it will search all students having dues greater or equal to 1000.')
+              'base_amount':fields.integer('Dues Greater Than',help = 'Enter an amount e.g 1000, it will search all students having dues greater or equal to 1000.'),
+              'student_type' :fields.selection([('Current','Current'),('Withdrawn','Withdrawn')],'Student Type', readonly = True),
                }
     _defaults = {
                  'session':_get_active_session,
                  'category':'Academics',
                  'base_amount':1,
                  'order_by':'sms_student.registration_no',
+                 'student_type': 'Current',
            }
     
     def print_defaulter_summary(self, cr, uid, ids, data):

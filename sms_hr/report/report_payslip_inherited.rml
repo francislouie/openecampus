@@ -236,7 +236,11 @@
   
     <blockTable colWidths="600.0" style="Standard_Outline">
         <tr>
-          <td><para style="P131">Salary is calculated according to Institue's HR policies communicated to all employees. Attendance policy is explained below:</para></td>
+          <td>
+            <para style="P4">[[repeatIn(get_unknown_info(o.employee_id.id,o.date_from, o.date_to), 'u')]]</para>
+            <para style="P131"><font color="Red">[[(u['message'])]]</font></para>
+            <spacer length="6"/>
+          <para style="P131">Salary is calculated according to Institue's HR policies communicated to all employees. Attendance policy is explained below:</para></td>
         </tr>
         <tr>
           <td><para style="P131">2x late comings upto 30 minutes = 1 day deduction</para></td>

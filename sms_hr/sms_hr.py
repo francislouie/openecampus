@@ -17,7 +17,7 @@ DAYOFWEEK_SELECTION = [('0', 'Monday'),
                        ('5', 'Saturday'),
                        ('6', 'Sunday'),]
 
-ATTENDANCE_STATUS_LIST = [('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('public_holiday', 'Public Holiday'),('Holiday', 'Holiday'),('Status Not Clear','Status Not Clear'),('unknown','Unknown')]
+ATTENDANCE_STATUS_LIST = [('Present', 'Present'),('Absent', 'Absent'),('Leave', 'Leave'),('public_holiday', 'Public Holiday'),('Holiday', 'Holiday'),('Status Not Clear','Status Not Clear'),('Unknown','Unknown')]
 
 
 class res_company(osv.osv):
@@ -252,7 +252,7 @@ class hr_monthly_attendance_calculation(osv.osv):
         emp_att_ids = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_id),('attendance_date','>=',date_from),('attendance_date','<=',date_to)]) 
         if emp_att_ids:
             for emp in self.pool.get('hr.employee.attendance').browse(cr,uid, emp_att_ids):
-                if emp.final_status =='unknown':
+                if emp.final_status == ATTENDANCE_STATUS_LIST[6][0]: 
                     result += 1
         return result  
     
@@ -467,10 +467,10 @@ class hr_employee_attendance(osv.osv):
     
     def get_final_status(self, cr, uid,ids, name, args, context=None):
         result = {}
-        final_status = ATTENDANCE_STATUS_LIST[6][0]
         hr_holiday_rec = False
         for f in self.browse(cr, uid, ids, context=context):
             if f.sign_in == '00:00:00':
+                final_status = ATTENDANCE_STATUS_LIST[6][0]
                 current_date = datetime.strptime(f.attendance_date,'%Y-%m-%d')
                 day = current_date.weekday()
                 employee_record = self.pool.get('hr.employee').browse(cr, uid, f.employee_id.id) 
@@ -549,7 +549,7 @@ class hr_employee_attendance(osv.osv):
       'active_schedule_id': fields.integer('Active Schedule Id')
     }
     _defaults = {
-        
+
     }
 hr_employee_attendance()
 
@@ -673,11 +673,11 @@ class hr_payslip(osv.osv):
         print'--------- date from man ------', date_from
         print'--------- date to man ------', date_to
         
-        unknown = self.pool.get('hr.monthly.attendance.calculation').get_unknown_status(cr, uid, vals['employee_id'], date_from, date_to)
-        print' ---- unknown ---------', unknown
-        
-        if unknown > 0:
-            raise osv.except_osv(('Cannot Proceed'),'There are unknown statuses for this employee in the current month!')
+#         unknown = self.pool.get('hr.monthly.attendance.calculation').get_unknown_status(cr, uid, vals['employee_id'], date_from, date_to)
+#         print' ---- unknown ---------', unknown
+#          
+#         if unknown > 0:
+#             raise osv.except_osv(('Cannot Proceed'),'There are unknown statuses for this employee in the current month!')
         
         if  (date_today > pull_date):
         
