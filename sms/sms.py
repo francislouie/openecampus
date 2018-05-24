@@ -3215,7 +3215,7 @@ sms_exam_lines()
 
 class sms_exam_default(osv.osv):
     
-    def _user_get(obj,cr,uid,context={}):
+    def _user_get(self,obj,cr,uid,context={}):
         return uid
 
     _name= "sms.exam.default"

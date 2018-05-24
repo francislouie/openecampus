@@ -2457,18 +2457,18 @@
 		</group>
 			<group  colspan="4">
 			 <group>		
-		  	 <newline/><field name="exam_type" attrs="{'readonly':[('state','in',['Closed','Cancelled'])]}"/>
+		  	 <newline/><field name="exam_type" attrs="{'readonly':[('state','in',['Closed','Cancelled','Active'])]}"/>
 		</group>
 		 <group colspan="4">
- 		   <field name="start_date" on_change="onchange_exam_start_date(start_date)" attrs="{'readonly':[('state','in',['Closed','Cancelled'])]}"/>
- 		   <field name="session_year"/>
- 		     <field name="term_name"/>
- 		    <field name="result"/>
+ 		   <field name="start_date" on_change="onchange_exam_start_date(start_date)" attrs="{'readonly':[('state','in',['Closed','Cancelled','Active'])]}"/>
+ 		   <field name="session_year" attrs="{'readonly':[('state','=','Active')]}"/>
+ 		     <field name="term_name" attrs="{'readonly':[('state','=','Active')]}"/>
+ 		    <field name="result" attrs="{'readonly':[('state','=','Active')]}"/>
 		</group>
 		</group>
 		<notebook>
 		<page string ="Exam Classes">
-		  	<field name="datesheet_ids" nolabel = "1" colspan="4"/>
+		  	<field name="datesheet_ids" nolabel = "1" colspan="4"  attrs="{'readonly':[('state','=','Active')]}"/>
 		  </page>
 		</notebook>	
         </form>
