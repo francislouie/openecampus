@@ -25,6 +25,12 @@
                   parent="hr_attendance.menu_hr_attendance"
                   action="action_sms_hr_attendance_report" 
                   groups=""/>
+                  
+        <menuitem id="menu_sms_hr_attendance_report"
+                  sequence="10"
+                  parent="hr_attendance.menu_hr_attendance"
+                  action="action_view_hr_attendance" 
+                  groups=""/>
       
 	</data>
 </openerp>
