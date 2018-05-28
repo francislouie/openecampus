@@ -15,7 +15,7 @@
 					<group colspan="4" col="6" String = "" >
 						 <field name="due_date" colspan="4" />
 						 <newline/><field name="amount_after_due_date" colspan="4" />
-						 <newline/><field  colspan="4"  name="category" on_change="onchange_get_open_pending(category)"/>
+						 <newline/><field  colspan="4"  name="category" on_change="onchange_get_open_pending(category, class_id)"/>
                         <newline/><field colspan="4" name="Dublicate"/>
                         <newline/><field name="total_pending" />
                         <newline/><field name="total_open" />
