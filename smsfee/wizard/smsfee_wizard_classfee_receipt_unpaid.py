@@ -11,8 +11,11 @@ _logger = logging.getLogger(__name__)
 class class_fee_receipts_unpaid(osv.osv_memory):
     
     def _get_class(self, cr, uid, ids):
+#         thisform = self.read(cr, uid, ids)[0]
         obj = self.browse(cr, uid, ids['active_id'])
-        std_id =  obj.id
+#         print'---- obj id ----', thisform
+#         std_id =  int(thisform['class_id'])
+        std_id = obj.id
         return std_id
     
     def _get_amount(self, cr, uid, ids):
@@ -27,7 +30,8 @@ class class_fee_receipts_unpaid(osv.osv_memory):
     def _get_total_pending(self, cr, uid, ids):
         total_pending = 0
         class_ids = self._get_class(cr, uid, ids)
-        pending_amount = self.pool.get('sms.academiccalendar').get_open_pending_receipts(cr, uid, class_ids, 'fee_calculated')
+        print'------ Class Id ------', class_ids
+        pending_amount = self.pool.get('sms.academiccalendar').get_open_pending_receipts(cr, uid, class_ids, 'Waiting_Approval', 'Academics')
         if pending_amount:
             total_pending = pending_amount
         return total_pending
@@ -35,28 +39,40 @@ class class_fee_receipts_unpaid(osv.osv_memory):
     def _get_total_open(self, cr, uid, ids):
         total_pending = 0
         class_ids = self._get_class(cr, uid, ids)
-        pending_amount = self.pool.get('sms.academiccalendar').get_open_pending_receipts(cr, uid, class_ids, 'Waiting_Approval')
+        print'------ Class Id ------', class_ids
+        pending_amount = self.pool.get('sms.academiccalendar').get_open_pending_receipts(cr, uid, class_ids, 'fee_calculated', 'Academics')
         if pending_amount:
             total_pending = pending_amount
         return total_pending
     
+    def onchange_get_open_pending(self, cr, uid, ids, cat, class_id):
+        print'------ on change mehtod --------', cat, class_id
+
+        open_amount = self.pool.get('sms.academiccalendar').get_open_pending_receipts(cr, uid, class_id, 'fee_calculated', cat)
+        waiting_amount = self.pool.get('sms.academiccalendar').get_open_pending_receipts(cr, uid, class_id, 'Waiting_Approval', cat)
+        
+        print'--------- return value from this --------', open_amount, waiting_amount
+
+        return {'value': {'total_pending':waiting_amount,'total_open':open_amount}}
+   
+
     _name = "class.fee.receipts.unpaid"
     _description = "admits student in a selected class"
     _columns = {
             "Dublicate": fields.boolean('Duplicate Fee Bill'),
               'class_id': fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active'),('fee_defined','=',1)]", help="Class"),
               'due_date': fields.date('Due Date', required=True),
-              'total_pending': fields.integer('Pending Challans', readonly=True),
-                'total_open': fields.integer('Open Challans', readonly=True),
+              'total_pending': fields.text('Pending Challans', readonly=True),
+              'total_open': fields.text('Open Challans', readonly=True),
               'amount_after_due_date': fields.integer('Fine After Due Date',readonly=True),
                'category':fields.selection([('Academics','Academics'),('Transport','Transport')],'Fee Bill Category',required=True),
                }
     
     _defaults = {'class_id':_get_class,
                  'amount_after_due_date':_get_amount,
-                 'category':'Academics',
                 'total_pending': _get_total_pending,
                 'total_open': _get_total_open,
+                'category': 'Academics'
                  }
     
     def create_unpaid_challans(self, cr, uid, class_id,due_date,category):
