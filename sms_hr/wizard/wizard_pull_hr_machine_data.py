@@ -237,13 +237,19 @@ class sms_pull_hr_machine_data(osv.osv_memory):
         
         for emp_id in emp_ids:
             attendance_exists = self.pool.get('hr.employee.attendance').search(cr,uid,[('employee_id','=',emp_id),('attendance_date','=',current_date)])
-        
+            department_query="""select department_id from hr_employee where id="""+str(emp_id)
+            cr.execute(department_query)
+            department_id=cr.fetchone()[0]
+            print'----- Department ------', department_id
+            schedule_id = self.pool.get('hr.schedule').search(cr, uid, [('department_id', '=', department_id),('state', '=', 'validate')])
             # if records don't exist then create records for each employee in employee attendance for the this current month
+            print'----- schedule id ------', schedule_id
             if not attendance_exists:
                 for date in current_month_dates:
+                                       
                                         date_stamp = date.strftime('%Y%m%d')
                                         self.pool.get('hr.employee.attendance').create(cr, uid, {'employee_id': emp_id,'attendance_date': date_stamp, 
-                                            'sign_in': '','sign_out': '','attendance_month': str(current_month_name)})
+                                            'sign_in': '','sign_out': '', 'active_schedule_id': schedule_id[0], 'attendance_month': str(current_month_name)})
         
         
             # create an entry against the current employee in the hr_monthly_attendance_calcualtion table

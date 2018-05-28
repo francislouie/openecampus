@@ -324,6 +324,14 @@ class hr_employee(osv.osv):
     def _current_employee(self, cr, uid, ids):
         
         return True
+    
+    def _get_schedule(self, cr, uid, ids, name, args, context=None):
+        
+        result = {}
+        for f in self.browse(cr, uid, ids):
+            name = self.pool.get('hr.employee.attendance').get_active_schedule(cr, uid, ids, f.id)
+        result[f.id] = name
+        return result
 
     _columns = {
         'employee_attendance_ids': fields.one2many('hr.employee.attendance', 'employee_id','Employee Attendance Record'),
@@ -331,7 +339,8 @@ class hr_employee(osv.osv):
         'empleado_account_id': fields.char('Empleado Acc ID'),
         'default_devicee_id': fields.char('Default Device'),
         'punch_attendance':fields.selection([('yes','Yes'),('no','No')],'Attendance Punching Allowed ?'),
-        'left_out': fields.boolean('Left Out')
+        'left_out': fields.boolean('Left Out'),
+        'active_schedule': fields.function(_get_schedule, method=True, string='Active Schedule', type='char')
     }
     _defaults = {
         'punch_attendance': 'yes',
@@ -533,9 +542,17 @@ class hr_employee_attendance(osv.osv):
     
     def set_month(self):
         return True
-
+    
+    def get_active_schedule(self, cr, uid, ids, emp, context=None):
+        rec_id = self.search(cr, uid, [('employee_id', '=', emp)], order='id desc', limit=1)
+        if rec_id:
+            rec_att = self.browse(cr, uid, rec_id[0])
+            rec = self.pool.get('hr.schedule').browse(cr, uid, rec_att.active_schedule_id)
+        result = rec.name
+        return result
+                
     _columns = {
-      'employee_id': fields.many2one('hr.employee'),
+      'employee_id': fields.many2one('hr.employee', string='Employee'),
       'attendance_date': fields.date('Date'),
       'dayofweek': fields.function(get_day_ofweek, method=True, string='Day',type='char'),
       'sign_in': fields.function(get_signin_time, method=True, string='Sign In',type='char'),
@@ -546,7 +563,8 @@ class hr_employee_attendance(osv.osv):
       'final_status': fields.function(get_final_status, string='Status',type='selection', selection=ATTENDANCE_STATUS_LIST),
       'attendance_month': fields.char('Attendance Month'),
       'invoiced': fields.boolean('Invoiced',readonly = 1),
-      'active_schedule_id': fields.integer('Active Schedule Id')
+      'active_schedule_id': fields.integer('Active Schedule Id'),
+      'schedule_name': fields.function(get_active_schedule, method=True, type='char', string='Active Schedule')
     }
     _defaults = {
 

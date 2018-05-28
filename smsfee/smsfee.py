@@ -467,9 +467,9 @@ class sms_academiccalendar(osv.osv):
         return result
     
     
-    def get_open_pending_receipts(self, cr, uid, class_id, state, context=None):
+    def get_open_pending_receipts(self, cr, uid, class_id, state, cat, context=None):
         total = 0
-        receipt_ids = self.pool.get('smsfee.receiptbook').search(cr ,uid ,[('student_class_id','=',class_id),('state','=',state)])
+        receipt_ids = self.pool.get('smsfee.receiptbook').search(cr ,uid ,[('student_class_id','=',class_id),('state','=',state),('challan_cat','=',cat)])
         if receipt_ids:
             total = len(receipt_ids)
         return total
