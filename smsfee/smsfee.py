@@ -467,6 +467,14 @@ class sms_academiccalendar(osv.osv):
         return result
     
     
+    def get_open_pending_receipts(self, cr, uid, class_id, state, context=None):
+        total = 0
+        receipt_ids = self.pool.get('smsfee.receiptbook').search(cr ,uid ,[('student_class_id','=',class_id),('state','=',state)])
+        if receipt_ids:
+            total = len(receipt_ids)
+        return total
+    
+    
     
     _name = 'sms.academiccalendar'
     _inherit ='sms.academiccalendar'
@@ -2317,6 +2325,7 @@ class smsfee_receiptbook(osv.osv):
         'note_at_receive': fields.text('Note'),
         'receive_whole_amount': fields.boolean('Receive Whole Amount'),
         'state': fields.selection([('Draft', 'Draft'),('fee_calculated', 'Open'),('Waiting_Approval', 'To Be Approved'),('Paid', 'Paid'),('Cancel', 'Cancel'),('Adjusted', 'Paid(Adjusted)')], 'State', readonly = True, help='State'),
+        'fee_issued_by': fields.many2one('res.users', 'Issued By'),
         'fee_received_by': fields.many2one('res.users', 'Received By'),
         'fee_approved_by': fields.many2one('res.users', 'Approved By'),
         'challan_cancel_by': fields.many2one('res.users', 'Canceled By',readonly=True),

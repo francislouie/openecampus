@@ -246,26 +246,25 @@ class hr_schedule(osv.osv):
     def unlink(self, cr, uid, ids, context=None):
  
         detail_obj = self.pool.get('hr.schedule.detail')
- 
+
         if isinstance(ids, (int, long)):
             ids = [ids]
  
-        schedule_ids = []
         for schedule in self.browse(cr, uid, ids, context=context):
             # Do not remove schedules that are not in draft or unlocked state
             if not self.deletable(cr, uid, schedule.id, context):
-                continue
- 
+                raise osv.except_osv(('Invalid Operation!'), ('Schedules in Confirmed or Locked state cannot be removed.'))
             # Delete the schedule details associated with this schedule
-            #
-            detail_ids = []
-            [detail_ids.append(detail.id) for detail in schedule.detail_ids]
-            if len(detail_ids) > 0:
-                detail_obj.unlink(cr, uid, detail_ids, context=context)
- 
-            schedule_ids.append(schedule.id)
- 
-        return super(hr_schedule, self).unlink(cr, uid, schedule_ids, context=context)
+            else:
+                sql_del = """delete from hr_schedule_lines where schedule_id = """+str(schedule.id)
+                cr.execute(sql_del)
+                
+                detail_ids = []
+                [detail_ids.append(detail.id) for detail in schedule.detail_ids]
+                if len(detail_ids) > 0:
+                    detail_obj.unlink(cr, uid, detail_ids, context=context)
+            
+        return super(hr_schedule, self).unlink(cr, uid, schedule.id, context=context)
  
     def _workflow_common(self, cr, uid, ids, signal, next_state, context=None):
         # <Obaid>

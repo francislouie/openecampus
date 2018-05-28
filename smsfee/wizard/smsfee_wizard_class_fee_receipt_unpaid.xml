@@ -17,6 +17,8 @@
 						 <newline/><field name="amount_after_due_date" colspan="4" />
 						 <newline/><field  colspan="4"  name="category"/>
                         <newline/><field colspan="4" name="Dublicate"/>
+                        <newline/><field name="total_pending" />
+                        <newline/><field name="total_open" />
 				    </group>
 						 
                     

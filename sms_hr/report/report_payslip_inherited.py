@@ -19,7 +19,8 @@ class report_payslip_inherited(report_sxw.rml_parse):
             'get_payslip_lines': self.get_payslip_lines,
             'print_payslipslist_signature_list': self.print_payslipslist_signature_list,
             'get_attendance_details': self.get_attendance_details,
-            'get_oneday_salary': self.get_oneday_salary
+            'get_oneday_salary': self.get_oneday_salary,
+            'get_unknown_info': self.get_unknown_info
         })
         
     def get_oneday_salary(self, obj, date_to):
@@ -117,6 +118,23 @@ class report_payslip_inherited(report_sxw.rml_parse):
 #             final_recs.update({'total_recs': total_recs})
 #             result.append(final_recs)
         return total_recs
+    
+    def get_unknown_info(self, emp_id, date_from, date_to):
+        result = []
+        info_obj = {}
+        info_obj['message'] = ""
+        date_f = datetime.strptime(date_from, '%Y-%m-%d').strftime('%Y-%m-%d')
+        year = int(datetime.strptime(date_f, '%Y-%m-%d').strftime('%Y'))
+        month = int(datetime.strptime(date_f, '%Y-%m-%d').strftime('%m'))
+        days = int(calendar.monthrange(year, month)[1])
+        month_end_str = str(str(year)+'-'+str(month)+'-'+str(days))
+        month_end = datetime.strptime(month_end_str, '%Y-%m-%d').strftime('%Y-%m-%d')
+        unknown = self.pool.get('hr.monthly.attendance.calculation').get_unknown_status(self.cr, self.uid, emp_id, date_f, month_end)
+        print'------- unknown figure --------', unknown
+        if unknown > 0:
+            info_obj['message'] = "This salary slip is generated for display purposes only and doesn't hold any legal grounds \n as there are unknown statuses against this employee in attendance records."   
+        result.append(info_obj)
+        return result    
     
     def print_payslipslist_signature_list(self, cr, uid, ids, data):
         result = []

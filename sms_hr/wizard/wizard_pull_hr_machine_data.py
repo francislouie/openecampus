@@ -243,7 +243,7 @@ class sms_pull_hr_machine_data(osv.osv_memory):
                 for date in current_month_dates:
                                         date_stamp = date.strftime('%Y%m%d')
                                         self.pool.get('hr.employee.attendance').create(cr, uid, {'employee_id': emp_id,'attendance_date': date_stamp, 
-                                            'sign_in': '','sign_out': '','final_status': 'unknown','attendance_month': str(current_month_name)})
+                                            'sign_in': '','sign_out': '','attendance_month': str(current_month_name)})
         
         
             # create an entry against the current employee in the hr_monthly_attendance_calcualtion table

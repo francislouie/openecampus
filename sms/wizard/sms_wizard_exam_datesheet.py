@@ -6,28 +6,21 @@ class exam_datesheet(osv.osv_memory):
     def _get_exam_offered(self, cr, uid, context=None):
         return context['active_ids'][0]
     
-    
-    def _get_exam(self, cr, uid, ids):
-        examobj = self.browse(cr, uid, ids['active_id'])
-        exam_id =  examobj.id
-        return exam_id
-    
     _name = "exam.datesheet"
     _description = "Exam Date Sheet"
     _columns = {
-                 'exam_offered': fields.many2one('sms.exam.offered', 'Select Offered Exam', domain="[('state','in',['Active','Draft'])]", required=True,readonly=True),
+                 'exam_offered': fields.many2one('sms.exam.offered', 'Select Offered Exam', domain="[('state','in',['Active','Draft'])]", required=True, readonly=True),
                  'academiccalendar':fields.many2one('sms.academiccalendar', 'Class', domain="[('state','=','Active')]", required=True),
                  'subject_marks':fields.integer('Subects Marks',required=True),
               }
     
     _defaults = {
             'subject_marks': 100,
-            'exam_offered':_get_exam
            }
     
     def exam_datesheet(self, cr, uid, ids, context=None):
         
-        for current_obj in self.pool.get('sms.exam.offered').browse(cr,uid,ids[0]):
+        for current_obj in self.pool.get('sms.exam.offered').browse(self.cr, self.uid,self.ids[0]):
             current_obj
             start_date = current_obj.exam_offered.start_date.split('-')
             datesheet_obj = self.pool.get('sms.exam.datesheet')

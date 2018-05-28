@@ -4,18 +4,18 @@
 
     <!-- Exam Date Sheet -->
 
-        <record id="view_sms_exam_datesheet_wizard" model="ir.ui.view">
-            <field name="name">Exam Date Sheet</field>
-            <field name="model">exam.datesheet</field>
+        <record id="view_sms_add_exam_class_wizard" model="ir.ui.view">
+            <field name="name">Exam Class</field>
+            <field name="model">add.exam.class</field>
             <field name="arch" type="xml">
                 <form string="Exam Date Sheet" version="7.0">
                     <group col="4">
                         <field name="exam_offered"/>
-                        <field name="academiccalendar"/>
+                        <field name="academiccalendar" />
                         <field name="subject_marks"/>
                     </group>
                     <footer>
-                        <button string="Next" name="exam_datesheet" type="object" class="oe_highlight"/>
+                        <button string="Save" name="add_class" type="object" class="oe_highlight"/>
                         or
                         <button string="Cancel" class="oe_link" special="cancel"/>
                     </footer>
@@ -25,12 +25,12 @@
 
   <!-- View Exam Date Sheet -->
 
-        <record id="action_exam_datesheet_wizard" model="ir.actions.act_window">
-            <field name="name">Create/Update Date Sheet</field>
-            <field name="res_model">exam.datesheet</field>
+        <record id="action_add_exam_class_wizard" model="ir.actions.act_window">
+            <field name="name">Create/Update Class</field>
+            <field name="res_model">add.exam.class</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
-           <field name="view_id" ref="view_sms_exam_datesheet_wizard"/>
+           <field name="view_id" ref="view_sms_add_exam_class_wizard"/>
            <field name="target">new</field>
         </record>
 </data>

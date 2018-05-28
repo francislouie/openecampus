@@ -30,5 +30,6 @@ import sms_wizard_student_transfer_in
 import sms_wizard_filter_subject_open
 import sms_wizard_filter_week_plan
 import sms_wizard_sibling
+import sms_wizard_add_exam_class
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

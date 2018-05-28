@@ -9,13 +9,13 @@ class sms_studentsibling_wizard(osv.osv_memory):
         obj = self.browse(cr, uid, ids['active_id'])
         std_id =  obj.id
         return std_id
-    
     _name = "sms.studentsibling.wizard"
     _description = "Print student sibling report"
     _columns = {
-              'session_id': fields.many2one('sms.session', 'Session', domain="[('state','=','Active')]"),
-              "class_id": fields.many2one('sms.academiccalendar','Classes', domain="[('state','=','Active')]"),
-              'order_of_report': fields.selection([('name', 'Name'), ('class','Class')],"Order By")
+        
+            "session_id": fields.many2one('sms.session', 'Session', domain="[('state','=','Active')]"),
+            "class_id": fields.many2many('sms.academiccalendar','sms_academiccalendar_rel', 'sms_class_id', 'sms_aca_id','Classes', domain="[('session_id','=',session_id)]"),
+            "order_of_report": fields.selection([('name', 'Name'), ('class','Class')],"Order By")
                }
     
     

@@ -2444,7 +2444,7 @@
         <form string="Exam Offered" version="7.0">
           <header>
 			<button name="%(report_datesheet_id)d" string="Print Date Sheet" type="action" class="oe_highlight"/>
-			<button name="%(action_exam_datesheet_wizard)d" string="Add New Class" states="Active" type="action" class="oe_highlight" groups=""/>
+			<button name="%(action_add_exam_class_wizard)d" string="Add New Class" states="Active" type="action" class="oe_highlight" groups=""/>
 			<button name="start_exam" string="Start Exams" type="object" states="Draft" confirm = "Starting exam will provide access to intended users for data entry and editing, Start exams?" class="oe_highlight"/>
 			<button name="close_exam" string="Close Exams" type="object" states="Active" confirm = "Closing exams will close access to marks enry and editing,howerver exams reports can be accessed." class="oe_highlight"/>
 			<button name="cancel_exam" string="Cancel Exams" confirm = "Canceling This exmas will close access to all classes of this exams, Cancel this exams?." type="object" states="Draft,Active" class="oe_highlight"/>
